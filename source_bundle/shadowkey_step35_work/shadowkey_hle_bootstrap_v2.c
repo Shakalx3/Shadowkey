@@ -15,7 +15,32 @@ static uint8_t *guest_ptr(ngage_cpu_t*c,uint32_t a,uint32_t n){
     return c->mem+(a-0x10000000u);
 }
 uint32_t shadowkey_heap_alloc(ngage_cpu_t*c,uint32_t size){if(!size)return 0;uint32_t p=0;if(heap_next&&heap_next<=heap_end&&size<=heap_end-heap_next){p=(heap_next+7u)&~7u;if(p<=heap_end&&size<=heap_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap_next=p+((size+7u)&~7u);return p;}}}if(heap2_next&&heap2_next<=heap2_end&&size<=heap2_end-heap2_next){p=(heap2_next+7u)&~7u;if(p<=heap2_end&&size<=heap2_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap2_next=p+((size+7u)&~7u);return p;}}}if(heap3_next&&heap3_next<=heap3_end&&size<=heap3_end-heap3_next){p=(heap3_next+7u)&~7u;if(p<=heap3_end&&size<=heap3_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap3_next=p+((size+7u)&~7u);return p;}}}return 0;}
+static int shadowkey_euser1407_font_literal(ngage_cpu_t*c){
+    static const uint32_t sites[]={0x10022b80u,0x10022dacu,0x10022fe8u,0x10023230u,0x1002366cu};
+    int matched=0;
+    for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++) if(c->r[14]==sites[i]) matched=1;
+    if(!matched || c->r[1]!=0x100ac718u) return 0;
+    uint32_t dst=c->r[0],src=c->r[1];
+    if(dst<0x10000000u || (uint64_t)dst+20u>0x12000000ull ||
+       src<0x10000000u || (uint64_t)src+12u>0x12000000ull) return 0;
+    uint8_t *d=guest_ptr(c,dst,20u),*s=guest_ptr(c,src,12u);
+    if(!d || !s) return 0;
+    static const uint16_t expected[6]={'S','w','i','s','s',0};
+    for(unsigned i=0;i<6;i++){
+        uint16_t ch=(uint16_t)(s[i*2u]|((uint16_t)s[i*2u+1u]<<8));
+        if(ch!=expected[i]) return 0;
+    }
+    /* The five callsites copy exactly 20 bytes immediately afterwards.
+       This callsite-specific no-directive Format result is a TBuf16<6>:
+       8-byte descriptor header plus six inline UTF-16 code units. */
+    ngage_w32(c,dst,0x30000005u);
+    ngage_w32(c,dst+4u,6u);
+    memset(d+8u,0,12u);
+    for(unsigned i=0;i<5;i++){d[8u+i*2u]=(uint8_t)expected[i];d[9u+i*2u]=(uint8_t)(expected[i]>>8);}
+    return 1;
+}
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u && shadowkey_euser1407_font_literal(c)) return;
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1282u){
         /* Observed three-argument byte-copy ABI at 20-, 32-, and 256-byte sites; exact export name remains unverified. */
         uint32_t dst=c->r[0],src=c->r[1],n=c->r[2];

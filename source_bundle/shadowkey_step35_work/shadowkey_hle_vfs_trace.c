@@ -91,7 +91,8 @@ static int tparse_set(ngage_cpu_t*c,uint32_t self,uint32_t name_desc,uint32_t re
     else {
         const char*base=rn?related:(dn?def:"");
         const char*slash1=strrchr(base,'\\'),*slash2=strrchr(base,'/');
-        const char*slash=slash1>slash2?slash1:slash2;
+        const char*slash=slash1;
+        if(!slash || (slash2 && slash2>slash))slash=slash2;
         size_t prefix=base[0]?(slash?(size_t)(slash-base+1u):0u):0u;
         if(prefix+n>=sizeof(full))return -9;
         if(prefix)memcpy(full,base,prefix);
@@ -261,9 +262,10 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         memset(p+32u,0,512u);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==185u){
-        int rc=tparse_set(c,c->r[0],c->r[1],c->r[2],c->r[3]);
+        uint32_t self=c->r[0],name=c->r[1],related=c->r[2],def=c->r[3];
+        int rc=tparse_set(c,self,name,related,def);
         c->r[0]=(uint32_t)rc;
-        fprintf(stderr,"  HLE SDK EFSRV185 TParse::Set this=%08x name=%08x related=%08x default=%08x rc=%d\\n",c->r[0],c->r[1],c->r[2],c->r[3],rc);
+        fprintf(stderr,"  HLE SDK EFSRV185 TParse::Set this=%08x name=%08x related=%08x default=%08x rc=%d\\n",self,name,related,def,rc);
         return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==121u){
@@ -411,25 +413,8 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     }
     if(shadowkey_bitgdi_import(c,dll,ordinal)) return;
     if(!strcmp(dll,"FBSCLI[10003a15].DLL") && shadowkey_fbs_import(c->r,c->mem,ordinal)) return;
-    if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==3u){
-        /* Observed at 0x10021480: the caller uses the object pointer after this call. */
-        return;
-    }
-    if(!strcmp(dll,"EIKCORE[10004892].DLL") && (ordinal==222u || ordinal==219u || ordinal==224u)){
-        /* These call sites use the import as a void object/base initializer. */
-        return;
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==828u || ordinal==858u)){
-        /* Call-site bootstrap no-ops: their broader Symbian semantics are not resolved yet. */
-        return;
-    }
-    if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==55u){
-        c->r[0]=shadowkey_cone_drawable_window(c); return;
-    }
-    if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==226u){
-        c->r[0]=shadowkey_cone_system_gc(c); return;
-    }
-    fprintf(stderr,"UNIMPLEMENTED Shadowkey import: %s ordinal %u (r0=%08x r1=%08x r2=%08x r3=%08x)\n",
-            dll,ordinal,c->r[0],c->r[1],c->r[2],c->r[3]);
-    c->r[0]=0;
+    fprintf(stderr,"HALT UNIMPLEMENTED Shadowkey import: %s ordinal=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
+            dll,ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
+    if(getenv("SHADOWKEY_DIAGNOSTIC_CONTINUE_UNIMPLEMENTED")) return;
+    exit(95);
 }

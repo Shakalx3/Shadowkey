@@ -33,7 +33,12 @@ static void bitmap_write_note(ngage_cpu_t*c,uint32_t a,uint32_t v,uint8_t width)
  if(!bitmap_watch_hi || a>=bitmap_watch_hi || (uint64_t)a+width<=bitmap_watch_lo)return;
  bitmap_guest_write_count++;
  if(bitmap_sample_count<24u){
-  bitmap_samples[bitmap_sample_count++]=(typeof(bitmap_samples[0])){a,v,c->r[14],c->r[13],width};
+  bitmap_samples[bitmap_sample_count].addr=a;
+  bitmap_samples[bitmap_sample_count].value=v;
+  bitmap_samples[bitmap_sample_count].lr=c->r[14];
+  bitmap_samples[bitmap_sample_count].sp=c->r[13];
+  bitmap_samples[bitmap_sample_count].width=width;
+  bitmap_sample_count++;
  }
 }
 void ngage_runtime_report_bitmap_writes(void){

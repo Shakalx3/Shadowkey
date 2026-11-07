@@ -90,9 +90,11 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++) if(c->r[14]==sites[i]) matched=1;
         if(matched && c->r[1]==0x100ac718u) {
             uint32_t dst=c->r[0],src=c->r[1];
-            uint8_t *p=guest_ptr(c,dst,20u),*q=guest_ptr(c,src,12u);
             static const uint16_t expected[6]={'S','w','i','s','s',0};
-            int valid=p&&q&&dst>=0x10000000u&&(uint64_t)dst+20u<=0x12000000ull;
+            int valid=dst>=0x10000000u&&(uint64_t)dst+20u<=0x12000000ull&&
+                      src>=0x10000000u&&(uint64_t)src+12u<=0x12000000ull;
+            uint8_t *p=valid?guest_ptr(c,dst,20u):0,*q=valid?guest_ptr(c,src,12u):0;
+            valid=valid&&p&&q;
             for(unsigned i=0;i<6&&valid;i++){
                 uint16_t ch=(uint16_t)(q[i*2u]|((uint16_t)q[i*2u+1u]<<8));
                 if(ch!=expected[i]) valid=0;

@@ -6,7 +6,7 @@ lines=p.read_text(errors="replace").splitlines()
 needles=("ngage_call(c, 0x1006a488u)","ngage_call(c, 0x1006a488)")
 hits=[i for i,line in enumerate(lines) if any(n in line for n in needles)]
 print(f"sub_1006a488 direct callsites: {len(hits)}")
-for symbol in ("sub_100275e4","sub_10024b3c"):
+for symbol in ("sub_100275e4","sub_10081030","sub_10024b3c"):
     start=p.read_text(errors="replace").find(f"void {symbol}")
     if start<0:
         print(f"\\n## {symbol}: not found")

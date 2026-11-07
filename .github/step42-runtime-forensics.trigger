@@ -1,2 +1,3 @@
 Run EUSER1575 and CONE160 runtime forensics.
 expanded-euser1575-probes
+capture-framebuffer

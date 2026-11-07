@@ -21,3 +21,4 @@ verify-global-spr-resource
 fix-global-spr-path
 trace-resource-loader
 dump-resource-table-neighbors
+inspect-resource-loader-source

@@ -81,6 +81,27 @@ static int run_case(int fail){
    c.r[0]=engine;
    ngage_call(&c,0x1002256cu);
    fprintf(stderr,"ENGINE RUNL live-state returned r0=%08x engine+0x30=%08x engine+0x34=%08x engine+0x3ad=%02x\n",c.r[0],ngage_r32(&c,engine+0x30u),ngage_r32(&c,engine+0x34u),ngage_r8(&c,engine+0x3adu));
+   /* Preserve the actual guest FBS bitmap after the unmodified RunL path.
+      This is a raw capture only: no synthetic pixels are inserted. */
+   {
+     uint32_t bitmap=ngage_r32(&c,engine+0x2e4u),pixels=0,w=0,h=0,stride=0,mode=0;
+     if(shadowkey_fbs_bitmap_info(bitmap,&pixels,&w,&h,&stride,&mode) &&
+        pixels>=guest_base && (uint64_t)pixels+(uint64_t)stride*h<=(uint64_t)guest_base+guest_size) {
+       FILE *raw=fopen(".build/live_run_bitmap.rgb565","wb");
+       FILE *meta=fopen(".build/live_run_bitmap.meta","w");
+       if(raw && meta) {
+         size_t bytes=(size_t)stride*h;
+         size_t wrote=fwrite(mem+(pixels-guest_base),1,bytes,raw);
+         fprintf(meta,"%u %u %u %u %u %08x %08x\n",w,h,stride,mode,(unsigned)bytes,bitmap,pixels);
+         uint32_t nonzero=0;
+         for(size_t i=0;i<bytes;i++) if(mem[(pixels-guest_base)+i]) nonzero++;
+         fprintf(stderr,"FRAMEBUFFER RAW captured bitmap=%08x pixels=%08x size=%ux%u stride=%u mode=%u bytes=%zu nonzero=%u\n",
+                 bitmap,pixels,w,h,stride,mode,bytes,nonzero);
+         if(wrote!=bytes) fprintf(stderr,"FRAMEBUFFER RAW short write %zu/%zu\n",wrote,bytes);
+       } else fprintf(stderr,"FRAMEBUFFER RAW could not open output files\n");
+       if(raw) fclose(raw); if(meta) fclose(meta);
+     } else fprintf(stderr,"FRAMEBUFFER RAW unavailable bitmap=%08x\n",bitmap);
+   }
    /* Verify that the import-slot indirection still works after the init path. */
    shadowkey_heap_init(0x10110000u,0x10170000u);
    c.r[0]=556u; ngage_call(&c,0x101007ecu);

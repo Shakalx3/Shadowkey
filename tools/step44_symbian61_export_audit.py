@@ -116,6 +116,28 @@ for dll,ordinals in TARGETS.items():
         out.append(f"- Ordinal {ordinal}: {', '.join(names) if names else '<no ordinal import record>'}; NameType={types}")
     out.append("")
 
+# Join every original game import slot to the exact N-Gage SDK symbol.
+import re
+dispatch_path=Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c")
+dispatch_text=dispatch_path.read_text(errors="replace")
+entry_re=re.compile(r'\\{\\s*(0x[0-9a-fA-F]+)u?,\\s*(0x[0-9a-fA-F]+)u?,\\s*"([A-Z0-9]+)\\[[^]]+\\]\\.DLL",\\s*(\\d+)u\\s*\\}')
+entries=[]
+for thunk,slot,dll,ordtext in entry_re.findall(dispatch_text):
+    if dll.lower() in ("efsrv","euser","cone","gdi"):
+        entries.append((int(thunk,16),int(slot,16),dll.lower(),int(ordtext)))
+out += ["## Exact symbol map for imports used by 6R51.APP","",
+        f"- Game import slots mapped: {len(entries)}",
+        "| Thunk | Slot | DLL | Ordinal | Original SDK symbol |",
+        "|---:|---:|---|---:|---|"]
+lib_cache={}
+for thunk,slot,dll,ordinal in entries:
+    if dll not in lib_cache:
+        lib=debugroot/f"{dll}.lib"
+        lib_cache[dll]=parse_coff_import_lib(lib) if lib.exists() else []
+    names=sorted(set(r["symbol"] for r in lib_cache[dll] if r["ordinal"]==ordinal))
+    symbol="; ".join(names) if names else "<NO MATCH>"
+    out.append(f"| 0x{thunk:08x} | 0x{slot:08x} | {dll.upper()} | {ordinal} | {symbol} |")
+out.append("")
 # Inspect ARM import libraries for C++ symbol names that WINS DLLs omit.
 import subprocess
 libroot=root.parent.parent/"armi"/"urel"

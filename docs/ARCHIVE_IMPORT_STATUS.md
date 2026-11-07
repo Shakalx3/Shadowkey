@@ -1,6 +1,6 @@
-# Step 35 archive intake and GitHub import boundary
+# Step 35 archive intake and GitHub import status
 
-Date: 2026-11-07
+Date: 2026-11-07 (updated during step 37)
 
 ## Source archive verified
 
@@ -14,26 +14,38 @@ File supplied in the conversation:
 - Uncompressed size: 112,885,393 bytes (about 107.7 MiB).
 - Root directory: `shadowkey_step35_work/`.
 
-The digest exactly matches the previously recorded step35 archive digest. The archive is readable and its directory inventory was inspected.
+The digest exactly matches the recorded step35 archive digest. The archive is readable and its directory inventory was inspected in the current working session.
 
-## Public repository import policy
+## Destination repository
 
-The destination repository is public: https://github.com/Shakalx3/Shadowkey.
+Destination: https://github.com/Shakalx3/Shadowkey
 
-The archive contains original proprietary game executable/DLL files, extracted game resources, audio, models, textures, and large lifted/decompiled game-code outputs. These are deliberately **not mirrored into this public repository** because doing so would publicly redistribute game binaries/assets and derived game content. The archive remains the authoritative local project input supplied by the owner.
+The repository has been verified as **private**. The connected GitHub account has read, push and admin permissions. Technical reports and project-authored research utilities can be committed directly.
 
-The repository will hold project-authored technical notes, reproducible test scripts, build glue, and non-game-specific tooling. Before mirroring the complete archive, change the repository to Private and confirm that private storage is intended; even then, large binaries/assets should be handled selectively rather than blindly committed.
+## Binary archive transfer status
 
-## First commit
+The complete ZIP is **not yet present in GitHub**. The GitHub connector available to this session exposes text-file and Git-object operations but no binary upload operation from the working container. No upload is claimed.
 
-The public repository was initialized on branch `main` with a project README. The connected GitHub account has push/admin permissions. No pre-existing files were overwritten.
+The archive is 23,492,696 bytes, below GitHub's documented 25 MiB web-upload limit for a single file. The owner can add it through the repository page using **Add file → Upload files** and commit it, for example at:
 
-## Initial validation
+`archive/shadowkey_recomp_bundle_v8_4_step35_direct_binary_patch_path.zip`
 
-- `shadowkey_step35_e32_patch_test.sh`: PASS.
-- `build_and_test.sh`: PASS.
-- Both commands were run from the supplied archive in a temporary validation workspace; this was a one-time archive inspection, not a permanent duplicate working repository.
-- The structural patch test writes a temporary probe image and explicitly does not prove EKA2 loader acceptance.
-- The general test suite includes diagnostic/synthetic HLE paths; passing it is not proof of a playable build.
+After upload, verify the SHA-256 against the value above. Do not rename or repackage it before verification.
 
-See [Step 35 patch test](STEP35_STRUCTURAL_PATCH_TEST.md) and [Step 36 toolchain audit](STEP36_EKA2_TOOLCHAIN_AUDIT.md).
+## Work completed while archive transfer is pending
+
+- Step 35 archive test and host test-suite results were retained in the repository's technical reports.
+- Step 37 re-ran the ARM ELF link checks from a clean executable-permission state.
+- A portability correction was prepared for the two ARM build scripts that previously relied on an executable bit for `build_arm11_core.sh`.
+- Step 37 audited the current EKA2/ARMv6 toolchain candidate against the target RM-320 and found no published N95 firmware test evidence.
+
+See [Step 37 EKA2 target-compatibility audit](STEP37_EKA2_TOOLCHAIN_TARGET_COMPATIBILITY.md) and [Step 37 build-script patch](../patches/STEP37_BUILD_SCRIPT_PORTABILITY.patch).
+
+## Validation boundaries
+
+Passing the archive tests and ARM ELF link checks does not establish:
+- a valid Symbian EKA2 E32 image;
+- compatibility with the exact N95 RM-320 ROM export tables;
+- a real Symbian startup/runtime;
+- working graphics, fonts, audio, input or filesystem behavior on the handset;
+- a successful launch on physical hardware.

@@ -2,7 +2,7 @@
 """Verify the live image-decoder resource against the original global.spr pack."""
 from pathlib import Path
 import struct
-root=Path("source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51")
+root=Path("game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51")
 p=root/"global.spr"
 data=p.read_bytes()
 offset=0x9444

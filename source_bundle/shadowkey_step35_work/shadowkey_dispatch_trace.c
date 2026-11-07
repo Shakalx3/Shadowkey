@@ -25,6 +25,15 @@ static void tracked_guest_call(uint32_t address,ngage_guest_fn fn,ngage_cpu_t*c)
                 address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
         for(uint32_t off=0;off<0x20u;off+=4u)
             fprintf(stderr,"RESLOAD stack[%02x]=%08x\\n",off,ngage_r32(c,c->r[13]+off));
+        fprintf(stderr,"RESLOAD caller-state r4(table)=%08x r12(index)=%08x\\n",c->r[4],c->r[12]);
+        if(c->r[4]>=0x10000000u && c->r[4]<0x12000000u && c->r[12]<0x10000u){
+            for(int32_t d=-2;d<=3;d++){
+                uint32_t ix=(uint32_t)((int32_t)c->r[12]+d);
+                uint32_t a=c->r[4]+ix*4u;
+                if(a>=0x10000000u && (uint64_t)a+4u<=0x12000000ull)
+                    fprintf(stderr,"RESLOAD table[%08x]=%08x\\n",ix,ngage_r32(c,a));
+            }
+        }
     }
     if(address==0x1006a488u){
         fprintf(stderr,"IMGDEC ENTER fn=%08x r0=%08x r1(dest)=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",

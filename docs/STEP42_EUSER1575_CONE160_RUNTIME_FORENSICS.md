@@ -82,6 +82,12 @@ LIMIT: the TFontSpec72/TBufC<24>/GDI108 mapping remains a cross-checked experime
 LIMIT: DrawText is diagnostic only; no glyph rasterization or physical N95 launch
 ---
 
+## Raw framebuffer capture
+
+---
+PNG .build/live_run_bitmap.png: 176x233, RGB565 mode=10, stride=352, nonzero_pixels=3491/41008, bitmap=0x10110718, pixels=0x10311000
+---
+
 ## Runtime evidence
 
 ---

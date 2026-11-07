@@ -42,7 +42,7 @@ jobs:
           if start<0:
               print("Function sub_1006a488 not found")
           else:
-              end=p.find("\nvoid sub_",start+1)
+              end=p.find("void sub_",start+len("void sub_"))
               if end<0: end=len(p)
               body=p[start:end]
               lines=body.splitlines()

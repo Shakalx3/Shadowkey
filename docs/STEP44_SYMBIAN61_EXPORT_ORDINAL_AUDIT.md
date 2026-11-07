@@ -1,4 +1,100 @@
-# Step 44 — Symbian 6.1 SDK export ordinal audit\n\nResolved against the original N-Gage/S60 1.2 SDK WINS/UREL DLL export directories, not inferred from newer Symbian releases.\n\n## EFSRV.DLL\n\n- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel/efsrv.dll (45056 bytes)\n- Export ordinal base: 1; functions: 231; named exports: 0\n\n| Ordinal | Export name | RVA |\n|---:|---|---:|\n| 18 | <NONAME> | 0x00001439 |\n| 136 | <NONAME> | 0x000035ee |\n| 137 | <NONAME> | 0x000035ee |\n| 138 | <NONAME> | 0x00002384 |\n| 139 | <NONAME> | 0x000023c2 |\n| 140 | <NONAME> | 0x000026dd |\n| 141 | <NONAME> | 0x000051e5 |\n| 142 | <NONAME> | 0x00005270 |\n| 143 | <NONAME> | 0x00001dad |\n| 185 | <NONAME> | 0x00005e20 |\n\n## EUSER.DLL\n\n- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel/euser.dll (274432 bytes)\n- Export ordinal base: 1; functions: 1684; named exports: 0\n\n| Ordinal | Export name | RVA |\n|---:|---|---:|\n| 1407 | <NONAME> | 0x0002b72e |\n| 1575 | <NONAME> | 0x0002986a |\n\n## CONE.DLL\n\n- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel/cone.dll (49152 bytes)\n- Export ordinal base: 1; functions: 317; named exports: 0\n\n| Ordinal | Export name | RVA |\n|---:|---|---:|\n| 160 | <NONAME> | 0x0000237a |\n\n## GDI.DLL\n\n- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel/gdi.dll (40960 bytes)\n- Export ordinal base: 1; functions: 195; named exports: 0\n\n| Ordinal | Export name | RVA |\n|---:|---|---:|\n| 101 | <NONAME> | 0x00002afa |\n| 108 | <NONAME> | 0x0000343a |\n| 151 | <NONAME> | 0x0000387f |\n\n## WINS UDEB export and import-library scan\n\n### EFSRV.DLL (UDEB)\n\n- Export ordinal base: 1; functions: 231; named exports: 0\n| Ordinal | Export name | RVA |\n|---:|---|---:|\n| 18 | <NONAME> | 0x0000104b |\n| 136 | <NONAME> | 0x000011fe |\n| 137 | <NONAME> | 0x000010f5 |\n| 138 | <NONAME> | 0x0000132a |\n| 139 | <NONAME> | 0x00001523 |\n| 140 | <NONAME> | 0x00001744 |\n| 141 | <NONAME> | 0x00001294 |\n| 142 | <NONAME> | 0x0000160e |\n| 143 | <NONAME> | 0x0000144c |\n| 185 | <NONAME> | 0x00001451 |\n\n### EFSRV.LIB (WINS UDEB)\n\n- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib: current ar archive\n- nm exit=0; nm lines=1398; stderr=\n- strings lines=1656; relevant matches=1253\n\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ??0CFileBase@@IAE@AAVRFs@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_??0CFileBase@@IAE@AAVRFs@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ??0TDriveUnit@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_??0TDriveUnit@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ??0TFindFile@@QAE@AAVRFs@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_??0TFindFile@@QAE@AAVRFs@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ??0TOpenFileScan@@QAE@AAVRFs@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_??0TOpenFileScan@@QAE@AAVRFs@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ??0TParse@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_??0TParse@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ??0TParseBase@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_??0TParseBase@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ??0TParsePtr@@QAE@AAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_??0TParsePtr@@QAE@AAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ??0TParsePtrC@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_??0TParsePtrC@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ??4TDriveUnit@@QAEAAV0@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_??4TDriveUnit@@QAEAAV0@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?AddDir@TParseBase@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?AddDir@TParseBase@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?AddFileSystem@RFs@@QBEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?AddFileSystem@RFs@@QBEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Att@RFile@@QBEHAAI@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Att@RFile@@QBEHAAI@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Att@RFs@@QBEHABVTDesC16@@AAI@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Att@RFs@@QBEHABVTDesC16@@AAI@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Attribs@CFileMan@@QAEHABVTDesC16@@IIABVTTime@@I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Attribs@CFileMan@@QAEHABVTDesC16@@IIABVTTime@@I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Attribs@CFileMan@@QAEHABVTDesC16@@IIABVTTime@@IAAVTRequestStatus@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Attribs@CFileMan@@QAEHABVTDesC16@@IIABVTTime@@IAAVTRequestStatus@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?BytesTransferredByCopyStep@CFileMan@@QAEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?BytesTransferredByCopyStep@CFileMan@@QAEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?ChangeMode@RFile@@QAEHW4TFileMode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?ChangeMode@RFile@@QAEHW4TFileMode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?CharToDrive@RFs@@SAHVTChar@@AAH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?CharToDrive@RFs@@SAHVTChar@@AAH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?CheckDisk@RFs@@QBEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?CheckDisk@RFs@@QBEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?ClearPassword@RFs@@QAEHHABV?$TBuf8@$0BA@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?ClearPassword@RFs@@QAEHHABV?$TBuf8@$0BA@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Close@RFsBase@@QAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Close@RFsBase@@QAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Connect@RFs@@QAEHH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Connect@RFs@@QAEHH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?ControlIo@RFs@@QAEHHHPAX0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?ControlIo@RFs@@QAEHHHPAX0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Copy@CFileMan@@QAEHABVTDesC16@@0I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Copy@CFileMan@@QAEHABVTDesC16@@0I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Copy@CFileMan@@QAEHABVTDesC16@@0IAAVTRequestStatus@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Copy@CFileMan@@QAEHABVTDesC16@@0IAAVTRequestStatus@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Create@RFile@@QAEHAAVRFs@@ABVTDesC16@@I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Create@RFile@@QAEHAAVRFs@@ABVTDesC16@@I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?DebugNotify@RFs@@QAEXHIAAVTRequestStatus@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?DebugNotify@RFs@@QAEXHIAAVTRequestStatus@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?DefaultPath@RFs@@QBEHAAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?DefaultPath@RFs@@QBEHAAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Delete@CFileMan@@QAEHABVTDesC16@@I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Delete@CFileMan@@QAEHABVTDesC16@@I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Delete@CFileMan@@QAEHABVTDesC16@@IAAVTRequestStatus@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Delete@CFileMan@@QAEHABVTDesC16@@IAAVTRequestStatus@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Delete@RFs@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Delete@RFs@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?DismountFileSystem@RFs@@QBEHABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?DismountFileSystem@RFs@@QBEHABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Drive@RFile@@QBEHAAHAAVTDriveInfo@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Drive@RFile@@QBEHAAHAAVTDriveInfo@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Drive@RFs@@QBEHAAVTDriveInfo@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Drive@RFs@@QBEHAAVTDriveInfo@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Drive@TParseBase@@QBE?AVTPtrC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Drive@TParseBase@@QBE?AVTPtrC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?DriveAndPath@TParseBase@@QBE?AVTPtrC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?DriveAndPath@TParseBase@@QBE?AVTPtrC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?DriveList@RFs@@QBEHAAV?$TBuf8@$0BK@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?DriveList@RFs@@QBEHAAV?$TBuf8@$0BK@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?DrivePresent@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?DrivePresent@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?DriveToChar@RFs@@SAHHAAVTChar@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?DriveToChar@RFs@@SAHHAAVTChar@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Entry@RFs@@QBEHABVTDesC16@@AAVTEntry@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Entry@RFs@@QBEHABVTDesC16@@AAVTEntry@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Ext@TParseBase@@QBE?AVTPtrC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Ext@TParseBase@@QBE?AVTPtrC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?ExtPresent@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?ExtPresent@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?FileSystemName@RFs@@QBEHAAVTDes16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?FileSystemName@RFs@@QBEHAAVTDes16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?FindByDir@TFindFile@@QAEHABVTDesC16@@0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?FindByDir@TFindFile@@QAEHABVTDesC16@@0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?FindByPath@TFindFile@@QAEHABVTDesC16@@PBV2@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?FindByPath@TFindFile@@QAEHABVTDesC16@@PBV2@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?FindWildByDir@TFindFile@@QAEHABVTDesC16@@0AAPAVCDir@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?FindWildByDir@TFindFile@@QAEHABVTDesC16@@0AAPAVCDir@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?FindWildByPath@TFindFile@@QAEHABVTDesC16@@PBV2@AAPAVCDir@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?FindWildByPath@TFindFile@@QAEHABVTDesC16@@PBV2@AAPAVCDir@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Flush@RFile@@QAEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Flush@RFile@@QAEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?FullName@TParseBase@@QBEABVTDesC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?FullName@TParseBase@@QBEABVTDesC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?GetCurrentSource@CFileMan@@QAEXAAV?$TBuf@$0BAA@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?GetCurrentSource@CFileMan@@QAEXAAV?$TBuf@$0BAA@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?GetCurrentTarget@CFileMan@@QAEXAAV?$TBuf@$0BAA@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?GetCurrentTarget@CFileMan@@QAEXAAV?$TBuf@$0BAA@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?GetDir@RFs@@QBEHABVTDesC16@@ABVTUidType@@IAAPAVCDir@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?GetDir@RFs@@QBEHABVTDesC16@@ABVTUidType@@IAAPAVCDir@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?GetDir@RFs@@QBEHABVTDesC16@@IIAAPAVCDir@@1@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?GetDir@RFs@@QBEHABVTDesC16@@IIAAPAVCDir@@1@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?GetDir@RFs@@QBEHABVTDesC16@@IIAAPAVCDir@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?GetDir@RFs@@QBEHABVTDesC16@@IIAAPAVCDir@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?GetDriveName@RFs@@QBEHHAAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?GetDriveName@RFs@@QBEHHAAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?GetLongName@RFs@@QBEHABVTDesC16@@AAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?GetLongName@RFs@@QBEHABVTDesC16@@AAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?GetNotifyUser@RFs@@QAEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?GetNotifyUser@RFs@@QAEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?GetShortName@RFs@@QBEHABVTDesC16@@AAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?GetShortName@RFs@@QBEHABVTDesC16@@AAVTDes16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsExtWild@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsExtWild@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsFileInRom@RFs@@QBEPAEABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsFileInRom@RFs@@QBEPAEABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsFileOpen@RFs@@QBEHABVTDesC16@@AAH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsFileOpen@RFs@@QBEHABVTDesC16@@AAH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsKMatchAny@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsKMatchAny@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsKMatchOne@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsKMatchOne@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsNameWild@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsNameWild@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsRomAddress@RFs@@SAHPAX@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsRomAddress@RFs@@SAHPAX@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsRoot@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsRoot@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsValidDrive@RFs@@SAHH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsValidDrive@RFs@@SAHH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsValidName@RFs@@QBEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsValidName@RFs@@QBEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsValidName@RFs@@QBEHABVTDesC16@@AAG@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsValidName@RFs@@QBEHABVTDesC16@@AAG@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?IsWild@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?IsWild@TParseBase@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?LoaderHeapFunction@RFs@@QAEHHPAX0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?LoaderHeapFunction@RFs@@QAEHHPAX0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Lock@RFile@@QBEHHH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Lock@RFile@@QBEHHH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?LockDrive@RFs@@QAEHHABV?$TBuf8@$0BA@@@0H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?LockDrive@RFs@@QAEHHABV?$TBuf8@$0BA@@@0H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?MkDir@RFs@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?MkDir@RFs@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?MkDirAll@RFs@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?MkDirAll@RFs@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Modified@RFile@@QBEHAAVTTime@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Modified@RFile@@QBEHAAVTTime@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Modified@RFs@@QBEHABVTDesC16@@AAVTTime@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Modified@RFs@@QBEHABVTDesC16@@AAVTTime@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?MountFileSystem@RFs@@QBEHABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?MountFileSystem@RFs@@QBEHABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Move@CFileMan@@QAEHABVTDesC16@@0I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Move@CFileMan@@QAEHABVTDesC16@@0I@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 T ?Move@CFileMan@@QAEHABVTDesC16@@0IAAVTRequestStatus@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/efsrv.lib:EFSRV.DLL:00000000 I _imp_?Move@CFileMan@@QAEHABVTDesC16@@0IAAVTRequestStatus@@@Z\n\n### EUSER.DLL (UDEB)\n\n- Export ordinal base: 1; functions: 1684; named exports: 0\n| Ordinal | Export name | RVA |\n|---:|---|---:|\n| 1407 | <NONAME> | 0x00002b3f |\n| 1575 | <NONAME> | 0x000039b3 |\n\n### EUSER.LIB (WINS UDEB)\n\n- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib: current ar archive\n- nm exit=0; nm lines=10116; stderr=\n- strings lines=11827; relevant matches=3178\n\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0RTest@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0RTest@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0RTest@@QAE@ABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0RTest@@QAE@ABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufBase16@@IAE@ABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufBase16@@IAE@ABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufBase16@@IAE@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufBase16@@IAE@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufBase16@@IAE@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufBase16@@IAE@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufBase16@@IAE@PBGH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufBase16@@IAE@PBGH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufBase8@@IAE@ABVTDesC8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufBase8@@IAE@ABVTDesC8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufBase8@@IAE@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufBase8@@IAE@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufBase8@@IAE@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufBase8@@IAE@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufBase8@@IAE@PBEH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufBase8@@IAE@PBEH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufCBase16@@IAE@ABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufCBase16@@IAE@ABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufCBase16@@IAE@PBGH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufCBase16@@IAE@PBGH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufCBase16@@IAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufCBase16@@IAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufCBase8@@IAE@ABVTDesC8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufCBase8@@IAE@ABVTDesC8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufCBase8@@IAE@PBEH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufCBase8@@IAE@PBEH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TBufCBase8@@IAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TBufCBase8@@IAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TCheckedUid@@QAE@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TCheckedUid@@QAE@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TFindHandleBase@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TFindHandleBase@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TFormatInfo@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TFormatInfo@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TLongDateFormatSpec@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TLongDateFormatSpec@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TPtr16@@AAE@AAVTBufCBase16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TPtr16@@AAE@AAVTBufCBase16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TPtr8@@AAE@AAVTBufCBase8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TPtr8@@AAE@AAVTBufCBase8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TPtrC16@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TPtrC16@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TPtrC8@@QAE@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TPtrC8@@QAE@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TRealFormat@@QAE@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TRealFormat@@QAE@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TRealFormat@@QAE@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TRealFormat@@QAE@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TRealFormat@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TRealFormat@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TRect@@QAE@ABVTPoint@@0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TRect@@QAE@ABVTPoint@@0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TRect@@QAE@ABVTPoint@@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TRect@@QAE@ABVTPoint@@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TRect@@QAE@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TRect@@QAE@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TShortDateFormatSpec@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TShortDateFormatSpec@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TTime@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TTime@@QAE@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??0TTimeFormatSpec@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??0TTimeFormatSpec@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??4HBufC16@@QAEAAV0@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??4HBufC16@@QAEAAV0@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??4HBufC16@@QAEAAV0@PBG@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??4HBufC16@@QAEAAV0@PBG@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??4HBufC8@@QAEAAV0@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??4HBufC8@@QAEAAV0@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??4HBufC8@@QAEAAV0@PBE@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??4HBufC8@@QAEAAV0@PBE@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??8TPoint@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??8TPoint@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??8TSize@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??8TSize@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??9TPoint@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??9TPoint@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??9TSize@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??9TSize@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??GTPoint@@QBE?AV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??GTPoint@@QBE?AV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??GTPoint@@QBE?AV0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??GTPoint@@QBE?AV0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??GTPoint@@QBE?AV0@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??GTPoint@@QBE?AV0@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??GTSize@@QBE?AV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??GTSize@@QBE?AV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??GTSize@@QBE?AV0@ABVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??GTSize@@QBE?AV0@ABVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??GTSize@@QBE?AV0@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??GTSize@@QBE?AV0@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??HTPoint@@QBE?AV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??HTPoint@@QBE?AV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??HTPoint@@QBE?AV0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??HTPoint@@QBE?AV0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??HTSize@@QBE?AV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??HTSize@@QBE?AV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??HTSize@@QBE?AV0@ABVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??HTSize@@QBE?AV0@ABVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??YTPoint@@QAEAAV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??YTPoint@@QAEAAV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??YTPoint@@QAEAAV0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??YTPoint@@QAEAAV0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??YTSize@@QAEAAV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??YTSize@@QAEAAV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??YTSize@@QAEAAV0@ABVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??YTSize@@QAEAAV0@ABVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??ZTPoint@@QAEAAV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??ZTPoint@@QAEAAV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??ZTPoint@@QAEAAV0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??ZTPoint@@QAEAAV0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??ZTSize@@QAEAAV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??ZTSize@@QAEAAV0@ABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ??ZTSize@@QAEAAV0@ABVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_??ZTSize@@QAEAAV0@ABVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?Alloc@TDesC16@@QBEPAVHBufC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?Alloc@TDesC16@@QBEPAVHBufC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?Alloc@TDesC8@@QBEPAVHBufC8@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?Alloc@TDesC8@@QBEPAVHBufC8@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AllocL@TDesC16@@QBEPAVHBufC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AllocL@TDesC16@@QBEPAVHBufC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AllocL@TDesC8@@QBEPAVHBufC8@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AllocL@TDesC8@@QBEPAVHBufC8@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AllocLC@TDesC16@@QBEPAVHBufC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AllocLC@TDesC16@@QBEPAVHBufC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AllocLC@TDesC8@@QBEPAVHBufC8@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AllocLC@TDesC8@@QBEPAVHBufC8@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?Append@TDes16@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?Append@TDes16@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?Append@TDes16@@QAEXPBGH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?Append@TDes16@@QAEXPBGH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?Append@TDes16@@QAEXVTChar@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?Append@TDes16@@QAEXVTChar@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?Append@TDes8@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?Append@TDes8@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?Append@TDes8@@QAEXABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?Append@TDes8@@QAEXABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?Append@TDes8@@QAEXPBEH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?Append@TDes8@@QAEXPBEH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?Append@TDes8@@QAEXVTChar@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?Append@TDes8@@QAEXVTChar@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AppendFill@TDes16@@QAEXVTChar@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AppendFill@TDes16@@QAEXVTChar@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AppendFill@TDes8@@QAEXVTChar@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AppendFill@TDes8@@QAEXVTChar@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AppendFormat@TDes16@@QAAXV?$TRefByValue@$$CBVTDesC16@@@@PAVTDes16Overflow@@ZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AppendFormat@TDes16@@QAAXV?$TRefByValue@$$CBVTDesC16@@@@PAVTDes16Overflow@@ZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AppendFormat@TDes16@@QAAXV?$TRefByValue@$$CBVTDesC16@@@@ZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AppendFormat@TDes16@@QAAXV?$TRefByValue@$$CBVTDesC16@@@@ZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AppendFormat@TDes8@@QAAXV?$TRefByValue@$$CBVTDesC8@@@@PAVTDes8Overflow@@ZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AppendFormat@TDes8@@QAAXV?$TRefByValue@$$CBVTDesC8@@@@PAVTDes8Overflow@@ZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AppendFormat@TDes8@@QAAXV?$TRefByValue@$$CBVTDesC8@@@@ZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AppendFormat@TDes8@@QAAXV?$TRefByValue@$$CBVTDesC8@@@@ZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AppendFormatList@TDes16@@QAEXABVTDesC16@@QAPACPAVTDes16Overflow@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AppendFormatList@TDes16@@QAEXABVTDesC16@@QAPACPAVTDes16Overflow@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 T ?AppendFormatList@TDes8@@QAEXABVTDesC8@@QAPACPAVTDes8Overflow@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/euser.lib:EUSER.DLL:00000000 I _imp_?AppendFormatList@TDes8@@QAEXABVTDesC8@@QAPACPAVTDes8Overflow@@@Z\n\n### CONE.DLL (UDEB)\n\n- Export ordinal base: 1; functions: 317; named exports: 0\n| Ordinal | Export name | RVA |\n|---:|---|---:|\n| 160 | <NONAME> | 0x000015a0 |\n\n### CONE.LIB (WINS UDEB)\n\n- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib: current ar archive\n- nm exit=0; nm lines=1914; stderr=\n- strings lines=2258; relevant matches=910\n\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ??0CCoeControl@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_??0CCoeControl@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ??0TCoeHelpContext@@QAE@VTUid@@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_??0TCoeHelpContext@@QAE@VTUid@@ABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ??1CCoeControl@@UAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_??1CCoeControl@@UAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?ActivateGc@CCoeControl@@IBEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?ActivateGc@CCoeControl@@IBEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?ActivateL@CCoeControl@@UAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?ActivateL@CCoeControl@@UAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?ActivateViewL@CCoeAppUi@@QAEXABVTVwsViewId@@VTUid@@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?ActivateViewL@CCoeAppUi@@QAEXABVTVwsViewId@@VTUid@@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?AddResourceFileL@CCoeEnv@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?AddResourceFileL@CCoeEnv@@QAEHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?AddToStackL@CCoeAppUi@@QAEXABVMCoeView@@PAVCCoeControl@@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?AddToStackL@CCoeAppUi@@QAEXABVMCoeView@@PAVCCoeControl@@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?AddToStackL@CCoeAppUi@@QAEXPAVCCoeControl@@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?AddToStackL@CCoeAppUi@@QAEXPAVCCoeControl@@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?AddToViewStackL@CCoeAppUi@@QAEXABVMCoeView@@PAVCCoeControl@@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?AddToViewStackL@CCoeAppUi@@QAEXABVMCoeView@@PAVCCoeControl@@HH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?AllocReadResourceAsDes16L@CCoeEnv@@QBEPAVHBufC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?AllocReadResourceAsDes16L@CCoeEnv@@QBEPAVHBufC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?AllocReadResourceAsDes16LC@CCoeEnv@@QBEPAVHBufC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?AllocReadResourceAsDes16LC@CCoeEnv@@QBEPAVHBufC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?AllocReadResourceAsDes8L@CCoeEnv@@QBEPAVHBufC8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?AllocReadResourceAsDes8L@CCoeEnv@@QBEPAVHBufC8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?AllocReadResourceAsDes8LC@CCoeEnv@@QBEPAVHBufC8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?AllocReadResourceAsDes8LC@CCoeEnv@@QBEPAVHBufC8@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?BackedUpWindow@CCoeControl@@IBEAAVRBackedUpWindow@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?BackedUpWindow@CCoeControl@@IBEAAVRBackedUpWindow@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?BrushStyle@CCoeBrushAndPenContext@@QBE?AW4TBrushStyle@CGraphicsContext@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?BrushStyle@CCoeBrushAndPenContext@@QBE?AW4TBrushStyle@CGraphicsContext@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CapturesPointer@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CapturesPointer@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?ClaimPointerGrab@CCoeControl@@QAEXH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?ClaimPointerGrab@CCoeControl@@QAEXH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CloseWindow@CCoeControl@@IAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CloseWindow@CCoeControl@@IAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?ComponentControl@CCoeControl@@UBEPAV1@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?ComponentControl@CCoeControl@@UBEPAV1@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?ConstructFromResourceL@CCoeControl@@UAEXAAVTResourceReader@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?ConstructFromResourceL@CCoeControl@@UAEXAAVTResourceReader@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?ControlContext@CCoeControl@@QBEPAVMCoeControlContext@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?ControlContext@CCoeControl@@QBEPAVMCoeControlContext@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CopyControlContextFrom@CCoeControl@@QAEXPBV1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CopyControlContextFrom@CCoeControl@@QAEXPBV1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CountComponentControls@CCoeControl@@UBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CountComponentControls@CCoeControl@@UBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CreateActivateViewEventL@CCoeAppUi@@QAEXABVTVwsViewId@@VTUid@@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CreateActivateViewEventL@CCoeAppUi@@QAEXABVTVwsViewId@@VTUid@@ABVTDesC8@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CreateBackedUpWindowL@CCoeControl@@IAEXAAVRWindowTreeNode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CreateBackedUpWindowL@CCoeControl@@IAEXAAVRWindowTreeNode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CreateBackedUpWindowL@CCoeControl@@IAEXAAVRWindowTreeNode@@W4TDisplayMode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CreateBackedUpWindowL@CCoeControl@@IAEXAAVRWindowTreeNode@@W4TDisplayMode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CreateDeviceFontL@CCoeEnv@@QAEPAVCFbsFont@@PAVCGraphicsDevice@@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CreateDeviceFontL@CCoeEnv@@QAEPAVCFbsFont@@PAVCGraphicsDevice@@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CreateScreenFontL@CCoeEnv@@QAEPAVCFbsFont@@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CreateScreenFontL@CCoeEnv@@QAEPAVCFbsFont@@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CreateWindowL@CCoeControl@@IAEXAAVRWindowTreeNode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CreateWindowL@CCoeControl@@IAEXAAVRWindowTreeNode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CreateWindowL@CCoeControl@@IAEXPAVRWindowGroup@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CreateWindowL@CCoeControl@@IAEXPAVRWindowGroup@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CreateWindowL@CCoeControl@@IAEXPBV1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CreateWindowL@CCoeControl@@IAEXPBV1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?CreateWindowL@CCoeControl@@IAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?CreateWindowL@CCoeControl@@IAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?DeactivateGc@CCoeControl@@IBEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?DeactivateGc@CCoeControl@@IBEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?Draw@CCoeControl@@EBEXABVTRect@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?Draw@CCoeControl@@EBEXABVTRect@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?DrawDeferred@CCoeControl@@QBEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?DrawDeferred@CCoeControl@@QBEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?DrawNow@CCoeControl@@QBEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?DrawNow@CCoeControl@@QBEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?DrawableWindow@CCoeControl@@QBEPAVRDrawableWindow@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?DrawableWindow@CCoeControl@@QBEPAVRDrawableWindow@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?EnableDragEvents@CCoeControl@@IAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?EnableDragEvents@CCoeControl@@IAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?ExecuteFepSettingsDialogL@CCoeEnv@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?ExecuteFepSettingsDialogL@CCoeEnv@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?FileExists@ConeUtils@@SAHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?FileExists@ConeUtils@@SAHABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?FocusChanged@CCoeControl@@MAEXW4TDrawNow@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?FocusChanged@CCoeControl@@MAEXW4TDrawNow@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?Format128@CCoeEnv@@QAAXAAVTDes16@@HZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?Format128@CCoeEnv@@QAAXAAVTDes16@@HZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?Format256@CCoeEnv@@QAAXAAVTDes16@@HZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?Format256@CCoeEnv@@QAAXAAVTDes16@@HZZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?GetColor@CCoeControl@@QBEHHAAVTRgb@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?GetColor@CCoeControl@@QBEHHAAVTRgb@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?GetColorUseListL@CCoeControl@@UBEXAAV?$CArrayFix@VTCoeColorUse@@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?GetColorUseListL@CCoeControl@@UBEXAAV?$CArrayFix@VTCoeColorUse@@@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?GetHelpContext@CCoeControl@@UBEXAAVTCoeHelpContext@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?GetHelpContext@CCoeControl@@UBEXAAVTCoeHelpContext@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?GrabbingComponent@CCoeControl@@IBEPAV1@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?GrabbingComponent@CCoeControl@@IBEPAV1@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?HandleComponentControlsResourceChange@CCoeControl@@IAEXH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?HandleComponentControlsResourceChange@CCoeControl@@IAEXH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?HandlePointerBufferReadyL@CCoeControl@@MAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?HandlePointerBufferReadyL@CCoeControl@@MAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?HandlePointerEventL@CCoeControl@@MAEXABUTPointerEvent@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?HandlePointerEventL@CCoeControl@@MAEXABUTPointerEvent@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?HandleRedrawEvent@CCoeControl@@IBEXABVTRect@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?HandleRedrawEvent@CCoeControl@@IBEXABVTRect@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?HandleResourceChange@CCoeControl@@UAEXH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?HandleResourceChange@CCoeControl@@UAEXH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?HandleSwitchOnEventL@CCoeAppUi@@EAEXPAVCCoeControl@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?HandleSwitchOnEventL@CCoeAppUi@@EAEXPAVCCoeControl@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?HandleWsEventL@CCoeAppUi@@MAEXABVTWsEvent@@PAVCCoeControl@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?HandleWsEventL@CCoeAppUi@@MAEXABVTWsEvent@@PAVCCoeControl@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?HandleWsEventL@CCoeAppUiSimple@@MAEXABVTWsEvent@@PAVCCoeControl@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?HandleWsEventL@CCoeAppUiSimple@@MAEXABVTWsEvent@@PAVCCoeControl@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?HasBorder@CCoeControl@@UBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?HasBorder@CCoeControl@@UBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IgnoreEventsUntilNextPointerUp@CCoeControl@@QAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IgnoreEventsUntilNextPointerUp@CCoeControl@@QAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?Index@CCoeControl@@QBEHPBV1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?Index@CCoeControl@@QBEHPBV1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?InputCapabilities@CCoeControl@@UBE?AVTCoeInputCapabilities@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?InputCapabilities@CCoeControl@@UBE?AVTCoeInputCapabilities@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?InstallFepL@CCoeEnv@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?InstallFepL@CCoeEnv@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IsActivated@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IsActivated@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IsBackedUp@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IsBackedUp@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IsBeingDestroyed@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IsBeingDestroyed@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IsBlank@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IsBlank@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IsDimmed@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IsDimmed@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IsFocused@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IsFocused@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IsNonFocusing@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IsNonFocusing@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IsReadyToDraw@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IsReadyToDraw@CCoeControl@@IBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?IsVisible@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?IsVisible@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?LeaveWithErrorText@CCoeEnv@@QAEXABVTDesC16@@PBV2@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?LeaveWithErrorText@CCoeEnv@@QAEXABVTDesC16@@PBV2@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?MakeVisible@CCoeControl@@UAEXH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?MakeVisible@CCoeControl@@UAEXH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?MinimumSize@CCoeControl@@UAE?AVTSize@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?MinimumSize@CCoeControl@@UAE?AVTSize@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?MopNext@CCoeControl@@EAEPAVMObjectProvider@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?MopNext@CCoeControl@@EAEPAVMObjectProvider@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?MopSupplyObject@CCoeControl@@MAE?AVPtr@TTypeUid@@V3@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?MopSupplyObject@CCoeControl@@MAE?AVPtr@TTypeUid@@V3@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?NameOfInstalledFepL@CCoeEnv@@QAEPAVHBufC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?NameOfInstalledFepL@CCoeEnv@@QAEPAVHBufC16@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?Observer@CCoeControl@@QBEPAVMCoeControlObserver@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?Observer@CCoeControl@@QBEPAVMCoeControlObserver@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?OfferKeyEventL@CCoeControl@@UAE?AW4TKeyResponse@@ABUTKeyEvent@@W4TEventCode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?OfferKeyEventL@CCoeControl@@UAE?AW4TKeyResponse@@ABUTKeyEvent@@W4TEventCode@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?OverrideColorL@CCoeControl@@QAEXHVTRgb@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?OverrideColorL@CCoeControl@@QAEXHVTRgb@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 T ?OwnsWindow@CCoeControl@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/cone.lib:CONE.DLL:00000000 I _imp_?OwnsWindow@CCoeControl@@QBEHXZ\n\n### GDI.DLL (UDEB)\n\n- Export ordinal base: 1; functions: 195; named exports: 0\n| Ordinal | Export name | RVA |\n|---:|---|---:|\n| 101 | <NONAME> | 0x0000184d |\n| 108 | <NONAME> | 0x00001280 |\n| 151 | <NONAME> | 0x000012fd |\n\n### GDI.LIB (WINS UDEB)\n\n- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib: current ar archive\n- nm exit=0; nm lines=1182; stderr=\n- strings lines=1404; relevant matches=378\n\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??0CFontCache@@QAE@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??0CFontCache@@QAE@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??0CFontCache@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??0CFontCache@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??0TFontSpec@@QAE@ABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??0TFontSpec@@QAE@ABVTDesC16@@H@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??0TFontSpec@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??0TFontSpec@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??0TFontStyle@@QAE@W4TFontPosture@@W4TFontStrokeWeight@@W4TFontPrintPosition@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??0TFontStyle@@QAE@W4TFontPosture@@W4TFontStrokeWeight@@W4TFontPrintPosition@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??0TFontStyle@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??0TFontStyle@@QAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??0TPageSpec@@QAE@W4TPageOrientation@0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??0TPageSpec@@QAE@W4TPageOrientation@0@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??1CFont@@MAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??1CFont@@MAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??1CFontCache@@UAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??1CFontCache@@UAE@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ??8TFontSpec@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_??8TFontSpec@@QBEHABV0@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?AddDirectoryL@CPdrModelList@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?AddDirectoryL@CPdrModelList@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?AddEntryL@CFontCache@@QAEPAVCFont@@PAV2@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?AddEntryL@CFontCache@@QAEPAVCFont@@PAV2@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?AddFontL@CTypefaceStore@@IAEXPAVCFont@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?AddFontL@CTypefaceStore@@IAEXPAVCFont@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?BaselineOffset@CTypefaceStore@@SAHHW4TFontPrintPosition@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?BaselineOffset@CTypefaceStore@@SAHHW4TFontPrintPosition@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?Construct@TLinearDDA@@QAEXABVTPoint@@0W4TLineMode@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?Construct@TLinearDDA@@QAEXABVTPoint@@0W4TLineMode@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?DescentInPixels@CFont@@UBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?DescentInPixels@CFont@@UBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?DrawText@CGraphicsContext@@UAEXABVTDesC16@@ABVTPoint@@ABUTDrawTextParam@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?DrawText@CGraphicsContext@@UAEXABVTDesC16@@ABVTPoint@@ABUTDrawTextParam@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?DrawTextExtended@CGraphicsContext@@QAEHABVTDesC16@@ABVTPoint@@ABUTDrawTextExtendedParam@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?DrawTextExtended@CGraphicsContext@@QAEHABVTDesC16@@ABVTPoint@@ABUTDrawTextExtendedParam@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?ExternalizeL@TFontSpec@@QBEXAAVRWriteStream@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?ExternalizeL@TFontSpec@@QBEXAAVRWriteStream@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?ExternalizeL@TFontStyle@@QBEXAAVRWriteStream@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?ExternalizeL@TFontStyle@@QBEXAAVRWriteStream@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?GetCharacterData@CFont@@UBE?AW4TCharacterDataAvailability@1@IAAVTOpenFontCharMetrics@@AAPBEAAVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?GetCharacterData@CFont@@UBE?AW4TCharacterDataAvailability@1@IAAVTOpenFontCharMetrics@@AAPBEAAVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?GetCharacterPosition@CFont@@UBEHAAVTPositionParam@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?GetCharacterPosition@CFont@@UBEHAAVTPositionParam@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?GetNearestFontInTwips@TZoomFactor@@UAEHAAPAVCFont@@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?GetNearestFontInTwips@TZoomFactor@@UAEHAAPAVCFont@@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?GetSizeInPixels@CPicture@@QBEXPAVMGraphicsDeviceMap@@AAVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?GetSizeInPixels@CPicture@@QBEXPAVMGraphicsDeviceMap@@AAVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?GetSizeInTwips@CPicture@@QBEXAAVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?GetSizeInTwips@CPicture@@QBEXAAVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?InternalizeL@TFontSpec@@QAEXAAVRReadStream@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?InternalizeL@TFontSpec@@QAEXAAVRReadStream@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?InternalizeL@TFontStyle@@QAEXAAVRReadStream@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?InternalizeL@TFontStyle@@QAEXAAVRReadStream@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?JustificationInPixels@CGraphicsContext@@SAHAAH0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?JustificationInPixels@CGraphicsContext@@SAHAAH0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?JustificationInPixels@CGraphicsContext@@SAHHHHH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?JustificationInPixels@CGraphicsContext@@SAHHHHH@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?MeasureText@CFont@@QBEHABVTDesC16@@PBVTMeasureTextInput@1@PAVTMeasureTextOutput@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?MeasureText@CFont@@QBEHABVTDesC16@@PBVTMeasureTextInput@1@PAVTMeasureTextOutput@1@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?NextStep@TLinearDDA@@QAEHAAVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?NextStep@TLinearDDA@@QAEHAAVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?OpenPdrL@CPrinterDriver@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?OpenPdrL@CPrinterDriver@@QAEXABVTDesC16@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?OrientedPageSize@TPageSpec@@QBE?AVTSize@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?OrientedPageSize@TPageSpec@@QBE?AVTSize@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?PixelsToTwips@MGraphicsDeviceMap@@QBE?AVTPoint@@ABV2@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?PixelsToTwips@MGraphicsDeviceMap@@QBE?AVTPoint@@ABV2@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?Posture@TFontStyle@@QBE?AW4TFontPosture@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?Posture@TFontStyle@@QBE?AW4TFontPosture@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?PrintPosition@TFontStyle@@QBE?AW4TFontPrintPosition@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?PrintPosition@TFontStyle@@QBE?AW4TFontPrintPosition@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?ReleaseFont@CTypefaceStore@@QAEXPAVCFont@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?ReleaseFont@CTypefaceStore@@QAEXPAVCFont@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?ReleaseFont@TZoomFactor@@UAEXPAVCFont@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?ReleaseFont@TZoomFactor@@UAEXPAVCFont@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?RemoveFirstEntry@CFontCache@@QAEPAVCFont@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?RemoveFirstEntry@CFontCache@@QAEPAVCFont@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?Reserved@CFont@@UAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?Reserved@CFont@@UAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?Reserved@CGraphicsContext@@UAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?Reserved@CGraphicsContext@@UAEXXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?Search@CFontCache@@QAEPAVCFont@@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?Search@CFontCache@@QAEPAVCFont@@ABVTFontSpec@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?SetPosture@TFontStyle@@QAEXW4TFontPosture@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?SetPosture@TFontStyle@@QAEXW4TFontPosture@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?SetPrintPosition@TFontStyle@@QAEXW4TFontPrintPosition@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?SetPrintPosition@TFontStyle@@QAEXW4TFontPrintPosition@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?SetSizeInPixels@CPicture@@QAEXPAVMGraphicsDeviceMap@@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?SetSizeInPixels@CPicture@@QAEXPAVMGraphicsDeviceMap@@ABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?SetSizeInTwips@CPicture@@QAEXABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?SetSizeInTwips@CPicture@@QAEXABVTSize@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?SetStrokeWeight@TFontStyle@@QAEXW4TFontStrokeWeight@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?SetStrokeWeight@TFontStyle@@QAEXW4TFontStrokeWeight@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?SetTwipToPixelMapping@TZoomFactor@@QAEXABVTSize@@0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?SetTwipToPixelMapping@TZoomFactor@@QAEXABVTSize@@0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?SingleScanline@TLinearDDA@@QAEHAAVTPoint@@0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?SingleScanline@TLinearDDA@@QAEHAAVTPoint@@0@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?SingleStep@TLinearDDA@@QAEHAAVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?SingleStep@TLinearDDA@@QAEHAAVTPoint@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?StrokeWeight@TFontStyle@@QBE?AW4TFontStrokeWeight@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?StrokeWeight@TFontStyle@@QBE?AW4TFontStrokeWeight@@XZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?SuperSubHeight@CTypefaceStore@@SAHHW4TFontPrintPosition@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?SuperSubHeight@CTypefaceStore@@SAHHW4TFontPrintPosition@@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?TwipsToPixels@MGraphicsDeviceMap@@QBE?AVTPoint@@ABV2@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?TwipsToPixels@MGraphicsDeviceMap@@QBE?AVTPoint@@ABV2@@Z\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 T ?WidthZeroInPixels@CFont@@QBEHXZ\n  - /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/udeb/gdi.lib:GDI.DLL:00000000 I _imp_?WidthZeroInPixels@CFont@@QBEHXZ\n  - ??0CFontCache@@QAE@H@Z\n  - __imp_??0CFontCache@@QAE@H@Z\n  - ??0CFontCache@@QAE@XZ\n  - __imp_??0CFontCache@@QAE@XZ\n  - ??0TFontSpec@@QAE@ABVTDesC16@@H@Z\n  - __imp_??0TFontSpec@@QAE@ABVTDesC16@@H@Z\n  - ??0TFontSpec@@QAE@XZ\n  - __imp_??0TFontSpec@@QAE@XZ\n  - ??0TFontStyle@@QAE@W4TFontPosture@@W4TFontStrokeWeight@@W4TFontPrintPosition@@@Z\n  - __imp_??0TFontStyle@@QAE@W4TFontPosture@@W4TFontStrokeWeight@@W4TFontPrintPosition@@@Z\n  - ??0TFontStyle@@QAE@XZ\n  - __imp_??0TFontStyle@@QAE@XZ\n  - ??0TPageSpec@@QAE@W4TPageOrientation@0@ABVTSize@@@Z\n  - __imp_??0TPageSpec@@QAE@W4TPageOrientation@0@ABVTSize@@@Z\n  - ??1CFont@@MAE@XZ\n  - __imp_??1CFont@@MAE@XZ\n  - ??1CFontCache@@UAE@XZ\n  - __imp_??1CFontCache@@UAE@XZ\n  - ??8TFontSpec@@QBEHABV0@@Z\n  - __imp_??8TFontSpec@@QBEHABV0@@Z\n  - ?AddDirectoryL@CPdrModelList@@QAEXABVTDesC16@@@Z\n  - __imp_?AddDirectoryL@CPdrModelList@@QAEXABVTDesC16@@@Z\n  - ?AddEntryL@CFontCache@@QAEPAVCFont@@PAV2@ABVTFontSpec@@@Z\n  - __imp_?AddEntryL@CFontCache@@QAEPAVCFont@@PAV2@ABVTFontSpec@@@Z\n  - ?AddFontL@CTypefaceStore@@IAEXPAVCFont@@@Z\n  - __imp_?AddFontL@CTypefaceStore@@IAEXPAVCFont@@@Z\n  - ?BaselineOffset@CTypefaceStore@@SAHHW4TFontPrintPosition@@@Z\n  - __imp_?BaselineOffset@CTypefaceStore@@SAHHW4TFontPrintPosition@@@Z\n  - ?Construct@TLinearDDA@@QAEXABVTPoint@@0W4TLineMode@1@@Z\n  - __imp_?Construct@TLinearDDA@@QAEXABVTPoint@@0W4TLineMode@1@@Z\n  - ?DescentInPixels@CFont@@UBEHXZ\n  - __imp_?DescentInPixels@CFont@@UBEHXZ\n  - ?ExternalizeL@TFontSpec@@QBEXAAVRWriteStream@@@Z\n  - __imp_?ExternalizeL@TFontSpec@@QBEXAAVRWriteStream@@@Z\n  - ?ExternalizeL@TFontStyle@@QBEXAAVRWriteStream@@@Z\n  - __imp_?ExternalizeL@TFontStyle@@QBEXAAVRWriteStream@@@Z\n  - ?GetNearestFontInTwips@TZoomFactor@@UAEHAAPAVCFont@@ABVTFontSpec@@@Z\n  - __imp_?GetNearestFontInTwips@TZoomFactor@@UAEHAAPAVCFont@@ABVTFontSpec@@@Z\n  - ?GetSizeInPixels@CPicture@@QBEXPAVMGraphicsDeviceMap@@AAVTSize@@@Z\n  - __imp_?GetSizeInPixels@CPicture@@QBEXPAVMGraphicsDeviceMap@@AAVTSize@@@Z\n  - ?GetSizeInTwips@CPicture@@QBEXAAVTSize@@@Z\n  - __imp_?GetSizeInTwips@CPicture@@QBEXAAVTSize@@@Z\n  - ?InternalizeL@TFontSpec@@QAEXAAVRReadStream@@@Z\n  - __imp_?InternalizeL@TFontSpec@@QAEXAAVRReadStream@@@Z\n  - ?InternalizeL@TFontStyle@@QAEXAAVRReadStream@@@Z\n  - __imp_?InternalizeL@TFontStyle@@QAEXAAVRReadStream@@@Z\n  - ?JustificationInPixels@CGraphicsContext@@SAHAAH0@Z\n  - __imp_?JustificationInPixels@CGraphicsContext@@SAHAAH0@Z\n  - ?JustificationInPixels@CGraphicsContext@@SAHHHHH@Z\n  - __imp_?JustificationInPixels@CGraphicsContext@@SAHHHHH@Z\n  - ?NextStep@TLinearDDA@@QAEHAAVTPoint@@@Z\n  - __imp_?NextStep@TLinearDDA@@QAEHAAVTPoint@@@Z\n\n## ARM import library symbol scan\n\nThe WINS PE DLLs export by ordinal only. The ARM import libraries are scanned for symbol names to recover the ordinal/name map.\n\n### EFSRV.LIB\n\n- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/efsrv.lib (201972 bytes)\n- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/efsrv.lib: current ar archive \n- nm exit=0; stdout lines=0; stderr=nm: dt.o: file format not recognized
+# Step 44 — Symbian 6.1 SDK export ordinal audit
+
+Resolved against the original N-Gage/S60 1.2 SDK WINS/UREL DLL export directories, not inferred from newer Symbian releases.
+
+## EFSRV.DLL
+
+- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel/efsrv.dll (45056 bytes)
+- Export ordinal base: 1; functions: 231; named exports: 0
+
+| Ordinal | Export name | RVA |
+|---:|---|---:|
+| 18 | <NONAME> | 0x00001439 |
+| 136 | <NONAME> | 0x000035ee |
+| 137 | <NONAME> | 0x000035ee |
+| 138 | <NONAME> | 0x00002384 |
+| 139 | <NONAME> | 0x000023c2 |
+| 140 | <NONAME> | 0x000026dd |
+| 141 | <NONAME> | 0x000051e5 |
+| 142 | <NONAME> | 0x00005270 |
+| 143 | <NONAME> | 0x00001dad |
+| 185 | <NONAME> | 0x00005e20 |
+
+## EUSER.DLL
+
+- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel/euser.dll (274432 bytes)
+- Export ordinal base: 1; functions: 1684; named exports: 0
+
+| Ordinal | Export name | RVA |
+|---:|---|---:|
+| 1407 | <NONAME> | 0x0002b72e |
+| 1575 | <NONAME> | 0x0002986a |
+
+## CONE.DLL
+
+- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel/cone.dll (49152 bytes)
+- Export ordinal base: 1; functions: 317; named exports: 0
+
+| Ordinal | Export name | RVA |
+|---:|---|---:|
+| 160 | <NONAME> | 0x0000237a |
+
+## GDI.DLL
+
+- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel/gdi.dll (40960 bytes)
+- Export ordinal base: 1; functions: 195; named exports: 0
+
+| Ordinal | Export name | RVA |
+|---:|---|---:|
+| 101 | <NONAME> | 0x00002afa |
+| 108 | <NONAME> | 0x0000343a |
+| 151 | <NONAME> | 0x0000387f |
+
+## WINS UDEB COFF import-library ordinal map
+
+The short-import records are parsed directly. NameType=0 means the 16-bit field is an export ordinal.
+
+### EFSRV.LIB
+
+- Import-object records: 231
+- Ordinal 18: ??ACDir@@QBEABVTEntry@@H@Z; NameType=[0]
+- Ordinal 136: ?NotifyFileManOperation@MFileManObserver@@UAE?AW4TControl@1@XZ; NameType=[0]
+- Ordinal 137: ?NotifyFileManStarted@MFileManObserver@@UAE?AW4TControl@1@XZ; NameType=[0]
+- Ordinal 138: ?Open@RDir@@QAEHAAVRFs@@ABVTDesC16@@ABVTUidType@@@Z; NameType=[0]
+- Ordinal 139: ?Open@RDir@@QAEHAAVRFs@@ABVTDesC16@@I@Z; NameType=[0]
+- Ordinal 140: ?Open@RFile@@QAEHAAVRFs@@ABVTDesC16@@I@Z; NameType=[0]
+- Ordinal 141: ?Open@RFormat@@QAEHAAVRFs@@ABVTDesC16@@IAAH@Z; NameType=[0]
+- Ordinal 142: ?Open@RRawDisk@@QAEHAAVRFs@@H@Z; NameType=[0]
+- Ordinal 143: ?Parse@RFs@@QBEHABVTDesC16@@0AAVTParse@@@Z; NameType=[0]
+- Ordinal 185: ?Set@TParse@@QAEHABVTDesC16@@PBV2@1@Z; NameType=[0]
+
+### EUSER.LIB
+
+- Import-object records: 1684
+- Ordinal 1407: ?SetOffset@TDblQueBase@@QAEXH@Z; NameType=[0]
+- Ordinal 1575: ?Val@TLex8@@QAEHAAVTInt64@@ABV2@@Z; NameType=[0]
+
+### CONE.LIB
+
+- Import-object records: 317
+- Ordinal 160: ?Position@CCoeControl@@QBE?AVTPoint@@XZ; NameType=[0]
+
+### GDI.LIB
+
+- Import-object records: 195
+- Ordinal 101: ?JustificationInPixels@CGraphicsContext@@SAHAAH0@Z; NameType=[0]
+- Ordinal 108: ?NewL@CPalette@@SAPAV1@H@Z; NameType=[0]
+- Ordinal 151: ?StoreL@CPicture@@UBE?AVTStreamId@@AAVCStreamStore@@@Z; NameType=[0]
+
+## ARM import library symbol scan
+
+The WINS PE DLLs export by ordinal only. The ARM import libraries are scanned for symbol names to recover the ordinal/name map.
+
+### EFSRV.LIB
+
+- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/efsrv.lib (201972 bytes)
+- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/efsrv.lib: current ar archive 
+- nm exit=0; stdout lines=0; stderr=nm: dt.o: file format not recognized
 nm: dh.o: file format not recognized
 nm: ds00001.o: file format not recognized
 nm: ds00221.o: file format not recognized
@@ -10,7 +106,176 @@ nm: ds00217.o: file format not recognized
 nm: ds00216.o: file format not recognized
 nm: ds00215.o: file format not recognized
 nm: ds00230.o: file format not recognized
-nm: ds\n- nm symbol-name matches: 0\n\n- strings lines=5110; relevant matches=1068\n  - __as__10TDriveUnitRC7TDesC16\n  - __imp___as__10TDriveUnitRC7TDesC16\n  - _imp____as__10TDriveUnitRC7TDesC16\n  - __9TParsePtrR6TDes16\n  - __imp___9TParsePtrR6TDes16\n  - _imp____9TParsePtrR6TDes16\n  - __9TFindFileR3RFs\n  - __imp___9TFindFileR3RFs\n  - _imp____9TFindFileR3RFs\n  - __9CFileBaseR3RFs\n  - __imp___9CFileBaseR3RFs\n  - _imp____9CFileBaseR3RFs\n  - __6TParse\n  - __imp___6TParse\n  - _imp____6TParse\n  - __13TOpenFileScanR3RFs\n  - __imp___13TOpenFileScanR3RFs\n  - _imp____13TOpenFileScanR3RFs\n  - __10TParsePtrCRC7TDesC16\n  - __imp___10TParsePtrCRC7TDesC16\n  - _imp____10TParsePtrCRC7TDesC16\n  - __10TParseBase\n  - __imp___10TParseBase\n  - _imp____10TParseBase\n  - __10TDriveUnitRC7TDesC16\n  - __imp___10TDriveUnitRC7TDesC16\n  - _imp____10TDriveUnitRC7TDesC16\n  - Write__9TFileTextRC7TDesC16\n  - __imp_Write__9TFileTextRC7TDesC16\n  - _imp__Write__9TFileTextRC7TDesC16\n  - Write__8RRawDiskiR6TDesC8\n  - __imp_Write__8RRawDiskiR6TDesC8\n  - _imp__Write__8RRawDiskiR6TDesC8\n  - Write__5RFileiRC6TDesC8iR14TRequestStatus\n  - __imp_Write__5RFileiRC6TDesC8iR14TRequestStatus\n  - _imp__Write__5RFileiRC6TDesC8iR14TRequestStatus\n  - Write__5RFileiRC6TDesC8i\n  - __imp_Write__5RFileiRC6TDesC8i\n  - _imp__Write__5RFileiRC6TDesC8i\n  - Write__5RFileiRC6TDesC8R14TRequestStatus\n  - __imp_Write__5RFileiRC6TDesC8R14TRequestStatus\n  - _imp__Write__5RFileiRC6TDesC8R14TRequestStatus\n  - Write__5RFileiRC6TDesC8\n  - __imp_Write__5RFileiRC6TDesC8\n  - _imp__Write__5RFileiRC6TDesC8\n  - Write__5RFileRC6TDesC8iR14TRequestStatus\n  - __imp_Write__5RFileRC6TDesC8iR14TRequestStatus\n  - _imp__Write__5RFileRC6TDesC8iR14TRequestStatus\n  - Write__5RFileRC6TDesC8i\n  - __imp_Write__5RFileRC6TDesC8i\n  - _imp__Write__5RFileRC6TDesC8i\n  - Write__5RFileRC6TDesC8R14TRequestStatus\n  - __imp_Write__5RFileRC6TDesC8R14TRequestStatus\n  - _imp__Write__5RFileRC6TDesC8R14TRequestStatus\n  - Write__5RFileRC6TDesC8\n  - __imp_Write__5RFileRC6TDesC8\n  - _imp__Write__5RFileRC6TDesC8\n  - Volume__C3RFsR11TVolumeInfoi\n  - __imp_Volume__C3RFsR11TVolumeInfoi\n  - _imp__Volume__C3RFsR11TVolumeInfoi\n  - Version__C3RFs\n  - __imp_Version__C3RFs\n  - _imp__Version__C3RFs\n  - UnlockDrive__3RFsiRCt5TBuf81i16i\n  - __imp_UnlockDrive__3RFsiRCt5TBuf81i16i\n  - _imp__UnlockDrive__3RFsiRCt5TBuf81i16i\n  - UnLock__C5RFileii\n  - __imp_UnLock__C5RFileii\n  - _imp__UnLock__C5RFileii\n  - Temp__5RFileR3RFsRC7TDesC16Rt4TBuf1i256Ui\n  - __imp_Temp__5RFileR3RFsRC7TDesC16Rt4TBuf1i256Ui\n  - _imp__Temp__5RFileR3RFsRC7TDesC16Rt4TBuf1i256Ui\n  - Subst__C3RFsR6TDes16i\n  - __imp_Subst__C3RFsR6TDes16i\n  - _imp__Subst__C3RFsR6TDes16i\n  - Size__C5RFileRi\n  - __imp_Size__C5RFileRi\n  - _imp__Size__C5RFileRi\n  - Set__9TFileTextR5RFile\n  - __imp_Set__9TFileTextR5RFile\n  - _imp__Set__9TFileTextR5RFile\n  - Set__6TParseRC7TDesC16PC7TDesC16T2\n  - __imp_Set__6TParseRC7TDesC16PC7TDesC16T2\n  - _imp__Set__6TParseRC7TDesC16PC7TDesC16T2\n  - Set__5RFileRC5TTimeUiUi\n  - __imp_Set__5RFileRC5TTimeUiUi\n  - _imp__Set__5RFileRC5TTimeUiUi\n  - SetVolumeLabel__3RFsRC7TDesC16i\n  - __imp_SetVolumeLabel__3RFsRC7TDesC16i\n  - _imp__SetVolumeLabel__3RFsRC7TDesC16i\n  - SetSubst__3RFsRC7TDesC16i\n  - __imp_SetSubst__3RFsRC7TDesC16i\n  - _imp__SetSubst__3RFsRC7TDesC16i\n  - SetSize__5RFilei\n  - __imp_SetSize__5RFilei\n  - _imp__SetSize__5RFilei\n  - SetSessionPath__3RFsRC7TDesC16\n  - __imp_SetSessionPath__3RFsRC7TDesC16\n  - _imp__SetSessionPath__3RFsRC7TDesC16\n  - SetScanDataL__8CDirScanRC7TDesC16UiUiQ28CDirScan14TScanDirection\n  - __imp_SetScanDataL__8CDirScanRC7TDesC16UiUiQ28CDirScan14TScanDirection\n  - _imp__SetScanDataL__8CDirScanRC7TDesC16UiUiQ28CDirScan14TScanDirection\n  - SetNotifyUser__3RFsi\n  - __imp_SetNotifyUser__3RFsi\n  - _imp__SetNotifyUser__3RFsi\n  - SetNoWild__6TParseRC7TDesC16PC7TDesC16T2\n  - __imp_SetNoWild__6TParseRC7TDesC16PC7TDesC16T2\n  - _imp__SetNoWild__6TParseRC7TDesC16PC7TDesC16T2\n  - SetModified__5RFileRC5TTime\n  - __imp_SetModified__5RFileRC5TTime\n  - _imp__SetModified__5RFileRC5TTime\n  - SetModified__3RFsRC7TDesC16RC5TTime\n  - __imp_SetModified__3RFsRC7TDesC16RC5TTime\n  - _imp__SetModified__3RFsRC7TDesC16RC5TTime\n  - SetErrorCondition__3RFsii\n  - __imp_SetErrorCondition__3RFsii\n  - _imp__SetErrorCondition__3RFsii\n  - SetEntry__3RFsRC7TDesC16RC5TTimeUiUi\n  - __imp_SetEntry__3RFsRC7TDesC16RC5TTimeUiUi\n  - _imp__SetEntry__3RFsRC7TDesC16RC5TTimeUiUi\n  - SetDriveName__3RFsiRC7TDesC16\n  - __imp_SetDriveName__3RFsiRC7TDesC16\n  - _imp__SetDriveName__3RFsiRC7TDesC16\n  - SetDefaultPath__3RFsRC7TDesC16\n  - __imp_SetDefaultPath__3RFsRC7TDesC16\n  - _imp__SetDefaultPath__3RFsRC7TDesC16\n  - SetDebugRegister__3RFsi\n  - __imp_SetDebugRegister__3RFsi\n  - _imp__SetDebugRegister__3RFsi\n  - SetAtt__5RFileUiUi\n  - __imp_SetAtt__5RFileUiUi\n  - _imp__SetAtt__5RFileUiUi\n  - SetAtt__3RFsRC7TDesC16UiUi\n  - __imp_SetAtt__3RFsRC7TDesC16UiUi\n  - _imp__SetAtt__3RFsRC7TDesC16UiUi\n  - SetAllocFailure__3RFsi\n  - __imp_SetAllocFailure__3RFsi\n  - _imp__SetAllocFailure__3RFsi\n  - SessionPath__C3RFsR6TDes16\n  - __imp_SessionPath__C3RFsR6TDes16\n  - _imp__SessionPath__C3RFsR6TDes16\n  - Seek__C5RFile5TSeekRi\n  - __imp_Seek__C5RFile5TSeekRi\n  - _imp__Seek__C5RFile5TSeekRi\n  - ScanDrive__C3RFsRC7TDesC16\n  - __imp_ScanDrive__C3RFsRC7TDesC16\n  - _imp__ScanDrive__C3RFsRC7TDesC16\n  - RmDir__8CFileManRC7TDesC16R14TRequestStatus\n  - __imp_RmDir__8CFileManRC7TDesC16R14TRequestStatus\n  - _imp__RmDir__8CFileManRC7TDesC16R14TRequestStatus\n  - RmDir__8CFileManRC7TDesC16\n  - __imp_RmDir__8CFileManRC7TDesC16\n  - _imp__RmDir__8CFileManRC7TDesC16\n  - RmDir__3RFsRC7TDesC16\n  - __imp_RmDir__3RFsRC7TDesC16\n  - _imp__RmDir__3RFsRC7TDesC16\n  - ResourceCount__C3RFs\n  - __imp_ResourceCount__C3RFs\n  - _imp__ResourceCount__C3RFs\n  - ResourceCountMarkStart__C3RFs\n\n### EUSER.LIB\n\n- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/euser.lib (1430680 bytes)\n- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/euser.lib: current ar archive \n- nm exit=0; stdout lines=0; stderr=nm: dt.o: file format not recognized
+nm: ds
+- nm symbol-name matches: 0
+
+- strings lines=5110; relevant matches=1068
+  - __as__10TDriveUnitRC7TDesC16
+  - __imp___as__10TDriveUnitRC7TDesC16
+  - _imp____as__10TDriveUnitRC7TDesC16
+  - __9TParsePtrR6TDes16
+  - __imp___9TParsePtrR6TDes16
+  - _imp____9TParsePtrR6TDes16
+  - __9TFindFileR3RFs
+  - __imp___9TFindFileR3RFs
+  - _imp____9TFindFileR3RFs
+  - __9CFileBaseR3RFs
+  - __imp___9CFileBaseR3RFs
+  - _imp____9CFileBaseR3RFs
+  - __6TParse
+  - __imp___6TParse
+  - _imp____6TParse
+  - __13TOpenFileScanR3RFs
+  - __imp___13TOpenFileScanR3RFs
+  - _imp____13TOpenFileScanR3RFs
+  - __10TParsePtrCRC7TDesC16
+  - __imp___10TParsePtrCRC7TDesC16
+  - _imp____10TParsePtrCRC7TDesC16
+  - __10TParseBase
+  - __imp___10TParseBase
+  - _imp____10TParseBase
+  - __10TDriveUnitRC7TDesC16
+  - __imp___10TDriveUnitRC7TDesC16
+  - _imp____10TDriveUnitRC7TDesC16
+  - Write__9TFileTextRC7TDesC16
+  - __imp_Write__9TFileTextRC7TDesC16
+  - _imp__Write__9TFileTextRC7TDesC16
+  - Write__8RRawDiskiR6TDesC8
+  - __imp_Write__8RRawDiskiR6TDesC8
+  - _imp__Write__8RRawDiskiR6TDesC8
+  - Write__5RFileiRC6TDesC8iR14TRequestStatus
+  - __imp_Write__5RFileiRC6TDesC8iR14TRequestStatus
+  - _imp__Write__5RFileiRC6TDesC8iR14TRequestStatus
+  - Write__5RFileiRC6TDesC8i
+  - __imp_Write__5RFileiRC6TDesC8i
+  - _imp__Write__5RFileiRC6TDesC8i
+  - Write__5RFileiRC6TDesC8R14TRequestStatus
+  - __imp_Write__5RFileiRC6TDesC8R14TRequestStatus
+  - _imp__Write__5RFileiRC6TDesC8R14TRequestStatus
+  - Write__5RFileiRC6TDesC8
+  - __imp_Write__5RFileiRC6TDesC8
+  - _imp__Write__5RFileiRC6TDesC8
+  - Write__5RFileRC6TDesC8iR14TRequestStatus
+  - __imp_Write__5RFileRC6TDesC8iR14TRequestStatus
+  - _imp__Write__5RFileRC6TDesC8iR14TRequestStatus
+  - Write__5RFileRC6TDesC8i
+  - __imp_Write__5RFileRC6TDesC8i
+  - _imp__Write__5RFileRC6TDesC8i
+  - Write__5RFileRC6TDesC8R14TRequestStatus
+  - __imp_Write__5RFileRC6TDesC8R14TRequestStatus
+  - _imp__Write__5RFileRC6TDesC8R14TRequestStatus
+  - Write__5RFileRC6TDesC8
+  - __imp_Write__5RFileRC6TDesC8
+  - _imp__Write__5RFileRC6TDesC8
+  - Volume__C3RFsR11TVolumeInfoi
+  - __imp_Volume__C3RFsR11TVolumeInfoi
+  - _imp__Volume__C3RFsR11TVolumeInfoi
+  - Version__C3RFs
+  - __imp_Version__C3RFs
+  - _imp__Version__C3RFs
+  - UnlockDrive__3RFsiRCt5TBuf81i16i
+  - __imp_UnlockDrive__3RFsiRCt5TBuf81i16i
+  - _imp__UnlockDrive__3RFsiRCt5TBuf81i16i
+  - UnLock__C5RFileii
+  - __imp_UnLock__C5RFileii
+  - _imp__UnLock__C5RFileii
+  - Temp__5RFileR3RFsRC7TDesC16Rt4TBuf1i256Ui
+  - __imp_Temp__5RFileR3RFsRC7TDesC16Rt4TBuf1i256Ui
+  - _imp__Temp__5RFileR3RFsRC7TDesC16Rt4TBuf1i256Ui
+  - Subst__C3RFsR6TDes16i
+  - __imp_Subst__C3RFsR6TDes16i
+  - _imp__Subst__C3RFsR6TDes16i
+  - Size__C5RFileRi
+  - __imp_Size__C5RFileRi
+  - _imp__Size__C5RFileRi
+  - Set__9TFileTextR5RFile
+  - __imp_Set__9TFileTextR5RFile
+  - _imp__Set__9TFileTextR5RFile
+  - Set__6TParseRC7TDesC16PC7TDesC16T2
+  - __imp_Set__6TParseRC7TDesC16PC7TDesC16T2
+  - _imp__Set__6TParseRC7TDesC16PC7TDesC16T2
+  - Set__5RFileRC5TTimeUiUi
+  - __imp_Set__5RFileRC5TTimeUiUi
+  - _imp__Set__5RFileRC5TTimeUiUi
+  - SetVolumeLabel__3RFsRC7TDesC16i
+  - __imp_SetVolumeLabel__3RFsRC7TDesC16i
+  - _imp__SetVolumeLabel__3RFsRC7TDesC16i
+  - SetSubst__3RFsRC7TDesC16i
+  - __imp_SetSubst__3RFsRC7TDesC16i
+  - _imp__SetSubst__3RFsRC7TDesC16i
+  - SetSize__5RFilei
+  - __imp_SetSize__5RFilei
+  - _imp__SetSize__5RFilei
+  - SetSessionPath__3RFsRC7TDesC16
+  - __imp_SetSessionPath__3RFsRC7TDesC16
+  - _imp__SetSessionPath__3RFsRC7TDesC16
+  - SetScanDataL__8CDirScanRC7TDesC16UiUiQ28CDirScan14TScanDirection
+  - __imp_SetScanDataL__8CDirScanRC7TDesC16UiUiQ28CDirScan14TScanDirection
+  - _imp__SetScanDataL__8CDirScanRC7TDesC16UiUiQ28CDirScan14TScanDirection
+  - SetNotifyUser__3RFsi
+  - __imp_SetNotifyUser__3RFsi
+  - _imp__SetNotifyUser__3RFsi
+  - SetNoWild__6TParseRC7TDesC16PC7TDesC16T2
+  - __imp_SetNoWild__6TParseRC7TDesC16PC7TDesC16T2
+  - _imp__SetNoWild__6TParseRC7TDesC16PC7TDesC16T2
+  - SetModified__5RFileRC5TTime
+  - __imp_SetModified__5RFileRC5TTime
+  - _imp__SetModified__5RFileRC5TTime
+  - SetModified__3RFsRC7TDesC16RC5TTime
+  - __imp_SetModified__3RFsRC7TDesC16RC5TTime
+  - _imp__SetModified__3RFsRC7TDesC16RC5TTime
+  - SetErrorCondition__3RFsii
+  - __imp_SetErrorCondition__3RFsii
+  - _imp__SetErrorCondition__3RFsii
+  - SetEntry__3RFsRC7TDesC16RC5TTimeUiUi
+  - __imp_SetEntry__3RFsRC7TDesC16RC5TTimeUiUi
+  - _imp__SetEntry__3RFsRC7TDesC16RC5TTimeUiUi
+  - SetDriveName__3RFsiRC7TDesC16
+  - __imp_SetDriveName__3RFsiRC7TDesC16
+  - _imp__SetDriveName__3RFsiRC7TDesC16
+  - SetDefaultPath__3RFsRC7TDesC16
+  - __imp_SetDefaultPath__3RFsRC7TDesC16
+  - _imp__SetDefaultPath__3RFsRC7TDesC16
+  - SetDebugRegister__3RFsi
+  - __imp_SetDebugRegister__3RFsi
+  - _imp__SetDebugRegister__3RFsi
+  - SetAtt__5RFileUiUi
+  - __imp_SetAtt__5RFileUiUi
+  - _imp__SetAtt__5RFileUiUi
+  - SetAtt__3RFsRC7TDesC16UiUi
+  - __imp_SetAtt__3RFsRC7TDesC16UiUi
+  - _imp__SetAtt__3RFsRC7TDesC16UiUi
+  - SetAllocFailure__3RFsi
+  - __imp_SetAllocFailure__3RFsi
+  - _imp__SetAllocFailure__3RFsi
+  - SessionPath__C3RFsR6TDes16
+  - __imp_SessionPath__C3RFsR6TDes16
+  - _imp__SessionPath__C3RFsR6TDes16
+  - Seek__C5RFile5TSeekRi
+  - __imp_Seek__C5RFile5TSeekRi
+  - _imp__Seek__C5RFile5TSeekRi
+  - ScanDrive__C3RFsRC7TDesC16
+  - __imp_ScanDrive__C3RFsRC7TDesC16
+  - _imp__ScanDrive__C3RFsRC7TDesC16
+  - RmDir__8CFileManRC7TDesC16R14TRequestStatus
+  - __imp_RmDir__8CFileManRC7TDesC16R14TRequestStatus
+  - _imp__RmDir__8CFileManRC7TDesC16R14TRequestStatus
+  - RmDir__8CFileManRC7TDesC16
+  - __imp_RmDir__8CFileManRC7TDesC16
+  - _imp__RmDir__8CFileManRC7TDesC16
+  - RmDir__3RFsRC7TDesC16
+  - __imp_RmDir__3RFsRC7TDesC16
+  - _imp__RmDir__3RFsRC7TDesC16
+  - ResourceCount__C3RFs
+  - __imp_ResourceCount__C3RFs
+  - _imp__ResourceCount__C3RFs
+  - ResourceCountMarkStart__C3RFs
+
+### EUSER.LIB
+
+- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/euser.lib (1430680 bytes)
+- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/euser.lib: current ar archive 
+- nm exit=0; stdout lines=0; stderr=nm: dt.o: file format not recognized
 nm: dh.o: file format not recognized
 nm: ds00003.o: file format not recognized
 nm: ds00001.o: file format not recognized
@@ -22,7 +287,176 @@ nm: ds01618.o: file format not recognized
 nm: ds01617.o: file format not recognized
 nm: ds01616.o: file format not recognized
 nm: ds01641.o: file format not recognized
-nm: ds\n- nm symbol-name matches: 0\n\n- strings lines=36966; relevant matches=2598\n  - __pl__C6TPointRC6TPoint\n  - __imp___pl__C6TPointRC6TPoint\n  - _imp____pl__C6TPointRC6TPoint\n  - __pl__C6TPointRC5TSize\n  - __imp___pl__C6TPointRC5TSize\n  - _imp____pl__C6TPointRC5TSize\n  - __pl__C5TSizeRC6TPoint\n  - __imp___pl__C5TSizeRC6TPoint\n  - _imp____pl__C5TSizeRC6TPoint\n  - __pl__C5TSizeRC5TSize\n  - __imp___pl__C5TSizeRC5TSize\n  - _imp____pl__C5TSizeRC5TSize\n  - __ne__C6TPointRC6TPoint\n  - __imp___ne__C6TPointRC6TPoint\n  - _imp____ne__C6TPointRC6TPoint\n  - __ne__C5TSizeRC5TSize\n  - __imp___ne__C5TSizeRC5TSize\n  - _imp____ne__C5TSizeRC5TSize\n  - __mi__C6TPointRC6TPoint\n  - __imp___mi__C6TPointRC6TPoint\n  - _imp____mi__C6TPointRC6TPoint\n  - __mi__C6TPointRC5TSize\n  - __imp___mi__C6TPointRC5TSize\n  - _imp____mi__C6TPointRC5TSize\n  - __mi__C6TPoint\n  - __imp___mi__C6TPoint\n  - _imp____mi__C6TPoint\n  - __mi__C5TSizeRC6TPoint\n  - __imp___mi__C5TSizeRC6TPoint\n  - _imp____mi__C5TSizeRC6TPoint\n  - __mi__C5TSizeRC5TSize\n  - __imp___mi__C5TSizeRC5TSize\n  - _imp____mi__C5TSizeRC5TSize\n  - __mi__C5TSize\n  - __imp___mi__C5TSize\n  - _imp____mi__C5TSize\n  - __eq__C6TPointRC6TPoint\n  - __imp___eq__C6TPointRC6TPoint\n  - _imp____eq__C6TPointRC6TPoint\n  - __eq__C5TSizeRC5TSize\n  - __imp___eq__C5TSizeRC5TSize\n  - _imp____eq__C5TSizeRC5TSize\n  - __as__7HBufC16RC7TDesC16\n  - __imp___as__7HBufC16RC7TDesC16\n  - _imp____as__7HBufC16RC7TDesC16\n  - __as__7HBufC16PCUs\n  - __imp___as__7HBufC16PCUs\n  - _imp____as__7HBufC16PCUs\n  - __as__6HBufC8RC6TDesC8\n  - __imp___as__6HBufC8RC6TDesC8\n  - _imp____as__6HBufC8RC6TDesC8\n  - __as__6HBufC8PCUc\n  - __imp___as__6HBufC8PCUc\n  - _imp____as__6HBufC8PCUc\n  - __apl__6TPointRC6TPoint\n  - __imp___apl__6TPointRC6TPoint\n  - _imp____apl__6TPointRC6TPoint\n  - __apl__6TPointRC5TSize\n  - __imp___apl__6TPointRC5TSize\n  - _imp____apl__6TPointRC5TSize\n  - __apl__5TSizeRC6TPoint\n  - __imp___apl__5TSizeRC6TPoint\n  - _imp____apl__5TSizeRC6TPoint\n  - __apl__5TSizeRC5TSize\n  - __imp___apl__5TSizeRC5TSize\n  - _imp____apl__5TSizeRC5TSize\n  - __ami__6TPointRC6TPoint\n  - __imp___ami__6TPointRC6TPoint\n  - _imp____ami__6TPointRC6TPoint\n  - __ami__6TPointRC5TSize\n  - __imp___ami__6TPointRC5TSize\n  - _imp____ami__6TPointRC5TSize\n  - __ami__5TSizeRC6TPoint\n  - __imp___ami__5TSizeRC6TPoint\n  - _imp____ami__5TSizeRC6TPoint\n  - __ami__5TSizeRC5TSize\n  - __imp___ami__5TSizeRC5TSize\n  - _imp____ami__5TSizeRC5TSize\n  - __DbgTestInvariant__C7TDesC16\n  - __imp___DbgTestInvariant__C7TDesC16\n  - _imp____DbgTestInvariant__C7TDesC16\n  - __DbgTestInvariant__C7HBufC16\n  - __imp___DbgTestInvariant__C7HBufC16\n  - _imp____DbgTestInvariant__C7HBufC16\n  - __DbgTestInvariant__C6TDesC8\n  - __imp___DbgTestInvariant__C6TDesC8\n  - _imp____DbgTestInvariant__C6TDesC8\n  - __DbgTestInvariant__C6TDes16\n  - __imp___DbgTestInvariant__C6TDes16\n  - _imp____DbgTestInvariant__C6TDes16\n  - __DbgTestInvariant__C6HBufC8\n  - __imp___DbgTestInvariant__C6HBufC8\n  - _imp____DbgTestInvariant__C6HBufC8\n  - __DbgTestInvariant__C5TDes8\n  - __imp___DbgTestInvariant__C5TDes8\n  - _imp____DbgTestInvariant__C5TDes8\n  - __DbgMarkCheck__5RHeapiiRC6TDesC8i\n  - __imp___DbgMarkCheck__5RHeapiiRC6TDesC8i\n  - _imp____DbgMarkCheck__5RHeapiiRC6TDesC8i\n  - __DbgMarkCheck__4UserQ25RHeap12TDbgHeapTypeiiRC6TDesC8i\n  - __imp___DbgMarkCheck__4UserQ25RHeap12TDbgHeapTypeiiRC6TDesC8i\n  - _imp____DbgMarkCheck__4UserQ25RHeap12TDbgHeapTypeiiRC6TDesC8i\n  - __9TBufBase8ii\n  - __imp___9TBufBase8ii\n  - _imp____9TBufBase8ii\n  - __9TBufBase8i\n  - __imp___9TBufBase8i\n  - _imp____9TBufBase8i\n  - __9TBufBase8RC6TDesC8i\n  - __imp___9TBufBase8RC6TDesC8i\n  - _imp____9TBufBase8RC6TDesC8i\n  - __9TBufBase8PCUci\n  - __imp___9TBufBase8PCUci\n  - _imp____9TBufBase8PCUci\n  - __7TPtrC16RC7TDesC16\n  - __imp___7TPtrC16RC7TDesC16\n  - _imp____7TPtrC16RC7TDesC16\n  - __6TPtrC8RC6TDesC8\n  - __imp___6TPtrC8RC6TDesC8\n  - _imp____6TPtrC8RC6TDesC8\n  - __6TPtr16R11TBufCBase16i\n  - __imp___6TPtr16R11TBufCBase16i\n  - _imp____6TPtr16R11TBufCBase16i\n  - __5TTimeRC7TDesC16\n  - __imp___5TTimeRC7TDesC16\n  - _imp____5TTimeRC7TDesC16\n  - __5TRectRC6TPointT1\n  - __imp___5TRectRC6TPointT1\n  - _imp____5TRectRC6TPointT1\n  - __5TRectRC6TPointRC5TSize\n  - __imp___5TRectRC6TPointRC5TSize\n  - _imp____5TRectRC6TPointRC5TSize\n  - __5TRectRC5TSize\n  - __imp___5TRectRC5TSize\n  - _imp____5TRectRC5TSize\n  - __5TPtr8R10TBufCBase8i\n  - __imp___5TPtr8R10TBufCBase8i\n  - _imp____5TPtr8R10TBufCBase8i\n  - __5RTestRC7TDesC16i\n  - __imp___5RTestRC7TDesC16i\n  - _imp____5RTestRC7TDesC16i\n  - __5RTestRC7TDesC16\n  - __imp___5RTestRC7TDesC16\n  - _imp____5RTestRC7TDesC16\n  - __20TShortDateFormatSpec\n  - __imp___20TShortDateFormatSpec\n  - _imp____20TShortDateFormatSpec\n  - __19TLongDateFormatSpec\n  - __imp___19TLongDateFormatSpec\n  - _imp____19TLongDateFormatSpec\n  - __15TTimeFormatSpec\n  - __imp___15TTimeFormatSpec\n  - _imp____15TTimeFormatSpec\n  - __15TFindHandleBaseRC7TDesC16\n  - __imp___15TFindHandleBaseRC7TDesC16\n  - _imp____15TFindHandleBaseRC7TDesC16\n  - __11TRealFormatii\n  - __imp___11TRealFormatii\n  - _imp____11TRealFormatii\n  - __11TRealFormati\n\n### CONE.LIB\n\n- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/cone.lib (299776 bytes)\n- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/cone.lib: current ar archive \n- nm exit=0; stdout lines=0; stderr=nm: dt.o: file format not recognized
+nm: ds
+- nm symbol-name matches: 0
+
+- strings lines=36966; relevant matches=2598
+  - __pl__C6TPointRC6TPoint
+  - __imp___pl__C6TPointRC6TPoint
+  - _imp____pl__C6TPointRC6TPoint
+  - __pl__C6TPointRC5TSize
+  - __imp___pl__C6TPointRC5TSize
+  - _imp____pl__C6TPointRC5TSize
+  - __pl__C5TSizeRC6TPoint
+  - __imp___pl__C5TSizeRC6TPoint
+  - _imp____pl__C5TSizeRC6TPoint
+  - __pl__C5TSizeRC5TSize
+  - __imp___pl__C5TSizeRC5TSize
+  - _imp____pl__C5TSizeRC5TSize
+  - __ne__C6TPointRC6TPoint
+  - __imp___ne__C6TPointRC6TPoint
+  - _imp____ne__C6TPointRC6TPoint
+  - __ne__C5TSizeRC5TSize
+  - __imp___ne__C5TSizeRC5TSize
+  - _imp____ne__C5TSizeRC5TSize
+  - __mi__C6TPointRC6TPoint
+  - __imp___mi__C6TPointRC6TPoint
+  - _imp____mi__C6TPointRC6TPoint
+  - __mi__C6TPointRC5TSize
+  - __imp___mi__C6TPointRC5TSize
+  - _imp____mi__C6TPointRC5TSize
+  - __mi__C6TPoint
+  - __imp___mi__C6TPoint
+  - _imp____mi__C6TPoint
+  - __mi__C5TSizeRC6TPoint
+  - __imp___mi__C5TSizeRC6TPoint
+  - _imp____mi__C5TSizeRC6TPoint
+  - __mi__C5TSizeRC5TSize
+  - __imp___mi__C5TSizeRC5TSize
+  - _imp____mi__C5TSizeRC5TSize
+  - __mi__C5TSize
+  - __imp___mi__C5TSize
+  - _imp____mi__C5TSize
+  - __eq__C6TPointRC6TPoint
+  - __imp___eq__C6TPointRC6TPoint
+  - _imp____eq__C6TPointRC6TPoint
+  - __eq__C5TSizeRC5TSize
+  - __imp___eq__C5TSizeRC5TSize
+  - _imp____eq__C5TSizeRC5TSize
+  - __as__7HBufC16RC7TDesC16
+  - __imp___as__7HBufC16RC7TDesC16
+  - _imp____as__7HBufC16RC7TDesC16
+  - __as__7HBufC16PCUs
+  - __imp___as__7HBufC16PCUs
+  - _imp____as__7HBufC16PCUs
+  - __as__6HBufC8RC6TDesC8
+  - __imp___as__6HBufC8RC6TDesC8
+  - _imp____as__6HBufC8RC6TDesC8
+  - __as__6HBufC8PCUc
+  - __imp___as__6HBufC8PCUc
+  - _imp____as__6HBufC8PCUc
+  - __apl__6TPointRC6TPoint
+  - __imp___apl__6TPointRC6TPoint
+  - _imp____apl__6TPointRC6TPoint
+  - __apl__6TPointRC5TSize
+  - __imp___apl__6TPointRC5TSize
+  - _imp____apl__6TPointRC5TSize
+  - __apl__5TSizeRC6TPoint
+  - __imp___apl__5TSizeRC6TPoint
+  - _imp____apl__5TSizeRC6TPoint
+  - __apl__5TSizeRC5TSize
+  - __imp___apl__5TSizeRC5TSize
+  - _imp____apl__5TSizeRC5TSize
+  - __ami__6TPointRC6TPoint
+  - __imp___ami__6TPointRC6TPoint
+  - _imp____ami__6TPointRC6TPoint
+  - __ami__6TPointRC5TSize
+  - __imp___ami__6TPointRC5TSize
+  - _imp____ami__6TPointRC5TSize
+  - __ami__5TSizeRC6TPoint
+  - __imp___ami__5TSizeRC6TPoint
+  - _imp____ami__5TSizeRC6TPoint
+  - __ami__5TSizeRC5TSize
+  - __imp___ami__5TSizeRC5TSize
+  - _imp____ami__5TSizeRC5TSize
+  - __DbgTestInvariant__C7TDesC16
+  - __imp___DbgTestInvariant__C7TDesC16
+  - _imp____DbgTestInvariant__C7TDesC16
+  - __DbgTestInvariant__C7HBufC16
+  - __imp___DbgTestInvariant__C7HBufC16
+  - _imp____DbgTestInvariant__C7HBufC16
+  - __DbgTestInvariant__C6TDesC8
+  - __imp___DbgTestInvariant__C6TDesC8
+  - _imp____DbgTestInvariant__C6TDesC8
+  - __DbgTestInvariant__C6TDes16
+  - __imp___DbgTestInvariant__C6TDes16
+  - _imp____DbgTestInvariant__C6TDes16
+  - __DbgTestInvariant__C6HBufC8
+  - __imp___DbgTestInvariant__C6HBufC8
+  - _imp____DbgTestInvariant__C6HBufC8
+  - __DbgTestInvariant__C5TDes8
+  - __imp___DbgTestInvariant__C5TDes8
+  - _imp____DbgTestInvariant__C5TDes8
+  - __DbgMarkCheck__5RHeapiiRC6TDesC8i
+  - __imp___DbgMarkCheck__5RHeapiiRC6TDesC8i
+  - _imp____DbgMarkCheck__5RHeapiiRC6TDesC8i
+  - __DbgMarkCheck__4UserQ25RHeap12TDbgHeapTypeiiRC6TDesC8i
+  - __imp___DbgMarkCheck__4UserQ25RHeap12TDbgHeapTypeiiRC6TDesC8i
+  - _imp____DbgMarkCheck__4UserQ25RHeap12TDbgHeapTypeiiRC6TDesC8i
+  - __9TBufBase8ii
+  - __imp___9TBufBase8ii
+  - _imp____9TBufBase8ii
+  - __9TBufBase8i
+  - __imp___9TBufBase8i
+  - _imp____9TBufBase8i
+  - __9TBufBase8RC6TDesC8i
+  - __imp___9TBufBase8RC6TDesC8i
+  - _imp____9TBufBase8RC6TDesC8i
+  - __9TBufBase8PCUci
+  - __imp___9TBufBase8PCUci
+  - _imp____9TBufBase8PCUci
+  - __7TPtrC16RC7TDesC16
+  - __imp___7TPtrC16RC7TDesC16
+  - _imp____7TPtrC16RC7TDesC16
+  - __6TPtrC8RC6TDesC8
+  - __imp___6TPtrC8RC6TDesC8
+  - _imp____6TPtrC8RC6TDesC8
+  - __6TPtr16R11TBufCBase16i
+  - __imp___6TPtr16R11TBufCBase16i
+  - _imp____6TPtr16R11TBufCBase16i
+  - __5TTimeRC7TDesC16
+  - __imp___5TTimeRC7TDesC16
+  - _imp____5TTimeRC7TDesC16
+  - __5TRectRC6TPointT1
+  - __imp___5TRectRC6TPointT1
+  - _imp____5TRectRC6TPointT1
+  - __5TRectRC6TPointRC5TSize
+  - __imp___5TRectRC6TPointRC5TSize
+  - _imp____5TRectRC6TPointRC5TSize
+  - __5TRectRC5TSize
+  - __imp___5TRectRC5TSize
+  - _imp____5TRectRC5TSize
+  - __5TPtr8R10TBufCBase8i
+  - __imp___5TPtr8R10TBufCBase8i
+  - _imp____5TPtr8R10TBufCBase8i
+  - __5RTestRC7TDesC16i
+  - __imp___5RTestRC7TDesC16i
+  - _imp____5RTestRC7TDesC16i
+  - __5RTestRC7TDesC16
+  - __imp___5RTestRC7TDesC16
+  - _imp____5RTestRC7TDesC16
+  - __20TShortDateFormatSpec
+  - __imp___20TShortDateFormatSpec
+  - _imp____20TShortDateFormatSpec
+  - __19TLongDateFormatSpec
+  - __imp___19TLongDateFormatSpec
+  - _imp____19TLongDateFormatSpec
+  - __15TTimeFormatSpec
+  - __imp___15TTimeFormatSpec
+  - _imp____15TTimeFormatSpec
+  - __15TFindHandleBaseRC7TDesC16
+  - __imp___15TFindHandleBaseRC7TDesC16
+  - _imp____15TFindHandleBaseRC7TDesC16
+  - __11TRealFormatii
+  - __imp___11TRealFormatii
+  - _imp____11TRealFormatii
+  - __11TRealFormati
+
+### CONE.LIB
+
+- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/cone.lib (299776 bytes)
+- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/cone.lib: current ar archive 
+- nm exit=0; stdout lines=0; stderr=nm: dt.o: file format not recognized
 nm: dh.o: file format not recognized
 nm: ds00245.o: file format not recognized
 nm: ds00001.o: file format not recognized
@@ -34,7 +468,176 @@ nm: ds00241.o: file format not recognized
 nm: ds00300.o: file format not recognized
 nm: ds00067.o: file format not recognized
 nm: ds00083.o: file format not recognized
-nm: ds\n- nm symbol-name matches: 0\n\n- strings lines=7002; relevant matches=744\n  - __15TCoeHelpContextG4TUidRC7TDesC16\n  - __imp___15TCoeHelpContextG4TUidRC7TDesC16\n  - _imp____15TCoeHelpContextG4TUidRC7TDesC16\n  - __11CCoeControl\n  - __imp___11CCoeControl\n  - _imp____11CCoeControl\n  - _._11CCoeControl\n  - __imp__._11CCoeControl\n  - _imp___._11CCoeControl\n  - WriteInternalStateL__C11CCoeControlR12RWriteStream\n  - __imp_WriteInternalStateL__C11CCoeControlR12RWriteStream\n  - _imp__WriteInternalStateL__C11CCoeControlR12RWriteStream\n  - Window__C11CCoeControl\n  - __imp_Window__C11CCoeControl\n  - _imp__Window__C11CCoeControl\n  - UpdateViewStackedControlFlags__9CCoeAppUiRC8MCoeViewP11CCoeControlii\n  - __imp_UpdateViewStackedControlFlags__9CCoeAppUiRC8MCoeViewP11CCoeControlii\n  - _imp__UpdateViewStackedControlFlags__9CCoeAppUiRC8MCoeViewP11CCoeControlii\n  - UpdateStackedControlFlags__9CCoeAppUiP11CCoeControlii\n  - __imp_UpdateStackedControlFlags__9CCoeAppUiP11CCoeControlii\n  - _imp__UpdateStackedControlFlags__9CCoeAppUiP11CCoeControlii\n  - SystemGc__C11CCoeControl\n  - __imp_SystemGc__C11CCoeControl\n  - _imp__SystemGc__C11CCoeControl\n  - Size__C11CCoeControl\n  - __imp_Size__C11CCoeControl\n  - _imp__Size__C11CCoeControl\n  - SizeChanged__11CCoeControl\n  - __imp_SizeChanged__11CCoeControl\n  - _imp__SizeChanged__11CCoeControl\n  - SetUpFepL__7CCoeEnvP17CCoeFepParametersRC7TDesC16\n  - __imp_SetUpFepL__7CCoeEnvP17CCoeFepParametersRC7TDesC16\n  - _imp__SetUpFepL__7CCoeEnvP17CCoeFepParametersRC7TDesC16\n  - SetSize__11CCoeControlRC5TSize\n  - __imp_SetSize__11CCoeControlRC5TSize\n  - _imp__SetSize__11CCoeControlRC5TSize\n  - SetSizeWithoutNotification__11CCoeControlRC5TSize\n  - __imp_SetSizeWithoutNotification__11CCoeControlRC5TSize\n  - _imp__SetSizeWithoutNotification__11CCoeControlRC5TSize\n  - SetRootControl__15CCoeAppUiSimpleP11CCoeControl\n  - __imp_SetRootControl__15CCoeAppUiSimpleP11CCoeControl\n  - _imp__SetRootControl__15CCoeAppUiSimpleP11CCoeControl\n  - SetRect__11CCoeControlRC5TRect\n  - __imp_SetRect__11CCoeControlRC5TRect\n  - _imp__SetRect__11CCoeControlRC5TRect\n  - SetPosition__11CCoeControlRC6TPoint\n  - __imp_SetPosition__11CCoeControlRC6TPoint\n  - _imp__SetPosition__11CCoeControlRC6TPoint\n  - SetPointerCapture__11CCoeControli\n  - __imp_SetPointerCapture__11CCoeControli\n  - _imp__SetPointerCapture__11CCoeControli\n  - SetObserver__11CCoeControlP19MCoeControlObserver\n  - __imp_SetObserver__11CCoeControlP19MCoeControlObserver\n  - _imp__SetObserver__11CCoeControlP19MCoeControlObserver\n  - SetNonFocusing__11CCoeControl\n  - __imp_SetNonFocusing__11CCoeControl\n  - _imp__SetNonFocusing__11CCoeControl\n  - SetNeighbor__11CCoeControlP11CCoeControl\n  - __imp_SetNeighbor__11CCoeControlP11CCoeControl\n  - _imp__SetNeighbor__11CCoeControlP11CCoeControl\n  - SetMopParent__11CCoeControlP15MObjectProvider\n  - __imp_SetMopParent__11CCoeControlP15MObjectProvider\n  - _imp__SetMopParent__11CCoeControlP15MObjectProvider\n  - SetGloballyCapturing__11CCoeControli\n  - __imp_SetGloballyCapturing__11CCoeControli\n  - _imp__SetGloballyCapturing__11CCoeControli\n  - SetFocusing__11CCoeControli\n  - __imp_SetFocusing__11CCoeControli\n  - _imp__SetFocusing__11CCoeControli\n  - SetFocus__11CCoeControli8TDrawNow\n  - __imp_SetFocus__11CCoeControli8TDrawNow\n  - _imp__SetFocus__11CCoeControli8TDrawNow\n  - SetExtent__11CCoeControlRC6TPointRC5TSize\n  - __imp_SetExtent__11CCoeControlRC6TPointRC5TSize\n  - _imp__SetExtent__11CCoeControlRC6TPointRC5TSize\n  - SetExtentToWholeScreen__11CCoeControl\n  - __imp_SetExtentToWholeScreen__11CCoeControl\n  - _imp__SetExtentToWholeScreen__11CCoeControl\n  - SetDimmed__11CCoeControli\n  - __imp_SetDimmed__11CCoeControli\n  - _imp__SetDimmed__11CCoeControli\n  - SetCornerAndSize__11CCoeControlG13TGulAlignmentRC5TSize\n  - __imp_SetCornerAndSize__11CCoeControlG13TGulAlignmentRC5TSize\n  - _imp__SetCornerAndSize__11CCoeControlG13TGulAlignmentRC5TSize\n  - SetControlContext__11CCoeControlP18MCoeControlContext\n  - __imp_SetControlContext__11CCoeControlP18MCoeControlContext\n  - _imp__SetControlContext__11CCoeControlP18MCoeControlContext\n  - SetContainerWindowL__11CCoeControlRC11CCoeControl\n  - __imp_SetContainerWindowL__11CCoeControlRC11CCoeControl\n  - _imp__SetContainerWindowL__11CCoeControlRC11CCoeControl\n  - SetContainerWindowL__11CCoeControlR7RWindow\n  - __imp_SetContainerWindowL__11CCoeControlR7RWindow\n  - _imp__SetContainerWindowL__11CCoeControlR7RWindow\n  - SetContainerWindowL__11CCoeControlR15RBackedUpWindow\n  - __imp_SetContainerWindowL__11CCoeControlR15RBackedUpWindow\n  - _imp__SetContainerWindowL__11CCoeControlR15RBackedUpWindow\n  - SetComponentsToInheritVisibility__11CCoeControli\n  - __imp_SetComponentsToInheritVisibility__11CCoeControli\n  - _imp__SetComponentsToInheritVisibility__11CCoeControli\n  - SetCanDrawOutsideRect__11CCoeControl\n  - __imp_SetCanDrawOutsideRect__11CCoeControl\n  - _imp__SetCanDrawOutsideRect__11CCoeControl\n  - SetBrushStyle__22CCoeBrushAndPenContextQ216CGraphicsContext11TBrushStyle\n  - __imp_SetBrushStyle__22CCoeBrushAndPenContextQ216CGraphicsContext11TBrushStyle\n  - _imp__SetBrushStyle__22CCoeBrushAndPenContextQ216CGraphicsContext11TBrushStyle\n  - SetBlank__11CCoeControl\n  - __imp_SetBlank__11CCoeControl\n  - _imp__SetBlank__11CCoeControl\n  - SetAllowStrayPointers__11CCoeControl\n  - __imp_SetAllowStrayPointers__11CCoeControl\n  - _imp__SetAllowStrayPointers__11CCoeControl\n  - SetAdjacent__11CCoeControli\n  - __imp_SetAdjacent__11CCoeControli\n  - _imp__SetAdjacent__11CCoeControli\n  - ResetGc__C11CCoeControl\n  - __imp_ResetGc__C11CCoeControl\n  - _imp__ResetGc__C11CCoeControl\n  - Reserved_2__11CCoeControl\n  - __imp_Reserved_2__11CCoeControl\n  - _imp__Reserved_2__11CCoeControl\n  - ReportEventL__11CCoeControlQ219MCoeControlObserver9TCoeEvent\n  - __imp_ReportEventL__11CCoeControlQ219MCoeControlObserver9TCoeEvent\n  - _imp__ReportEventL__11CCoeControlQ219MCoeControlObserver9TCoeEvent\n  - RemoveFromViewStack__9CCoeAppUiRC8MCoeViewP11CCoeControl\n  - __imp_RemoveFromViewStack__9CCoeAppUiRC8MCoeViewP11CCoeControl\n  - _imp__RemoveFromViewStack__9CCoeAppUiRC8MCoeViewP11CCoeControl\n  - RemoveFromStack__9CCoeAppUiP11CCoeControl\n  - __imp_RemoveFromStack__9CCoeAppUiP11CCoeControl\n  - _imp__RemoveFromStack__9CCoeAppUiP11CCoeControl\n  - ReleaseScreenFont__C7CCoeEnvP5CFont\n  - __imp_ReleaseScreenFont__C7CCoeEnvP5CFont\n  - _imp__ReleaseScreenFont__C7CCoeEnvP5CFont\n  - RecursivelyMergedInputCapabilities__C11CCoeControl\n  - __imp_RecursivelyMergedInputCapabilities__C11CCoeControl\n  - _imp__RecursivelyMergedInputCapabilities__C11CCoeControl\n  - Rect__C11CCoeControl\n  - __imp_Rect__C11CCoeControl\n  - _imp__Rect__C11CCoeControl\n  - ReadResourceAsDes8__C7CCoeEnvR5TDes8i\n  - __imp_ReadResourceAsDes8__C7CCoeEnvR5TDes8i\n  - _imp__ReadResourceAsDes8__C7CCoeEnvR5TDes8i\n  - ReadResourceAsDes16__C7CCoeEnvR6TDes16i\n  - __imp_ReadResourceAsDes16__C7CCoeEnvR6TDes16i\n  - _imp__ReadResourceAsDes16__C7CCoeEnvR6TDes16i\n  - PrepareForFocusLossL__11CCoeControl\n  - __imp_PrepareForFocusLossL__11CCoeControl\n  - _imp__PrepareForFocusLossL__11CCoeControl\n  - PrepareForFocusGainL__11CCoeControl\n  - __imp_PrepareForFocusGainL__11CCoeControl\n  - _imp__PrepareForFocusGainL__11CCoeControl\n  - Position__C11CCoeControl\n  - __imp_Position__C11CCoeControl\n  - _imp__Position__C11CCoeControl\n  - PositionRelativeToScreen__C11CCoeControl\n  - __imp_PositionRelativeToScreen__C11CCoeControl\n  - _imp__PositionRelativeToScreen__C11CCoeControl\n  - PositionChanged__11CCoeControl\n  - __imp_PositionChanged__11CCoeControl\n  - _imp__PositionChanged__11CCoeControl\n  - OwnsWindow__C11CCoeControl\n\n### GDI.LIB\n\n- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/gdi.lib (175970 bytes)\n- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/gdi.lib: current ar archive \n- nm exit=0; stdout lines=0; stderr=nm: dt.o: file format not recognized
+nm: ds
+- nm symbol-name matches: 0
+
+- strings lines=7002; relevant matches=744
+  - __15TCoeHelpContextG4TUidRC7TDesC16
+  - __imp___15TCoeHelpContextG4TUidRC7TDesC16
+  - _imp____15TCoeHelpContextG4TUidRC7TDesC16
+  - __11CCoeControl
+  - __imp___11CCoeControl
+  - _imp____11CCoeControl
+  - _._11CCoeControl
+  - __imp__._11CCoeControl
+  - _imp___._11CCoeControl
+  - WriteInternalStateL__C11CCoeControlR12RWriteStream
+  - __imp_WriteInternalStateL__C11CCoeControlR12RWriteStream
+  - _imp__WriteInternalStateL__C11CCoeControlR12RWriteStream
+  - Window__C11CCoeControl
+  - __imp_Window__C11CCoeControl
+  - _imp__Window__C11CCoeControl
+  - UpdateViewStackedControlFlags__9CCoeAppUiRC8MCoeViewP11CCoeControlii
+  - __imp_UpdateViewStackedControlFlags__9CCoeAppUiRC8MCoeViewP11CCoeControlii
+  - _imp__UpdateViewStackedControlFlags__9CCoeAppUiRC8MCoeViewP11CCoeControlii
+  - UpdateStackedControlFlags__9CCoeAppUiP11CCoeControlii
+  - __imp_UpdateStackedControlFlags__9CCoeAppUiP11CCoeControlii
+  - _imp__UpdateStackedControlFlags__9CCoeAppUiP11CCoeControlii
+  - SystemGc__C11CCoeControl
+  - __imp_SystemGc__C11CCoeControl
+  - _imp__SystemGc__C11CCoeControl
+  - Size__C11CCoeControl
+  - __imp_Size__C11CCoeControl
+  - _imp__Size__C11CCoeControl
+  - SizeChanged__11CCoeControl
+  - __imp_SizeChanged__11CCoeControl
+  - _imp__SizeChanged__11CCoeControl
+  - SetUpFepL__7CCoeEnvP17CCoeFepParametersRC7TDesC16
+  - __imp_SetUpFepL__7CCoeEnvP17CCoeFepParametersRC7TDesC16
+  - _imp__SetUpFepL__7CCoeEnvP17CCoeFepParametersRC7TDesC16
+  - SetSize__11CCoeControlRC5TSize
+  - __imp_SetSize__11CCoeControlRC5TSize
+  - _imp__SetSize__11CCoeControlRC5TSize
+  - SetSizeWithoutNotification__11CCoeControlRC5TSize
+  - __imp_SetSizeWithoutNotification__11CCoeControlRC5TSize
+  - _imp__SetSizeWithoutNotification__11CCoeControlRC5TSize
+  - SetRootControl__15CCoeAppUiSimpleP11CCoeControl
+  - __imp_SetRootControl__15CCoeAppUiSimpleP11CCoeControl
+  - _imp__SetRootControl__15CCoeAppUiSimpleP11CCoeControl
+  - SetRect__11CCoeControlRC5TRect
+  - __imp_SetRect__11CCoeControlRC5TRect
+  - _imp__SetRect__11CCoeControlRC5TRect
+  - SetPosition__11CCoeControlRC6TPoint
+  - __imp_SetPosition__11CCoeControlRC6TPoint
+  - _imp__SetPosition__11CCoeControlRC6TPoint
+  - SetPointerCapture__11CCoeControli
+  - __imp_SetPointerCapture__11CCoeControli
+  - _imp__SetPointerCapture__11CCoeControli
+  - SetObserver__11CCoeControlP19MCoeControlObserver
+  - __imp_SetObserver__11CCoeControlP19MCoeControlObserver
+  - _imp__SetObserver__11CCoeControlP19MCoeControlObserver
+  - SetNonFocusing__11CCoeControl
+  - __imp_SetNonFocusing__11CCoeControl
+  - _imp__SetNonFocusing__11CCoeControl
+  - SetNeighbor__11CCoeControlP11CCoeControl
+  - __imp_SetNeighbor__11CCoeControlP11CCoeControl
+  - _imp__SetNeighbor__11CCoeControlP11CCoeControl
+  - SetMopParent__11CCoeControlP15MObjectProvider
+  - __imp_SetMopParent__11CCoeControlP15MObjectProvider
+  - _imp__SetMopParent__11CCoeControlP15MObjectProvider
+  - SetGloballyCapturing__11CCoeControli
+  - __imp_SetGloballyCapturing__11CCoeControli
+  - _imp__SetGloballyCapturing__11CCoeControli
+  - SetFocusing__11CCoeControli
+  - __imp_SetFocusing__11CCoeControli
+  - _imp__SetFocusing__11CCoeControli
+  - SetFocus__11CCoeControli8TDrawNow
+  - __imp_SetFocus__11CCoeControli8TDrawNow
+  - _imp__SetFocus__11CCoeControli8TDrawNow
+  - SetExtent__11CCoeControlRC6TPointRC5TSize
+  - __imp_SetExtent__11CCoeControlRC6TPointRC5TSize
+  - _imp__SetExtent__11CCoeControlRC6TPointRC5TSize
+  - SetExtentToWholeScreen__11CCoeControl
+  - __imp_SetExtentToWholeScreen__11CCoeControl
+  - _imp__SetExtentToWholeScreen__11CCoeControl
+  - SetDimmed__11CCoeControli
+  - __imp_SetDimmed__11CCoeControli
+  - _imp__SetDimmed__11CCoeControli
+  - SetCornerAndSize__11CCoeControlG13TGulAlignmentRC5TSize
+  - __imp_SetCornerAndSize__11CCoeControlG13TGulAlignmentRC5TSize
+  - _imp__SetCornerAndSize__11CCoeControlG13TGulAlignmentRC5TSize
+  - SetControlContext__11CCoeControlP18MCoeControlContext
+  - __imp_SetControlContext__11CCoeControlP18MCoeControlContext
+  - _imp__SetControlContext__11CCoeControlP18MCoeControlContext
+  - SetContainerWindowL__11CCoeControlRC11CCoeControl
+  - __imp_SetContainerWindowL__11CCoeControlRC11CCoeControl
+  - _imp__SetContainerWindowL__11CCoeControlRC11CCoeControl
+  - SetContainerWindowL__11CCoeControlR7RWindow
+  - __imp_SetContainerWindowL__11CCoeControlR7RWindow
+  - _imp__SetContainerWindowL__11CCoeControlR7RWindow
+  - SetContainerWindowL__11CCoeControlR15RBackedUpWindow
+  - __imp_SetContainerWindowL__11CCoeControlR15RBackedUpWindow
+  - _imp__SetContainerWindowL__11CCoeControlR15RBackedUpWindow
+  - SetComponentsToInheritVisibility__11CCoeControli
+  - __imp_SetComponentsToInheritVisibility__11CCoeControli
+  - _imp__SetComponentsToInheritVisibility__11CCoeControli
+  - SetCanDrawOutsideRect__11CCoeControl
+  - __imp_SetCanDrawOutsideRect__11CCoeControl
+  - _imp__SetCanDrawOutsideRect__11CCoeControl
+  - SetBrushStyle__22CCoeBrushAndPenContextQ216CGraphicsContext11TBrushStyle
+  - __imp_SetBrushStyle__22CCoeBrushAndPenContextQ216CGraphicsContext11TBrushStyle
+  - _imp__SetBrushStyle__22CCoeBrushAndPenContextQ216CGraphicsContext11TBrushStyle
+  - SetBlank__11CCoeControl
+  - __imp_SetBlank__11CCoeControl
+  - _imp__SetBlank__11CCoeControl
+  - SetAllowStrayPointers__11CCoeControl
+  - __imp_SetAllowStrayPointers__11CCoeControl
+  - _imp__SetAllowStrayPointers__11CCoeControl
+  - SetAdjacent__11CCoeControli
+  - __imp_SetAdjacent__11CCoeControli
+  - _imp__SetAdjacent__11CCoeControli
+  - ResetGc__C11CCoeControl
+  - __imp_ResetGc__C11CCoeControl
+  - _imp__ResetGc__C11CCoeControl
+  - Reserved_2__11CCoeControl
+  - __imp_Reserved_2__11CCoeControl
+  - _imp__Reserved_2__11CCoeControl
+  - ReportEventL__11CCoeControlQ219MCoeControlObserver9TCoeEvent
+  - __imp_ReportEventL__11CCoeControlQ219MCoeControlObserver9TCoeEvent
+  - _imp__ReportEventL__11CCoeControlQ219MCoeControlObserver9TCoeEvent
+  - RemoveFromViewStack__9CCoeAppUiRC8MCoeViewP11CCoeControl
+  - __imp_RemoveFromViewStack__9CCoeAppUiRC8MCoeViewP11CCoeControl
+  - _imp__RemoveFromViewStack__9CCoeAppUiRC8MCoeViewP11CCoeControl
+  - RemoveFromStack__9CCoeAppUiP11CCoeControl
+  - __imp_RemoveFromStack__9CCoeAppUiP11CCoeControl
+  - _imp__RemoveFromStack__9CCoeAppUiP11CCoeControl
+  - ReleaseScreenFont__C7CCoeEnvP5CFont
+  - __imp_ReleaseScreenFont__C7CCoeEnvP5CFont
+  - _imp__ReleaseScreenFont__C7CCoeEnvP5CFont
+  - RecursivelyMergedInputCapabilities__C11CCoeControl
+  - __imp_RecursivelyMergedInputCapabilities__C11CCoeControl
+  - _imp__RecursivelyMergedInputCapabilities__C11CCoeControl
+  - Rect__C11CCoeControl
+  - __imp_Rect__C11CCoeControl
+  - _imp__Rect__C11CCoeControl
+  - ReadResourceAsDes8__C7CCoeEnvR5TDes8i
+  - __imp_ReadResourceAsDes8__C7CCoeEnvR5TDes8i
+  - _imp__ReadResourceAsDes8__C7CCoeEnvR5TDes8i
+  - ReadResourceAsDes16__C7CCoeEnvR6TDes16i
+  - __imp_ReadResourceAsDes16__C7CCoeEnvR6TDes16i
+  - _imp__ReadResourceAsDes16__C7CCoeEnvR6TDes16i
+  - PrepareForFocusLossL__11CCoeControl
+  - __imp_PrepareForFocusLossL__11CCoeControl
+  - _imp__PrepareForFocusLossL__11CCoeControl
+  - PrepareForFocusGainL__11CCoeControl
+  - __imp_PrepareForFocusGainL__11CCoeControl
+  - _imp__PrepareForFocusGainL__11CCoeControl
+  - Position__C11CCoeControl
+  - __imp_Position__C11CCoeControl
+  - _imp__Position__C11CCoeControl
+  - PositionRelativeToScreen__C11CCoeControl
+  - __imp_PositionRelativeToScreen__C11CCoeControl
+  - _imp__PositionRelativeToScreen__C11CCoeControl
+  - PositionChanged__11CCoeControl
+  - __imp_PositionChanged__11CCoeControl
+  - _imp__PositionChanged__11CCoeControl
+  - OwnsWindow__C11CCoeControl
+
+### GDI.LIB
+
+- File: /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/gdi.lib (175970 bytes)
+- file(1): /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel/gdi.lib: current ar archive 
+- nm exit=0; stdout lines=0; stderr=nm: dt.o: file format not recognized
 nm: dh.o: file format not recognized
 nm: ds00001.o: file format not recognized
 nm: ds00160.o: file format not recognized
@@ -46,4 +649,168 @@ nm: ds00155.o: file format not recognized
 nm: ds00186.o: file format not recognized
 nm: ds00154.o: file format not recognized
 nm: ds00153.o: file format not recognized
-nm: ds\n- nm symbol-name matches: 0\n\n- strings lines=4318; relevant matches=318\n  - __eq__C9TFontSpecRC9TFontSpec\n  - __imp___eq__C9TFontSpecRC9TFontSpec\n  - _imp____eq__C9TFontSpecRC9TFontSpec\n  - __9TPageSpecQ29TPageSpec16TPageOrientationRC5TSize\n  - __imp___9TPageSpecQ29TPageSpec16TPageOrientationRC5TSize\n  - _imp____9TPageSpecQ29TPageSpec16TPageOrientationRC5TSize\n  - __9TFontSpecRC7TDesC16i\n  - __imp___9TFontSpecRC7TDesC16i\n  - _imp____9TFontSpecRC7TDesC16i\n  - __9TFontSpec\n  - __imp___9TFontSpec\n  - _imp____9TFontSpec\n  - __10TFontStyle12TFontPosture17TFontStrokeWeight18TFontPrintPosition\n  - __imp___10TFontStyle12TFontPosture17TFontStrokeWeight18TFontPrintPosition\n  - _imp____10TFontStyle12TFontPosture17TFontStrokeWeight18TFontPrintPosition\n  - __10TFontStyle\n  - __imp___10TFontStyle\n  - _imp____10TFontStyle\n  - __10CFontCachei\n  - __imp___10CFontCachei\n  - _imp____10CFontCachei\n  - __10CFontCache\n  - __imp___10CFontCache\n  - _imp____10CFontCache\n  - _._5CFont\n  - __imp__._5CFont\n  - _imp___._5CFont\n  - _._10CFontCache\n  - __imp__._10CFontCache\n  - _imp___._10CFontCache\n  - WidthZeroInPixels__C5CFont\n  - __imp_WidthZeroInPixels__C5CFont\n  - _imp__WidthZeroInPixels__C5CFont\n  - TwipsToPixels__C18MGraphicsDeviceMapRC6TPoint\n  - __imp_TwipsToPixels__C18MGraphicsDeviceMapRC6TPoint\n  - _imp__TwipsToPixels__C18MGraphicsDeviceMapRC6TPoint\n  - SuperSubHeight__14CTypefaceStorei18TFontPrintPosition\n  - __imp_SuperSubHeight__14CTypefaceStorei18TFontPrintPosition\n  - _imp__SuperSubHeight__14CTypefaceStorei18TFontPrintPosition\n  - StrokeWeight__C10TFontStyle\n  - __imp_StrokeWeight__C10TFontStyle\n  - _imp__StrokeWeight__C10TFontStyle\n  - SingleStep__10TLinearDDAR6TPoint\n  - __imp_SingleStep__10TLinearDDAR6TPoint\n  - _imp__SingleStep__10TLinearDDAR6TPoint\n  - SingleScanline__10TLinearDDAR6TPointT1\n  - __imp_SingleScanline__10TLinearDDAR6TPointT1\n  - _imp__SingleScanline__10TLinearDDAR6TPointT1\n  - SetTwipToPixelMapping__11TZoomFactorRC5TSizeT1\n  - __imp_SetTwipToPixelMapping__11TZoomFactorRC5TSizeT1\n  - _imp__SetTwipToPixelMapping__11TZoomFactorRC5TSizeT1\n  - SetStrokeWeight__10TFontStyle17TFontStrokeWeight\n  - __imp_SetStrokeWeight__10TFontStyle17TFontStrokeWeight\n  - _imp__SetStrokeWeight__10TFontStyle17TFontStrokeWeight\n  - SetSizeInTwips__8CPictureRC5TSize\n  - __imp_SetSizeInTwips__8CPictureRC5TSize\n  - _imp__SetSizeInTwips__8CPictureRC5TSize\n  - SetSizeInPixels__8CPictureP18MGraphicsDeviceMapRC5TSize\n  - __imp_SetSizeInPixels__8CPictureP18MGraphicsDeviceMapRC5TSize\n  - _imp__SetSizeInPixels__8CPictureP18MGraphicsDeviceMapRC5TSize\n  - SetPrintPosition__10TFontStyle18TFontPrintPosition\n  - __imp_SetPrintPosition__10TFontStyle18TFontPrintPosition\n  - _imp__SetPrintPosition__10TFontStyle18TFontPrintPosition\n  - SetPosture__10TFontStyle12TFontPosture\n  - __imp_SetPosture__10TFontStyle12TFontPosture\n  - _imp__SetPosture__10TFontStyle12TFontPosture\n  - Search__10CFontCacheRC9TFontSpec\n  - __imp_Search__10CFontCacheRC9TFontSpec\n  - _imp__Search__10CFontCacheRC9TFontSpec\n  - Reserved__5CFont\n  - __imp_Reserved__5CFont\n  - _imp__Reserved__5CFont\n  - Reserved__16CGraphicsContext\n  - __imp_Reserved__16CGraphicsContext\n  - _imp__Reserved__16CGraphicsContext\n  - RemoveFirstEntry__10CFontCache\n  - __imp_RemoveFirstEntry__10CFontCache\n  - _imp__RemoveFirstEntry__10CFontCache\n  - ReleaseFont__14CTypefaceStoreP5CFont\n  - __imp_ReleaseFont__14CTypefaceStoreP5CFont\n  - _imp__ReleaseFont__14CTypefaceStoreP5CFont\n  - ReleaseFont__11TZoomFactorP5CFont\n  - __imp_ReleaseFont__11TZoomFactorP5CFont\n  - _imp__ReleaseFont__11TZoomFactorP5CFont\n  - PrintPosition__C10TFontStyle\n  - __imp_PrintPosition__C10TFontStyle\n  - _imp__PrintPosition__C10TFontStyle\n  - Posture__C10TFontStyle\n  - __imp_Posture__C10TFontStyle\n  - _imp__Posture__C10TFontStyle\n  - PixelsToTwips__C18MGraphicsDeviceMapRC6TPoint\n  - __imp_PixelsToTwips__C18MGraphicsDeviceMapRC6TPoint\n  - _imp__PixelsToTwips__C18MGraphicsDeviceMapRC6TPoint\n  - OpenPdrL__14CPrinterDriverRC7TDesC16\n  - __imp_OpenPdrL__14CPrinterDriverRC7TDesC16\n  - _imp__OpenPdrL__14CPrinterDriverRC7TDesC16\n  - NextStep__10TLinearDDAR6TPoint\n  - __imp_NextStep__10TLinearDDAR6TPoint\n  - _imp__NextStep__10TLinearDDAR6TPoint\n  - MeasureText__C5CFontRC7TDesC16PCQ25CFont17TMeasureTextInputPQ25CFont18TMeasureTextOutput\n  - __imp_MeasureText__C5CFontRC7TDesC16PCQ25CFont17TMeasureTextInputPQ25CFont18TMeasureTextOutput\n  - _imp__MeasureText__C5CFontRC7TDesC16PCQ25CFont17TMeasureTextInputPQ25CFont18TMeasureTextOutput\n  - JustificationInPixels__16CGraphicsContextiiii\n  - __imp_JustificationInPixels__16CGraphicsContextiiii\n  - _imp__JustificationInPixels__16CGraphicsContextiiii\n  - JustificationInPixels__16CGraphicsContextRiT1\n  - __imp_JustificationInPixels__16CGraphicsContextRiT1\n  - _imp__JustificationInPixels__16CGraphicsContextRiT1\n  - InternalizeL__9TFontSpecR11RReadStream\n  - __imp_InternalizeL__9TFontSpecR11RReadStream\n  - _imp__InternalizeL__9TFontSpecR11RReadStream\n  - InternalizeL__10TFontStyleR11RReadStream\n  - __imp_InternalizeL__10TFontStyleR11RReadStream\n  - _imp__InternalizeL__10TFontStyleR11RReadStream\n  - GetSizeInTwips__C8CPictureR5TSize\n  - __imp_GetSizeInTwips__C8CPictureR5TSize\n  - _imp__GetSizeInTwips__C8CPictureR5TSize\n  - GetSizeInPixels__C8CPictureP18MGraphicsDeviceMapR5TSize\n  - __imp_GetSizeInPixels__C8CPictureP18MGraphicsDeviceMapR5TSize\n  - _imp__GetSizeInPixels__C8CPictureP18MGraphicsDeviceMapR5TSize\n  - GetNearestFontInTwips__11TZoomFactorRP5CFontRC9TFontSpec\n  - __imp_GetNearestFontInTwips__11TZoomFactorRP5CFontRC9TFontSpec\n  - _imp__GetNearestFontInTwips__11TZoomFactorRP5CFontRC9TFontSpec\n  - GetCharacterPosition__C5CFontRQ25CFont14TPositionParam\n  - __imp_GetCharacterPosition__C5CFontRQ25CFont14TPositionParam\n  - _imp__GetCharacterPosition__C5CFontRQ25CFont14TPositionParam\n  - GetCharacterData__C5CFontUiR20TOpenFontCharMetricsRPCUcR5TSize\n  - __imp_GetCharacterData__C5CFontUiR20TOpenFontCharMetricsRPCUcR5TSize\n  - _imp__GetCharacterData__C5CFontUiR20TOpenFontCharMetricsRPCUcR5TSize\n  - ExternalizeL__C9TFontSpecR12RWriteStream\n  - __imp_ExternalizeL__C9TFontSpecR12RWriteStream\n  - _imp__ExternalizeL__C9TFontSpecR12RWriteStream\n  - ExternalizeL__C10TFontStyleR12RWriteStream\n  - __imp_ExternalizeL__C10TFontStyleR12RWriteStream\n  - _imp__ExternalizeL__C10TFontStyleR12RWriteStream\n  - DrawText__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext14TDrawTextParam\n  - __imp_DrawText__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext14TDrawTextParam\n  - _imp__DrawText__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext14TDrawTextParam\n  - DrawTextExtended__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext22TDrawTextExtendedParam\n  - __imp_DrawTextExtended__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext22TDrawTextExtendedParam\n  - _imp__DrawTextExtended__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext22TDrawTextExtendedParam\n  - DescentInPixels__C5CFont\n  - __imp_DescentInPixels__C5CFont\n  - _imp__DescentInPixels__C5CFont\n  - Construct__10TLinearDDARC6TPointT1Q210TLinearDDA9TLineMode\n  - __imp_Construct__10TLinearDDARC6TPointT1Q210TLinearDDA9TLineMode\n  - _imp__Construct__10TLinearDDARC6TPointT1Q210TLinearDDA9TLineMode\n  - BaselineOffset__14CTypefaceStorei18TFontPrintPosition\n  - __imp_BaselineOffset__14CTypefaceStorei18TFontPrintPosition\n  - _imp__BaselineOffset__14CTypefaceStorei18TFontPrintPosition\n  - AddFontL__14CTypefaceStoreP5CFont\n  - __imp_AddFontL__14CTypefaceStoreP5CFont\n  - _imp__AddFontL__14CTypefaceStoreP5CFont\n  - AddEntryL__10CFontCacheP5CFontRC9TFontSpec\n  - __imp_AddEntryL__10CFontCacheP5CFontRC9TFontSpec\n  - _imp__AddEntryL__10CFontCacheP5CFontRC9TFontSpec\n  - AddDirectoryL__13CPdrModelListRC7TDesC16\n  - __imp_AddDirectoryL__13CPdrModelListRC7TDesC16\n  - _imp__AddDirectoryL__13CPdrModelListRC7TDesC16\n  - __eq__C9TFontSpecRC9TFontSpec\n\n
+nm: ds
+- nm symbol-name matches: 0
+
+- strings lines=4318; relevant matches=318
+  - __eq__C9TFontSpecRC9TFontSpec
+  - __imp___eq__C9TFontSpecRC9TFontSpec
+  - _imp____eq__C9TFontSpecRC9TFontSpec
+  - __9TPageSpecQ29TPageSpec16TPageOrientationRC5TSize
+  - __imp___9TPageSpecQ29TPageSpec16TPageOrientationRC5TSize
+  - _imp____9TPageSpecQ29TPageSpec16TPageOrientationRC5TSize
+  - __9TFontSpecRC7TDesC16i
+  - __imp___9TFontSpecRC7TDesC16i
+  - _imp____9TFontSpecRC7TDesC16i
+  - __9TFontSpec
+  - __imp___9TFontSpec
+  - _imp____9TFontSpec
+  - __10TFontStyle12TFontPosture17TFontStrokeWeight18TFontPrintPosition
+  - __imp___10TFontStyle12TFontPosture17TFontStrokeWeight18TFontPrintPosition
+  - _imp____10TFontStyle12TFontPosture17TFontStrokeWeight18TFontPrintPosition
+  - __10TFontStyle
+  - __imp___10TFontStyle
+  - _imp____10TFontStyle
+  - __10CFontCachei
+  - __imp___10CFontCachei
+  - _imp____10CFontCachei
+  - __10CFontCache
+  - __imp___10CFontCache
+  - _imp____10CFontCache
+  - _._5CFont
+  - __imp__._5CFont
+  - _imp___._5CFont
+  - _._10CFontCache
+  - __imp__._10CFontCache
+  - _imp___._10CFontCache
+  - WidthZeroInPixels__C5CFont
+  - __imp_WidthZeroInPixels__C5CFont
+  - _imp__WidthZeroInPixels__C5CFont
+  - TwipsToPixels__C18MGraphicsDeviceMapRC6TPoint
+  - __imp_TwipsToPixels__C18MGraphicsDeviceMapRC6TPoint
+  - _imp__TwipsToPixels__C18MGraphicsDeviceMapRC6TPoint
+  - SuperSubHeight__14CTypefaceStorei18TFontPrintPosition
+  - __imp_SuperSubHeight__14CTypefaceStorei18TFontPrintPosition
+  - _imp__SuperSubHeight__14CTypefaceStorei18TFontPrintPosition
+  - StrokeWeight__C10TFontStyle
+  - __imp_StrokeWeight__C10TFontStyle
+  - _imp__StrokeWeight__C10TFontStyle
+  - SingleStep__10TLinearDDAR6TPoint
+  - __imp_SingleStep__10TLinearDDAR6TPoint
+  - _imp__SingleStep__10TLinearDDAR6TPoint
+  - SingleScanline__10TLinearDDAR6TPointT1
+  - __imp_SingleScanline__10TLinearDDAR6TPointT1
+  - _imp__SingleScanline__10TLinearDDAR6TPointT1
+  - SetTwipToPixelMapping__11TZoomFactorRC5TSizeT1
+  - __imp_SetTwipToPixelMapping__11TZoomFactorRC5TSizeT1
+  - _imp__SetTwipToPixelMapping__11TZoomFactorRC5TSizeT1
+  - SetStrokeWeight__10TFontStyle17TFontStrokeWeight
+  - __imp_SetStrokeWeight__10TFontStyle17TFontStrokeWeight
+  - _imp__SetStrokeWeight__10TFontStyle17TFontStrokeWeight
+  - SetSizeInTwips__8CPictureRC5TSize
+  - __imp_SetSizeInTwips__8CPictureRC5TSize
+  - _imp__SetSizeInTwips__8CPictureRC5TSize
+  - SetSizeInPixels__8CPictureP18MGraphicsDeviceMapRC5TSize
+  - __imp_SetSizeInPixels__8CPictureP18MGraphicsDeviceMapRC5TSize
+  - _imp__SetSizeInPixels__8CPictureP18MGraphicsDeviceMapRC5TSize
+  - SetPrintPosition__10TFontStyle18TFontPrintPosition
+  - __imp_SetPrintPosition__10TFontStyle18TFontPrintPosition
+  - _imp__SetPrintPosition__10TFontStyle18TFontPrintPosition
+  - SetPosture__10TFontStyle12TFontPosture
+  - __imp_SetPosture__10TFontStyle12TFontPosture
+  - _imp__SetPosture__10TFontStyle12TFontPosture
+  - Search__10CFontCacheRC9TFontSpec
+  - __imp_Search__10CFontCacheRC9TFontSpec
+  - _imp__Search__10CFontCacheRC9TFontSpec
+  - Reserved__5CFont
+  - __imp_Reserved__5CFont
+  - _imp__Reserved__5CFont
+  - Reserved__16CGraphicsContext
+  - __imp_Reserved__16CGraphicsContext
+  - _imp__Reserved__16CGraphicsContext
+  - RemoveFirstEntry__10CFontCache
+  - __imp_RemoveFirstEntry__10CFontCache
+  - _imp__RemoveFirstEntry__10CFontCache
+  - ReleaseFont__14CTypefaceStoreP5CFont
+  - __imp_ReleaseFont__14CTypefaceStoreP5CFont
+  - _imp__ReleaseFont__14CTypefaceStoreP5CFont
+  - ReleaseFont__11TZoomFactorP5CFont
+  - __imp_ReleaseFont__11TZoomFactorP5CFont
+  - _imp__ReleaseFont__11TZoomFactorP5CFont
+  - PrintPosition__C10TFontStyle
+  - __imp_PrintPosition__C10TFontStyle
+  - _imp__PrintPosition__C10TFontStyle
+  - Posture__C10TFontStyle
+  - __imp_Posture__C10TFontStyle
+  - _imp__Posture__C10TFontStyle
+  - PixelsToTwips__C18MGraphicsDeviceMapRC6TPoint
+  - __imp_PixelsToTwips__C18MGraphicsDeviceMapRC6TPoint
+  - _imp__PixelsToTwips__C18MGraphicsDeviceMapRC6TPoint
+  - OpenPdrL__14CPrinterDriverRC7TDesC16
+  - __imp_OpenPdrL__14CPrinterDriverRC7TDesC16
+  - _imp__OpenPdrL__14CPrinterDriverRC7TDesC16
+  - NextStep__10TLinearDDAR6TPoint
+  - __imp_NextStep__10TLinearDDAR6TPoint
+  - _imp__NextStep__10TLinearDDAR6TPoint
+  - MeasureText__C5CFontRC7TDesC16PCQ25CFont17TMeasureTextInputPQ25CFont18TMeasureTextOutput
+  - __imp_MeasureText__C5CFontRC7TDesC16PCQ25CFont17TMeasureTextInputPQ25CFont18TMeasureTextOutput
+  - _imp__MeasureText__C5CFontRC7TDesC16PCQ25CFont17TMeasureTextInputPQ25CFont18TMeasureTextOutput
+  - JustificationInPixels__16CGraphicsContextiiii
+  - __imp_JustificationInPixels__16CGraphicsContextiiii
+  - _imp__JustificationInPixels__16CGraphicsContextiiii
+  - JustificationInPixels__16CGraphicsContextRiT1
+  - __imp_JustificationInPixels__16CGraphicsContextRiT1
+  - _imp__JustificationInPixels__16CGraphicsContextRiT1
+  - InternalizeL__9TFontSpecR11RReadStream
+  - __imp_InternalizeL__9TFontSpecR11RReadStream
+  - _imp__InternalizeL__9TFontSpecR11RReadStream
+  - InternalizeL__10TFontStyleR11RReadStream
+  - __imp_InternalizeL__10TFontStyleR11RReadStream
+  - _imp__InternalizeL__10TFontStyleR11RReadStream
+  - GetSizeInTwips__C8CPictureR5TSize
+  - __imp_GetSizeInTwips__C8CPictureR5TSize
+  - _imp__GetSizeInTwips__C8CPictureR5TSize
+  - GetSizeInPixels__C8CPictureP18MGraphicsDeviceMapR5TSize
+  - __imp_GetSizeInPixels__C8CPictureP18MGraphicsDeviceMapR5TSize
+  - _imp__GetSizeInPixels__C8CPictureP18MGraphicsDeviceMapR5TSize
+  - GetNearestFontInTwips__11TZoomFactorRP5CFontRC9TFontSpec
+  - __imp_GetNearestFontInTwips__11TZoomFactorRP5CFontRC9TFontSpec
+  - _imp__GetNearestFontInTwips__11TZoomFactorRP5CFontRC9TFontSpec
+  - GetCharacterPosition__C5CFontRQ25CFont14TPositionParam
+  - __imp_GetCharacterPosition__C5CFontRQ25CFont14TPositionParam
+  - _imp__GetCharacterPosition__C5CFontRQ25CFont14TPositionParam
+  - GetCharacterData__C5CFontUiR20TOpenFontCharMetricsRPCUcR5TSize
+  - __imp_GetCharacterData__C5CFontUiR20TOpenFontCharMetricsRPCUcR5TSize
+  - _imp__GetCharacterData__C5CFontUiR20TOpenFontCharMetricsRPCUcR5TSize
+  - ExternalizeL__C9TFontSpecR12RWriteStream
+  - __imp_ExternalizeL__C9TFontSpecR12RWriteStream
+  - _imp__ExternalizeL__C9TFontSpecR12RWriteStream
+  - ExternalizeL__C10TFontStyleR12RWriteStream
+  - __imp_ExternalizeL__C10TFontStyleR12RWriteStream
+  - _imp__ExternalizeL__C10TFontStyleR12RWriteStream
+  - DrawText__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext14TDrawTextParam
+  - __imp_DrawText__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext14TDrawTextParam
+  - _imp__DrawText__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext14TDrawTextParam
+  - DrawTextExtended__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext22TDrawTextExtendedParam
+  - __imp_DrawTextExtended__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext22TDrawTextExtendedParam
+  - _imp__DrawTextExtended__16CGraphicsContextRC7TDesC16RC6TPointRCQ216CGraphicsContext22TDrawTextExtendedParam
+  - DescentInPixels__C5CFont
+  - __imp_DescentInPixels__C5CFont
+  - _imp__DescentInPixels__C5CFont
+  - Construct__10TLinearDDARC6TPointT1Q210TLinearDDA9TLineMode
+  - __imp_Construct__10TLinearDDARC6TPointT1Q210TLinearDDA9TLineMode
+  - _imp__Construct__10TLinearDDARC6TPointT1Q210TLinearDDA9TLineMode
+  - BaselineOffset__14CTypefaceStorei18TFontPrintPosition
+  - __imp_BaselineOffset__14CTypefaceStorei18TFontPrintPosition
+  - _imp__BaselineOffset__14CTypefaceStorei18TFontPrintPosition
+  - AddFontL__14CTypefaceStoreP5CFont
+  - __imp_AddFontL__14CTypefaceStoreP5CFont
+  - _imp__AddFontL__14CTypefaceStoreP5CFont
+  - AddEntryL__10CFontCacheP5CFontRC9TFontSpec
+  - __imp_AddEntryL__10CFontCacheP5CFontRC9TFontSpec
+  - _imp__AddEntryL__10CFontCacheP5CFontRC9TFontSpec
+  - AddDirectoryL__13CPdrModelListRC7TDesC16
+  - __imp_AddDirectoryL__13CPdrModelListRC7TDesC16
+  - _imp__AddDirectoryL__13CPdrModelListRC7TDesC16
+  - __eq__C9TFontSpecRC9TFontSpec
+

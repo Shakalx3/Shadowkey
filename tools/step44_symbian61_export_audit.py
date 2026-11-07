@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Resolve original Symbian 6.1 SDK PE export ordinals from WINS DLLs."""
 from pathlib import Path
-import struct, sys, subprocess
+import struct, sys, subprocess, re
 
 TARGETS={
  "efsrv": [18,136,137,138,139,140,141,142,143,185],

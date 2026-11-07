@@ -103,8 +103,6 @@ def parse_coff_import_lib(path):
     return records
 
 debugroot=root.parent/"udeb"
-out += ["## WINS UDEB COFF import-library ordinal map","",
-        "The short-import records are parsed directly. NameType=0 means the 16-bit field is an export ordinal.",""]
 dispatch_path=Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c")
 dispatch_text=dispatch_path.read_text(errors="replace")
 entry_re=re.compile(r'\{\s*(0x[0-9a-fA-F]+)u?,\s*(0x[0-9a-fA-F]+)u?,\s*"([A-Z0-9]+)\[[^]]+\]\.DLL",\s*(\d+)u\s*\}')

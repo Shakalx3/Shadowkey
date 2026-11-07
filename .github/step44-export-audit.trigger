@@ -9,3 +9,4 @@ fix-coff-byte-escapes
 map-all-game-imports
 fix-import-regex
 retry-safe-report-commit
+map-all-19-dll-imports

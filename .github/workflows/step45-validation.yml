@@ -7,6 +7,7 @@ on:
       - "source_bundle/shadowkey_step35_work/shadowkey_hle_bootstrap_v2.c"
       - "source_bundle/shadowkey_step35_work/shadowkey_symbian61_hle.h"
       - "source_bundle/shadowkey_step35_work/shadowkey_step45_sdk_identity_test.c"
+      - "source_bundle/shadowkey_step35_work/shadowkey_efsrv_size_test.c"
       - "source_bundle/shadowkey_step35_work/build_and_test.sh"
       - ".github/step45-validation.trigger"
   workflow_dispatch:

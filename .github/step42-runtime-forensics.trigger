@@ -3,3 +3,4 @@ expanded-euser1575-probes
 capture-framebuffer
 adjacent-buffer-pointer
 commit-framebuffer-to-docs
+trace-bitmap-writes

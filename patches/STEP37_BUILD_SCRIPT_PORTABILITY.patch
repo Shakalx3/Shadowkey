@@ -1,0 +1,10 @@
+--- a/build_arm11_linkcheck.sh
++++ b/build_arm11_linkcheck.sh
+@@
+-./build_arm11_core.sh
++sh ./build_arm11_core.sh
+--- a/build_arm11_symbian_base.sh
++++ b/build_arm11_symbian_base.sh
+@@
+-./build_arm11_core.sh
++sh ./build_arm11_core.sh

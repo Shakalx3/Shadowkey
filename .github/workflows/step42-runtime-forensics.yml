@@ -52,7 +52,7 @@ jobs:
               for i,line in enumerate(lines,1):
                   print(f"{i}: {line}")
           PY
-          grep -E "RESLOAD ENTER|RESLOAD stack|RESLOAD EXIT|TRACE resource index=|TRACE loaded resource|IMGDEC source_base|IMGDEC header|IMGDEC payload|IMGDEC ENTER|IMGDEC stack|IMGDEC source_base|IMGDEC header|IMGDEC payload|IMGDEC EXIT|BITMAP CPU WRITE|BITMAP HOST WRITE|EUSER1575 FORENSIC|TRACE EUSER1575|CONE160 FORENSIC|TRACE CONE160|HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import: (EUSER.*(1575|248)|CONE.*160)" .build/live_hal_vfs_trace.log > /tmp/step42_trace_excerpt.log || true
+          grep -E "RESLOAD ENTER|RESLOAD stack|RESLOAD caller-state|RESLOAD table|RESLOAD EXIT|TRACE resource index=|TRACE loaded resource|IMGDEC source_base|IMGDEC header|IMGDEC payload|IMGDEC ENTER|IMGDEC stack|IMGDEC source_base|IMGDEC header|IMGDEC payload|IMGDEC EXIT|BITMAP CPU WRITE|BITMAP HOST WRITE|EUSER1575 FORENSIC|TRACE EUSER1575|CONE160 FORENSIC|TRACE CONE160|HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import: (EUSER.*(1575|248)|CONE.*160)" .build/live_hal_vfs_trace.log > /tmp/step42_trace_excerpt.log || true
       - name: Upload actual framebuffer capture
         uses: actions/upload-artifact@v4
         with:

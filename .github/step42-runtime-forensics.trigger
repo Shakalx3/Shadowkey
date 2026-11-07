@@ -8,3 +8,4 @@ capture-nonzero-stores
 trace-host-writes
 inspect-pixel-writer
 track-active-guest-function
+inspect-active-writer-1006a488

@@ -16,3 +16,4 @@ exact-function-boundary
 dump-imgdec-source-header
 audit-imgdec-caller
 fix-imgdec-audit-path
+capture-resource-index-and-palette

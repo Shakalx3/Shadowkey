@@ -76,6 +76,7 @@ report=Path("docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md")
 report.parent.mkdir(parents=True,exist_ok=True)
 report.write_text("\n".join(out)+"\n")
 
+symptoms=("TDes","TBuf","HBuf","CFont","TFont","CGraphicsContext","CCoeControl","RFile","RFs","TParse","TPoint","TSize","Format","Copy","SetLength")
 # Compare debug WINS DLLs and import libraries, which may retain decorated names.
 debugroot=root.parent/"udeb"
 out += ["## WINS UDEB export and import-library scan",""]

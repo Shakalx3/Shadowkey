@@ -1,0 +1,26 @@
+name: EUSER1575 CONE160 callsite audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/step41-callsite-audit.trigger"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Generate callsite report
+        run: python3 tools/step41_callsite_audit.py
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/STEP41_EUSER1575_CONE160_EUSER248_CALLSITE_AUDIT.md
+          git commit -m "Add EUSER1575 and CONE160 callsite audit"
+          git pull --rebase origin main
+          git push origin HEAD:main

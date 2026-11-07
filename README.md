@@ -26,6 +26,7 @@ See:
 - [Archive import status](docs/ARCHIVE_IMPORT_STATUS.md)
 - [Step 35 structural patch test](docs/STEP35_STRUCTURAL_PATCH_TEST.md)
 - [Step 36 EKA2 toolchain audit](docs/STEP36_EKA2_TOOLCHAIN_AUDIT.md)
+- [Step 36 native ARM build validation](docs/STEP36_NATIVE_ARM_BUILD_VALIDATION.md)
 - [Step 34 GDI108 call-boundary audit](docs/STEP34_GDI108_CALL_BOUNDARY_ARGUMENTS.md)
 - [Step 33 GDI callsite/write-watch audit](docs/STEP33_GDI_CALLSITE_PROVENANCE_AND_WATCH_FIX.md)
 - [Step 32 TFontSpec structural finding](docs/STEP32_GDI108_TFONTSPEC72.md)

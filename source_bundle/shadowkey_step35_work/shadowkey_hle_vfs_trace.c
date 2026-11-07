@@ -26,8 +26,7 @@ static uint32_t heap_next=0, heap_end=0, heap2_next=0x10230000u, heap2_end=0x103
 void shadowkey_heap_init(uint32_t begin,uint32_t end){heap_next=begin;heap_end=end;heap2_next=(end>begin)?0x10230000u:0x12000000u;heap3_next=(end>begin)?0x10400000u:0x12000000u;}
 void shadowkey_heap_extend(uint32_t end){heap_end=end;}
 static uint8_t *guest_ptr(ngage_cpu_t*c,uint32_t a,uint32_t n){
-    (void)n;
-    if(a<0x10000000u) return 0;
+    if(!c || a<0x10000000u || (uint64_t)a+n>0x12000000ull) return 0;
     return c->mem+(a-0x10000000u);
 }
 uint32_t shadowkey_heap_alloc(ngage_cpu_t*c,uint32_t size){
@@ -63,6 +62,76 @@ static uint32_t pathish_utf16_len(ngage_cpu_t*c,uint32_t data,uint32_t limit){
     if(!((a>='A'&&a<='Z')||(a>='a'&&a<='z'))||b!=':'||d!='\\')return limit;
     uint32_t n=0;while(n<limit){uint8_t*q=guest_ptr(c,data+n*2u,2u);if(!q)break;uint16_t ch=(uint16_t)q[0]|((uint16_t)q[1]<<8);if(!ch||ch<32u||ch>126u)break;n++;}return n;
 }
+
+static int guest_utf16_desc_to_ascii(ngage_cpu_t*c,uint32_t desc,char*out,size_t cap,uint32_t*chars){
+    uint32_t len=0,max=0,data=0;
+    if(!out||cap<2u||!descriptor_info(c,desc,&len,&max,&data)){if(chars)*chars=0;return 0;}
+    if(len>max)len=max;
+    if(len>cap-1u)len=(uint32_t)(cap-1u);
+    uint32_t clean=pathish_utf16_len(c,data,len);
+    for(uint32_t i=0;i<clean;i++){
+        uint8_t*p=guest_ptr(c,data+i*2u,2u);if(!p){clean=i;break;}
+        uint16_t ch=(uint16_t)p[0]|((uint16_t)p[1]<<8);
+        if(ch<32u||ch>126u){clean=i;break;}
+        out[i]=(char)ch;
+    }
+    out[clean]=0;if(chars)*chars=clean;return 1;
+}
+static void tparse_write_field(ngage_cpu_t*c,uint32_t self,unsigned field,uint8_t pos,uint8_t len,uint8_t present){
+    uint32_t a=self+8u+field*4u;uint8_t*p=guest_ptr(c,a,4u);if(!p)return;
+    p[0]=pos;p[1]=len;p[2]=present;p[3]=0;
+}
+static int tparse_set(ngage_cpu_t*c,uint32_t self,uint32_t name_desc,uint32_t related_desc,uint32_t default_desc){
+    char name[260]={0},related[260]={0},def[260]={0},full[260]={0};
+    uint32_t n=0,rn=0,dn=0;
+    if(!guest_utf16_desc_to_ascii(c,name_desc,name,sizeof(name),&n))return -6;
+    if(related_desc && !guest_utf16_desc_to_ascii(c,related_desc,related,sizeof(related),&rn))rn=0;
+    if(default_desc && !guest_utf16_desc_to_ascii(c,default_desc,def,sizeof(def),&dn))dn=0;
+    if(n && ((n>=2u&&name[1]==':') || name[0]=='\\')) snprintf(full,sizeof(full),"%s",name);
+    else {
+        const char*base=rn?related:(dn?def:"");
+        const char*slash1=strrchr(base,'\\'),*slash2=strrchr(base,'/');
+        const char*slash=slash1>slash2?slash1:slash2;
+        size_t prefix=base[0]?(slash?(size_t)(slash-base+1u):0u):0u;
+        if(prefix+n>=sizeof(full))return -9;
+        if(prefix)memcpy(full,base,prefix);
+        memcpy(full+prefix,name,n+1u);
+    }
+    size_t length=strlen(full);if(length>256u)return -9;
+    uint8_t*obj=guest_ptr(c,self,32u+512u);if(!obj)return -6;
+    wr32(c,self+4u,0u);
+    memset(obj+8u,0,16u);
+    uint32_t wild=0;size_t drive=0,path_start=0,path_end=0,name_start=0,name_end=0,ext_start=length;
+    if(length>=2u && full[1]==':'){drive=2u; tparse_write_field(c,self,0,0,2,1);}
+    path_start=drive;
+    for(size_t i=drive;i<length;i++)if(full[i]=='\\'||full[i]=='/')path_end=i+1u;
+    if(path_end>path_start)tparse_write_field(c,self,1,(uint8_t)path_start,(uint8_t)(path_end-path_start),1);
+    name_start=path_end;
+    for(size_t i=name_start;i<length;i++)if(full[i]=='.'){ext_start=i;break;}
+    name_end=ext_start;
+    if(name_end>name_start)tparse_write_field(c,self,2,(uint8_t)name_start,(uint8_t)(name_end-name_start),1);
+    if(ext_start<length)tparse_write_field(c,self,3,(uint8_t)ext_start,(uint8_t)(length-ext_start),1);
+    for(size_t i=name_start;i<name_end;i++){if(full[i]=='*')wild|=0x01u|0x04u|0x20u;else if(full[i]=='?')wild|=0x01u|0x04u|0x10u;}
+    for(size_t i=ext_start;i<length;i++){if(full[i]=='*')wild|=0x02u|0x04u|0x20u;else if(full[i]=='?')wild|=0x02u|0x04u|0x10u;}
+    if(path_end==length && length && (full[length-1]=='\\'||full[length-1]=='/'))wild|=0x08u;
+    wr32(c,self+4u,wild);
+    uint32_t buf=self+24u;wr32(c,buf,0x30000000u|(uint32_t)length);wr32(c,buf+4u,256u);
+    for(size_t i=0;i<length;i++){uint8_t*p=guest_ptr(c,buf+8u+(uint32_t)i*2u,2u);if(!p)return -6;p[0]=(uint8_t)full[i];p[1]=0;}
+    uint8_t*z=guest_ptr(c,buf+8u+(uint32_t)length*2u,2u);if(z){z[0]=0;z[1]=0;}
+    return 0;
+}
+static int vfs_host_path(ngage_cpu_t*c,uint32_t path_desc,char*out,size_t cap,char*display,size_t display_cap){
+    uint32_t chars=0;
+    if(!guest_utf16_desc_to_ascii(c,path_desc,display,display_cap,&chars))return 0;
+    const char*tail=strrchr(display,'\\');const char*slash=strrchr(display,'/');
+    if(slash && (!tail||slash>tail))tail=slash;
+    tail=tail?tail+1:display;
+    const char*root=getenv("SHADOWKEY_ASSET_ROOT");
+    if(!root||!*root)return 0;
+    int n=snprintf(out,cap,"%s/%s",root,tail);
+    return n>0 && (size_t)n<cap;
+}
+
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     fprintf(stderr,"IMPORT dll=%s ord=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x cpsr=%08x\n",dll,ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14],c->cpsr);
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u) {
@@ -184,84 +253,68 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         }
         c->r[0]=(uint32_t)-6; return;
     }
-    if(!strcmp(dll,"EFSRV[100039e4].DLL") && (ordinal==162u || ordinal==136u || ordinal==15u)){
-        fprintf(stderr,"  EFSRV probe ord=%u args:",ordinal);
-        for(unsigned ai=0;ai<4;ai++){
-            uint32_t a=c->r[ai]; fprintf(stderr," r%u=%08x",ai,a);
-            if(a>=0x10000000u && a<0x12000000u){uint8_t *q=c->mem+(a-0x10000000u);fprintf(stderr,"[%08x %08x %08x %08x]",(uint32_t)q[0]|((uint32_t)q[1]<<8)|((uint32_t)q[2]<<16)|((uint32_t)q[3]<<24),(uint32_t)q[4]|((uint32_t)q[5]<<8)|((uint32_t)q[6]<<16)|((uint32_t)q[7]<<24),(uint32_t)q[8]|((uint32_t)q[9]<<8)|((uint32_t)q[10]<<16)|((uint32_t)q[11]<<24),(uint32_t)q[12]|((uint32_t)q[13]<<8)|((uint32_t)q[14]<<16)|((uint32_t)q[15]<<24));}
-        }
-        fprintf(stderr,"\n");
-    }
-    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==121u){
-        uint32_t a=c->r[2];
-        char symbian_path[260]={0}, host_path[1024]={0};
-        uint32_t h=0,max=0,n=0;
-        if(a>=0x10000000u && a<0x12000000u){
-            uint8_t *p=c->mem+(a-0x10000000u);
-            h=(uint32_t)p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);
-            n=h&0x0fffffffu; max=(uint32_t)p[4]|((uint32_t)p[5]<<8)|((uint32_t)p[6]<<16)|((uint32_t)p[7]<<24);
-            if(n>250)n=250;
-            uint32_t clean=0;
-            for(;clean<n;clean++){uint16_t ch=(uint16_t)p[8+clean*2]|((uint16_t)p[9+clean*2]<<8);if(ch<32u||ch>126u)break;}
-            n=clean;
-            for(uint32_t i=0;i<n;i++){uint16_t ch=(uint16_t)p[8+i*2]|((uint16_t)p[9+i*2]<<8);symbian_path[i]=(char)ch;}
-            symbian_path[n]=0;
-        }
-        const char *root=getenv("SHADOWKEY_ASSET_ROOT");
-        const char *tail=strrchr(symbian_path,'\\');
-        if(!tail)tail=symbian_path;else tail++;
-        if(root && *root) snprintf(host_path,sizeof(host_path),"%s/%s",root,tail);
-        struct stat st; int exists=(host_path[0] && stat(host_path,&st)==0 && S_ISREG(st.st_mode));
-        vfile_t *vf=vfile_for(c->r[0],1);
-        if(vf && vf->fp){fclose(vf->fp);vf->fp=NULL;}
-        if(exists && vf){vf->fp=fopen(host_path,"rb");snprintf(vf->path,sizeof(vf->path),"%s",host_path);}
-        int ok=(exists && vf && vf->fp);
-        fprintf(stderr,"  VFS RFile::Open path='%s' -> '%s' %s size=%lld mode=%08x obj=%08x\n",symbian_path,host_path,ok?"OPENED":"MISSING/FAILED",ok?(long long)st.st_size:0LL,c->r[3],c->r[0]);
-        c->r[0]=ok?0u:(uint32_t)-1; return;
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==230u){
+        uint32_t self=c->r[0];uint8_t*p=guest_ptr(c,self,544u);
+        if(!p){c->r[0]=(uint32_t)-6;return;}
+        wr32(c,self+4u,0u);memset(p+8u,0,16u);
+        wr32(c,self+24u,0x30000000u);wr32(c,self+28u,256u);
+        memset(p+32u,0,512u);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==185u){
-        /* Call-site ABI identifies RFile::Size(TInt&): r0=file handle,
-           r1=output TInt*. SDK docs define the output as file size; the
-           FP1 ordinal/name pairing is still awaiting an export-table check. */
-        vfile_t *vf=vfile_for(c->r[0],0);
-        uint32_t out=c->r[1];
-        if(!vf || !vf->fp || out<0x10000000u || out>=0x12000000u){
-            c->r[0]=(uint32_t)-1;
-            fprintf(stderr,"  VFS RFile::Size failed handle=%08x out=%08x\n",c->r[0],out);
-            return;
-        }
-        long current=ftell(vf->fp);
-        if(current<0 || fseek(vf->fp,0,SEEK_END)!=0){
-            c->r[0]=(uint32_t)-6; return;
-        }
-        long size=ftell(vf->fp);
-        int restore=(current<0)?-1:fseek(vf->fp,current,SEEK_SET);
-        if(size<0 || restore!=0 || size>0x7fffffffL){c->r[0]=(uint32_t)-6;return;}
-        wr32(c,out,(uint32_t)size);
-        c->r[0]=0;
-        fprintf(stderr,"  VFS RFile::Size wrote %ld to %08x for %s\n",size,out,vf->path);
+        int rc=tparse_set(c,c->r[0],c->r[1],c->r[2],c->r[3]);
+        c->r[0]=(uint32_t)rc;
+        fprintf(stderr,"  HLE SDK EFSRV185 TParse::Set this=%08x name=%08x related=%08x default=%08x rc=%d\\n",c->r[0],c->r[1],c->r[2],c->r[3],rc);
         return;
+    }
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==121u){
+        uint32_t self=c->r[0];uint8_t*p=guest_ptr(c,self+18u,1u);
+        c->r[0]=(p&&*p)?1u:0u;
+        fprintf(stderr,"  HLE SDK EFSRV121 TParseBase::NamePresent this=%08x -> %u\\n",self,c->r[0]);return;
+    }
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==146u){
+        uint32_t self=c->r[0];uint8_t*p=guest_ptr(c,self+14u,1u);
+        c->r[0]=(p&&*p)?1u:0u;
+        fprintf(stderr,"  HLE SDK EFSRV146 TParseBase::PathPresent this=%08x -> %u\\n",self,c->r[0]);return;
+    }
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==86u){
+        uint32_t self=c->r[0];c->r[0]=(rd32(c,self+4u)&0x02u)?1u:0u;
+        fprintf(stderr,"  HLE SDK EFSRV86 TParseBase::IsExtWild this=%08x -> %u\\n",self,c->r[0]);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==162u){
-        vfile_t *vf=vfile_for(c->r[0],0);
-        if(vf && vf->fp){ long off=0; if(c->r[2]>=0x10000000u && c->r[2]<0x12000000u) off=(long)ngage_r32(c,c->r[2]); int whence=(c->r[1]==1u)?SEEK_SET:(c->r[1]==2u)?SEEK_CUR:SEEK_END; int rc=fseek(vf->fp,off,whence); long now=ftell(vf->fp); if(c->r[2]>=0x10000000u && c->r[2]<0x12000000u && now>=0){uint32_t a=c->r[2];uint8_t*p=c->mem+(a-0x10000000u);uint32_t v=(uint32_t)now;p[0]=v;p[1]=v>>8;p[2]=v>>16;p[3]=v>>24;} c->r[0]=rc?((uint32_t)-6):0u; }
-        else c->r[0]=(uint32_t)-1;
-        fprintf(stderr,"  VFS EFSRV ordinal 162 seek mode=%u offset=%ld result=%d\n",c->r[1],(long)(c->r[2]>=0x10000000u&&c->r[2]<0x12000000u?ngage_r32(c,c->r[2]):0),(int32_t)c->r[0]); return;
-    }
-    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==136u){
-        vfile_t *vf=vfile_for(c->r[0],0); uint32_t desc=c->r[1],len=c->r[2],data=0,max=0,cur=0; uint8_t *dp=NULL;
-        uint32_t dtype=0;
-        if(desc>=0x10000000u && desc<0x12000000u){uint8_t*p=c->mem+(desc-0x10000000u);uint32_t h=(uint32_t)p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);dtype=h>>28;cur=h&0x0fffffffu;data=(uint32_t)p[4]|((uint32_t)p[5]<<8)|((uint32_t)p[6]<<16)|((uint32_t)p[7]<<24);max=(uint32_t)p[8]|((uint32_t)p[9]<<8)|((uint32_t)p[10]<<16)|((uint32_t)p[11]<<24);if(dtype==2u && data>=0x10000000u && data<0x12000000u && max<0x200000u)dp=c->mem+(data-0x10000000u);}
-        /* A zero-length request on the inline TBuf path is a metadata call, not a data read. */
-        if(vf && vf->fp && len==0u){c->r[0]=0;fprintf(stderr,"  VFS EFSRV ordinal 136 zero-length metadata call desc=%08x type=%u\n",desc,dtype);return;}
-        if(vf && vf->fp && dp){if(len>max)len=max;size_t got=fread(dp,1,len,vf->fp);if(got && ngage_runtime_note_bitmap_host_write) ngage_runtime_note_bitmap_host_write(c,data,0,(uint32_t)got,3u,0u);uint32_t h=0x20000000u|(uint32_t)got;uint8_t*p=c->mem+(desc-0x10000000u);p[0]=h;p[1]=h>>8;p[2]=h>>16;p[3]=h>>24;c->r[0]=0;fprintf(stderr,"  VFS EFSRV ordinal 136 read %zu/%u bytes from %s into data=%08x descriptor=%08x max=%u\n",got,len,vf->path,data,desc,max);}
-        else {c->r[0]=(uint32_t)-1;fprintf(stderr,"  VFS EFSRV ordinal 136 read failed file=%08x desc=%08x type/ptr/max invalid len=%u\n",c->r[0],desc,len);}
+        uint32_t path_desc=c->r[1],offset=c->r[2],out_desc=c->r[3];
+        uint32_t out_len=0,out_max=0,out_data=0;
+        char display[520]={0},host_path[1024]={0};
+        uint32_t requested=rd32(c,c->r[13]);
+        if(!descriptor_info(c,out_desc,&out_len,&out_max,&out_data) ||
+           ((rd32(c,out_desc)>>28)!=2u && (rd32(c,out_desc)>>28)!=3u) ||
+           !vfs_host_path(c,path_desc,host_path,sizeof(host_path),display,sizeof(display))){
+            c->r[0]=(uint32_t)-6;
+            fprintf(stderr,"  HALT SDK EFSRV162 RFs::ReadFileSection invalid args pathDesc=%08x offset=%08x outDesc=%08x len=%u\\n",path_desc,offset,out_desc,requested);return;
+        }
+        if(requested>out_max){c->r[0]=(uint32_t)-9;fprintf(stderr,"  EFSRV162 overflow requested=%u max=%u path=%s\\n",requested,out_max,display);return;}
+        uint8_t*dest=guest_ptr(c,out_data,requested);
+        if(!dest){c->r[0]=(uint32_t)-6;return;}
+        FILE*fp=fopen(host_path,"rb");
+        if(!fp){c->r[0]=(uint32_t)-1;fprintf(stderr,"  EFSRV162 missing file path='%s' host='%s'\\n",display,host_path);return;}
+        if(fseek(fp,(long)offset,SEEK_SET)!=0){fclose(fp);c->r[0]=(uint32_t)-6;return;}
+        size_t got=requested?fread(dest,1u,requested,fp):0u;fclose(fp);
+        wr32(c,out_desc,(rd32(c,out_desc)&0xf0000000u)|(uint32_t)got);
+        c->r[0]=0;
+        fprintf(stderr,"  HLE SDK EFSRV162 RFs::ReadFileSection path='%s' offset=%u requested=%u got=%zu out=%08x data=%08x max=%u\\n",display,offset,requested,got,out_desc,out_data,out_max);
         return;
+    }
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==18u){
+        uint32_t self=c->r[0],index=c->r[1],array=rd32(c,self+4u);
+        fprintf(stderr,"  HALT SDK EFSRV18 CDir::operator[] this=%08x index=%u iArray=%08x",self,index,array);
+        if(array>=0x10000000u && array<0x12000000u)
+            fprintf(stderr," count=%u gran=%u rep=%08x base=%08x cacheIndex=%u cacheOffset=%u",
+                    rd32(c,array+4u),rd32(c,array+8u),rd32(c,array+12u),rd32(c,array+16u),rd32(c,array+20u),rd32(c,array+24u));
+        fputc('\\n',stderr);exit(95);
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==15u){
         vfile_t *vf=vfile_for(c->r[0],0);
-        if(vf && vf->fp){fprintf(stderr,"  VFS EFSRV ordinal 15 close %s (preserve r0=%08x; Close is void)\n",vf->path,c->r[0]);fclose(vf->fp);vf->fp=NULL;vf->object=0;}
-        return;
+        if(vf && vf->fp){fclose(vf->fp);vf->fp=NULL;vf->object=0;}
+        fprintf(stderr,"  HLE SDK EFSRV15 CFileBase destructor this=%08x\\n",c->r[0]);return;
     }
     if (!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==89u || ordinal==1359u || ordinal==35u || ordinal==90u)) { uint32_t a=c->r[0]; if(a>=0x10000000u && a<0x12000000u){uint8_t *p=c->mem+(a-0x10000000u); fprintf(stderr,"  MEM r0: %08x %08x %08x %08x %08x %08x\n",*(uint32_t*)(p),*(uint32_t*)(p+4),*(uint32_t*)(p+8),*(uint32_t*)(p+12),*(uint32_t*)(p+16),*(uint32_t*)(p+20));}}
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && (ordinal==315u || ordinal==317u)){

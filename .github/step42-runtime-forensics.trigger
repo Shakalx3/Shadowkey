@@ -19,3 +19,4 @@ fix-imgdec-audit-path
 capture-resource-index-and-palette
 verify-global-spr-resource
 fix-global-spr-path
+trace-resource-loader

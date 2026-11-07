@@ -52,5 +52,5 @@ for rel in ["diagnostics/step26/live_font_name_descriptor_trace.log",
     for i in ix[:20]:
         out += ["LOG BEGIN", *log[max(0, i-2):min(len(log), i+4)], "LOG END", ""]
 REPORT.parent.mkdir(parents=True, exist_ok=True)
-REPORT.write_text("\\n".join(out) + "\\n")
+REPORT.write_text("\n".join(out) + "\n")
 print(f"Wrote {REPORT}: {len(hits)} static callsites")

@@ -93,7 +93,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/STEP42_EUSER1575_CONE160_RUNTIME_FORENSICS.md
-          git commit -m "Record EUSER1575 and CONE160 runtime evidence"
+          mkdir -p docs/diagnostics
+          cp source_bundle/shadowkey_step35_work/.build/live_run_bitmap.png docs/diagnostics/live_run_framebuffer.png
+          git add docs/STEP42_EUSER1575_CONE160_RUNTIME_FORENSICS.md docs/diagnostics/live_run_framebuffer.png
+          git commit -m "Record EUSER1575 and CONE160 runtime evidence and framebuffer"
           git pull --rebase origin main
           git push origin HEAD:main

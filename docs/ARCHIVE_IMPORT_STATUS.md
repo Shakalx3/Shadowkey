@@ -1,51 +1,52 @@
-# Step 35 archive intake and GitHub import status
+# Archive intake and repository status
 
-Date: 2026-11-07 (updated during step 37)
+Updated: 2026-11-07
 
-## Source archive verified
+## Repository state checked in this run
 
-File supplied in the conversation:
+- Repository: https://github.com/Shakalx3/Shadowkey
+- Visibility: private.
+- Default branch: `main`.
+- Connected GitHub permissions: admin, maintain, pull, push, triage.
+- Current `main` HEAD at inspection: `fe7c0768f7935e80f2b786e73150ece15cb8fd3d`.
+
+## Source archive
+
+The complete ZIP is present at the repository root:
 
 `shadowkey_recomp_bundle_v8_4_step35_direct_binary_patch_path.zip`
 
-- Size: 23,492,696 bytes (about 22.4 MiB).
-- SHA-256: `6b263d86210eff452f2c00cd099ed9cac475bbca6bff9f60782b41c61263384d`.
-- ZIP entries: 2,191.
-- Uncompressed size: 112,885,393 bytes (about 107.7 MiB).
-- Root directory: `shadowkey_step35_work/`.
+Git tree metadata reports:
+- Size: 23,492,696 bytes.
+- Git blob SHA-1: `5e6863df8eca94643636f31ca273489c145514b2`.
 
-The digest exactly matches the recorded step35 archive digest. The archive is readable and its directory inventory was inspected in the current working session.
+The previously recorded source SHA-256 is:
+`6b263d86210eff452f2c00cd099ed9cac475bbca6bff9f60782b41c61263384d`.
 
-## Destination repository
+A prior session reported that this SHA-256 matched the original attached archive and that the Git blob SHA-1 matched the uploaded bytes. In the current execution, GitHub metadata confirms the file and blob identity, but the connector does not return the content of this 23.5 MB binary blob (the file-content response is empty). The current run therefore has **not independently recomputed** the SHA-256 or extracted/tested the ZIP.
 
-Destination: https://github.com/Shakalx3/Shadowkey
+## Existing verified technical baseline
 
-The repository has been verified as **private**. The connected GitHub account has read, push and admin permissions. Technical reports and project-authored research utilities can be committed directly.
+The preceding step35–37 reports remain the last executed test evidence:
+- old-E32 structural patch test: PASS (format rewrite only);
+- host test suite: PASS (explicit assertions only; several HLE imports remain unimplemented);
+- ARM11 core build: PASS (ELF32 ARM EABI relocatable object);
+- ARM11 link checks: PASS after the recorded shell invocation portability correction (static ELF, not Symbian E32).
 
-## Binary archive transfer status
+These results are not repeated as fresh tests in this run because the archive bytes are not currently accessible to the execution environment.
 
-The complete ZIP is **not yet present in GitHub**. The GitHub connector available to this session exposes text-file and Git-object operations but no binary upload operation from the working container. No upload is claimed.
+## Immediate execution blocker
 
-The archive is 23,492,696 bytes, below GitHub's documented 25 MiB web-upload limit for a single file. The owner can add it through the repository page using **Add file → Upload files** and commit it, for example at:
+The GitHub connector can read/write repository text and inspect Git trees and blob metadata, but it does not expose a binary download path for this 23.5 MB repository blob. The current container has no mounted copy of the ZIP. Consequently the source archive cannot be extracted or its scripts rerun in this execution.
 
-`archive/shadowkey_recomp_bundle_v8_4_step35_direct_binary_patch_path.zip`
+To resume source-level experiments, provide the ZIP as a conversation attachment in the active run or make a binary-download-capable GitHub/working-directory path available. Do not infer source contents from the ZIP filename, Git blob SHA, or prior reports.
 
-After upload, verify the SHA-256 against the value above. Do not rename or repackage it before verification.
+## Technical next gate once the archive is available
 
-## Work completed while archive transfer is pending
+1. Inspect the archive's actual file inventory and read the step35 patch-path report, README, and native-port status from the archive itself.
+2. Re-run the structural patch and host tests against the exact archive; record command lines and fresh output.
+3. Continue the EKA2 ARMv6 toolchain experiment only after obtaining the SDK and validating its release digest.
+4. Obtain exact N95 RM-320 / S60 3rd FP1 exports or matching firmware/SDK DEF data. Resolve EUSER, EFSRV, CONE, FBSCLI, GDI, WS32, EIKCORE and AVKON imports against the target rather than assuming newer firmware ordinal compatibility.
+5. Do not treat a generated ELF or generic E32 as N95-compatible without inspecting E32 metadata, imports, capabilities and loader acceptance.
 
-- Step 35 archive test and host test-suite results were retained in the repository's technical reports.
-- Step 37 re-ran the ARM ELF link checks from a clean executable-permission state.
-- A portability correction was prepared for the two ARM build scripts that previously relied on an executable bit for `build_arm11_core.sh`.
-- Step 37 audited the current EKA2/ARMv6 toolchain candidate against the target RM-320 and found no published N95 firmware test evidence.
-
-See [Step 37 EKA2 target-compatibility audit](STEP37_EKA2_TOOLCHAIN_TARGET_COMPATIBILITY.md) and [Step 37 build-script patch](../patches/STEP37_BUILD_SCRIPT_PORTABILITY.patch).
-
-## Validation boundaries
-
-Passing the archive tests and ARM ELF link checks does not establish:
-- a valid Symbian EKA2 E32 image;
-- compatibility with the exact N95 RM-320 ROM export tables;
-- a real Symbian startup/runtime;
-- working graphics, fonts, audio, input or filesystem behavior on the handset;
-- a successful launch on physical hardware.
+No physical N95 launch is claimed.

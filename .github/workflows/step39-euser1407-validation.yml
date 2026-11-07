@@ -23,7 +23,7 @@ jobs:
         run: |
           set -euo pipefail
           cd source_bundle/shadowkey_step35_work
-          bash build_and_test.sh > /tmp/step40_build.log 2>&1
+          bash build_and_test.sh > /tmp/step40_build.log 2>&1 || { tail -n 100 /tmp/step40_build.log; exit 1; }
           tail -n 45 /tmp/step40_build.log
       - name: Run live VFS trace with downstream GDI probes only
         shell: bash

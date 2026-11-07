@@ -19,9 +19,21 @@ jobs:
           fetch-depth: 0
       - name: Fetch original N-Gage SDK DLLs
         run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          src=Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c").read_text()
+          dlls=sorted(set(x.lower() for x in re.findall(r'"([A-Z0-9]+)\\[',src)))
+          base="6.1/Series60/Epoc32/Release/"
+          paths=[base+"wins/udeb/"+d+".lib" for d in dlls]
+          paths += [base+"wins/urel/"+d+".dll" for d in ("efsrv","euser","cone","gdi")]
+          paths += [base+"armi/urel/"+d+".lib" for d in ("efsrv","euser","cone","gdi")]
+          Path("/tmp/sdk_sparse_paths").write_text("\\n".join(paths)+"\\n")
+          print("\\n".join(paths))
+          PY
           git clone --depth 1 --filter=blob:none --sparse https://github.com/ngagesdk/sdk.git /tmp/ngagesdk-sdk
           cd /tmp/ngagesdk-sdk
-          git sparse-checkout set 6.1/Series60/Epoc32/Release/wins/urel 6.1/Series60/Epoc32/Release/wins/udeb 6.1/Series60/Epoc32/Release/armi/urel
+          xargs git sparse-checkout set < /tmp/sdk_sparse_paths
       - name: Parse original Symbian 6.1 exports
         run: python3 tools/step44_symbian61_export_audit.py /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel
       - name: Commit ordinal map

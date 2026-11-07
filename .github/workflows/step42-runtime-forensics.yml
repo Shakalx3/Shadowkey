@@ -46,10 +46,9 @@ jobs:
               lines=body.splitlines()
               print(f"Function sub_1006a488: {len(lines)} source lines")
               for i,line in enumerate(lines,1):
-                  if i<=180:
-                      print(f"{i}: {line}")
+                  print(f"{i}: {line}")
           PY
-          grep -E "BITMAP CPU WRITE|BITMAP HOST WRITE|EUSER1575 FORENSIC|TRACE EUSER1575|CONE160 FORENSIC|TRACE CONE160|HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import: (EUSER.*(1575|248)|CONE.*160)" .build/live_hal_vfs_trace.log > /tmp/step42_trace_excerpt.log || true
+          grep -E "IMGDEC ENTER|IMGDEC stack|IMGDEC EXIT|BITMAP CPU WRITE|BITMAP HOST WRITE|EUSER1575 FORENSIC|TRACE EUSER1575|CONE160 FORENSIC|TRACE CONE160|HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import: (EUSER.*(1575|248)|CONE.*160)" .build/live_hal_vfs_trace.log > /tmp/step42_trace_excerpt.log || true
       - name: Upload actual framebuffer capture
         uses: actions/upload-artifact@v4
         with:

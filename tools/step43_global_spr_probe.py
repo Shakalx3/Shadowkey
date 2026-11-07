@@ -7,6 +7,10 @@ p=root/"global.spr"
 data=p.read_bytes()
 offset=0x9444
 print(f"global.spr size={len(data)} bytes")
+print("file prefix="+data[:64].hex(" "))
+sig=bytes.fromhex("b0 00 d0 00 01 0c 01 0b 11 0f 01 0b")
+print(f"runtime signature positions={[hex(i) for i in range(len(data)) if data.startswith(sig,i)][:20]}")
+print(f"dimension-only positions={[hex(i) for i in range(len(data)) if data.startswith(bytes.fromhex('b0 00 d0 00'),i)][:20]}")
 print(f"resource[0xF8] candidate offset=0x{offset:x}")
 if offset+0x204>len(data):
     raise SystemExit("candidate resource header exceeds file")

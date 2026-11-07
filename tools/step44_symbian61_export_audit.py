@@ -77,36 +77,44 @@ report.parent.mkdir(parents=True,exist_ok=True)
 report.write_text("\n".join(out)+"\n")
 
 symptoms=("TDes","TBuf","HBuf","CFont","TFont","CGraphicsContext","CCoeControl","RFile","RFs","TParse","TPoint","TSize","Format","Copy","SetLength")
-# Compare debug WINS DLLs and import libraries, which may retain decorated names.
+# Decode COFF short-import members: they carry the ordinal and decorated C++ symbol.
+def parse_coff_import_lib(path):
+    data=Path(path).read_bytes()
+    if not data.startswith(b"!<arch>\\n"):
+        return []
+    records=[]
+    pos=8
+    while pos+60<=len(data):
+        header=data[pos:pos+60]
+        try: size=int(header[48:58].decode("ascii").strip())
+        except Exception: break
+        obj=data[pos+60:pos+60+size]
+        if len(obj)>=20 and u16(obj,0)==0 and u16(obj,2)==0xffff:
+            version=u16(obj,4); machine=u16(obj,6); data_size=u32(obj,12)
+            ordinal_or_hint=u16(obj,16); type_info=u16(obj,18)
+            name_type=(type_info>>2)&0x7
+            strings=obj[20:20+data_size].split(b"\\0")
+            symbol=strings[0].decode("ascii","replace") if strings else ""
+            dllname=strings[1].decode("ascii","replace") if len(strings)>1 else ""
+            records.append({"ordinal":ordinal_or_hint if name_type==0 else None,
+                            "name_type":name_type,"symbol":symbol,"dll":dllname,
+                            "machine":machine,"version":version})
+        pos += 60+size+(size&1)
+    return records
+
 debugroot=root.parent/"udeb"
-out += ["## WINS UDEB export and import-library scan",""]
+out += ["## WINS UDEB COFF import-library ordinal map","",
+        "The short-import records are parsed directly. NameType=0 means the 16-bit field is an export ordinal.",""]
 for dll,ordinals in TARGETS.items():
-    debugdll=debugroot/f"{dll}.dll"
-    if debugdll.exists():
-        try:
-            base,nf,nn,items=parse_exports(debugdll)
-            out += [f"### {dll.upper()}.DLL (UDEB)","",
-                    f"- Export ordinal base: {base}; functions: {nf}; named exports: {nn}",
-                    "| Ordinal | Export name | RVA |","|---:|---|---:|"]
-            for ordinal in ordinals:
-                name,rva=items[ordinal]
-                out.append(f"| {ordinal} | {name} | 0x{rva:08x} |")
-            out.append("")
-        except Exception as exc:
-            out.append(f"- UDEB DLL parse failed: {exc}")
-    debuglib=debugroot/f"{dll}.lib"
-    if debuglib.exists():
-        kind=subprocess.run(["file",str(debuglib)],capture_output=True,text=True,check=False)
-        nm=subprocess.run(["nm","-A","-C",str(debuglib)],capture_output=True,text=True,check=False)
-        strs=subprocess.run(["strings","-a",str(debuglib)],capture_output=True,text=True,check=False)
-        matches=[x for x in (nm.stdout+ "\\n"+strs.stdout).splitlines()
-                 if any(t.lower() in x.lower() for t in symptoms)]
-        out += [f"### {dll.upper()}.LIB (WINS UDEB)","",
-                f"- file(1): {kind.stdout.strip()}",
-                f"- nm exit={nm.returncode}; nm lines={len(nm.stdout.splitlines())}; stderr={nm.stderr.strip()[:300]}",
-                f"- strings lines={len(strs.stdout.splitlines())}; relevant matches={len(matches)}",""]
-        out.extend(f"  - {x}" for x in matches[:160])
-        out.append("")
+    lib=debugroot/f"{dll}.lib"
+    records=parse_coff_import_lib(lib) if lib.exists() else []
+    out += [f"### {dll.upper()}.LIB","",
+            f"- Import-object records: {len(records)}"]
+    for ordinal in ordinals:
+        names=sorted(set(r["symbol"] for r in records if r["ordinal"]==ordinal))
+        types=sorted(set(r["name_type"] for r in records if r["ordinal"]==ordinal))
+        out.append(f"- Ordinal {ordinal}: {', '.join(names) if names else '<no ordinal import record>'}; NameType={types}")
+    out.append("")
 
 # Inspect ARM import libraries for C++ symbol names that WINS DLLs omit.
 import subprocess

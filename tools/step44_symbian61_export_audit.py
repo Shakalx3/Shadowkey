@@ -80,7 +80,7 @@ symptoms=("TDes","TBuf","HBuf","CFont","TFont","CGraphicsContext","CCoeControl",
 # Decode COFF short-import members: they carry the ordinal and decorated C++ symbol.
 def parse_coff_import_lib(path):
     data=Path(path).read_bytes()
-    if not data.startswith(b"!<arch>\\n"):
+    if not data.startswith(b"!<arch>\n"):
         return []
     records=[]
     pos=8
@@ -93,7 +93,7 @@ def parse_coff_import_lib(path):
             version=u16(obj,4); machine=u16(obj,6); data_size=u32(obj,12)
             ordinal_or_hint=u16(obj,16); type_info=u16(obj,18)
             name_type=(type_info>>2)&0x7
-            strings=obj[20:20+data_size].split(b"\\0")
+            strings=obj[20:20+data_size].split(b"\0")
             symbol=strings[0].decode("ascii","replace") if strings else ""
             dllname=strings[1].decode("ascii","replace") if len(strings)>1 else ""
             records.append({"ordinal":ordinal_or_hint if name_type==0 else None,
@@ -143,5 +143,5 @@ for dll in ("efsrv","euser","cone","gdi"):
     except Exception as exc:
         out.append(f"- nm scan failed: {exc}")
     out.append("")
-report.write_text("\\n".join(out)+"\\n")
-print("\\n".join(out))
+report.write_text("\n".join(out)+"\n")
+print("\n".join(out))

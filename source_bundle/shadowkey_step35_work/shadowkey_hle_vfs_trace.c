@@ -126,9 +126,9 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         trace_guest_bytes(c,"EUSER1575 arg0/out-candidate PRE",c->r[0],16u);
         if(c->r[1]>=0x10000010u && c->r[1]<0x12000000u) {
             trace_guest_bytes(c,"EUSER1575 arg1 object fields around +310",c->r[1]-16u,0x70u);
-            uint32_t p=ngage_r32(c,c->r[1]);
+            uint32_t p=ngage_r32(c,c->r[1]-16u);
             if(p>=0x10000000u && p<0x12000000u)
-                trace_guest_bytes(c,"EUSER1575 arg1 first-word pointee",p,0x50u);
+                trace_guest_bytes(c,"EUSER1575 object[-0x10] buffer pointer",p,0x80u);
         }
         if(c->r[2]>=0x10000000u && c->r[2]<0x12000000u)
             trace_guest_bytes(c,"EUSER1575 arg2 pointee",c->r[2],0x30u);

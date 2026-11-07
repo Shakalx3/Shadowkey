@@ -27,7 +27,7 @@ static uint8_t *ptr(ngage_cpu_t*c,uint32_t a,size_t n){
 void ngage_runtime_watch_range(uint32_t lo,uint32_t size){watch_lo=lo;watch_hi=lo+size;fprintf(stderr,"WATCH RANGE armed %08x..%08x\n",watch_lo,watch_hi);}
 void ngage_runtime_watch_bitmap_range(uint32_t lo,uint32_t size){
  bitmap_watch_lo=lo;bitmap_watch_hi=lo+size;bitmap_guest_write_count=0;bitmap_sample_count=0;
- fprintf(stderr,"BITMAP CPU WRITE WATCH armed %08x..%08x (%u bytes)\\n",lo,lo+size,size);
+ fprintf(stderr,"BITMAP CPU WRITE WATCH armed %08x..%08x (%u bytes)\n",lo,lo+size,size);
 }
 static void bitmap_write_note(ngage_cpu_t*c,uint32_t a,uint32_t v,uint8_t width){
  if(!bitmap_watch_hi || a>=bitmap_watch_hi || (uint64_t)a+width<=bitmap_watch_lo)return;
@@ -42,9 +42,9 @@ static void bitmap_write_note(ngage_cpu_t*c,uint32_t a,uint32_t v,uint8_t width)
  }
 }
 void ngage_runtime_report_bitmap_writes(void){
- fprintf(stderr,"BITMAP CPU WRITE WATCH result: guest_store_ops=%u samples=%u\\n",bitmap_guest_write_count,bitmap_sample_count);
+ fprintf(stderr,"BITMAP CPU WRITE WATCH result: guest_store_ops=%u samples=%u\n",bitmap_guest_write_count,bitmap_sample_count);
  for(uint32_t i=0;i<bitmap_sample_count;i++)
-  fprintf(stderr,"BITMAP CPU WRITE sample[%u] width=%u addr=%08x value=%08x lr=%08x sp=%08x\\n",
+  fprintf(stderr,"BITMAP CPU WRITE sample[%u] width=%u addr=%08x value=%08x lr=%08x sp=%08x\n",
    i,bitmap_samples[i].width,bitmap_samples[i].addr,bitmap_samples[i].value,bitmap_samples[i].lr,bitmap_samples[i].sp);
 }
 uint32_t ngage_r32(ngage_cpu_t*c,uint32_t a){uint8_t*p=ptr(c,a,4);uint32_t v=p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);if(watch_hi&&a<watch_hi&&(uint64_t)a+4u>watch_lo)fprintf(stderr,"WATCH RANGE READ32 addr=%08x value=%08x lr=%08x sp=%08x\n",a,v,c->r[14],c->r[13]);if(a==0x10125c44u)fprintf(stderr,"WATCH source+14a3c READ value=%08x\n",v);return v;}

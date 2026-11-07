@@ -12,3 +12,4 @@ retry-safe-report-commit
 map-all-19-dll-imports
 fix-dynamic-sparse-checkout
 correct-python-escape-sequences
+sparse-file-paths-skip-checks

@@ -13,3 +13,4 @@ map-all-19-dll-imports
 fix-dynamic-sparse-checkout
 correct-python-escape-sequences
 sparse-file-paths-skip-checks
+fix-re-import

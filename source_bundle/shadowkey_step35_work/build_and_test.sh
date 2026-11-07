@@ -42,9 +42,9 @@ $CC -o "$BUILD/step23_drawtext_abi_test" "$BUILD/step23_drawtext_abi_test.o" "$B
 $CC $CFLAGS -c shadowkey_step28_euser711_tpoint_test.c -o "$BUILD/step28_euser711_tpoint_test.o"
 $CC -o "$BUILD/step28_euser711_tpoint_test" "$BUILD/step28_euser711_tpoint_test.o" "$BUILD/shadowkey_hle_vfs_trace.o" "$BUILD/shadowkey_bitgdi_hle.o" "$BUILD/shadowkey_fbs_hle.o" "$BUILD/shadowkey_cone_gc_hle.o"
 "$BUILD/step28_euser711_tpoint_test"
-$CC $CFLAGS -c shadowkey_step39_euser1407_test.c -o "$BUILD/step39_euser1407_test.o"
-$CC -o "$BUILD/step39_euser1407_test" "$BUILD/step39_euser1407_test.o" "$BUILD/shadowkey_hle.o" "$BUILD/shadowkey_bitgdi_hle.o" "$BUILD/shadowkey_fbs_hle.o"
-"$BUILD/step39_euser1407_test"
+$CC $CFLAGS -c shadowkey_step45_sdk_identity_test.c -o "$BUILD/step45_sdk_identity_test.o"
+$CC -o "$BUILD/step45_sdk_identity_test" "$BUILD/step45_sdk_identity_test.o"
+"$BUILD/step45_sdk_identity_test"
 bash shadowkey_arm_shift_test.sh
 python3 shadowkey_step29_shift_operand_audit.py
 bash shadowkey_step30_point_import_test.sh

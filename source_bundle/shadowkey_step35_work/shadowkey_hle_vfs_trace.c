@@ -19,6 +19,7 @@ static vfile_t *vfile_for(uint32_t object, int create){
     if(create && empty){empty->object=object;return empty;} return NULL;
 }
 extern uint32_t ngage_r32(ngage_cpu_t *, uint32_t);
+extern void ngage_runtime_note_bitmap_host_write(ngage_cpu_t*,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t) __attribute__((weak));
 extern void ngage_runtime_watch_range(uint32_t,uint32_t) __attribute__((weak));
 static uint32_t heap_next=0, heap_end=0, heap2_next=0x10230000u, heap2_end=0x10300000u, heap3_next=0x10400000u, heap3_end=0x12000000u;
 void shadowkey_heap_init(uint32_t begin,uint32_t end){heap_next=begin;heap_end=end;heap2_next=(end>begin)?0x10230000u:0x12000000u;heap3_next=(end>begin)?0x10400000u:0x12000000u;}
@@ -326,6 +327,7 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         uint8_t *p=guest_ptr(c,dst,n);
         if(n && !p){c->r[0]=(uint32_t)-6;return;}
         if(n) memset(p,0,n);
+        if(n && ngage_runtime_note_bitmap_host_write) ngage_runtime_note_bitmap_host_write(c,dst,0,n,1u,0u);
         c->r[0]=dst;
         fprintf(stderr,"  HLE EUSER1431 zero-fill dst=%08x length=%u\n",dst,n);
         return;
@@ -342,6 +344,7 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(n && !p){c->r[0]=(uint32_t)-6;return;}
         if(n && dst<=0x10125c44u && (uint64_t)dst+n>0x10125c44u) fprintf(stderr,"WATCH source+14a3c bulk memset dst=%08x length=%u value=%02x\n",dst,n,(uint8_t)c->r[1]);
         if(n) memset(p,(uint8_t)c->r[1],n);
+        if(n && ngage_runtime_note_bitmap_host_write) ngage_runtime_note_bitmap_host_write(c,dst,0,n,1u,c->r[1]&0xffu);
         c->r[0]=dst;
         fprintf(stderr,"  HLE memset dst=%08x value=%02x length=%u\n",dst,(uint8_t)c->r[1],n);
         return;
@@ -494,6 +497,7 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(n>0x100000u || dst<0x10000000u || src<0x10000000u ||
            (uint64_t)dst+n>0x12000000ull || (uint64_t)src+n>0x12000000ull){c->r[0]=(uint32_t)-6;return;}
         if(n && dst<=0x10125c44u && (uint64_t)dst+n>0x10125c44u) fprintf(stderr,"WATCH source+14a3c bulk memcpy dst=%08x src=%08x length=%u\n",dst,src,n);
+        if(ngage_runtime_note_bitmap_host_write) ngage_runtime_note_bitmap_host_write(c,dst,src,n,2u,0u);
         memmove(c->mem+(dst-0x10000000u),c->mem+(src-0x10000000u),n);
         c->r[0]=dst; return;
     }

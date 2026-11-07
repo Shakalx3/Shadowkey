@@ -3,9 +3,11 @@ on:
   push:
     branches: [main]
     paths:
-      - "source_bundle/shadowkey_step35_work/shadowkey_hle_vfs_trace.c"
       - ".github/step42-runtime-forensics.trigger"
   workflow_dispatch:
+concurrency:
+  group: shadowkey-step42-runtime-forensics
+  cancel-in-progress: true
 permissions:
   contents: write
 jobs:

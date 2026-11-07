@@ -86,11 +86,20 @@ for dll in ("efsrv","euser","cone","gdi"):
     lib=libroot/f"{dll}.lib"
     out += [f"### {dll.upper()}.LIB","",f"- File: {lib} ({lib.stat().st_size} bytes)"]
     try:
-        nm=subprocess.run(["nm","-A","-C",str(lib)],capture_output=True,text=True,check=False).stdout.splitlines()
-        matches=[line for line in nm if any(token.lower() in line.lower() for token in symptoms)]
-        out += [f"- nm lines: {len(nm)}; symbol-name matches: {len(matches)}",""]
+        kind=subprocess.run(["file",str(lib)],capture_output=True,text=True,check=False)
+        out.append(f"- file(1): {kind.stdout.strip()} {kind.stderr.strip()}")
+        nm=subprocess.run(["nm","-A","-C",str(lib)],capture_output=True,text=True,check=False)
+        nmlines=nm.stdout.splitlines()
+        out.append(f"- nm exit={nm.returncode}; stdout lines={len(nmlines)}; stderr={nm.stderr.strip()[:500]}")
+        matches=[line for line in nmlines if any(token.lower() in line.lower() for token in symptoms)]
+        out += [f"- nm symbol-name matches: {len(matches)}",""]
         out.extend(f"  - {line}" for line in matches[:120])
-        if not matches: out.append("  - No matching C++ names emitted by nm")
+        strings=subprocess.run(["strings","-a",str(lib)],capture_output=True,text=True,check=False)
+        strlines=strings.stdout.splitlines()
+        smatches=[line for line in strlines if any(token.lower() in line.lower() for token in symptoms)]
+        out.append(f"- strings lines={len(strlines)}; relevant matches={len(smatches)}")
+        out.extend(f"  - {line}" for line in smatches[:160])
+        if not matches and not smatches: out.append("  - No recognizable C++ names in symbol or strings scan")
     except Exception as exc:
         out.append(f"- nm scan failed: {exc}")
     out.append("")

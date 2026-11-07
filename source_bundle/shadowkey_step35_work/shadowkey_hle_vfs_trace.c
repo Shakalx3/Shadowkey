@@ -154,14 +154,14 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u) {
         uint32_t self=c->r[0],offset=c->r[1];
         if(!shadowkey_hle_euser1407_setoffset(c)){
-            fprintf(stderr,"HALT invalid TDblQueBase::SetOffset this=%08x offset=%08x\\n",self,offset);
+            fprintf(stderr,"HALT invalid TDblQueBase::SetOffset this=%08x offset=%08x\n",self,offset);
             exit(95);
         }
-        fprintf(stderr,"  HLE SDK EUSER1407 TDblQueBase::SetOffset this=%08x iOffset=%08x\\n",self,offset);
+        fprintf(stderr,"  HLE SDK EUSER1407 TDblQueBase::SetOffset this=%08x iOffset=%08x\n",self,offset);
         return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1575u) {
-        fprintf(stderr,"  EUSER1575 FORENSIC r0(out)=%08x r1(obj+310)=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
+        fprintf(stderr,"  EUSER1575 FORENSIC r0(out)=%08x r1(obj+310)=%08x r2=%08x r3=%08x sp=%08x lr=%08x\n",
                 c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
         trace_guest_bytes(c,"EUSER1575 arg0/out-candidate PRE",c->r[0],16u);
         if(c->r[1]>=0x10000010u && c->r[1]<0x12000000u) {
@@ -180,10 +180,10 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==160u) {
         uint32_t result=c->r[0],self=c->r[1];
         if(!shadowkey_hle_cone160_position(c)){
-            fprintf(stderr,"HALT invalid CCoeControl::Position result=%08x this=%08x\\n",result,self);
+            fprintf(stderr,"HALT invalid CCoeControl::Position result=%08x this=%08x\n",result,self);
             exit(95);
         }
-        fprintf(stderr,"  HLE SDK CONE160 CCoeControl::Position this=%08x -> (%d,%d)\\n",
+        fprintf(stderr,"  HLE SDK CONE160 CCoeControl::Position this=%08x -> (%d,%d)\n",
                 self,(int32_t)ngage_r32(c,result),(int32_t)ngage_r32(c,result+4u));
         return;
     }
@@ -281,22 +281,22 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         uint32_t self=c->r[0],name=c->r[1],related=c->r[2],def=c->r[3];
         int rc=tparse_set(c,self,name,related,def);
         c->r[0]=(uint32_t)rc;
-        fprintf(stderr,"  HLE SDK EFSRV185 TParse::Set this=%08x name=%08x related=%08x default=%08x rc=%d\\n",self,name,related,def,rc);
+        fprintf(stderr,"  HLE SDK EFSRV185 TParse::Set this=%08x name=%08x related=%08x default=%08x rc=%d\n",self,name,related,def,rc);
         return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==121u){
         uint32_t self=c->r[0];uint8_t*p=guest_ptr(c,self+18u,1u);
         c->r[0]=(p&&*p)?1u:0u;
-        fprintf(stderr,"  HLE SDK EFSRV121 TParseBase::NamePresent this=%08x -> %u\\n",self,c->r[0]);return;
+        fprintf(stderr,"  HLE SDK EFSRV121 TParseBase::NamePresent this=%08x -> %u\n",self,c->r[0]);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==146u){
         uint32_t self=c->r[0];uint8_t*p=guest_ptr(c,self+14u,1u);
         c->r[0]=(p&&*p)?1u:0u;
-        fprintf(stderr,"  HLE SDK EFSRV146 TParseBase::PathPresent this=%08x -> %u\\n",self,c->r[0]);return;
+        fprintf(stderr,"  HLE SDK EFSRV146 TParseBase::PathPresent this=%08x -> %u\n",self,c->r[0]);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==86u){
         uint32_t self=c->r[0];c->r[0]=(rd32(c,self+4u)&0x02u)?1u:0u;
-        fprintf(stderr,"  HLE SDK EFSRV86 TParseBase::IsExtWild this=%08x -> %u\\n",self,c->r[0]);return;
+        fprintf(stderr,"  HLE SDK EFSRV86 TParseBase::IsExtWild this=%08x -> %u\n",self,c->r[0]);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==162u){
         uint32_t path_desc=c->r[1],offset=c->r[2],out_desc=c->r[3];
@@ -307,18 +307,18 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
            ((rd32(c,out_desc)>>28)!=2u && (rd32(c,out_desc)>>28)!=3u) ||
            !vfs_host_path(c,path_desc,host_path,sizeof(host_path),display,sizeof(display))){
             c->r[0]=(uint32_t)-6;
-            fprintf(stderr,"  HALT SDK EFSRV162 RFs::ReadFileSection invalid args pathDesc=%08x offset=%08x outDesc=%08x len=%u\\n",path_desc,offset,out_desc,requested);return;
+            fprintf(stderr,"  HALT SDK EFSRV162 RFs::ReadFileSection invalid args pathDesc=%08x offset=%08x outDesc=%08x len=%u\n",path_desc,offset,out_desc,requested);return;
         }
-        if(requested>out_max){c->r[0]=(uint32_t)-9;fprintf(stderr,"  EFSRV162 overflow requested=%u max=%u path=%s\\n",requested,out_max,display);return;}
+        if(requested>out_max){c->r[0]=(uint32_t)-9;fprintf(stderr,"  EFSRV162 overflow requested=%u max=%u path=%s\n",requested,out_max,display);return;}
         uint8_t*dest=guest_ptr(c,out_data,requested);
         if(!dest){c->r[0]=(uint32_t)-6;return;}
         FILE*fp=fopen(host_path,"rb");
-        if(!fp){c->r[0]=(uint32_t)-1;fprintf(stderr,"  EFSRV162 missing file path='%s' host='%s'\\n",display,host_path);return;}
+        if(!fp){c->r[0]=(uint32_t)-1;fprintf(stderr,"  EFSRV162 missing file path='%s' host='%s'\n",display,host_path);return;}
         if(fseek(fp,(long)offset,SEEK_SET)!=0){fclose(fp);c->r[0]=(uint32_t)-6;return;}
         size_t got=requested?fread(dest,1u,requested,fp):0u;fclose(fp);
         wr32(c,out_desc,(rd32(c,out_desc)&0xf0000000u)|(uint32_t)got);
         c->r[0]=0;
-        fprintf(stderr,"  HLE SDK EFSRV162 RFs::ReadFileSection path='%s' offset=%u requested=%u got=%zu out=%08x data=%08x max=%u\\n",display,offset,requested,got,out_desc,out_data,out_max);
+        fprintf(stderr,"  HLE SDK EFSRV162 RFs::ReadFileSection path='%s' offset=%u requested=%u got=%zu out=%08x data=%08x max=%u\n",display,offset,requested,got,out_desc,out_data,out_max);
         return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==18u){
@@ -327,16 +327,16 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(array>=0x10000000u && array<0x12000000u)
             fprintf(stderr," count=%u gran=%u rep=%08x base=%08x cacheIndex=%u cacheOffset=%u",
                     rd32(c,array+4u),rd32(c,array+8u),rd32(c,array+12u),rd32(c,array+16u),rd32(c,array+20u),rd32(c,array+24u));
-        fputc('\\n',stderr);exit(95);
+        fputc('\n',stderr);exit(95);
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==15u){
         vfile_t *vf=vfile_for(c->r[0],0);
         if(vf && vf->fp){fclose(vf->fp);vf->fp=NULL;vf->object=0;}
-        fprintf(stderr,"  HLE SDK EFSRV15 CFileBase destructor this=%08x\\n",c->r[0]);return;
+        fprintf(stderr,"  HLE SDK EFSRV15 CFileBase destructor this=%08x\n",c->r[0]);return;
     }
     if (!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==89u || ordinal==1359u || ordinal==35u || ordinal==90u)) { uint32_t a=c->r[0]; if(a>=0x10000000u && a<0x12000000u){uint8_t *p=c->mem+(a-0x10000000u); fprintf(stderr,"  MEM r0: %08x %08x %08x %08x %08x %08x\n",*(uint32_t*)(p),*(uint32_t*)(p+4),*(uint32_t*)(p+8),*(uint32_t*)(p+12),*(uint32_t*)(p+16),*(uint32_t*)(p+20));}}
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==315u){
-        fprintf(stderr,"  HLE ESTLIB315 _wclosedir handle=%08x\\n",c->r[0]);c->r[0]=0;return;
+        fprintf(stderr,"  HLE ESTLIB315 _wclosedir handle=%08x\n",c->r[0]);c->r[0]=0;return;
     }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==316u){
         uint32_t dst=c->r[0],src=c->r[1],dl=guest_wstr_len(c,dst,0x10000u),sl=guest_wstr_len(c,src,0x10000u);
@@ -353,12 +353,12 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         char display[1024]={0},host[2048]={0},mode[16]="rb";
         if(!vfs_host_path_cstr(c,c->r[0],host,sizeof(host),display,sizeof(display))){c->r[0]=0;return;}
         guest_cstr(c,c->r[1],mode,sizeof(mode));
-        if(mode[0]!='r'){fprintf(stderr,"  HALT ESTLIB58 _fopen write mode rejected path='%s' mode='%s'\\n",display,mode);c->r[0]=0;return;}
-        FILE*fp=fopen(host,"rb");if(!fp){fprintf(stderr,"  ESTLIB58 _fopen missing path='%s' host='%s'\\n",display,host);c->r[0]=0;return;}
+        if(mode[0]!='r'){fprintf(stderr,"  HALT ESTLIB58 _fopen write mode rejected path='%s' mode='%s'\n",display,mode);c->r[0]=0;return;}
+        FILE*fp=fopen(host,"rb");if(!fp){fprintf(stderr,"  ESTLIB58 _fopen missing path='%s' host='%s'\n",display,host);c->r[0]=0;return;}
         uint32_t handle=shadowkey_heap_alloc(c,16u);vfile_t*vf=handle?vfile_for(handle,1):NULL;
         if(!vf){fclose(fp);c->r[0]=0;return;}
         vf->fp=fp;snprintf(vf->path,sizeof(vf->path),"%s",host);c->r[0]=handle;
-        fprintf(stderr,"  HLE ESTLIB58 _fopen path='%s' -> handle=%08x\\n",display,handle);return;
+        fprintf(stderr,"  HLE ESTLIB58 _fopen path='%s' -> handle=%08x\n",display,handle);return;
     }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==49u){
         vfile_t*vf=vfile_for(c->r[0],0);int rc=-1;if(vf&&vf->fp){rc=fclose(vf->fp);vf->fp=NULL;vf->object=0;}c->r[0]=(uint32_t)rc;return;
@@ -381,7 +381,7 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(!vf||!vf->fp||!guest_cstr(c,c->r[1],fmt,sizeof(fmt))){c->r[0]=(uint32_t)-1;return;}
         unsigned ai=0;int assigned=0;
         for(size_t i=0;fmt[i];i++){
-            if(fmt[i]==' '||fmt[i]=='\\t'||fmt[i]=='\\n'){while(fmt[i+1]==' '||fmt[i+1]=='\\t'||fmt[i+1]=='\\n')i++;fscanf(vf->fp," ");continue;}
+            if(fmt[i]==' '||fmt[i]=='\t'||fmt[i]=='\n'){while(fmt[i+1]==' '||fmt[i+1]=='\t'||fmt[i+1]=='\n')i++;fscanf(vf->fp," ");continue;}
             if(fmt[i]!='%'){int ch=fgetc(vf->fp);if(ch!=fmt[i]){if(ch!=EOF)ungetc(ch,vf->fp);break;}continue;}
             i++;if(fmt[i]=='%'){int ch=fgetc(vf->fp);if(ch!='%')break;continue;}
             while(fmt[i]=='*'||(fmt[i]>='0'&&fmt[i]<='9')||fmt[i]=='h'||fmt[i]=='l'||fmt[i]=='L')i++;
@@ -392,7 +392,7 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
             else if(spec=='c'){int v=fgetc(vf->fp);ok=v!=EOF;if(ok){uint8_t*p=guest_ptr(c,arg,1u);if(p)*p=(uint8_t)v;}}
             else if(spec=='s'){char tmp[1024];ok=fscanf(vf->fp,"%1023s",tmp)==1;if(ok)guest_put_cstr(c,arg,tmp);}
             else if(spec=='f'){float v=0;ok=fscanf(vf->fp,"%f",&v)==1;if(ok){uint32_t bits=0;memcpy(&bits,&v,4);wr32(c,arg,bits);}}
-            else {fprintf(stderr,"  HALT ESTLIB64 unsupported fscanf format %%%c\\n",spec);exit(95);}
+            else {fprintf(stderr,"  HALT ESTLIB64 unsupported fscanf format %%%c\n",spec);exit(95);}
             if(!ok)break;assigned++;
         }
         c->r[0]=(uint32_t)assigned;return;
@@ -401,83 +401,25 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         char a[4096],b[4096];guest_cstr(c,c->r[0],a,sizeof(a));guest_cstr(c,c->r[1],b,sizeof(b));int v=strcmp(a,b);c->r[0]=(uint32_t)(v<0?-1:(v>0?1:0));return;
     }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==82u){uint32_t dst=c->r[0],fmtp=c->r[1];char fmt[2048],out[4096];guest_cstr(c,fmtp,fmt,sizeof(fmt));size_t oi=0;unsigned ai=2;for(size_t i=0;fmt[i]&&oi+2<sizeof(out);i++){if(fmt[i]!='%'){out[oi++]=fmt[i];continue;}char spec=fmt[++i];if(!spec)break;if(spec=='%'){out[oi++]='%';continue;}uint32_t arg=0;if(ai<=12)arg=c->r[ai++];else{arg=ngage_r32(c,c->r[13]+(ai-13)*4u);ai++;}char t[512];t[0]=0;if(spec=='s')guest_cstr(c,arg,t,sizeof(t));else if(spec=='d'||spec=='i')snprintf(t,sizeof(t),"%d",(int32_t)arg);else if(spec=='u')snprintf(t,sizeof(t),"%u",arg);else if(spec=='x'||spec=='X')snprintf(t,sizeof(t),spec=='x'?"%x":"%X",arg);else if(spec=='c'){t[0]=(char)arg;t[1]=0;}else{t[0]='%';t[1]=spec;t[2]=0;}size_t n=strlen(t);if(n>sizeof(out)-oi-2)n=sizeof(out)-oi-2;memcpy(out+oi,t,n);oi+=n;}out[oi]=0;guest_put_cstr(c,dst,out);c->r[0]=(uint32_t)oi;return;}
-    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && (ordinal==51u || ordinal==64u || ordinal==180u)){
-        /* String-helper exports used with a live destination buffer. Exact
-           EKA1 ordinal names are not available yet; preserve the non-null
-           destination result so the caller can take its success path. */
-        return;
-    }
-    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==9u){
-        uint32_t a=c->r[0],n=0;uint8_t*p=guest_ptr(c,a,1u);
-        if(!p){c->r[0]=0;return;}
-        while(n<0x100000u){uint8_t*q=guest_ptr(c,a+n,1u);if(!q||!*q)break;n++;}
-        c->r[0]=n;return;
-    }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==90u){
-        uint32_t dst=c->r[0],src=c->r[1],dl=0,dm=0,dd=0,sl=0,sm=0,sd=0;
-        if(src>=0x10000000u&&src<0x12000000u){fprintf(stderr,"  EUSER90 src=%08x words=%08x %08x %08x %08x %08x %08x\n",src,rd32(c,src),rd32(c,src+4u),rd32(c,src+8u),rd32(c,src+12u),rd32(c,src+16u),rd32(c,src+20u));}
-        if(!descriptor_info(c,dst,&dl,&dm,&dd)){c->r[0]=(uint32_t)-6;return;}
-        if(descriptor_info(c,src,&sl,&sm,&sd)){sl=pathish_utf16_len(c,sd,sl);uint32_t n=sl<dm?sl:dm;uint8_t*sp=guest_ptr(c,sd,n*2u),*dp=guest_ptr(c,dd,n*2u);if(n&&sp&&dp)memmove(dp,sp,n*2u);wr32(c,dst,(rd32(c,dst)&0xf0000000u)|n);c->r[0]=dst;return;}
-        /* The source may point directly at the inline data of a TBuf (this-8). */
-        uint32_t sl2=0,sm2=0,sd2=0;
-        if(src>=0x10000008u && descriptor_info(c,src-8u,&sl2,&sm2,&sd2) && sd2==src){sl2=pathish_utf16_len(c,sd2,sl2);uint32_t n=sl2<dm?sl2:dm;uint8_t*q=guest_ptr(c,sd2,n*2u),*d=guest_ptr(c,dd,n*2u);if(n&&q&&d)memmove(d,q,n*2u);wr32(c,dst,(rd32(c,dst)&0xf0000000u)|n);c->r[0]=dst;return;}
-        uint32_t n=0;while(n<dm){uint8_t*q=guest_ptr(c,src+n*2u,2u);if(!q||(!q[0]&&!q[1]))break;uint16_t ch=(uint16_t)q[0]|((uint16_t)q[1]<<8);if(ch<32u||ch>126u)break;uint8_t*d=guest_ptr(c,dd+n*2u,2u);if(!d)break;d[0]=q[0];d[1]=q[1];n++;}wr32(c,dst,(rd32(c,dst)&0xf0000000u)|n);c->r[0]=dst;return;
+        /* TInt64::TInt64(TInt): sign-extend the 32-bit constructor argument. */
+        uint32_t self=c->r[0],value=c->r[1];
+        if(!guest_ptr(c,self,8u)){fprintf(stderr,"HALT invalid EUSER90 TInt64 constructor this=%08x\\n",self);exit(95);}
+        wr32(c,self,value);wr32(c,self+4u,(value&0x80000000u)?0xffffffffu:0u);return;
     }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==99u){ c->r[0]=c->r[0]; return; }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==172u){ return; }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==342u){
-        /* Call pattern walks a UTF-16 string in two-byte steps, then uses this
-           result as its length field: treat this export as a wide-string length. */
-        uint32_t a=c->r[0], n=0;
-        while(n<0x10000u){uint8_t *p=guest_ptr(c,a+n*2u,2u);if(!p)break;if(p[0]==0 && p[1]==0)break;n++;}
-        c->r[0]=n;return;
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==2u){
-        /* Observed three-argument byte copy used by SIMKIN string construction. */
-        uint32_t dst=c->r[0], src=c->r[1], n=c->r[2];
-        if(n>0x100000u || dst<0x10000000u || src<0x10000000u ||
-           (uint64_t)dst+n>0x12000000ull || (uint64_t)src+n>0x12000000ull){c->r[0]=(uint32_t)-6;return;}
-        if(n && dst<=0x10125c44u && (uint64_t)dst+n>0x10125c44u) fprintf(stderr,"WATCH source+14a3c bulk memcpy dst=%08x src=%08x length=%u\n",dst,src,n);
-        if(ngage_runtime_note_bitmap_host_write) ngage_runtime_note_bitmap_host_write(c,dst,src,n,2u,0u);
-        memmove(c->mem+(dst-0x10000000u),c->mem+(src-0x10000000u),n);
-        c->r[0]=dst; return;
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==828u || ordinal==1359u || ordinal==1262u || ordinal==856u || ordinal==857u)){
-        /* These call sites pass a live object in r0 and continue to use that
-           object after the call. Until their exact EUSER bodies are mapped,
-           preserve the receiver rather than fabricating a null pointer. */
-        return;
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1283u){
-        /* Observed TBuf-style constructor: r0 points at a stack descriptor,
-           r1 is its maximum character count. Symbian descriptor header is
-           length at +0, maximum length at +4, UTF-16 data at +8. */
-        uint8_t *p=c->mem+(c->r[0]-0x10000000u);
-        uint32_t max=c->r[1];
-        p[0]=0; p[1]=0; p[2]=0; p[3]=0x30;
-        p[4]=(uint8_t)max; p[5]=(uint8_t)(max>>8); p[6]=(uint8_t)(max>>16); p[7]=(uint8_t)(max>>24);
-        return;
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==89u){
-        /* Append one character to a TBuf/TDes using the descriptor header. */
-        uint8_t *p=c->mem+(c->r[0]-0x10000000u);
-        uint32_t hdr=(uint32_t)p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24); uint32_t len=hdr&0x0fffffffu;
-        uint32_t max=(uint32_t)p[4]|((uint32_t)p[5]<<8)|((uint32_t)p[6]<<16)|((uint32_t)p[7]<<24);
-        if(len<max){ uint32_t at=8u+len*2u; p[at]=(uint8_t)c->r[1]; p[at+1]=(uint8_t)(c->r[1]>>8); len++; uint32_t nh=(hdr&0xf0000000u)|len; p[0]=nh; p[1]=nh>>8; p[2]=nh>>16; p[3]=nh>>24; }
-        else { c->r[0]=(uint32_t)-9; }
-        return;
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==1582u || ordinal==3u || ordinal==1505u || ordinal==35u || ordinal==1507u)){
-        uint32_t size=c->r[0];
-        uint32_t p=shadowkey_heap_alloc(c,size);
-        c->r[0]=p;
-        if(!p) fprintf(stderr,"  HLE Alloc FAILED size=%u primary_next=%08x primary_end=%08x secondary_next=%08x\n",size,heap_next,heap_end,heap2_next);
-        else fprintf(stderr,"  HLE Alloc size=%u -> %08x\n",size,p);
-        return;
+        /* _wcsdup(const wchar_t*): allocate a guest UTF-16 copy and return it. */
+        uint32_t src=c->r[0],n=guest_wstr_len(c,src,0x10000u);
+        if(n>=0x10000u){c->r[0]=0;return;}
+        uint32_t dst=shadowkey_heap_alloc(c,(n+1u)*2u);
+        if(!dst){c->r[0]=0;return;}
+        uint8_t*sp=guest_ptr(c,src,(n+1u)*2u),*dp=guest_ptr(c,dst,(n+1u)*2u);
+        if(!sp||!dp){c->r[0]=0;return;}
+        memcpy(dp,sp,(n+1u)*2u);c->r[0]=dst;return;
     }
     if(shadowkey_bitgdi_import(c,dll,ordinal)) return;
     if(!strcmp(dll,"FBSCLI[10003a15].DLL") && shadowkey_fbs_import(c->r,c->mem,ordinal)) return;
-    fprintf(stderr,"HALT UNIMPLEMENTED Shadowkey import: %s ordinal=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
+    fprintf(stderr,"HALT UNIMPLEMENTED Shadowkey import: %s ordinal=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\n",
             dll,ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
     if(getenv("SHADOWKEY_DIAGNOSTIC_CONTINUE_UNIMPLEMENTED")) return;
     exit(95);

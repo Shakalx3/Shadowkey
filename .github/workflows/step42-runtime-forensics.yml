@@ -1,0 +1,83 @@
+name: EUSER1575 CONE160 runtime forensics
+on:
+  push:
+    branches: [main]
+    paths:
+      - "source_bundle/shadowkey_step35_work/shadowkey_hle_vfs_trace.c"
+      - ".github/step42-runtime-forensics.trigger"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  trace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build host objects and run regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd source_bundle/shadowkey_step35_work
+          bash build_and_test.sh > /tmp/step42_build.log 2>&1 || { tail -n 100 /tmp/step42_build.log; exit 1; }
+      - name: Run fresh instrumented live trace
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd source_bundle/shadowkey_step35_work
+          SHADOWKEY_HLE_FREE_RAM_BYTES=33554432 \
+          SHADOWKEY_EXPERIMENTAL_GDI151_TFONTSPEC=1 \
+          SHADOWKEY_EXPERIMENTAL_GDI108_TFONTSTYLE=1 \
+          SHADOWKEY_WATCH_GDI108_RECEIVER=1 \
+            bash trace_asset_loader_live_vfs.sh > /tmp/step42_trace_runner.log 2>&1
+          python3 shadowkey_step32_gdi108_forensics.py > /tmp/step42_gdi_audit.log 2>&1
+          grep -E "EUSER1575 FORENSIC|TRACE EUSER1575|CONE160 FORENSIC|TRACE CONE160|HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import: (EUSER.*(1575|248)|CONE.*160)" .build/live_hal_vfs_trace.log > /tmp/step42_trace_excerpt.log || true
+      - name: Write forensic report
+        shell: bash
+        run: |
+          {
+            echo "# Step 42 — EUSER1575 and CONE160 runtime forensics"
+            echo
+            echo "Read-only probes were added at the import boundary. They dump caller-owned output and receiver memory before the unresolved imports; they do not write guest memory or force success."
+            echo
+            echo "## Host regression suite"
+            echo
+            echo "---"
+            tail -n 45 /tmp/step42_build.log
+            echo "---"
+            echo
+            echo "## Live trace runner"
+            echo
+            echo "---"
+            cat /tmp/step42_trace_runner.log
+            echo "---"
+            echo
+            echo "## GDI forensic audit"
+            echo
+            echo "---"
+            cat /tmp/step42_gdi_audit.log
+            echo "---"
+            echo
+            echo "## Runtime evidence"
+            echo
+            echo "---"
+            cat /tmp/step42_trace_excerpt.log
+            echo "---"
+            echo
+            echo "## Interpretation limits"
+            echo
+            echo "- EUSER1575 remains unimplemented; its nonzero-success branch is not fabricated."
+            echo "- CONE160 remains unimplemented; its hidden-result ABI is observed, but the returned TPoint/TSize semantics are not assumed."
+            echo "- GDI151/GDI108 remain opt-in experimental probes; DrawText remains diagnostic-only."
+            echo "- Host trace calls RunL directly and does not instantiate CActiveScheduler or represent a physical N95 launch."
+          } > docs/STEP42_EUSER1575_CONE160_RUNTIME_FORENSICS.md
+          cat docs/STEP42_EUSER1575_CONE160_RUNTIME_FORENSICS.md
+      - name: Commit forensic report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/STEP42_EUSER1575_CONE160_RUNTIME_FORENSICS.md
+          git commit -m "Record EUSER1575 and CONE160 runtime evidence"
+          git pull --rebase origin main
+          git push origin HEAD:main

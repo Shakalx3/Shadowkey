@@ -75,4 +75,24 @@ for dll,ordinals in TARGETS.items():
 report=Path("docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md")
 report.parent.mkdir(parents=True,exist_ok=True)
 report.write_text("\n".join(out)+"\n")
-print("\n".join(out))
+
+# Inspect ARM import libraries for C++ symbol names that WINS DLLs omit.
+import subprocess
+libroot=root.parent.parent/"armi"/"urel"
+symptoms=("TDes","TBuf","HBuf","CFont","TFont","CGraphicsContext","CCoeControl","RFile","RFs","TParse","TPoint","TSize","Format","Copy","SetLength")
+out += ["## ARM import library symbol scan","",
+        "The WINS PE DLLs export by ordinal only. The ARM import libraries are scanned for symbol names to recover the ordinal/name map.",""]
+for dll in ("efsrv","euser","cone","gdi"):
+    lib=libroot/f"{dll}.lib"
+    out += [f"### {dll.upper()}.LIB","",f"- File: {lib} ({lib.stat().st_size} bytes)"]
+    try:
+        nm=subprocess.run(["nm","-A","-C",str(lib)],capture_output=True,text=True,check=False).stdout.splitlines()
+        matches=[line for line in nm if any(token.lower() in line.lower() for token in symptoms)]
+        out += [f"- nm lines: {len(nm)}; symbol-name matches: {len(matches)}",""]
+        out.extend(f"  - {line}" for line in matches[:120])
+        if not matches: out.append("  - No matching C++ names emitted by nm")
+    except Exception as exc:
+        out.append(f"- nm scan failed: {exc}")
+    out.append("")
+report.write_text("\\n".join(out)+"\\n")
+print("\\n".join(out))

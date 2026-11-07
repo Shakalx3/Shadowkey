@@ -49,6 +49,27 @@ void ngage_runtime_report_bitmap_writes(void){
   fprintf(stderr,"BITMAP CPU WRITE sample[%u] width=%u addr=%08x value=%08x pc=%08x lr=%08x sp=%08x\n",
    i,bitmap_samples[i].width,bitmap_samples[i].addr,bitmap_samples[i].value,bitmap_samples[i].pc,bitmap_samples[i].lr,bitmap_samples[i].sp);
 }
+void ngage_runtime_note_bitmap_host_write(ngage_cpu_t*c,uint32_t dst,uint32_t src,uint32_t n,uint32_t kind,uint32_t fill){
+ if(!bitmap_watch_hi || dst>=bitmap_watch_hi || (uint64_t)dst+n<=bitmap_watch_lo)return;
+ uint32_t lo=dst>bitmap_watch_lo?dst:bitmap_watch_lo;
+ uint32_t hi=(uint64_t)dst+n<bitmap_watch_hi?dst+n:bitmap_watch_hi;
+ uint32_t overlap=hi-lo, sample=overlap<32u?overlap:32u;
+ const char *name=kind==1u?"memset":kind==2u?"memmove":kind==3u?"fread":"other";
+ fprintf(stderr,"BITMAP HOST WRITE kind=%s dst=%08x src=%08x bytes=%u overlap=%u fill=%02x lr=%08x sp=%08x\\n",
+  name,dst,src,n,overlap,fill,c->r[14],c->r[13]);
+ if(kind==2u && src>=guest_base && (uint64_t)src+n<=guest_base+guest_size){
+  uint8_t*p=c->mem+(src-guest_base);uint32_t nz=0;
+  for(uint32_t i=0;i<n;i++)if(p[i])nz++;
+  fprintf(stderr,"BITMAP HOST WRITE source nonzero bytes=%u/%u first:",nz,n);
+  for(uint32_t i=0;i<sample;i++)fprintf(stderr," %02x",p[i]);
+  fputc('\\n',stderr);
+ } else if(kind==3u || kind==1u){
+  uint8_t*p=c->mem+(lo-guest_base);
+  fprintf(stderr,"BITMAP HOST WRITE dest first:");
+  for(uint32_t i=0;i<sample;i++)fprintf(stderr," %02x",p[i]);
+  fputc('\\n',stderr);
+ }
+}
 uint32_t ngage_r32(ngage_cpu_t*c,uint32_t a){uint8_t*p=ptr(c,a,4);uint32_t v=p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);if(watch_hi&&a<watch_hi&&(uint64_t)a+4u>watch_lo)fprintf(stderr,"WATCH RANGE READ32 addr=%08x value=%08x lr=%08x sp=%08x\n",a,v,c->r[14],c->r[13]);if(a==0x10125c44u)fprintf(stderr,"WATCH source+14a3c READ value=%08x\n",v);return v;}
 void ngage_w32(ngage_cpu_t*c,uint32_t a,uint32_t v){bitmap_write_note(c,a,v,4);uint8_t*p=ptr(c,a,4);if(watch_hi&&a<watch_hi&&(uint64_t)a+4u>watch_lo)fprintf(stderr,"WATCH RANGE WRITE32 addr=%08x value=%08x lr=%08x sp=%08x\n",a,v,c->r[14],c->r[13]);p[0]=v;p[1]=v>>8;p[2]=v>>16;p[3]=v>>24;memory_writes++;if(a<=0x10125c44u && (uint64_t)a+4u>0x10125c44u)fprintf(stderr,"WATCH source+14a3c WRITE32 at=%08x value=%08x\n",a,v);if(a==0x10125cc4u)fprintf(stderr,"WATCH source2+14a3c WRITE32 at=%08x value=%08x pc=%08x lr=%08x\n",a,v,c->r[15],c->r[14]);}
 uint32_t ngage_r16(ngage_cpu_t*c,uint32_t a){uint8_t*p=ptr(c,a,2);return p[0]|((uint32_t)p[1]<<8);}

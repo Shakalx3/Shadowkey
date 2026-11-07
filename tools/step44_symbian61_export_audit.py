@@ -105,11 +105,21 @@ def parse_coff_import_lib(path):
 debugroot=root.parent/"udeb"
 out += ["## WINS UDEB COFF import-library ordinal map","",
         "The short-import records are parsed directly. NameType=0 means the 16-bit field is an export ordinal.",""]
-for dll,ordinals in TARGETS.items():
+dispatch_path=Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c")
+dispatch_text=dispatch_path.read_text(errors="replace")
+entry_re=re.compile(r'\{\s*(0x[0-9a-fA-F]+)u?,\s*(0x[0-9a-fA-F]+)u?,\s*"([A-Z0-9]+)\[[^]]+\]\.DLL",\s*(\d+)u\s*\}')
+entries=[]
+for thunk,slot,dll,ordtext in entry_re.findall(dispatch_text):
+    entries.append((int(thunk,16),int(slot,16),dll.lower(),int(ordtext)))
+game_dlls=sorted(set(e[2] for e in entries))
+out += ["## WINS UDEB COFF import-library ordinal map","",
+        "The short-import records are parsed directly. NameType=0 means the 16-bit field is an export ordinal.",""]
+for dll in game_dlls:
     lib=debugroot/f"{dll}.lib"
     records=parse_coff_import_lib(lib) if lib.exists() else []
+    ordinals=sorted(set(e[3] for e in entries if e[2]==dll))
     out += [f"### {dll.upper()}.LIB","",
-            f"- Import-object records: {len(records)}"]
+            f"- Import-object records: {len(records)}; imports used by game: {len(ordinals)}"]
     for ordinal in ordinals:
         names=sorted(set(r["symbol"] for r in records if r["ordinal"]==ordinal))
         types=sorted(set(r["name_type"] for r in records if r["ordinal"]==ordinal))
@@ -117,16 +127,9 @@ for dll,ordinals in TARGETS.items():
     out.append("")
 
 # Join every original game import slot to the exact N-Gage SDK symbol.
-import re
-dispatch_path=Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c")
-dispatch_text=dispatch_path.read_text(errors="replace")
-entry_re=re.compile(r'\{\s*(0x[0-9a-fA-F]+)u?,\s*(0x[0-9a-fA-F]+)u?,\s*"([A-Z0-9]+)\[[^]]+\]\.DLL",\s*(\d+)u\s*\}')
-entries=[]
-for thunk,slot,dll,ordtext in entry_re.findall(dispatch_text):
-    if dll.lower() in ("efsrv","euser","cone","gdi"):
-        entries.append((int(thunk,16),int(slot,16),dll.lower(),int(ordtext)))
 out += ["## Exact symbol map for imports used by 6R51.APP","",
-        f"- Game import slots mapped: {len(entries)}",
+        f"- Game import slots: {len(entries)}",
+        f"- DLLs referenced: {len(game_dlls)}",
         "| Thunk | Slot | DLL | Ordinal | Original SDK symbol |",
         "|---:|---:|---|---:|---|"]
 lib_cache={}
@@ -135,7 +138,7 @@ for thunk,slot,dll,ordinal in entries:
         lib=debugroot/f"{dll}.lib"
         lib_cache[dll]=parse_coff_import_lib(lib) if lib.exists() else []
     names=sorted(set(r["symbol"] for r in lib_cache[dll] if r["ordinal"]==ordinal))
-    symbol="; ".join(names) if names else "<NO MATCH>"
+    symbol="; ".join(names) if names else "<NO MATCH / library absent>"
     out.append(f"| 0x{thunk:08x} | 0x{slot:08x} | {dll.upper()} | {ordinal} | {symbol} |")
 out.append("")
 # Inspect ARM import libraries for C++ symbol names that WINS DLLs omit.

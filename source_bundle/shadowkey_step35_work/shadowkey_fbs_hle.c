@@ -1,6 +1,7 @@
 #include "shadowkey_fbs_hle.h"
 #include <string.h>
 #include <stdio.h>
+extern void ngage_runtime_watch_bitmap_range(uint32_t,uint32_t) __attribute__((weak));
 
 /* The game call sites establish this contract:
    ord 135: construct a 24-byte bitmap handle object;
@@ -105,6 +106,8 @@ int shadowkey_fbs_import(uint32_t regs[16], uint8_t *mem, uint16_t ordinal) {
         uint8_t *pixels=guest_ptr(mem,SHADOWKEY_FBS_LARGE_BASE+d,(uint32_t)bytes64);
         if(!pixels){regs[0]=(uint32_t)-4;b->created=0;return 1;}
         memset(pixels,0,(size_t)bytes64);
+        if(ngage_runtime_watch_bitmap_range)
+            ngage_runtime_watch_bitmap_range(SHADOWKEY_FBS_LARGE_BASE+d,(uint32_t)bytes64);
         shared_next=h+FBS_HEADER_BYTES;large_next=d+(uint32_t)bytes64;
         regs[0]=0; /* KErrNone */
         fprintf(stderr,"FBS HLE: Create %ux%u mode=%u stride=%u bytes=%u header=%08x pixels=%08x\n",

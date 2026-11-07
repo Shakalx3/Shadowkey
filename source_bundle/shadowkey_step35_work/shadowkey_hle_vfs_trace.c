@@ -85,26 +85,27 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(c->r[1]>=0x10000000u && c->r[1]<0x12000000u) trace_guest_bytes(c,"EUSER1407 source candidate",c->r[1],40u);
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u) {
-        /* EXPERIMENT ONLY: the font call copies exactly 20 bytes immediately
-           after this call, consistent with a local TBuf16<6> (8-byte header
-           plus 12-byte inline payload). Test that structural hypothesis
-           without treating ordinal 1407's general identity as established. */
-        const char *probe=getenv("SHADOWKEY_EXPERIMENTAL_EUSER1407_FONT_TBUF");
-        if(probe && *probe && strcmp(probe,"0") &&
-           c->r[14]==0x10023230u && c->r[1]==0x100ac718u) {
-            uint8_t *p=guest_ptr(c,c->r[0],20u);
-            uint8_t *q=guest_ptr(c,c->r[1],12u);
-            if(!p || !q){c->r[0]=(uint32_t)-6;return;}
-            uint32_t n=0;
-            while(n<6u && (q[n*2u] || q[n*2u+1u])) n++;
-            if(n>6u){c->r[0]=(uint32_t)-9;return;}
-            wr32(c,c->r[0],0x30000000u|n);
-            wr32(c,c->r[0]+4u,6u);
+        static const uint32_t sites[]={0x10022b80u,0x10022dacu,0x10022fe8u,0x10023230u,0x1002366cu};
+        int matched=0;
+        for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++) if(c->r[14]==sites[i]) matched=1;
+        if(matched && c->r[1]==0x100ac718u) {
+            uint32_t dst=c->r[0],src=c->r[1];
+            uint8_t *p=guest_ptr(c,dst,20u),*q=guest_ptr(c,src,12u);
+            static const uint16_t expected[6]={'S','w','i','s','s',0};
+            int valid=p&&q&&dst>=0x10000000u&&(uint64_t)dst+20u<=0x12000000ull;
+            for(unsigned i=0;i<6&&valid;i++){
+                uint16_t ch=(uint16_t)(q[i*2u]|((uint16_t)q[i*2u+1u]<<8));
+                if(ch!=expected[i]) valid=0;
+            }
+            if(!valid){fprintf(stderr,"  HLE EUSER1407 rejected Swiss literal callsite lr=%08x dst=%08x src=%08x\n",c->r[14],dst,src);return;}
+            /* Five callsites copy exactly 20 bytes immediately afterwards.
+               Implement only the no-directive Swiss Format case, not the
+               generic variadic formatter used by other EUSER1407 callers. */
+            wr32(c,dst,0x30000005u); wr32(c,dst+4u,6u);
             memset(p+8u,0,12u);
-            memcpy(p+8u,q,n*2u);
-            c->r[0]=c->r[0];
-            fprintf(stderr,"  EXPERIMENT EUSER1407 TBuf16<6> candidate: length=%u text=Swiss; exact export identity NOT asserted\n",n);
-            trace_guest_bytes(c,"EUSER1407 experimental descriptor",c->r[0],20u);
+            for(unsigned i=0;i<5;i++){p[8u+i*2u]=(uint8_t)expected[i];p[9u+i*2u]=(uint8_t)(expected[i]>>8);}
+            fprintf(stderr,"  HLE EUSER1407 Format literal-only: TBuf16<6> length=5 text=Swiss lr=%08x\n",c->r[14]);
+            trace_guest_bytes(c,"EUSER1407 formatted descriptor",dst,20u);
             return;
         }
     }

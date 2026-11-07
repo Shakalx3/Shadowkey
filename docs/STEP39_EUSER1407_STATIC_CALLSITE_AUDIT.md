@@ -884,3 +884,19 @@ IMPORT dll=EUSER[100039e5].DLL ord=1282 r0=102fed30 r1=102fe6d8 r2=00000014 r3=0
   TRACE EUSER1282 destination before @102fed30: 00 00 00 00 10 6c 27 10 70 fe 0f 10 00 00 00 00 64 fe 0f 10
 LOG END
 
+## Format-string literal provenance
+
+- 6R51.APP code offset: 0x7c
+- VA-to-file mapping: code_offset + (VA - 0x10000000)
+
+- VA 0x100a6470, file offset 0xa64ec: '%x'
+- VA 0x100abf28, file offset 0xabfa4: 'Graphics'
+- VA 0x100ac718, file offset 0xac794: 'Swiss'
+- VA 0x100b1068, file offset 0xb10e4: 'Helper'
+- VA 0x100b3c8c, file offset 0xb3d08: 'phonetsy'
+
+## Interpretation boundary
+
+Five font-name callsites use the Swiss literal at 0x100ac718 and copy 20 bytes from their temporary object immediately after the call. The other five references use separate format literals and are not safe to handle with a Swiss-specific shortcut.
+The generic API shape is consistent with TDes16::Format(TRefByValue<const TDesC16>, ...), but the exact EUSER ordinal-to-export-name mapping and all variadic argument semantics still require target FP1 export/callsite verification.
+

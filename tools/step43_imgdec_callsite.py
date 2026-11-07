@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Find every direct caller of the recovered guest image decoder."""
 from pathlib import Path
-p=Path("source_bundle/shadowkey_step35_work/shadowkey_lifted_v6.c")
+p=Path("shadowkey_lifted_v6.c")
 lines=p.read_text(errors="replace").splitlines()
 needles=("ngage_call(c, 0x1006a488u)","ngage_call(c, 0x1006a488)")
 hits=[i for i,line in enumerate(lines) if any(n in line for n in needles)]

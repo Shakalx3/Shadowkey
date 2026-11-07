@@ -20,6 +20,12 @@ uint32_t simkin_export_calls=0, simkin_system_import_calls=0;
 extern void ngage_runtime_guest_function_enter(uint32_t) __attribute__((weak));
 extern void ngage_runtime_guest_function_exit(void) __attribute__((weak));
 static void tracked_guest_call(uint32_t address,ngage_guest_fn fn,ngage_cpu_t*c){
+    if(address==0x100275e4u){
+        fprintf(stderr,"RESLOAD ENTER fn=%08x r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
+                address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
+        for(uint32_t off=0;off<0x20u;off+=4u)
+            fprintf(stderr,"RESLOAD stack[%02x]=%08x\\n",off,ngage_r32(c,c->r[13]+off));
+    }
     if(address==0x1006a488u){
         fprintf(stderr,"IMGDEC ENTER fn=%08x r0=%08x r1(dest)=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
                 address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
@@ -40,6 +46,9 @@ static void tracked_guest_call(uint32_t address,ngage_guest_fn fn,ngage_cpu_t*c)
     fn(c);
     if(address==0x1006a488u)
         fprintf(stderr,"IMGDEC EXIT fn=%08x r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
+                address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
+    if(address==0x100275e4u)
+        fprintf(stderr,"RESLOAD EXIT fn=%08x r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
                 address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
     if(ngage_runtime_guest_function_exit)ngage_runtime_guest_function_exit();
 }

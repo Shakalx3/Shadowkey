@@ -19,7 +19,10 @@ static uint32_t guest_base=0x10000000u;
 static size_t guest_size=0x02000000u;
 static int memory_writes=0; static uint32_t watch_lo=0,watch_hi=0; static const char *app_path=0; static const char *simkin_path=0; static ngage_cpu_t *active_cpu=0;
 static uint32_t bitmap_watch_lo=0,bitmap_watch_hi=0,bitmap_guest_write_count=0,bitmap_nonzero_write_count=0,bitmap_sample_count=0;
-static struct {uint32_t addr,value,pc,lr,sp;uint8_t width;} bitmap_samples[24];
+static uint32_t guest_function_stack[128],guest_function_depth=0;
+static struct {uint32_t addr,value,pc,function,lr,sp;uint8_t width;} bitmap_samples[24];
+void ngage_runtime_guest_function_enter(uint32_t address){if(guest_function_depth<128u)guest_function_stack[guest_function_depth++]=address;}
+void ngage_runtime_guest_function_exit(void){if(guest_function_depth)guest_function_depth--;}
 static uint8_t *ptr(ngage_cpu_t*c,uint32_t a,size_t n){
  if(a<guest_base||(uint64_t)a+n>(uint64_t)guest_base+guest_size){if(active_cpu)fprintf(stderr,"OOB %08x/%zu pc=%08x lr=%08x sp=%08x r0=%08x r1=%08x r2=%08x r3=%08x r4=%08x r5=%08x r6=%08x r7=%08x r8=%08x r9=%08x r10=%08x r11=%08x r12=%08x cpsr=%08x\n",a,n,active_cpu->r[15],active_cpu->r[14],active_cpu->r[13],active_cpu->r[0],active_cpu->r[1],active_cpu->r[2],active_cpu->r[3],active_cpu->r[4],active_cpu->r[5],active_cpu->r[6],active_cpu->r[7],active_cpu->r[8],active_cpu->r[9],active_cpu->r[10],active_cpu->r[11],active_cpu->r[12],active_cpu->cpsr);else fprintf(stderr,"OOB %08x/%zu\n",a,n);exit(90);}
  return c->mem+(a-guest_base);
@@ -37,6 +40,7 @@ static void bitmap_write_note(ngage_cpu_t*c,uint32_t a,uint32_t v,uint8_t width)
   bitmap_samples[bitmap_sample_count].addr=a;
   bitmap_samples[bitmap_sample_count].value=v;
   bitmap_samples[bitmap_sample_count].pc=c->r[15];
+  bitmap_samples[bitmap_sample_count].function=guest_function_depth?guest_function_stack[guest_function_depth-1u]:0u;
   bitmap_samples[bitmap_sample_count].lr=c->r[14];
   bitmap_samples[bitmap_sample_count].sp=c->r[13];
   bitmap_samples[bitmap_sample_count].width=width;
@@ -46,8 +50,8 @@ static void bitmap_write_note(ngage_cpu_t*c,uint32_t a,uint32_t v,uint8_t width)
 void ngage_runtime_report_bitmap_writes(void){
  fprintf(stderr,"BITMAP CPU WRITE WATCH result: guest_store_ops=%u nonzero_store_ops=%u nonzero_samples=%u\n",bitmap_guest_write_count,bitmap_nonzero_write_count,bitmap_sample_count);
  for(uint32_t i=0;i<bitmap_sample_count;i++)
-  fprintf(stderr,"BITMAP CPU WRITE sample[%u] width=%u addr=%08x value=%08x pc=%08x lr=%08x sp=%08x\n",
-   i,bitmap_samples[i].width,bitmap_samples[i].addr,bitmap_samples[i].value,bitmap_samples[i].pc,bitmap_samples[i].lr,bitmap_samples[i].sp);
+  fprintf(stderr,"BITMAP CPU WRITE sample[%u] width=%u addr=%08x value=%08x pc=%08x function=%08x lr=%08x sp=%08x\n",
+   i,bitmap_samples[i].width,bitmap_samples[i].addr,bitmap_samples[i].value,bitmap_samples[i].pc,bitmap_samples[i].function,bitmap_samples[i].lr,bitmap_samples[i].sp);
 }
 void ngage_runtime_note_bitmap_host_write(ngage_cpu_t*c,uint32_t dst,uint32_t src,uint32_t n,uint32_t kind,uint32_t fill){
  if(!bitmap_watch_hi || dst>=bitmap_watch_hi || (uint64_t)dst+n<=bitmap_watch_lo)return;

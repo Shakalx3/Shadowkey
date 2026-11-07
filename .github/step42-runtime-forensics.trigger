@@ -23,3 +23,4 @@ trace-resource-loader
 dump-resource-table-neighbors
 inspect-resource-loader-source
 trace-filedec-helper
+trace-vfs-source-file

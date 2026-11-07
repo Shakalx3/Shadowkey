@@ -4,14 +4,17 @@
 #include "shadowkey_cone_gc_hle.h"
 
 extern uint32_t ngage_r32(ngage_cpu_t *,uint32_t);
-extern void ngage_w32(ngage_cpu_t *,uint32_t,uint32_t);
+static inline void shadowkey_symbian61_w32(ngage_cpu_t*c,uint32_t a,uint32_t v){
+    if(!c||a<0x10000000u||(uint64_t)a+4u>0x12000000ull)return;
+    uint8_t*p=c->mem+(a-0x10000000u);p[0]=(uint8_t)v;p[1]=(uint8_t)(v>>8);p[2]=(uint8_t)(v>>16);p[3]=(uint8_t)(v>>24);
+}
 
 /* Symbian 6.1 SDK: EUSER ordinal 1407 = TDblQueBase::SetOffset(TInt).
    TDblQueBase layout: TDblQueLink iHead at +0, TInt iOffset at +8. */
 static inline int shadowkey_hle_euser1407_setoffset(ngage_cpu_t *c){
     uint32_t self=c->r[0];
     if(!c || self<0x10000000u || (uint64_t)self+12u>0x12000000ull) return 0;
-    ngage_w32(c,self+8u,c->r[1]);
+    shadowkey_symbian61_w32(c,self+8u,c->r[1]);
     return 1;
 }
 
@@ -24,8 +27,8 @@ static inline int shadowkey_hle_cone160_position(ngage_cpu_t *c){
        self<0x10000000u || (uint64_t)self+0x14u>0x12000000ull) return 0;
     uint32_t x=ngage_r32(c,self+0x0cu);
     uint32_t y=ngage_r32(c,self+0x10u);
-    ngage_w32(c,result,x);
-    ngage_w32(c,result+4u,y);
+    shadowkey_symbian61_w32(c,result,x);
+    shadowkey_symbian61_w32(c,result+4u,y);
     c->r[0]=result;
     return 1;
 }

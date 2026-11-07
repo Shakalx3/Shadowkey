@@ -11,3 +11,4 @@ track-active-guest-function
 inspect-active-writer-1006a488
 inspect-imgdec-args
 bound-imgdec-body
+single-run-function-bound

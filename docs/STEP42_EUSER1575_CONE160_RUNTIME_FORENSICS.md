@@ -88,190 +88,190 @@ LIMIT: DrawText is diagnostic only; no glyph rasterization or physical N95 launc
 PNG .build/live_run_bitmap.png: 176x233, RGB565 mode=10, stride=352, nonzero_pixels=3491/41008, bitmap=0x10110718, pixels=0x10311000
 ---
 
-## Guest pixel writer source at PC 0x100677d0
+## Guest pixel writer source at PC 0x100677d0 (stale interpreter PC; active guest function 0x1006a488)
 
 ---
-Function sub_100677cc: 125236 source lines
-1: void sub_100677cc(ngage_cpu_t *c) {
-2:     (void)c;
-3:     if (0) { goto L_100677cc; goto L_100677d0; goto L_100677d4; goto L_100677d8; goto L_100677dc; goto L_100677e0; goto L_100677e4; goto L_100677e8; goto L_100677ec; goto L_100677f0; goto L_100677f4; goto L_100677f8; goto L_100677fc; goto L_10067800; goto L_10067804; goto L_10067808; goto L_1006780c; }
-4: L_100677cc:
-5:     c->r[13] -= 12u; ngage_w32(c, c->r[13] + 0u, c->r[4]); ngage_w32(c, c->r[13] + 4u, c->r[5]); ngage_w32(c, c->r[13] + 8u, c->r[14]); /* push {r4, r5, lr} */
-6: L_100677d0:
-7:     c->r[4] = 0x00000000u; /* mov r4, #0 */
-8: L_100677d4:
-9:     c->r[5] = c->r[0]; /* mov r5, r0 */
-10: L_100677d8:
-11:     goto L_100677f4; /* b 0x677f4 <shadowkey_code+0x677f4> */
-12: L_100677dc:
-13:     c->r[3] = (c->r[4] << 1); /* lsl r3, r4, #1 */
-14: L_100677e0:
-15:     c->r[2] = ngage_r16(c, (c->r[3] + c->r[5])); /* ldrh r2, [r3, r5] */
-16: L_100677e4:
-17:     ngage_sub_flags(c, c->r[2], 0x0000007bu); /* cmp r2, #123 */
-18: L_100677e8:
-19:     if (ngage_zf(c)) { c->r[0] = 0x00000000u; } /* moveq r0, #0 */
-20: L_100677ec:
-21:     if (ngage_zf(c)) { goto L_10067808; } /* beq 0x67808 <shadowkey_code+0x67808> */
-22: L_100677f0:
-23:     c->r[4] = c->r[4] + 0x00000001u; /* add r4, r4, #1 */
-24: L_100677f4:
-25:     c->r[0] = c->r[5]; /* mov r0, r5 */
-26: L_100677f8:
-27:     c->r[14] = 0x100677fcu; ngage_call(c, 0x100a0530u); goto L_100677fc; /* bl 0xa0530 <shadowkey_code+0xa0530> */
-28: L_100677fc:
-29:     ngage_sub_flags(c, c->r[4], c->r[0]); /* cmp r4, r0 */
-30: L_10067800:
-31:     if (!ngage_cf(c)) { goto L_100677dc; } /* blo 0x677dc <shadowkey_code+0x677dc> */
-32: L_10067804:
-33:     c->r[0] = 0x00000001u; /* mov r0, #1 */
-34: L_10067808:
-35:     c->r[4] = ngage_r32(c, c->r[13] + 0u); c->r[5] = ngage_r32(c, c->r[13] + 4u); c->r[14] = ngage_r32(c, c->r[13] + 8u); c->r[13] += 12u; /* pop {r4, r5, lr} */
-36: L_1006780c:
-37:     return; /* bx lr */
-38: }
-39: 
-40: void sub_10067810(ngage_cpu_t *c) {
-41:     (void)c;
-42:     if (0) { goto L_10067810; goto L_10067814; goto L_10067818; goto L_1006781c; goto L_10067820; goto L_10067824; goto L_10067828; goto L_1006782c; goto L_10067830; goto L_10067834; goto L_10067838; goto L_1006783c; goto L_10067840; goto L_10067844; goto L_10067848; goto L_1006784c; goto L_10067850; goto L_10067854; goto L_10067858; goto L_1006785c; goto L_10067860; goto L_10067864; goto L_10067868; goto L_1006786c; goto L_10067870; goto L_10067874; goto L_10067878; goto L_1006787c; goto L_10067880; goto L_10067884; goto L_10067888; goto L_1006788c; goto L_10067890; goto L_10067894; }
-43: L_10067810:
-44:     c->r[13] -= 24u; ngage_w32(c, c->r[13] + 0u, c->r[4]); ngage_w32(c, c->r[13] + 4u, c->r[5]); ngage_w32(c, c->r[13] + 8u, c->r[6]); ngage_w32(c, c->r[13] + 12u, c->r[7]); ngage_w32(c, c->r[13] + 16u, c->r[8]); ngage_w32(c, c->r[13] + 20u, c->r[14]); /* push {r4, r5, r6, r7, r8, lr} */
-45: L_10067814:
-46:     c->r[7] = c->r[0]; /* mov r7, r0 */
-47: L_10067818:
-48:     c->r[4] = c->r[1]; /* mov r4, r1 */
-49: L_1006781c:
-50:     c->r[8] = c->r[2]; /* mov r8, r2 */
-51: L_10067820:
-52:     c->r[14] = 0x10067824u; ngage_call(c, 0x100a0530u); goto L_10067824; /* bl 0xa0530 <shadowkey_code+0xa0530> */
-53: L_10067824:
-54:     ngage_sub_flags(c, c->r[8], c->r[0]); /* cmp r8, r0 */
-55: L_10067828:
-56:     if ((ngage_nf(c) != ngage_vf(c))) { goto L_10067834; } /* blt 0x67834 <shadowkey_code+0x67834> */
-57: L_1006782c:
-58:     c->r[0] = ~(0x00000000u); /* mvn r0, #0 */
-59: L_10067830:
-60:     goto L_10067890; /* b 0x67890 <shadowkey_code+0x67890> */
-61: L_10067834:
-62:     c->r[12] = 0x00000000u; /* mov r12, #0 */
-63: L_10067838:
-64:     ngage_sub_flags(c, c->r[12], c->r[8]); /* cmp r12, r8 */
-65: L_1006783c:
-66:     if ((ngage_nf(c) == ngage_vf(c))) { goto L_1006788c; } /* bge 0x6788c <shadowkey_code+0x6788c> */
-67: L_10067840:
-68:     c->r[6] = c->r[4] + 0x00000001u; /* add r6, r4, #1 */
-69: L_10067844:
-70:     c->r[5] = c->r[4]; /* mov r5, r4 */
-71: L_10067848:
-72:     c->r[4] = c->r[7] + 0x00000001u; /* add r4, r7, #1 */
-73: L_1006784c:
-74:     c->r[14] = c->r[7]; /* mov lr, r7 */
-75: L_10067850:
-76:     c->r[2] = ngage_r8(c, c->r[14]); /* ldrb r2, [lr] */
-77: L_10067854:
-78:     c->r[0] = ngage_r8(c, c->r[4]); /* ldrb r0, [r4] */
-79: L_10067858:
-80:     c->r[3] = ngage_r8(c, c->r[5]); /* ldrb r3, [r5] */
-81: L_1006785c:
-82:     c->r[1] = ngage_r8(c, c->r[6]); /* ldrb r1, [r6] */
-83: L_10067860:
-84:     c->r[4] = c->r[4] + 0x00000002u; /* add r4, r4, #2 */
-85: L_10067864:
-86:     c->r[6] = c->r[6] + 0x00000002u; /* add r6, r6, #2 */
-87: L_10067868:
-88:     c->r[2] = c->r[2] | shadowkey_arm_shift_operand(c, c->r[0], 0u, 8u, 1u, 0u); /* orr r2, r2, r0, lsl #8 */
-89: L_1006786c:
-90:     c->r[3] = c->r[3] | shadowkey_arm_shift_operand(c, c->r[1], 0u, 8u, 1u, 0u); /* orr r3, r3, r1, lsl #8 */
-91: L_10067870:
-92:     ngage_sub_flags(c, c->r[2], c->r[3]); /* cmp r2, r3 */
-93: L_10067874:
-94:     if (!ngage_zf(c)) { goto L_1006782c; } /* bne 0x6782c <shadowkey_code+0x6782c> */
-95: L_10067878:
-96:     c->r[5] = c->r[5] + 0x00000002u; /* add r5, r5, #2 */
-97: L_1006787c:
-98:     c->r[14] = c->r[14] + 0x00000002u; /* add lr, lr, #2 */
-99: L_10067880:
-100:     c->r[12] = c->r[12] + 0x00000001u; /* add r12, r12, #1 */
-101: L_10067884:
-102:     ngage_sub_flags(c, c->r[12], c->r[8]); /* cmp r12, r8 */
-103: L_10067888:
-104:     if ((ngage_nf(c) != ngage_vf(c))) { goto L_10067850; } /* blt 0x67850 <shadowkey_code+0x67850> */
-105: L_1006788c:
-106:     c->r[0] = 0x00000001u; /* mov r0, #1 */
-107: L_10067890:
-108:     c->r[4] = ngage_r32(c, c->r[13] + 0u); c->r[5] = ngage_r32(c, c->r[13] + 4u); c->r[6] = ngage_r32(c, c->r[13] + 8u); c->r[7] = ngage_r32(c, c->r[13] + 12u); c->r[8] = ngage_r32(c, c->r[13] + 16u); c->r[14] = ngage_r32(c, c->r[13] + 20u); c->r[13] += 24u; /* pop {r4, r5, r6, r7, r8, lr} */
-109: L_10067894:
-110:     return; /* bx lr */
-111: }
-112: 
-113: void sub_10067898(ngage_cpu_t *c) {
-114:     (void)c;
-115:     if (0) { goto L_10067898; goto L_1006789c; goto L_100678a0; goto L_100678a4; goto L_100678a8; goto L_100678ac; goto L_100678b0; goto L_100678b4; goto L_100678b8; goto L_100678bc; goto L_100678c0; goto L_100678c4; goto L_100678c8; goto L_100678cc; goto L_100678d0; goto L_100678d4; goto L_100678d8; goto L_100678dc; goto L_100678e0; goto L_100678e4; goto L_100678e8; goto L_100678ec; goto L_100678f0; goto L_100678f4; goto L_100678f8; goto L_100678fc; goto L_10067900; goto L_10067904; goto L_10067908; goto L_1006790c; goto L_10067910; goto L_10067914; goto L_10067918; goto L_1006791c; goto L_10067920; goto L_10067924; goto L_10067928; goto L_1006792c; goto L_10067930; goto L_10067934; goto L_10067938; goto L_1006793c; goto L_10067940; goto L_10067944; goto L_10067948; goto L_1006794c; goto L_10067950; goto L_10067954; goto L_10067958; goto L_10067968; goto L_1006796c; }
-116: L_10067898:
-117:     c->r[13] -= 12u; ngage_w32(c, c->r[13] + 0u, c->r[4]); ngage_w32(c, c->r[13] + 4u, c->r[5]); ngage_w32(c, c->r[13] + 8u, c->r[14]); /* push {r4, r5, lr} */
-118: L_1006789c:
-119:     c->r[4] = c->r[0]; /* mov r4, r0 */
-120: L_100678a0:
-121:     c->r[14] = 0x100678a4u; ngage_call(c, 0x10060d54u); goto L_100678a4; /* bl 0x60d54 <shadowkey_code+0x60d54> */
-122: L_100678a4:
-123:     c->r[3] = 0x00000144u; /* mov r3, #324 */
-124: L_100678a8:
-125:     c->r[3] = c->r[3] + 0x00000002u; /* add r3, r3, #2 */
-126: L_100678ac:
-127:     c->r[0] = ~(0x00000000u); /* mvn r0, #0 */
-128: L_100678b0:
-129:     ngage_w16(c, (c->r[4] + c->r[3]), (uint16_t)c->r[0]); /* strh r0, [r4, r3] */
-130: L_100678b4:
-131:     c->r[2] = 0x00000144u; /* mov r2, #324 */
-132: L_100678b8:
-133:     ngage_w16(c, (c->r[4] + c->r[2]), (uint16_t)c->r[0]); /* strh r0, [r4, r2] */
-134: L_100678bc:
-135:     c->r[3] = 0x0000013cu; /* mov r3, #316 */
-136: L_100678c0:
-137:     c->r[3] = c->r[3] + 0x00000002u; /* add r3, r3, #2 */
-138: L_100678c4:
-139:     ngage_w16(c, (c->r[4] + c->r[3]), (uint16_t)c->r[0]); /* strh r0, [r4, r3] */
-140: L_100678c8:
-141:     c->r[1] = 0x00000000u; /* mov r1, #0 */
-142: L_100678cc:
-143:     ngage_w32(c, (c->r[4] + 304u), (uint32_t)c->r[1]); /* str r1, [r4, #0x130] */
-144: L_100678d0:
-145:     ngage_w32(c, (c->r[4] + 300u), (uint32_t)c->r[0]); /* str r0, [r4, #0x12c] */
-146: L_100678d4:
-147:     c->r[3] = 0x00000134u; /* mov r3, #308 */
-148: L_100678d8:
-149:     ngage_w8(c, (c->r[4] + c->r[3]), (uint8_t)c->r[1]); /* strb r1, [r4, r3] */
-150: L_100678dc:
-151:     c->r[2] = 0x0000013cu; /* mov r2, #316 */
-152: L_100678e0:
-153:     ngage_w16(c, (c->r[4] + c->r[2]), (uint16_t)c->r[0]); /* strh r0, [r4, r2] */
-154: L_100678e4:
-155:     ngage_w32(c, (c->r[4] + 312u), (uint32_t)c->r[1]); /* str r1, [r4, #0x138] */
-156: L_100678e8:
-157:     ngage_w32(c, (c->r[4] + 320u), (uint32_t)c->r[1]); /* str r1, [r4, #0x140] */
-158: L_100678ec:
-159:     ngage_w32(c, (c->r[4] + 84u), (uint32_t)c->r[1]); /* str r1, [r4, #0x54] */
-160: L_100678f0:
-161:     c->r[12] = c->r[0]; /* mov r12, r0 */
-162: L_100678f4:
-163:     c->r[3] = 0x00000148u; /* mov r3, #328 */
-164: L_100678f8:
-165:     ngage_w8(c, (c->r[4] + c->r[3]), (uint8_t)c->r[12]); /* strb r12, [r4, r3] */
-166: L_100678fc:
-167:     c->r[14] = 0x100fbd18u; /* literal 0x1006795c */ /* ldr lr, [pc, #0x58] */
-168: L_10067900:
-169:     ngage_w32(c, (c->r[4] + 8u), (uint32_t)c->r[14]); /* str lr, [r4, #0x8] */
-170: L_10067904:
-171:     c->r[3] = c->r[3] + 0x00000001u; /* add r3, r3, #1 */
-172: L_10067908:
-173:     ngage_w8(c, (c->r[4] + c->r[3]), (uint8_t)c->r[12]); /* strb r12, [r4, r3] */
-174: L_1006790c:
-175:     c->r[2] = 0x100fbbb4u; /* literal 0x10067960 */ /* ldr r2, [pc, #0x4c] */
-176: L_10067910:
-177:     ngage_w32(c, (c->r[4] + 4u), (uint32_t)c->r[2]); /* str r2, [r4, #0x4] */
-178: L_10067914:
-179:     ngage_w32(c, (c->r[4] + 332u), (uint32_t)c->r[1]); /* str r1, [r4, #0x14c] */
-180: L_10067918:
+Function sub_1006a488: 119487 source lines
+1: void sub_1006a488(ngage_cpu_t *c) {
+2:     uint32_t imgdec_dest = c->r[1];
+3:     (void)c;
+4:     if (0) { goto L_1006a488; goto L_1006a48c; goto L_1006a490; goto L_1006a494; goto L_1006a498; goto L_1006a49c; goto L_1006a4a0; goto L_1006a4a4; goto L_1006a4a8; goto L_1006a4ac; goto L_1006a4b0; goto L_1006a4b4; goto L_1006a4b8; goto L_1006a4bc; goto L_1006a4c0; goto L_1006a4c4; goto L_1006a4c8; goto L_1006a4cc; goto L_1006a4d0; goto L_1006a4d4; goto L_1006a4d8; goto L_1006a4dc; goto L_1006a4e0; goto L_1006a4e4; goto L_1006a4e8; goto L_1006a4ec; goto L_1006a4f0; goto L_1006a4f4; goto L_1006a4f8; goto L_1006a4fc; goto L_1006a500; goto L_1006a504; goto L_1006a508; goto L_1006a50c; goto L_1006a510; goto L_1006a514; goto L_1006a518; goto L_1006a51c; goto L_1006a520; goto L_1006a524; goto L_1006a528; goto L_1006a52c; goto L_1006a530; goto L_1006a534; goto L_1006a538; goto L_1006a53c; goto L_1006a540; goto L_1006a544; goto L_1006a548; goto L_1006a54c; goto L_1006a550; goto L_1006a554; goto L_1006a558; goto L_1006a55c; goto L_1006a560; goto L_1006a564; goto L_1006a568; goto L_1006a56c; goto L_1006a570; goto L_1006a574; goto L_1006a578; goto L_1006a57c; goto L_1006a580; goto L_1006a584; goto L_1006a588; goto L_1006a58c; goto L_1006a590; goto L_1006a594; goto L_1006a598; goto L_1006a59c; goto L_1006a5a0; goto L_1006a5a4; goto L_1006a5a8; goto L_1006a5ac; goto L_1006a5b0; goto L_1006a5b4; goto L_1006a5b8; goto L_1006a5bc; goto L_1006a5c0; goto L_1006a5c4; goto L_1006a5c8; goto L_1006a5cc; goto L_1006a5d0; goto L_1006a5d4; goto L_1006a5d8; goto L_1006a5dc; goto L_1006a5e0; goto L_1006a5e4; goto L_1006a5e8; goto L_1006a5ec; goto L_1006a5f0; goto L_1006a5f4; goto L_1006a5f8; goto L_1006a5fc; goto L_1006a600; goto L_1006a604; goto L_1006a608; goto L_1006a60c; goto L_1006a610; goto L_1006a614; goto L_1006a618; goto L_1006a61c; goto L_1006a620; goto L_1006a624; goto L_1006a628; goto L_1006a62c; goto L_1006a630; goto L_1006a634; goto L_1006a638; goto L_1006a63c; goto L_1006a640; goto L_1006a644; goto L_1006a648; goto L_1006a64c; goto L_1006a650; goto L_1006a654; goto L_1006a658; goto L_1006a65c; goto L_1006a660; goto L_1006a664; goto L_1006a668; goto L_1006a66c; goto L_1006a670; goto L_1006a674; goto L_1006a678; goto L_1006a67c; goto L_1006a680; goto L_1006a684; goto L_1006a688; goto L_1006a68c; }
+5: L_1006a488:
+6:     c->r[13] -= 32u; ngage_w32(c, c->r[13] + 0u, c->r[4]); ngage_w32(c, c->r[13] + 4u, c->r[5]); ngage_w32(c, c->r[13] + 8u, c->r[6]); ngage_w32(c, c->r[13] + 12u, c->r[7]); ngage_w32(c, c->r[13] + 16u, c->r[8]); ngage_w32(c, c->r[13] + 20u, c->r[9]); ngage_w32(c, c->r[13] + 24u, c->r[10]); ngage_w32(c, c->r[13] + 28u, c->r[14]); /* push {r4, r5, r6, r7, r8, r9, r10, lr} */
+7: L_1006a48c:
+8:     c->r[13] = c->r[13] - 0x00000024u; /* sub sp, sp, #36 */
+9: L_1006a490:
+10:     ngage_w32(c, (c->r[13] + 32u), (uint32_t)c->r[1]); /* str r1, [sp, #0x20] */
+11: L_1006a494:
+12:     ngage_w32(c, (c->r[13] + 28u), (uint32_t)c->r[2]); /* str r2, [sp, #0x1c] */
+13: L_1006a498:
+14:     c->r[12] = ngage_r32(c, (c->r[13] + 68u)); /* ldr r12, [sp, #0x44] */
+15: L_1006a49c:
+16:     ngage_w32(c, (c->r[13] + 24u), (uint32_t)c->r[3]); /* str r3, [sp, #0x18] */
+17: L_1006a4a0:
+18:     c->r[14] = c->r[12] + 0x00000204u; /* add lr, r12, #516 */
+19: L_1006a4a4:
+20:     c->r[12] = c->r[12] + 0x00000004u; /* add r12, r12, #4 */
+21: L_1006a4a8:
+22:     ngage_w32(c, (c->r[13] + 20u), (uint32_t)c->r[12]); /* str r12, [sp, #0x14] */
+23: L_1006a4ac:
+24:     c->r[7] = ngage_r32(c, (c->r[13] + 80u)); /* ldr r7, [sp, #0x50] */
+25: L_1006a4b0:
+26:     c->r[9] = ngage_r32(c, (c->r[13] + 72u)); /* ldr r9, [sp, #0x48] */
+27: L_1006a4b4:
+28:     c->r[0] = c->r[7] - c->r[9]; /* rsb r0, r9, r7 */
+29: L_1006a4b8:
+30:     ngage_sub_flags(c, c->r[0], 0x000000b0u); /* cmp r0, #176 */
+31: L_1006a4bc:
+32:     if ((!ngage_zf(c) && ngage_nf(c) == ngage_vf(c))) { c->r[7] = c->r[9] + 0x000000b0u; } /* addgt r7, r9, #176 */
+33: L_1006a4c0:
+34:     ngage_w32(c, (c->r[13] + 80u), (uint32_t)c->r[7]); /* str r7, [sp, #0x50] */
+35: L_1006a4c4:
+36:     c->r[7] = ngage_r32(c, (c->r[13] + 76u)); /* ldr r7, [sp, #0x4c] */
+37: L_1006a4c8:
+38:     c->r[4] = 0x00000000u; /* mov r4, #0 */
+39: L_1006a4cc:
+40:     ngage_sub_flags(c, c->r[4], c->r[7]); /* cmp r4, r7 */
+41: L_1006a4d0:
+42:     if ((ngage_nf(c) == ngage_vf(c))) { goto L_1006a514; } /* bge 0x6a514 <shadowkey_code+0x6a514> */
+43: L_1006a4d4:
+44:     c->r[3] = ngage_r8(c, c->r[14]); /* ldrb r3, [lr] */
+45: L_1006a4d8:
+46:     c->r[0] = ngage_r8(c, (c->r[14] + 1u)); /* ldrb r0, [lr, #0x1] */
+47: L_1006a4dc:
+48:     c->r[9] = ngage_r32(c, (c->r[13] + 76u)); /* ldr r9, [sp, #0x4c] */
+49: L_1006a4e0:
+50:     c->r[2] = ngage_r8(c, (c->r[14] + 2u)); c->r[14] = (c->r[14] + 2u); /* ldrb r2, [lr, #0x2]! */
+51: L_1006a4e4:
+52:     c->r[1] = ngage_r8(c, (c->r[14] + 1u)); /* ldrb r1, [lr, #0x1] */
+53: L_1006a4e8:
+54:     c->r[4] = c->r[4] + 0x00000001u; /* add r4, r4, #1 */
+55: L_1006a4ec:
+56:     ngage_sub_flags(c, c->r[4], c->r[9]); /* cmp r4, r9 */
+57: L_1006a4f0:
+58:     c->r[3] = c->r[3] | shadowkey_arm_shift_operand(c, c->r[0], 0u, 8u, 1u, 0u); /* orr r3, r3, r0, lsl #8 */
+59: L_1006a4f4:
+60:     c->r[3] = (c->r[3] << 16); /* lsl r3, r3, #16 */
+61: L_1006a4f8:
+62:     c->r[3] = ((uint32_t)((int32_t)c->r[3] >> 16)); /* asr r3, r3, #16 */
+63: L_1006a4fc:
+64:     c->r[14] = c->r[14] + 0x00000002u; /* add lr, lr, #2 */
+65: L_1006a500:
+66:     c->r[2] = c->r[2] | shadowkey_arm_shift_operand(c, c->r[1], 0u, 8u, 1u, 0u); /* orr r2, r2, r1, lsl #8 */
+67: L_1006a504:
+68:     c->r[2] = (c->r[2] << 16); /* lsl r2, r2, #16 */
+69: L_1006a508:
+70:     c->r[3] = shadowkey_arm_shift_operand(c, c->r[2], 2u, 16u, 1u, 0u) - c->r[3]; /* rsb r3, r3, r2, asr #16 */
+71: L_1006a50c:
+72:     c->r[14] = c->r[14] + c->r[3]; /* add lr, lr, r3 */
+73: L_1006a510:
+74:     if ((ngage_nf(c) != ngage_vf(c))) { goto L_1006a4d4; } /* blt 0x6a4d4 <shadowkey_code+0x6a4d4> */
+75: L_1006a514:
+76:     c->r[10] = ngage_r32(c, (c->r[13] + 76u)); /* ldr r10, [sp, #0x4c] */
+77: L_1006a518:
+78:     c->r[7] = ngage_r32(c, (c->r[13] + 84u)); /* ldr r7, [sp, #0x54] */
+79: L_1006a51c:
+80:     c->r[4] = c->r[14]; /* mov r4, lr */
+81: L_1006a520:
+82:     ngage_sub_flags(c, c->r[10], c->r[7]); /* cmp r10, r7 */
+83: L_1006a524:
+84:     if ((ngage_nf(c) == ngage_vf(c))) { goto L_1006a684; } /* bge 0x6a684 <shadowkey_code+0x6a684> */
+85: L_1006a528:
+86:     c->r[9] = 0x0000ff00u; /* mov r9, #65280 */
+87: L_1006a52c:
+88:     c->r[9] = c->r[9] + 0x000000ffu; /* add r9, r9, #255 */
+89: L_1006a530:
+90:     ngage_w32(c, (c->r[13] + 16u), (uint32_t)c->r[9]); /* str r9, [sp, #0x10] */
+91: L_1006a534:
+92:     c->r[14] = ngage_r8(c, c->r[4]); /* ldrb lr, [r4] */
+93: L_1006a538:
+94:     c->r[0] = ngage_r8(c, (c->r[4] + 1u)); /* ldrb r0, [r4, #0x1] */
+95: L_1006a53c:
+96:     c->r[12] = ngage_r8(c, (c->r[4] + 2u)); /* ldrb r12, [r4, #0x2] */
+97: L_1006a540:
+98:     c->r[1] = ngage_r8(c, (c->r[4] + 3u)); /* ldrb r1, [r4, #0x3] */
+99: L_1006a544:
+100:     c->r[4] = c->r[4] + 0x00000004u; /* add r4, r4, #4 */
+101: L_1006a548:
+102:     ngage_w32(c, (c->r[13] + 4u), (uint32_t)c->r[4]); /* str r4, [sp, #0x4] */
+103: L_1006a54c:
+104:     c->r[7] = ngage_r32(c, (c->r[13] + 76u)); /* ldr r7, [sp, #0x4c] */
+105: L_1006a550:
+106:     c->r[9] = ngage_r32(c, (c->r[13] + 24u)); /* ldr r9, [sp, #0x18] */
+107: L_1006a554:
+108:     c->r[5] = ngage_r32(c, (c->r[13] + 72u)); /* ldr r5, [sp, #0x48] */
+109: L_1006a558:
+110:     c->r[8] = ngage_r32(c, (c->r[13] + 80u)); /* ldr r8, [sp, #0x50] */
+111: L_1006a55c:
+112:     c->r[3] = c->r[10] - c->r[7]; /* rsb r3, r7, r10 */
+113: L_1006a560:
+114:     c->r[7] = ngage_r32(c, (c->r[13] + 32u)); /* ldr r7, [sp, #0x20] */
+115: L_1006a564:
+116:     c->r[3] = c->r[9] + c->r[3]; /* add r3, r9, r3 */
+117: L_1006a568:
+118:     c->r[9] = ngage_r32(c, (c->r[13] + 16u)); /* ldr r9, [sp, #0x10] */
+119: L_1006a56c:
+120:     c->r[2] = c->r[3] + shadowkey_arm_shift_operand(c, c->r[3], 0u, 2u, 1u, 0u); /* add r2, r3, r3, lsl #2 */
+121: L_1006a570:
+122:     c->r[3] = c->r[3] + shadowkey_arm_shift_operand(c, c->r[2], 0u, 1u, 1u, 0u); /* add r3, r3, r2, lsl #1 */
+123: L_1006a574:
+124:     c->r[2] = c->r[14] | shadowkey_arm_shift_operand(c, c->r[0], 0u, 8u, 1u, 0u); /* orr r2, lr, r0, lsl #8 */
+125: L_1006a578:
+126:     c->r[1] = c->r[12] | shadowkey_arm_shift_operand(c, c->r[1], 0u, 8u, 1u, 0u); /* orr r1, r12, r1, lsl #8 */
+127: L_1006a57c:
+128:     c->r[6] = c->r[7] + shadowkey_arm_shift_operand(c, c->r[3], 0u, 5u, 1u, 0u); /* add r6, r7, r3, lsl #5 */
+129: L_1006a580:
+130:     ngage_sub_flags(c, c->r[1], c->r[9]); /* cmp r1, r9 */
+131: L_1006a584:
+132:     if (!ngage_zf(c)) { ngage_sub_flags(c, c->r[2], c->r[9]); } /* cmpne r2, r9 */
+133: L_1006a588:
+134:     if (ngage_zf(c)) { goto L_1006a674; } /* beq 0x6a674 <shadowkey_code+0x6a674> */
+135: L_1006a58c:
+136:     c->r[7] = ngage_r32(c, (c->r[13] + 24u)); /* ldr r7, [sp, #0x18] */
+137: L_1006a590:
+138:     c->r[1] = c->r[1] - c->r[2]; /* rsb r1, r2, r1 */
+139: L_1006a594:
+140:     ngage_w32(c, (c->r[13] + 8u), (uint32_t)c->r[1]); /* str r1, [sp, #0x8] */
+141: L_1006a598:
+142:     c->r[7] = c->r[10] + c->r[7]; /* add r7, r10, r7 */
+143: L_1006a59c:
+144:     ngage_w32(c, (c->r[13] + 12u), (uint32_t)c->r[7]); /* str r7, [sp, #0xc] */
+145: L_1006a5a0:
+146:     c->r[3] = c->r[2] - c->r[5]; /* rsb r3, r5, r2 */
+147: L_1006a5a4:
+148:     c->r[5] = c->r[5] + c->r[3]; /* add r5, r5, r3 */
+149: L_1006a5a8:
+150:     c->r[6] = c->r[6] + shadowkey_arm_shift_operand(c, c->r[3], 0u, 1u, 1u, 0u); /* add r6, r6, r3, lsl #1 */
+151: L_1006a5ac:
+152:     c->r[2] = c->r[8] - c->r[5]; /* rsb r2, r5, r8 */
+153: L_1006a5b0:
+154:     ngage_sub_flags(c, c->r[2], c->r[1]); /* cmp r2, r1 */
+155: L_1006a5b4:
+156:     if ((!ngage_zf(c) && ngage_nf(c) == ngage_vf(c))) { c->r[8] = c->r[5] + c->r[1]; } /* addgt r8, r5, r1 */
+157: L_1006a5b8:
+158:     c->r[4] = c->r[5]; /* mov r4, r5 */
+159: L_1006a5bc:
+160:     ngage_sub_flags(c, c->r[4], c->r[8]); /* cmp r4, r8 */
+161: L_1006a5c0:
+162:     if ((ngage_nf(c) == ngage_vf(c))) { goto L_1006a65c; } /* bge 0x6a65c <shadowkey_code+0x6a65c> */
+163: L_1006a5c4:
+164:     c->r[9] = 0x00000f00u; /* mov r9, #3840 */
+165: L_1006a5c8:
+166:     c->r[9] = c->r[9] + 0x0000000fu; /* add r9, r9, #15 */
+167: L_1006a5cc:
+168:     ngage_w32(c, c->r[13], (uint32_t)c->r[9]); /* str r9, [sp] */
+169: L_1006a5d0:
+170:     c->r[12] = 0x00000ee0u; /* mov r12, #3808 */
+171: L_1006a5d4:
+172:     c->r[12] = c->r[12] + 0x0000000eu; /* add r12, r12, #14 */
+173: L_1006a5d8:
+174:     c->r[7] = ngage_r32(c, (c->r[13] + 4u)); /* ldr r7, [sp, #0x4] */
+175: L_1006a5dc:
+176:     c->r[9] = ngage_r32(c, (c->r[13] + 20u)); /* ldr r9, [sp, #0x14] */
+177: L_1006a5e0:
+178:     c->r[0] = c->r[4] - c->r[5]; /* rsb r0, r5, r4 */
+179: L_1006a5e4:
+180:     c->r[3] = ngage_r8(c, (c->r[7] + c->r[0])); /* ldrb r3, [r7, r0] */
 ---
 
 ## Runtime evidence

@@ -34,6 +34,7 @@ jobs:
           SHADOWKEY_WATCH_GDI108_RECEIVER=1 \
             bash trace_asset_loader_live_vfs.sh > /tmp/step42_trace_runner.log 2>&1
           python3 shadowkey_step32_gdi108_forensics.py > /tmp/step42_gdi_audit.log 2>&1
+          python3 ../../tools/step43_imgdec_callsite.py > /tmp/step43_imgdec_callsite.log 2>&1
           python3 shadowkey_fbs_capture_to_png.py .build/live_run_bitmap.rgb565 .build/live_run_bitmap.meta .build/live_run_bitmap.png > /tmp/step42_framebuffer.log 2>&1
           python3 - <<'PY' > /tmp/step42_pixel_writer_source.log
           from pathlib import Path
@@ -85,6 +86,12 @@ jobs:
             echo "---"
             cat /tmp/step42_gdi_audit.log
             echo "---"
+            echo
+            echo "## Image decoder caller audit"
+            echo
+            echo '---'
+            cat /tmp/step43_imgdec_callsite.log
+            echo '---'
             echo
             echo "## Raw framebuffer capture"
             echo

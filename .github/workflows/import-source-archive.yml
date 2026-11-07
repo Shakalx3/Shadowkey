@@ -1,0 +1,73 @@
+name: Import source archive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/import-extracted-bundle.trigger"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-source-archive
+  cancel-in-progress: false
+
+jobs:
+  extract-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract archive without overwriting repository files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import pathlib
+          import zipfile
+
+          archive = pathlib.Path("shadowkey_recomp_bundle_v8_4_step35_direct_binary_patch_path.zip")
+          destination = pathlib.Path("source_bundle")
+          if not archive.is_file():
+              raise SystemExit(f"Archive missing: {archive}")
+          if destination.exists():
+              raise SystemExit(f"Refusing to overwrite existing directory: {destination}")
+
+          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+          expected = "6b263d86210eff452f2c00cd099ed9cac475bbca6bff9f60782b41c61263384d"
+          if digest != expected:
+              raise SystemExit(f"Archive SHA-256 mismatch: {digest}")
+
+          with zipfile.ZipFile(archive) as zf:
+              members = zf.infolist()
+              total = sum(m.file_size for m in members)
+              if len(members) != 2191 or total != 112885393:
+                  raise SystemExit(f"Unexpected archive inventory: {len(members)} entries, {total} bytes")
+              for member in members:
+                  name = pathlib.PurePosixPath(member.filename)
+                  if name.is_absolute() or ".." in name.parts:
+                      raise SystemExit(f"Unsafe archive path: {member.filename}")
+              zf.extractall(destination)
+
+          extracted_files = [p for p in destination.rglob("*") if p.is_file()]
+          extracted_bytes = sum(p.stat().st_size for p in extracted_files)
+          if len(extracted_files) != 2191 or extracted_bytes != 112885393:
+              raise SystemExit(f"Extraction verification failed: {len(extracted_files)} files, {extracted_bytes} bytes")
+          print(f"SHA-256: {digest}")
+          print(f"Extracted files: {len(extracted_files)}")
+          print(f"Extracted bytes: {extracted_bytes}")
+          PY
+
+      - name: Commit extracted source tree
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source_bundle/
+          git commit -m "Import extracted Shadowkey source archive"
+          git push origin HEAD:main

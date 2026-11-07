@@ -3298,6 +3298,24 @@ sub_1006a488 direct callsites: 30
 313309:     c->r[0] = c->r[4]; /* mov r0, r4 */
 ---
 
+## global.spr resource identity check
+
+---
+global.spr size=1646707 bytes
+resource[0xF8] candidate offset=0x9444
+candidate dimensions=45189x34222
+candidate header/palette prefix=85 b0 ae 85 b2 b0 b2 ae b2 b2 b0 b0 b0 b0 6e b5 b0 b0 b0 b0 99 b0 b0 b0 b0 88 b0 b0 b0 b0 b0 6e b0 b0 b0 b0 b0 b0 b0 6e b5 b0 6e b0 b0 b4 6e 99 b4 99 99 4c 9c 9c c4 9e 81 69 84 6d 98 70 70 9b
+candidate payload prefix=b0 b0 96 b0 b0 b0 b0 b0 ae b0 ae b2 b0 85 b2 b2 b0 ae 85 b2 b2 b0 b2 b0 b2 b2 ae b2 ae b2 ae 85 b0 b2 b0 b0 b0 b0 b0 6e b0 b0 b0 b0 b0 b0 b0 b0 b0 b0 b0 b0 85 b0 b0 b0 b0 85 b0 b0 b0 b0 85 b0
+runtime header expected=b0 00 d0 00 01 0c 01 0b 11 0f 01 0b ...
+header_match_176x208=False
+offset-table candidates containing entry[0xF8]=0x9444: 5
+table_entry_filepos=0x3e0 table_base=0x0 prev=0x9444 this=0x9444 next=0x9444 resource_bytes=0
+table_entry_filepos=0x3e4 table_base=0x4 prev=0x9444 this=0x9444 next=0x9444 resource_bytes=0
+table_entry_filepos=0x3e8 table_base=0x8 prev=0x9444 this=0x9444 next=0x9444 resource_bytes=0
+table_entry_filepos=0x3ec table_base=0xc prev=0x9444 this=0x9444 next=0x9444 resource_bytes=0
+table_entry_filepos=0x3f0 table_base=0x10 prev=0x9444 this=0x9444 next=0x0 resource_bytes=-1
+---
+
 ## Raw framebuffer capture
 
 ---

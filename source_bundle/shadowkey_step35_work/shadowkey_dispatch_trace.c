@@ -25,6 +25,16 @@ static void tracked_guest_call(uint32_t address,ngage_guest_fn fn,ngage_cpu_t*c)
                 address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
         for(uint32_t off=0;off<0x30u;off+=4u)
             fprintf(stderr,"IMGDEC stack[%02x]=%08x\\n",off,ngage_r32(c,c->r[13]+off));
+        {
+            uint32_t src=ngage_r32(c,c->r[13]);
+            fprintf(stderr,"IMGDEC source_base=%08x payload=%08x\\n",src,src+0x204u);
+            if(src>=0x10000000u && (uint64_t)src+0x244u<=0x12000000ull){
+                for(uint32_t off=0;off<0x40u;off+=4u)
+                    fprintf(stderr,"IMGDEC header[%03x]=%08x\\n",off,ngage_r32(c,src+off));
+                for(uint32_t off=0;off<0x40u;off+=4u)
+                    fprintf(stderr,"IMGDEC payload[%03x]=%08x\\n",off,ngage_r32(c,src+0x204u+off));
+            }
+        }
     }
     if(ngage_runtime_guest_function_enter)ngage_runtime_guest_function_enter(address);
     fn(c);

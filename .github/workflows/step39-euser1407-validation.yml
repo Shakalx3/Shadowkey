@@ -1,13 +1,5 @@
 name: EUSER1407 implementation validation
 on:
-  push:
-    branches: [main]
-    paths:
-      - "source_bundle/shadowkey_step35_work/shadowkey_hle_bootstrap_v2.c"
-      - "source_bundle/shadowkey_step35_work/shadowkey_hle_vfs_trace.c"
-      - "source_bundle/shadowkey_step35_work/shadowkey_step39_euser1407_test.c"
-      - "source_bundle/shadowkey_step35_work/build_and_test.sh"
-      - ".github/step39-euser1407-validation.trigger"
   workflow_dispatch:
 permissions:
   contents: write

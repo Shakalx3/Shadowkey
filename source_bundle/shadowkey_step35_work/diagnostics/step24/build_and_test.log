@@ -1,0 +1,58 @@
+UNIMPLEMENTED Shadowkey import: AVKON[100056c6].DLL ordinal 63 (r0=10110258 r1=00000000 r2=100fff34 r3=100fc4d8)
+UNIMPLEMENTED Shadowkey import: EIKCORE[10004892].DLL ordinal 233 (r0=102fefe4 r1=10110258 r2=100fff34 r3=100fc4d8)
+UNIMPLEMENTED Shadowkey import: CONE[10003a41].DLL ordinal 236 (r0=101102c8 r1=10110258 r2=100fff34 r3=100fc4d8)
+UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 1395 (r0=10110678 r1=00000000 r2=100fbb74 r3=100fcf68)
+UNIMPLEMENTED Shadowkey import: ETEL[10003d46].DLL ordinal 204 (r0=10110690 r1=00000000 r2=100fbb74 r3=100fbb84)
+UNIMPLEMENTED Shadowkey import: ETEL[10003d46].DLL ordinal 211 (r0=10110698 r1=00000000 r2=100fbb74 r3=100fbb84)
+UNIMPLEMENTED Shadowkey import: ETEL[10003d46].DLL ordinal 210 (r0=101106ac r1=00000000 r2=100fbb74 r3=100fbb84)
+UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 13 (r0=10110678 r1=00000000 r2=100fbb74 r3=00000000)
+UNIMPLEMENTED Shadowkey import: MSGS[10004e66].DLL ordinal 143 (r0=10110710 r1=00000000 r2=100fbaf4 r3=00000000)
+UNIMPLEMENTED Shadowkey import: MSGS[10004e66].DLL ordinal 3 (r0=00000000 r1=10110710 r2=100fbaf4 r3=00000000)
+UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 1431 (r0=102feeb0 r1=00000100 r2=00000008 r3=0000000a)
+UNIMPLEMENTED Shadowkey import: ESTLIB[10003b0b].DLL ordinal 317 (r0=102fee30 r1=100ac390 r2=00000008 r3=0000000a)
+UNIMPLEMENTED Shadowkey import: ESTLIB[10003b0b].DLL ordinal 315 (r0=102fee30 r1=100ac3c0 r2=00000008 r3=0000000a)
+UNIMPLEMENTED Shadowkey import: HAL[100039e8].DLL ordinal 1 (r0=00000010 r1=102fed20 r2=00000008 r3=0000000a)
+UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 21 (r0=00002710 r1=102fed20 r2=00000000 r3=0068afff)
+UNIMPLEMENTED Shadowkey import: CONE[10003a41].DLL ordinal 40 (r0=101102c8 r1=102fed20 r2=0000039c r3=000003ad)
+UNIMPLEMENTED Shadowkey import: CONE[10003a41].DLL ordinal 214 (r0=101102c8 r1=102fefe4 r2=0000039c r3=000003ad)
+UNIMPLEMENTED Shadowkey import: CONE[10003a41].DLL ordinal 160 (r0=102fed24 r1=101102c8 r2=0000039c r3=000003ad)
+UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 1086 (r0=102fed18 r1=102fed24 r2=0000039c r3=000003ad)
+FBS HLE: CFbsBitmap handle constructed object=10110718
+FBS HLE: Create 176x233 mode=10 stride=352 bytes=82016 header=10300100 pixels=10311000
+UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 627 (r0=00000000 r1=102fed04 r2=0000000a r3=000000b0)
+  GFX HLE: CFbsBitmapDevice::NewL bitmap=10110718 -> device=10110730 pixels=10311000 size=176x233 stride=352 mode=10
+  GFX HLE: CFbsDevice::CreateContext device=10110730 -> gc=10110770 out=102fed0c
+UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 627 (r0=00000000 r1=102fed0c r2=0000000a r3=00000000)
+UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 738 (r0=ffffffec r1=102fed0c r2=0000000a r3=100fcf68)
+UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 1111 (r0=00000000 r1=00000001 r2=00009c40 r3=10028200)
+UNIMPLEMENTED Shadowkey import: AVKON[100056c6].DLL ordinal 1529 (r0=10110258 r1=00000001 r2=00009c40 r3=10028200)
+UNIMPLEMENTED Shadowkey import: CONE[10003a41].DLL ordinal 12 (r0=10110258 r1=101102c8 r2=00000000 r3=00000000)
+UNIMPLEMENTED Shadowkey import: AVKON[100056c6].DLL ordinal 874 (r0=10110258 r1=101102c8 r2=00000000 r3=00000000)
+UNIMPLEMENTED Shadowkey import: AVKON[100056c6].DLL ordinal 1272 (r0=00000000 r1=08cc0116 r2=00000000 r3=00000000)
+PASS: EUSER ordinal 1 memset ABI; app factory, document vtable dispatch, AppUi construction (51 import calls), engine object/back-pointer, allocation failure and IAT-slot dispatch pass
+FBS HLE: CFbsBitmap handle constructed object=10110718
+FBS HLE: Create 176x233 mode=10 stride=352 bytes=82016 header=10300100 pixels=10311000
+FBS HLE: DataAddress object=10110718 shared=10300100 offset=00001000 -> 10311000 (82016 bytes)
+PASS: HLE shared-chunk metadata + large-chunk pixels; DataAddress resolves Base()+offset; mode-10 buffer covers the 176x208 two-byte clear
+IMPORT dll=EFSRV[100039e4].DLL ord=121 r0=1017f534 r1=00000000 r2=1017f54c r3=00000002 sp=00000000 lr=00000000 cpsr=00000000
+  VFS RFile::Open path='e:\system\apps\6R51\menu_sprites.txt' -> '/mnt/data/shadowkey_work/shadowkey_step12_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/menu_sprites.txt' OPENED size=252 mode=00000002 obj=1017f534
+IMPORT dll=EFSRV[100039e4].DLL ord=185 r0=1017f534 r1=1017f530 r2=1017f54c r3=00000002 sp=00000000 lr=00000000 cpsr=00000000
+  VFS RFile::Size wrote 252 to 1017f530 for /mnt/data/shadowkey_work/shadowkey_step12_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/menu_sprites.txt
+IMPORT dll=EFSRV[100039e4].DLL ord=15 r0=1017f534 r1=1017f530 r2=1017f54c r3=00000002 sp=00000000 lr=00000000 cpsr=00000000
+  EFSRV probe ord=15 args: r0=1017f534[00000000 00000000 00000000 00000000] r1=1017f530[000000fc 00000000 00000000 00000000] r2=1017f54c[30000024 00000100 003a0065 0073005c] r3=00000002
+  VFS EFSRV ordinal 15 close /mnt/data/shadowkey_work/shadowkey_step12_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/menu_sprites.txt (preserve r0=1017f534; Close is void)
+PASS: EFSRV ordinal 185 call-site ABI writes RFile::Size(TInt&) output without changing the file handle
+PASS: CONE ordinal 226 has four this-only call sites
+PASS: ordinal 55 has two matching this-only call sites
+PASS: both paired sites call returned object's vtable slot +0xD8 with ordinal-55 result
+PASS: remaining ordinal-226 sites use returned object's graphics-context slots +0x48 / +0xB8
+INFERENCE: ordinal 226 = CCoeControl::SystemGc() (high confidence, not export-table proven)
+INFERENCE: ordinal 55 = CCoeControl::DrawableWindow() (high confidence, not export-table proven)
+PASS: FBSCLI ordinal 17 maps to thunk 0x1009FD40 and has exactly three guest call sites
+PASS: all three sites pass the engine bitmap-object field at +0x2E4
+PASS: two sites store the return as a pixel-buffer pointer at engine-child +0x480
+PASS: first consumer zero-fills 0x11E00 bytes through that return pointer
+PASS: third site stores the same return in engine +0x300 for later propagation
+PASS: ordinal 17 is called with only the bitmap receiver deliberately set
+INFERENCE: ordinal 135 = CFbsBitmap construction; ordinal 16 = Create(TSize&,TDisplayMode)
+INFERENCE: ordinal 17 = CFbsBitmap::DataAddress() (high confidence; no FP1 EAT proof)

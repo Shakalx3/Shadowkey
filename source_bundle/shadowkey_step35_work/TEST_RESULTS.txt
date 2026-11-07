@@ -1,0 +1,33 @@
+2026-10-29 diagnostic status
+
+PASS: shadowkey_appui_construct_test
+- App factory / NewApplication object
+- document vtable dispatch
+- AppUi construction and engine object creation
+- engine back-pointer and AppUi flag initialization
+- allocation-failure path
+- import-slot dispatch
+
+ENGINE TRACE: intentionally incomplete
+- SIMKIN jump-table paths no longer return prematurely or corrupt the stack in the tested copy/array paths.
+- Engine startup reaches resource opens for:
+  z:\system\apps\6R51\StringTable.eng
+  e:\system\apps\6R51\global.spr
+- The harness has no mounted game filesystem/assets; RFile::Open returns KErrNotFound.
+- The next error/cleanup path still dereferences null and stops with exit code 90.
+- No playable desktop build or Symbian/N95 SIS has been produced.
+
+ARM11 cross-compilation (2026-10-29):
+- `./build_arm11_core.sh` produces `arm11_objects/shadowkey_arm11_core.o`.
+- Verified as ELF 32-bit LSB relocatable, ARM, EABI5.
+- Main lifted code and SIMKIN compile to ARM11 objects; guest-runtime symbols resolve in the combined object.
+- Remaining undefined references are C runtime / compiler memory helpers: exit, fprintf, stderr, strcmp, strncmp, __aeabi_memclr, __aeabi_memmove, __aeabi_memset.
+- This is not an E32Image and cannot be launched by the N95 OS as-is.
+
+## Additional static ELF link check
+
+- `build_arm11_linkcheck.sh` completed successfully.
+- Output: `arm11_objects/shadowkey_arm11_linkcheck.elf`, ELF32 ARM EABI5 static executable, approximately 5.5 MiB.
+- `nm -u` reports no undefined symbols.
+- The entry point is a temporary `E32Main()` stub that returns immediately. This validates the link stage only; it does not run Shadowkey and is not a Symbian E32Image.
+- The host-side AppUi construction smoke test was rerun and passed.

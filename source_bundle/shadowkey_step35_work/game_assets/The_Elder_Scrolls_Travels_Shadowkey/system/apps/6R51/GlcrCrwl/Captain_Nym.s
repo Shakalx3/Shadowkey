@@ -1,0 +1,16 @@
+{
+	saved_Talked[0]
+	Init[()
+	{
+		SetUseText(1542);
+		SetUsable(true);
+		SetInvulnerable(true);
+		SetID("nym");
+		SetAggressive(false);
+		SetIdleAnimation(0);
+	}]
+	OnUse[()
+	{
+		GetPlayer().OpenMenu("glcrcrwl\\\\nym_convo");
+	}]
+}

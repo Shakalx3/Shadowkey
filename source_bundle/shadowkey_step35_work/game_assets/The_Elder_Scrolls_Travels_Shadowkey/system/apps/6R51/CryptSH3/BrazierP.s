@@ -1,0 +1,12 @@
+{
+	Init[()
+	{
+		SetUseText(690);
+		SetUsable(true);
+	}]
+	OnUse[()
+	{
+		GetPlayer().OpenMenu("CryptSH3\\\\personality_menu");
+		SetUsable(false);
+	}]
+}

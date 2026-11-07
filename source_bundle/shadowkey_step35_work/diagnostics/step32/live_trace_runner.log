@@ -1,0 +1,3 @@
+PASS: HAL free-RAM model crosses the original constructor threshold; unmodified engine state reaches DrawText
+PASS: no forced engine+0x34 write in live harness; threshold=0x0068afff
+LIMITATION: direct RunL invocation still bypasses CActiveScheduler; HAL free RAM is a configurable diagnostic model, not a measured N95 reading

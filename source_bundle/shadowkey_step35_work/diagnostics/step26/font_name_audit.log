@@ -1,0 +1,5 @@
+PASS: E32 code offset 0x7c; VA 100ac718 -> file offset 000ac794; literal = Swiss
+PASS: live TFontSpec constructor site uses 20-byte descriptor copy and height 213 twips
+PASS: EUSER1282 three-argument byte-copy ABI implemented; live copy reaches GDI151
+BLOCKER: EUSER1407 leaves its 20-byte source descriptor unformatted; GDI151 receives stale UTF-16 path bytes
+INFERENCE: EUSER1407 call ABI matches TDes16::Format(TRefByValue<const TDesC16>, ...); export name still needs FP1 export-table proof

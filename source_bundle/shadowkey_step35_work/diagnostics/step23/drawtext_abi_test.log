@@ -1,0 +1,5 @@
+  GFX HLE: DrawText(gc=10100000 desc=10100100 rect=10100200 [-2,3..176,233] baseline=-15 align=2 margin=7) [diagnostic only; no glyph rasterization]
+  GFX RAW descriptor @10100100: 05 00 00 30 00 01 00 00 48 00 45 00 4c 00 4c 00 4f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  GFX RAW rect @10100200: fe ff ff ff 03 00 00 00 b0 00 00 00 e9 00 00 00
+  GFX RAW stack-args @10100300: 02 00 00 00 07 00 00 00
+PASS: DrawText ABI register/stack decode; TRect coordinates; no unintended pixel writes

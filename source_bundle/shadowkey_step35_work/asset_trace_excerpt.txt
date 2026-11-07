@@ -1,0 +1,12 @@
+--- Resource path attempts ---
+  RFile::Open candidate path='z:\system\apps\6R51\StringTable.eng' descriptor_header=30000023 max=256
+  RFile::Open candidate path='z:\system\apps\6R51\StringTable.eng' descriptor_header=30000023 max=256
+  RFile::Open candidate path='z:\system\apps\6R51\StringTable.eng' descriptor_header=30000023 max=256
+  RFile::Open candidate path='e:\system\apps\6R51\global.spr' descriptor_header=3000001e max=256
+  RFile::Open candidate path='e:\system\apps\6R51\global.spr' descriptor_header=3000001e max=256
+  RFile::Open candidate path='e:\system\apps\6R51\global.spr' descriptor_header=3000001e max=256
+--- Stack-preservation sample ---
+SIMKIN after  102132b8 r0=10126e78 r1=10126e68 r2=00000000 r3=00000001 r4=10126e18 r5=00000000 sp=1017fc9c lr=102049b4
+SIMKIN after  102132b8 r0=101271f0 r1=101271e0 r2=00000000 r3=00000001 r4=10127190 r5=00000000 sp=1017fc48 lr=102049b4
+--- First missing-file stop ---
+OOB 00000000/4 lr=00000000 sp=1017fbec r0=1017fc04 r1=00000600 r2=00000000 r3=10111208 r4=00000000 r5=101102c8 r6=000003e0 r7=101102c8 r8=00000000 r9=00000001 r10=1017ff60 r11=00000000 r12=000000f8 cpsr=80000000

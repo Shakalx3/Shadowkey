@@ -1,0 +1,11 @@
+{
+	Init[()
+	{
+		SetUseText(1396);
+		SetUsable(true);
+	}]
+	OnUse[()
+	{
+		OpenMenu("fearfrst\\\\Shadowkey_menu");
+	}]
+}

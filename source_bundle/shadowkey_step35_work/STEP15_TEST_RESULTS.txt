@@ -1,0 +1,21 @@
+step15 verification
+===================
+build_and_test.sh: PASS
+trace_asset_loader_vfs.sh: PASS
+expanded frontier regression: PASS
+build_arm11_core.sh: PASS (ARM EABI5 relocatable core)
+build_arm11_linkcheck.sh: PASS (static ARM ELF, no undefined symbols)
+
+Verified guest object chain:
+engine child +0x2E4 -> bitmap handle 0x10110718
+engine child +0x2E8 -> bitmap device 0x10110730
+engine child +0x2EC -> graphics context 0x10110770
+
+Verified diagnostic virtuals:
+CGraphicsContext vslot +0xA8
+CGraphicsContext vslot +0x28
+bitmap/font callback formerly aliased to pixel buffer 0x10311000
+
+Current remaining frontier: EUSER 1575, CONE 160, EUSER 21; text/GDI imports 248, 711, GDI 151/108 remain unresolved.
+
+No physical Nokia N95 launch has been performed.

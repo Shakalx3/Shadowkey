@@ -1,0 +1,20 @@
+Shadowkey v8.4 step24 test results
+
+PASS  starting archive v8.4 step23 verified (ZIP integrity and SHA-256)
+PASS  build_and_test.sh
+PASS  DrawText ABI test: registers, stack args, TRect decoding, and no fake pixel writes
+PASS  EUSER 248 focused test: UTF-16 pointer copy, empty source, overflow guard
+PASS  ESTLIB 317 focused test: UTF-16 replacement/copy
+PASS  ESTLIB 315 focused test: UTF-16 append
+PASS  natural high-RAM constructor/RunL probe with new EUSER/ESTLIB HLE handlers
+PASS  live text audit: ESTLIB 317/315 produce a non-empty UTF-16 message
+PASS  EUSER 248 copies "has paused the game" (19 code units) and "d the game" (10 code units)
+PASS  both non-empty descriptors reach DrawText
+PASS  low-RAM branch remains distinct and does not reach DrawText
+PASS  forced-zero diagnostic VFS regression remains green
+PASS  ARM11 EABI5 relocatable core build
+PASS  ARM EABI5 static ELF linkcheck with no undefined symbols
+
+LIMIT EUSER 711 remains unresolved; rectangle output remains stale
+LIMIT DrawText remains diagnostic only; no glyph rasterization or pixel writes
+LIMIT No full CActiveScheduler, E32Image/SIS package, or physical N95 launch

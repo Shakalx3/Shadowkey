@@ -1,0 +1,1 @@
+PASS: ARM-core HLE implements EUSER1282 byte-copy ABI, EUSER248, EUSER711 and ESTLIB315/317 observed text-path ABIs

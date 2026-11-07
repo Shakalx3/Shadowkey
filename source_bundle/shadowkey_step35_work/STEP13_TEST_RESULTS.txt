@@ -1,0 +1,22 @@
+STEP13 RESULTS
+===============
+Host tests:
+  sh build_and_test.sh                 PASS
+  sh trace_asset_loader_vfs.sh         PASS (diagnostic exit code 0)
+  python3 shadowkey_frontier_regression.py .build/asset_vfs_trace.log  PASS
+ARM build/link:
+  sh build_arm11_core.sh               PASS
+  sh build_arm11_linkcheck.sh          PASS (no undefined symbols)
+
+Trace assertions:
+  no ARM fallback out-of-range BX heuristic message
+  no ARM fallback INVALID BX
+  no OOB at 0x102FDC68
+  CONE ordinal 160 reached
+  CFont diagnostic model reached
+  decoded global.spr buffer remains non-zero (6909 bytes)
+
+Current harness frontier:
+  ENGINE RUNL forced-zero returned r0=00000000
+
+This is diagnostic host execution only. The linkcheck ELF has a no-op E32Main and is not a playable/device-ready build.

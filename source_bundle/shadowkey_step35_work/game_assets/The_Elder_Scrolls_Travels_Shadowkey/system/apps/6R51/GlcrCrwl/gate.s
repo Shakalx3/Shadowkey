@@ -1,0 +1,11 @@
+{
+	Init[()
+	{
+		SetUseText(698);
+		SetUsable(true);
+	}]
+	OnUse[()
+	{
+		OpenMenu("glcrcrwl\\\\gate_menu");
+	}]
+}

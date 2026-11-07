@@ -1,0 +1,23 @@
+Shadowkey v8.4 step26 test results
+
+PASS build_and_test.sh
+PASS shadowkey_step26_core_hle_test.sh
+PASS trace_asset_loader_live_vfs.sh
+PASS shadowkey_step26_font_name_audit.py
+PASS build_arm11_core.sh (ARM EABI5 relocatable object)
+PASS build_arm11_linkcheck.sh (static ARM ELF; no undefined symbols)
+
+New HLE:
+- EUSER ordinal 1282: bounded overlap-safe three-argument byte-copy, compatible with Mem::Copy(dst,src,length); exact export name unverified. Implemented in host VFS and ARM-core bootstrap.
+
+New forensic evidence:
+- GDI ordinal 151 receives a 20-byte descriptor-like source and height 213 twips.
+- EUSER ordinal 1407 receives a format-like UTF-16 literal `Swiss` at VA 0x100ac718.
+- EUSER ordinal 1282 copies the 20-byte object immediately before GDI 151.
+- Current source bytes are stale path text because EUSER 1407 is still unimplemented.
+
+Not achieved:
+- No valid TFontSpec descriptor has yet been produced by the live path.
+- No glyph rasterization or pixel-buffer change.
+- No installable E32Image/SIS.
+- No physical N95 launch.

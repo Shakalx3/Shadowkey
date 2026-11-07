@@ -1,0 +1,17 @@
+PASS: all five GDI108 callsites are accounted for
+PASS: each receiver is exactly TFontSpec candidate base + 0x3C; source descriptor starts at receiver + 4
+PASS: conflicting legacy GDI151 layout is isolated behind a separate opt-in
+PASS: live watch instruments guest WRITE8/WRITE16/WRITE32 paths
+PASS: watch armed on receiver subobject
+PASS: no guest CPU writes to receiver range before GDI108
+PASS: pre-call first 12 bytes captured
+PASS: GDI108 experimental default writes 12 zero bytes
+PASS: post-call style block is zero
+PASS: GDI151 candidate prefix is 60 bytes of a 72-byte spec
+PASS: font lookup reads the 72-byte candidate
+PASS: first DrawText reached
+PASS: second DrawText reached
+PASS: unmodified live-state RunL returned
+PASS: GDI101 was skipped in this observed call path
+LIMIT: the TFontSpec72/TBufC<24>/GDI108 mapping remains a cross-checked experiment, not N95 ROM-confirmed ABI
+LIMIT: DrawText is diagnostic only; no glyph rasterization or physical N95 launch

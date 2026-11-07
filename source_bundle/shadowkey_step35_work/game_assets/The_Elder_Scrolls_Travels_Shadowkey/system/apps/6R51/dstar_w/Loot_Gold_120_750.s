@@ -1,0 +1,19 @@
+{
+	DestroyMe [0]
+
+	Init[ (s)
+	{
+		SetName(456);
+		SetUseText(457);
+		SetUsable( true );
+
+		Item = Level.CreateEntity( 52 );
+		Item.SetQuantity( Random( 120, 750 ) );
+		AddObject( Item );
+	} ]
+
+	OnUse[ (s)
+	{
+		OpenMenu("LootMenu");
+	} ]
+}

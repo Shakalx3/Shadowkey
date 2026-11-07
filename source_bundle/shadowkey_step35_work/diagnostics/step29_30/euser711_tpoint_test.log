@@ -1,0 +1,5 @@
+IMPORT dll=EUSER[100039e5].DLL ord=711 r0=10100000 r1=00000000 r2=0000000d r3=fffffff1 sp=10101000 lr=00000000 cpsr=00000000
+  HLE EUSER711 TPoint init point=10100000 (0,13)
+IMPORT dll=EUSER[100039e5].DLL ord=711 r0=10100000 r1=00000017 r2=0000000d r3=fffffff8 sp=10101000 lr=00000000 cpsr=00000000
+  HLE EUSER711 TPoint init point=10100000 (23,13)
+PASS: EUSER 711 TPoint ABI writes only this->x/this->y; r3 and stack are not arguments

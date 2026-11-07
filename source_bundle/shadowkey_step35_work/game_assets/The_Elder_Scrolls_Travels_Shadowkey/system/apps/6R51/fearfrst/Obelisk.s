@@ -1,0 +1,12 @@
+{
+	Init[()
+	{
+		SetUseText(1371);
+		SetUsable(true);
+		SetMPUsable(true);
+	}]
+	OnUse[()
+	{
+		OpenMenu("fearfrst\\\\Obelisk_menu");
+	}]
+}

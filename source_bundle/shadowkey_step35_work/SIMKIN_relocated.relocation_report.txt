@@ -1,0 +1,17 @@
+Input: /mnt/data/SIMKIN.DLL
+Input SHA-256: 5bf7971d0f9bbea8a00d7bed8851262a884c489f0316aba21d4dec9f6f2ef0b2
+Output: /mnt/data/SIMKIN_relocated.DLL
+Output SHA-256: 6d869c37c1706f3d3426eb7a9cdd21d2040fb5699d08d7a0d6b2aa18700fdb9d
+Old base: 0x10000000
+New base: 0x10200000
+Delta: +0x200000
+Code file offset: 0x7C
+Code size: 150,960
+Relocation section: 0x24FC4, payload size 0xE34
+Blocks parsed: 36
+Absolute/padding entries skipped: 19
+32-bit code relocations applied: 1655
+Data size: 0
+Data relocation offset: 0x0
+Relocation rule: each type-3 site held a pointer inside the original code segment; add the load-base delta.
+Caution: this loader handles only this simple ARM image shape; it is not a general Symbian loader.

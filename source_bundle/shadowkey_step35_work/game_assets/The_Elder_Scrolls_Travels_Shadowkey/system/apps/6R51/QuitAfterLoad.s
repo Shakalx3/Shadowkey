@@ -1,0 +1,7 @@
+{
+	Init[ (s)
+	{
+		AddStaticItem( GetQuitMessage() );
+		
+	} ]
+}

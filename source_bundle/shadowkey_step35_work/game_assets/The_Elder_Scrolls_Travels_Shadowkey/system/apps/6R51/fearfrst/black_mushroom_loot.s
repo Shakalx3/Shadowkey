@@ -1,0 +1,12 @@
+{
+	Init[()
+	{
+		SetUseText(698);
+		SetUsable(true);
+		SetMPUsable(true);
+	}]
+	OnUse[()
+	{
+		OpenMenu("fearfrst\\\\black_mushroom_loot_menu");
+	}]
+}

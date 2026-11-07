@@ -1,0 +1,20 @@
+Shadowkey asset trace v8
+
+PASS:
+- StringTable.eng opened: 338078 bytes
+- global.spr opened: 1646707 bytes
+- resource index 0xF8 -> resource buffer size 0x9444 (37956 bytes)
+- seek/read from global.spr offset 0x163B1F, 37956 bytes
+- resource header: 176 x 208
+- image-decoder function entered; diagnostic buffer override allows execution past the previous null buffer access
+
+NEXT FAILURE:
+- CONE[10003a41].DLL ordinal 226 returns null
+- guest dereferences null at 0x100228AC; call-site return address 0x100228A8
+
+REMAINING ISSUES:
+- one VFS open attempt receives an empty path before global.spr is reopened
+- actual Symbian graphics/UI context is not initialized
+- no N95-compatible E32Image or playable build yet
+
+Regression smoke test: PASS (see TEST_RESULTS_v8.txt).

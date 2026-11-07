@@ -1,0 +1,1088 @@
+/* Generated SIMKIN.DLL function registry, relocated to 0x10200000. */
+#include <stdint.h>
+typedef struct { uint32_t r[16]; uint32_t cpsr; uint8_t *mem; } ngage_cpu_t;
+typedef void (*ngage_guest_fn)(ngage_cpu_t *);
+typedef struct { uint32_t address; ngage_guest_fn fn; } simkin_function_entry;
+extern void simkin_export_264_10200004(ngage_cpu_t *);
+extern void simkin_export_263_1020003c(ngage_cpu_t *);
+extern void simkin_export_095_10200078(ngage_cpu_t *);
+extern void simkin_export_100_102000d4(ngage_cpu_t *);
+extern void simkin_sub_1020010c(ngage_cpu_t *);
+extern void simkin_sub_102001a4(ngage_cpu_t *);
+extern void simkin_sub_10200214(ngage_cpu_t *);
+extern void simkin_sub_102002a0(ngage_cpu_t *);
+extern void simkin_export_113_10200354(ngage_cpu_t *);
+extern void simkin_export_104_102003ec(ngage_cpu_t *);
+extern void simkin_export_168_10200424(ngage_cpu_t *);
+extern void simkin_export_169_102004b8(ngage_cpu_t *);
+extern void simkin_export_242_10200548(ngage_cpu_t *);
+extern void simkin_sub_1020054c(ngage_cpu_t *);
+extern void simkin_sub_102005ac(ngage_cpu_t *);
+extern void simkin_export_174_102005e0(ngage_cpu_t *);
+extern void simkin_export_171_10200620(ngage_cpu_t *);
+extern void simkin_export_173_10200660(ngage_cpu_t *);
+extern void simkin_export_238_102006a4(ngage_cpu_t *);
+extern void simkin_export_239_10200928(ngage_cpu_t *);
+extern void simkin_export_030_10200bf8(ngage_cpu_t *);
+extern void simkin_export_056_10200d6c(ngage_cpu_t *);
+extern void simkin_export_053_10200de8(ngage_cpu_t *);
+extern void simkin_export_033_10200e9c(ngage_cpu_t *);
+extern void simkin_export_049_10200f50(ngage_cpu_t *);
+extern void simkin_export_048_10201000(ngage_cpu_t *);
+extern void simkin_export_143_1020107c(ngage_cpu_t *);
+extern void simkin_export_148_102010d4(ngage_cpu_t *);
+extern void simkin_export_147_10201204(ngage_cpu_t *);
+extern void simkin_export_145_10201340(ngage_cpu_t *);
+extern void simkin_export_249_10201470(ngage_cpu_t *);
+extern void simkin_export_243_1020149c(ngage_cpu_t *);
+extern void simkin_export_146_102014d0(ngage_cpu_t *);
+extern void simkin_export_187_102015f4(ngage_cpu_t *);
+extern void simkin_export_189_10201640(ngage_cpu_t *);
+extern void simkin_sub_10201794(ngage_cpu_t *);
+extern void simkin_export_036_10201890(ngage_cpu_t *);
+extern void simkin_export_079_102018fc(ngage_cpu_t *);
+extern void simkin_export_248_10201940(ngage_cpu_t *);
+extern void simkin_export_246_10201a50(ngage_cpu_t *);
+extern void simkin_sub_10201b68(ngage_cpu_t *);
+extern void simkin_export_052_10201c18(ngage_cpu_t *);
+extern void simkin_export_186_10201c20(ngage_cpu_t *);
+extern void simkin_export_086_10201c28(ngage_cpu_t *);
+extern void simkin_sub_10201c30(ngage_cpu_t *);
+extern void simkin_sub_10201df0(ngage_cpu_t *);
+extern void simkin_sub_10202128(ngage_cpu_t *);
+extern void simkin_sub_10202394(ngage_cpu_t *);
+extern void simkin_sub_1020239c(ngage_cpu_t *);
+extern void simkin_export_017_102023b8(ngage_cpu_t *);
+extern void simkin_sub_102023ec(ngage_cpu_t *);
+extern void simkin_export_002_10202424(ngage_cpu_t *);
+extern void simkin_export_120_1020244c(ngage_cpu_t *);
+extern void simkin_export_183_10202454(ngage_cpu_t *);
+extern void simkin_export_140_1020245c(ngage_cpu_t *);
+extern void simkin_export_083_10202468(ngage_cpu_t *);
+extern void simkin_export_087_10202470(ngage_cpu_t *);
+extern void simkin_export_235_10202478(ngage_cpu_t *);
+extern void simkin_export_233_102024a8(ngage_cpu_t *);
+extern void simkin_sub_102024b0(ngage_cpu_t *);
+extern void simkin_export_164_102024b8(ngage_cpu_t *);
+extern void simkin_export_162_102024c0(ngage_cpu_t *);
+extern void simkin_export_191_102024c8(ngage_cpu_t *);
+extern void simkin_export_117_10202be0(ngage_cpu_t *);
+extern void simkin_export_106_10202c14(ngage_cpu_t *);
+extern void simkin_export_105_10202c1c(ngage_cpu_t *);
+extern void simkin_export_160_10202c24(ngage_cpu_t *);
+extern void simkin_export_156_10202c54(ngage_cpu_t *);
+extern void simkin_export_154_10202c58(ngage_cpu_t *);
+extern void simkin_sub_10202c5c(ngage_cpu_t *);
+extern void simkin_sub_10202c70(ngage_cpu_t *);
+extern void simkin_sub_10202c8c(ngage_cpu_t *);
+extern void simkin_sub_10202ca4(ngage_cpu_t *);
+extern void simkin_export_097_10202d10(ngage_cpu_t *);
+extern void simkin_export_090_10202d58(ngage_cpu_t *);
+extern void simkin_export_091_10202e54(ngage_cpu_t *);
+extern void simkin_export_093_10202f50(ngage_cpu_t *);
+extern void simkin_export_179_10203064(ngage_cpu_t *);
+extern void simkin_sub_10203210(ngage_cpu_t *);
+extern void simkin_sub_1020335c(ngage_cpu_t *);
+extern void simkin_sub_10203490(ngage_cpu_t *);
+extern void simkin_sub_102035ac(ngage_cpu_t *);
+extern void simkin_export_004_102036d0(ngage_cpu_t *);
+extern void simkin_export_015_102036e0(ngage_cpu_t *);
+extern void simkin_export_016_10203720(ngage_cpu_t *);
+extern void simkin_export_258_10203760(ngage_cpu_t *);
+extern void simkin_export_203_102037a4(ngage_cpu_t *);
+extern void simkin_export_202_10203860(ngage_cpu_t *);
+extern void simkin_export_114_10203968(ngage_cpu_t *);
+extern void simkin_export_166_10203994(ngage_cpu_t *);
+extern void simkin_export_209_10203a00(ngage_cpu_t *);
+extern void simkin_export_206_10203e9c(ngage_cpu_t *);
+extern void simkin_export_019_10203f0c(ngage_cpu_t *);
+extern void simkin_export_005_10203fa0(ngage_cpu_t *);
+extern void simkin_export_115_10203ff4(ngage_cpu_t *);
+extern void simkin_export_167_1020401c(ngage_cpu_t *);
+extern void simkin_export_207_102040bc(ngage_cpu_t *);
+extern void simkin_export_210_10204164(ngage_cpu_t *);
+extern void simkin_export_020_102041c4(ngage_cpu_t *);
+extern void simkin_export_177_10204244(ngage_cpu_t *);
+extern void simkin_sub_10204364(ngage_cpu_t *);
+extern void simkin_sub_102043e8(ngage_cpu_t *);
+extern void simkin_export_135_10204624(ngage_cpu_t *);
+extern void simkin_export_060_102047d0(ngage_cpu_t *);
+extern void simkin_export_216_102049cc(ngage_cpu_t *);
+extern void simkin_export_059_102049d4(ngage_cpu_t *);
+extern void simkin_export_215_10204ae4(ngage_cpu_t *);
+extern void simkin_export_155_10204bec(ngage_cpu_t *);
+extern void simkin_sub_10204bf4(ngage_cpu_t *);
+extern void simkin_sub_10204ce4(ngage_cpu_t *);
+extern void simkin_export_122_10204e74(ngage_cpu_t *);
+extern void simkin_export_205_1020502c(ngage_cpu_t *);
+extern void simkin_export_204_102052ac(ngage_cpu_t *);
+extern void simkin_export_123_10205498(ngage_cpu_t *);
+extern void simkin_export_124_10205568(ngage_cpu_t *);
+extern void simkin_sub_10205634(ngage_cpu_t *);
+extern void simkin_sub_10205704(ngage_cpu_t *);
+extern void simkin_sub_102058a8(ngage_cpu_t *);
+extern void simkin_sub_10205958(ngage_cpu_t *);
+extern void simkin_export_225_10205a08(ngage_cpu_t *);
+extern void simkin_export_224_10205d28(ngage_cpu_t *);
+extern void simkin_export_252_10205da0(ngage_cpu_t *);
+extern void simkin_export_251_10205dd4(ngage_cpu_t *);
+extern void simkin_export_231_10205e8c(ngage_cpu_t *);
+extern void simkin_export_230_10205e94(ngage_cpu_t *);
+extern void simkin_sub_10205e9c(ngage_cpu_t *);
+extern void simkin_export_119_1020611c(ngage_cpu_t *);
+extern void simkin_sub_102061b4(ngage_cpu_t *);
+extern void simkin_sub_10206460(ngage_cpu_t *);
+extern void simkin_sub_10206e48(ngage_cpu_t *);
+extern void simkin_sub_1020723c(ngage_cpu_t *);
+extern void simkin_sub_10207e84(ngage_cpu_t *);
+extern void simkin_sub_10207f1c(ngage_cpu_t *);
+extern void simkin_sub_10208038(ngage_cpu_t *);
+extern void simkin_sub_102081cc(ngage_cpu_t *);
+extern void simkin_sub_102084f4(ngage_cpu_t *);
+extern void simkin_sub_10208e44(ngage_cpu_t *);
+extern void simkin_sub_102097b8(ngage_cpu_t *);
+extern void simkin_sub_1020a968(ngage_cpu_t *);
+extern void simkin_sub_1020aaac(ngage_cpu_t *);
+extern void simkin_sub_1020ac48(ngage_cpu_t *);
+extern void simkin_sub_1020bcf0(ngage_cpu_t *);
+extern void simkin_sub_1020be8c(ngage_cpu_t *);
+extern void simkin_sub_1020dda8(ngage_cpu_t *);
+extern void simkin_export_018_1020de68(ngage_cpu_t *);
+extern void simkin_export_003_1020dee0(ngage_cpu_t *);
+extern void simkin_export_254_1020df1c(ngage_cpu_t *);
+extern void simkin_export_253_1020df58(ngage_cpu_t *);
+extern void simkin_export_021_1020df8c(ngage_cpu_t *);
+extern void simkin_export_006_1020dfb8(ngage_cpu_t *);
+extern void simkin_export_256_1020dfc8(ngage_cpu_t *);
+extern void simkin_export_255_1020dfd0(ngage_cpu_t *);
+extern void simkin_sub_1020dfdc(ngage_cpu_t *);
+extern void simkin_sub_1021011c(ngage_cpu_t *);
+extern void simkin_sub_10210260(ngage_cpu_t *);
+extern void simkin_sub_102103f8(ngage_cpu_t *);
+extern void simkin_sub_1021052c(ngage_cpu_t *);
+extern void simkin_sub_10211210(ngage_cpu_t *);
+extern void simkin_sub_102112d8(ngage_cpu_t *);
+extern void simkin_sub_102112e0(ngage_cpu_t *);
+extern void simkin_sub_10211330(ngage_cpu_t *);
+extern void simkin_sub_102117b0(ngage_cpu_t *);
+extern void simkin_sub_10211c6c(ngage_cpu_t *);
+extern void simkin_sub_10211c74(ngage_cpu_t *);
+extern void simkin_sub_10211d0c(ngage_cpu_t *);
+extern void simkin_sub_10211dac(ngage_cpu_t *);
+extern void simkin_sub_10211dd4(ngage_cpu_t *);
+extern void simkin_export_029_10211e14(ngage_cpu_t *);
+extern void simkin_export_040_10211f08(ngage_cpu_t *);
+extern void simkin_export_042_10211f94(ngage_cpu_t *);
+extern void simkin_export_041_10212020(ngage_cpu_t *);
+extern void simkin_export_039_102120ac(ngage_cpu_t *);
+extern void simkin_export_038_1021213c(ngage_cpu_t *);
+extern void simkin_export_037_10212284(ngage_cpu_t *);
+extern void simkin_export_089_10212450(ngage_cpu_t *);
+extern void simkin_export_185_10212528(ngage_cpu_t *);
+extern void simkin_export_142_102125a8(ngage_cpu_t *);
+extern void simkin_export_085_10212658(ngage_cpu_t *);
+extern void simkin_export_237_102127d0(ngage_cpu_t *);
+extern void simkin_export_046_10212b70(ngage_cpu_t *);
+extern void simkin_sub_10212f04(ngage_cpu_t *);
+extern void simkin_sub_10212f3c(ngage_cpu_t *);
+extern void simkin_sub_10212fbc(ngage_cpu_t *);
+extern void simkin_sub_10212fe4(ngage_cpu_t *);
+extern void simkin_sub_1021300c(ngage_cpu_t *);
+extern void simkin_export_098_10213078(ngage_cpu_t *);
+extern void simkin_export_092_102130c0(ngage_cpu_t *);
+extern void simkin_export_094_102131bc(ngage_cpu_t *);
+extern void simkin_export_180_102132b8(ngage_cpu_t *);
+extern void simkin_export_111_10213610(ngage_cpu_t *);
+extern void simkin_export_218_102137e0(ngage_cpu_t *);
+extern void simkin_export_045_10213998(ngage_cpu_t *);
+extern void simkin_sub_10213b78(ngage_cpu_t *);
+extern void simkin_sub_10213c20(ngage_cpu_t *);
+extern void simkin_export_101_10213c7c(ngage_cpu_t *);
+extern void simkin_sub_10213d34(ngage_cpu_t *);
+extern void simkin_sub_10213d9c(ngage_cpu_t *);
+extern void simkin_export_176_10213dd0(ngage_cpu_t *);
+extern void simkin_export_172_10213e18(ngage_cpu_t *);
+extern void simkin_export_175_10213e60(ngage_cpu_t *);
+extern void simkin_export_240_10213ea8(ngage_cpu_t *);
+extern void simkin_export_241_10214068(ngage_cpu_t *);
+extern void simkin_export_031_102143ac(ngage_cpu_t *);
+extern void simkin_export_057_102144c0(ngage_cpu_t *);
+extern void simkin_export_055_10214638(ngage_cpu_t *);
+extern void simkin_export_054_102147a0(ngage_cpu_t *);
+extern void simkin_export_043_10214958(ngage_cpu_t *);
+extern void simkin_export_051_10214a14(ngage_cpu_t *);
+extern void simkin_export_050_10214ac4(ngage_cpu_t *);
+extern void simkin_export_144_10214afc(ngage_cpu_t *);
+extern void simkin_export_152_10214bfc(ngage_cpu_t *);
+extern void simkin_export_151_10214cf0(ngage_cpu_t *);
+extern void simkin_export_149_10214df0(ngage_cpu_t *);
+extern void simkin_export_250_10214ee4(ngage_cpu_t *);
+extern void simkin_export_244_10214f3c(ngage_cpu_t *);
+extern void simkin_export_150_10214fa4(ngage_cpu_t *);
+extern void simkin_export_188_10215058(ngage_cpu_t *);
+extern void simkin_export_190_102150dc(ngage_cpu_t *);
+extern void simkin_export_080_102151d8(ngage_cpu_t *);
+extern void simkin_export_116_10215344(ngage_cpu_t *);
+extern void simkin_export_221_102153f8(ngage_cpu_t *);
+extern void simkin_export_220_1021576c(ngage_cpu_t *);
+extern void simkin_export_222_102159c0(ngage_cpu_t *);
+extern void simkin_export_217_10215db8(ngage_cpu_t *);
+extern void simkin_export_061_10216044(ngage_cpu_t *);
+extern void simkin_export_067_10216264(ngage_cpu_t *);
+extern void simkin_export_062_10216304(ngage_cpu_t *);
+extern void simkin_export_063_102163dc(ngage_cpu_t *);
+extern void simkin_export_064_102164d0(ngage_cpu_t *);
+extern void simkin_export_065_102165e0(ngage_cpu_t *);
+extern void simkin_export_066_1021670c(ngage_cpu_t *);
+extern void simkin_export_068_10216854(ngage_cpu_t *);
+extern void simkin_export_074_10216a9c(ngage_cpu_t *);
+extern void simkin_export_069_10216b58(ngage_cpu_t *);
+extern void simkin_export_070_10216c6c(ngage_cpu_t *);
+extern void simkin_export_071_10216dac(ngage_cpu_t *);
+extern void simkin_export_072_10216f18(ngage_cpu_t *);
+extern void simkin_export_073_102170b4(ngage_cpu_t *);
+extern void simkin_export_044_1021727c(ngage_cpu_t *);
+extern void simkin_export_219_10217328(ngage_cpu_t *);
+extern void simkin_export_007_10217394(ngage_cpu_t *);
+extern void simkin_export_034_102173d0(ngage_cpu_t *);
+extern void simkin_export_078_10217440(ngage_cpu_t *);
+extern void simkin_export_077_10217488(ngage_cpu_t *);
+extern void simkin_export_075_10217504(ngage_cpu_t *);
+extern void simkin_export_076_10217558(ngage_cpu_t *);
+extern void simkin_export_247_102175cc(ngage_cpu_t *);
+extern void simkin_export_245_10217778(ngage_cpu_t *);
+extern void simkin_sub_10217830(ngage_cpu_t *);
+extern void simkin_export_178_102178e8(ngage_cpu_t *);
+extern void simkin_sub_10217abc(ngage_cpu_t *);
+extern void simkin_sub_10217b60(ngage_cpu_t *);
+extern void simkin_export_170_10217c84(ngage_cpu_t *);
+extern void simkin_export_194_10217cb0(ngage_cpu_t *);
+extern void simkin_export_195_10217d2c(ngage_cpu_t *);
+extern void simkin_export_103_10217e24(ngage_cpu_t *);
+extern void simkin_sub_10217e78(ngage_cpu_t *);
+extern void simkin_sub_10217f30(ngage_cpu_t *);
+extern void simkin_sub_10217f9c(ngage_cpu_t *);
+extern void simkin_sub_102180c4(ngage_cpu_t *);
+extern void simkin_sub_102181fc(ngage_cpu_t *);
+extern void simkin_sub_1021834c(ngage_cpu_t *);
+extern void simkin_export_012_10218354(ngage_cpu_t *);
+extern void simkin_export_014_102184b8(ngage_cpu_t *);
+extern void simkin_export_013_1021864c(ngage_cpu_t *);
+extern void simkin_export_261_102187e0(ngage_cpu_t *);
+extern void simkin_export_032_1021886c(ngage_cpu_t *);
+extern void simkin_export_081_10218a7c(ngage_cpu_t *);
+extern void simkin_export_181_10218b48(ngage_cpu_t *);
+extern void simkin_export_138_10218c54(ngage_cpu_t *);
+extern void simkin_export_082_10218d60(ngage_cpu_t *);
+extern void simkin_export_096_10218dcc(ngage_cpu_t *);
+extern void simkin_export_102_10218ddc(ngage_cpu_t *);
+extern void simkin_export_193_10218e58(ngage_cpu_t *);
+extern void simkin_export_200_10218f24(ngage_cpu_t *);
+extern void simkin_export_198_10218f3c(ngage_cpu_t *);
+extern void simkin_export_227_10218f7c(ngage_cpu_t *);
+extern void simkin_export_208_10219180(ngage_cpu_t *);
+extern void simkin_export_058_102191e0(ngage_cpu_t *);
+extern void simkin_export_214_10219274(ngage_cpu_t *);
+extern void simkin_export_112_10219284(ngage_cpu_t *);
+extern void simkin_sub_102192c0(ngage_cpu_t *);
+extern void simkin_export_201_102192c8(ngage_cpu_t *);
+extern void simkin_export_182_102192d0(ngage_cpu_t *);
+extern void simkin_export_139_102192d8(ngage_cpu_t *);
+extern void simkin_export_196_102192e0(ngage_cpu_t *);
+extern void simkin_export_197_10219378(ngage_cpu_t *);
+extern void simkin_export_127_10219394(ngage_cpu_t *);
+extern void simkin_export_126_102195ac(ngage_cpu_t *);
+extern void simkin_export_125_10219794(ngage_cpu_t *);
+extern void simkin_export_134_102198a8(ngage_cpu_t *);
+extern void simkin_export_130_102198d0(ngage_cpu_t *);
+extern void simkin_export_129_102198f8(ngage_cpu_t *);
+extern void simkin_export_128_10219a0c(ngage_cpu_t *);
+extern void simkin_export_132_10219a34(ngage_cpu_t *);
+extern void simkin_export_131_10219a5c(ngage_cpu_t *);
+extern void simkin_export_133_10219b68(ngage_cpu_t *);
+extern void simkin_sub_10219b90(ngage_cpu_t *);
+extern void simkin_export_001_10219bdc(ngage_cpu_t *);
+extern void simkin_export_257_10219c28(ngage_cpu_t *);
+extern void simkin_export_211_1021a188(ngage_cpu_t *);
+extern void simkin_export_047_1021a318(ngage_cpu_t *);
+extern void simkin_export_110_1021a320(ngage_cpu_t *);
+extern void simkin_export_026_1021a490(ngage_cpu_t *);
+extern void simkin_export_011_1021a4c4(ngage_cpu_t *);
+extern void simkin_export_223_1021a4d4(ngage_cpu_t *);
+extern void simkin_export_259_1021a4e0(ngage_cpu_t *);
+extern void simkin_export_260_1021a520(ngage_cpu_t *);
+extern void simkin_export_008_1021a560(ngage_cpu_t *);
+extern void simkin_export_136_1021a5a8(ngage_cpu_t *);
+extern void simkin_export_137_1021a720(ngage_cpu_t *);
+extern void simkin_export_035_1021a9d0(ngage_cpu_t *);
+extern void simkin_export_199_1021ac2c(ngage_cpu_t *);
+extern void simkin_export_024_1021ac58(ngage_cpu_t *);
+extern void simkin_export_025_1021acc4(ngage_cpu_t *);
+extern void simkin_export_010_1021ad68(ngage_cpu_t *);
+extern void simkin_export_099_1021adc0(ngage_cpu_t *);
+extern void simkin_sub_1021ade4(ngage_cpu_t *);
+extern void simkin_sub_1021ae08(ngage_cpu_t *);
+extern void simkin_sub_1021ae4c(ngage_cpu_t *);
+extern void simkin_sub_1021ae70(ngage_cpu_t *);
+extern void simkin_export_212_1021ae88(ngage_cpu_t *);
+extern void simkin_export_213_1021af4c(ngage_cpu_t *);
+extern void simkin_sub_1021b104(ngage_cpu_t *);
+extern void simkin_sub_1021b304(ngage_cpu_t *);
+extern void simkin_sub_1021b38c(ngage_cpu_t *);
+extern void simkin_export_262_1021b6f4(ngage_cpu_t *);
+extern void simkin_export_022_1021b6f8(ngage_cpu_t *);
+extern void simkin_export_023_1021b75c(ngage_cpu_t *);
+extern void simkin_export_009_1021b7fc(ngage_cpu_t *);
+extern void simkin_export_121_1021b8a0(ngage_cpu_t *);
+extern void simkin_export_184_1021b8a8(ngage_cpu_t *);
+extern void simkin_export_141_1021b8b0(ngage_cpu_t *);
+extern void simkin_export_084_1021b8b8(ngage_cpu_t *);
+extern void simkin_export_088_1021b8c0(ngage_cpu_t *);
+extern void simkin_export_236_1021b988(ngage_cpu_t *);
+extern void simkin_export_232_1021b9ec(ngage_cpu_t *);
+extern void simkin_export_234_1021bc64(ngage_cpu_t *);
+extern void simkin_export_159_1021bf28(ngage_cpu_t *);
+extern void simkin_export_229_1021bf30(ngage_cpu_t *);
+extern void simkin_export_228_1021c060(ngage_cpu_t *);
+extern void simkin_export_163_1021c178(ngage_cpu_t *);
+extern void simkin_export_165_1021c424(ngage_cpu_t *);
+extern void simkin_export_192_1021c80c(ngage_cpu_t *);
+extern void simkin_sub_1021d4fc(ngage_cpu_t *);
+extern void simkin_export_158_1021d554(ngage_cpu_t *);
+extern void simkin_export_108_1021d5b4(ngage_cpu_t *);
+extern void simkin_export_107_1021d64c(ngage_cpu_t *);
+extern void simkin_export_161_1021d6dc(ngage_cpu_t *);
+extern void simkin_export_157_1021dd1c(ngage_cpu_t *);
+extern void simkin_export_226_1021df50(ngage_cpu_t *);
+extern void simkin_export_153_1021df58(ngage_cpu_t *);
+extern void simkin_export_109_1021df60(ngage_cpu_t *);
+extern void simkin_export_118_1021dfc0(ngage_cpu_t *);
+extern void simkin_export_027_1021e164(ngage_cpu_t *);
+extern void simkin_export_028_1021e244(ngage_cpu_t *);
+extern void simkin_sub_1021e320(ngage_cpu_t *);
+extern void simkin_sub_1021e3c0(ngage_cpu_t *);
+extern void simkin_sub_1021e570(ngage_cpu_t *);
+extern void simkin_sub_1021e6d0(ngage_cpu_t *);
+extern void simkin_sub_1021e788(ngage_cpu_t *);
+extern void simkin_sub_1021e7b8(ngage_cpu_t *);
+extern void simkin_sub_1021e7e4(ngage_cpu_t *);
+extern void simkin_sub_1021e838(ngage_cpu_t *);
+extern void simkin_sub_1021e880(ngage_cpu_t *);
+extern void simkin_sub_1021e8a8(ngage_cpu_t *);
+extern void simkin_sub_1021e9d4(ngage_cpu_t *);
+extern void simkin_sub_1021ea1c(ngage_cpu_t *);
+extern void simkin_sub_1021ea38(ngage_cpu_t *);
+extern void simkin_sub_1021ebbc(ngage_cpu_t *);
+extern void simkin_sub_1021ec6c(ngage_cpu_t *);
+extern void simkin_sub_1021ec84(ngage_cpu_t *);
+extern void simkin_sub_1021ed14(ngage_cpu_t *);
+extern void simkin_sub_1021ee2c(ngage_cpu_t *);
+extern void simkin_sub_1021eea0(ngage_cpu_t *);
+extern void simkin_sub_1021eef0(ngage_cpu_t *);
+extern void simkin_sub_1021ef18(ngage_cpu_t *);
+extern void simkin_sub_1021ef4c(ngage_cpu_t *);
+extern void simkin_sub_1021ef5c(ngage_cpu_t *);
+extern void simkin_sub_1021ef6c(ngage_cpu_t *);
+extern void simkin_sub_1021ef7c(ngage_cpu_t *);
+extern void simkin_sub_1021ef8c(ngage_cpu_t *);
+extern void simkin_sub_1021ef9c(ngage_cpu_t *);
+extern void simkin_sub_1021efac(ngage_cpu_t *);
+extern void simkin_sub_1021efbc(ngage_cpu_t *);
+extern void simkin_sub_1021efcc(ngage_cpu_t *);
+extern void simkin_sub_1021efdc(ngage_cpu_t *);
+extern void simkin_sub_1021efec(ngage_cpu_t *);
+extern void simkin_sub_1021effc(ngage_cpu_t *);
+extern void simkin_sub_1021f00c(ngage_cpu_t *);
+extern void simkin_sub_1021f01c(ngage_cpu_t *);
+extern void simkin_sub_1021f02c(ngage_cpu_t *);
+extern void simkin_sub_1021f03c(ngage_cpu_t *);
+extern void simkin_sub_1021f04c(ngage_cpu_t *);
+extern void simkin_sub_1021f05c(ngage_cpu_t *);
+extern void simkin_sub_1021f06c(ngage_cpu_t *);
+extern void simkin_sub_1021f07c(ngage_cpu_t *);
+extern void simkin_sub_1021f08c(ngage_cpu_t *);
+extern void simkin_sub_1021f09c(ngage_cpu_t *);
+extern void simkin_sub_1021f0ac(ngage_cpu_t *);
+extern void simkin_sub_1021f0bc(ngage_cpu_t *);
+extern void simkin_sub_1021f0cc(ngage_cpu_t *);
+extern void simkin_sub_1021f0dc(ngage_cpu_t *);
+extern void simkin_sub_1021f0ec(ngage_cpu_t *);
+extern void simkin_sub_1021f0fc(ngage_cpu_t *);
+extern void simkin_sub_1021f10c(ngage_cpu_t *);
+extern void simkin_sub_1021f11c(ngage_cpu_t *);
+extern void simkin_sub_1021f12c(ngage_cpu_t *);
+extern void simkin_sub_1021f13c(ngage_cpu_t *);
+extern void simkin_sub_1021f14c(ngage_cpu_t *);
+extern void simkin_sub_1021f15c(ngage_cpu_t *);
+extern void simkin_sub_1021f16c(ngage_cpu_t *);
+extern void simkin_sub_1021f17c(ngage_cpu_t *);
+extern void simkin_sub_1021f18c(ngage_cpu_t *);
+extern void simkin_sub_1021f19c(ngage_cpu_t *);
+extern void simkin_sub_1021f1ac(ngage_cpu_t *);
+extern void simkin_sub_1021f1bc(ngage_cpu_t *);
+extern void simkin_sub_1021f1cc(ngage_cpu_t *);
+extern void simkin_sub_1021f1dc(ngage_cpu_t *);
+extern void simkin_sub_1021f1ec(ngage_cpu_t *);
+extern void simkin_sub_1021f1fc(ngage_cpu_t *);
+extern void simkin_sub_1021f20c(ngage_cpu_t *);
+extern void simkin_sub_1021f21c(ngage_cpu_t *);
+extern void simkin_sub_1021f22c(ngage_cpu_t *);
+extern void simkin_sub_1021f23c(ngage_cpu_t *);
+extern void simkin_sub_1021f24c(ngage_cpu_t *);
+extern void simkin_sub_1021f25c(ngage_cpu_t *);
+extern void simkin_sub_1021f26c(ngage_cpu_t *);
+extern void simkin_sub_1021f27c(ngage_cpu_t *);
+extern void simkin_sub_1021f28c(ngage_cpu_t *);
+extern void simkin_sub_1021f29c(ngage_cpu_t *);
+extern void simkin_sub_1021f2ac(ngage_cpu_t *);
+extern void simkin_sub_1021f2bc(ngage_cpu_t *);
+extern void simkin_sub_1021f2cc(ngage_cpu_t *);
+extern void simkin_sub_1021f2dc(ngage_cpu_t *);
+extern void simkin_sub_1021f2ec(ngage_cpu_t *);
+extern void simkin_sub_1021f2fc(ngage_cpu_t *);
+extern void simkin_sub_1021f30c(ngage_cpu_t *);
+extern void simkin_sub_1021f31c(ngage_cpu_t *);
+extern void simkin_sub_1021f32c(ngage_cpu_t *);
+extern void simkin_sub_1021f33c(ngage_cpu_t *);
+extern void simkin_sub_1021f34c(ngage_cpu_t *);
+extern void simkin_sub_1021f35c(ngage_cpu_t *);
+extern void simkin_sub_1021f36c(ngage_cpu_t *);
+extern void simkin_sub_1021f37c(ngage_cpu_t *);
+extern void simkin_sub_1021f38c(ngage_cpu_t *);
+extern void simkin_sub_1021f39c(ngage_cpu_t *);
+extern void simkin_sub_1021f3ac(ngage_cpu_t *);
+extern void simkin_sub_1021f3bc(ngage_cpu_t *);
+extern void simkin_sub_1021f3cc(ngage_cpu_t *);
+extern void simkin_sub_1021f3dc(ngage_cpu_t *);
+extern void simkin_sub_1021f3ec(ngage_cpu_t *);
+extern void simkin_sub_1021f3fc(ngage_cpu_t *);
+extern void simkin_sub_1021f40c(ngage_cpu_t *);
+extern void simkin_sub_1021f41c(ngage_cpu_t *);
+extern void simkin_sub_1021f42c(ngage_cpu_t *);
+extern void simkin_sub_1021f444(ngage_cpu_t *);
+extern void simkin_sub_1021f4bc(ngage_cpu_t *);
+extern void simkin_sub_1021f548(ngage_cpu_t *);
+extern void simkin_sub_1021f5b8(ngage_cpu_t *);
+extern void simkin_sub_1021f5e4(ngage_cpu_t *);
+extern void simkin_sub_1021f610(ngage_cpu_t *);
+extern void simkin_sub_1021f650(ngage_cpu_t *);
+extern void simkin_sub_1021f67c(ngage_cpu_t *);
+extern void simkin_sub_1021f6a8(ngage_cpu_t *);
+extern void simkin_sub_1021f6d4(ngage_cpu_t *);
+extern void simkin_sub_1021f700(ngage_cpu_t *);
+extern void simkin_sub_1021f730(ngage_cpu_t *);
+extern void simkin_sub_1021f7c8(ngage_cpu_t *);
+extern void simkin_sub_1021f83c(ngage_cpu_t *);
+extern void simkin_sub_1021f8b0(ngage_cpu_t *);
+extern void simkin_sub_1021f93c(ngage_cpu_t *);
+extern void simkin_sub_1021f970(ngage_cpu_t *);
+extern void simkin_sub_1021f9c8(ngage_cpu_t *);
+extern void simkin_sub_1021fa44(ngage_cpu_t *);
+extern void simkin_sub_1021fad4(ngage_cpu_t *);
+extern void simkin_sub_1021fb78(ngage_cpu_t *);
+extern void simkin_sub_1021fc2c(ngage_cpu_t *);
+extern void simkin_sub_1021fc90(ngage_cpu_t *);
+extern void simkin_sub_1021fd10(ngage_cpu_t *);
+extern void simkin_sub_1021fd44(ngage_cpu_t *);
+extern void simkin_sub_1021fd5c(ngage_cpu_t *);
+extern void simkin_sub_1021fdc4(ngage_cpu_t *);
+extern void simkin_sub_1021fe2c(ngage_cpu_t *);
+extern void simkin_sub_1021fea4(ngage_cpu_t *);
+extern void simkin_sub_1021ff18(ngage_cpu_t *);
+extern void simkin_sub_1021ff4c(ngage_cpu_t *);
+extern void simkin_sub_1021ffa4(ngage_cpu_t *);
+extern void simkin_sub_1022007c(ngage_cpu_t *);
+extern void simkin_sub_102200ec(ngage_cpu_t *);
+extern void simkin_sub_102201b4(ngage_cpu_t *);
+extern void simkin_sub_10220230(ngage_cpu_t *);
+extern void simkin_sub_102202b0(ngage_cpu_t *);
+extern void simkin_sub_10220348(ngage_cpu_t *);
+extern void simkin_sub_102203d8(ngage_cpu_t *);
+extern void simkin_sub_1022044c(ngage_cpu_t *);
+extern void simkin_sub_102204a4(ngage_cpu_t *);
+extern void simkin_sub_102204d8(ngage_cpu_t *);
+extern void simkin_sub_102205a8(ngage_cpu_t *);
+extern void simkin_sub_1022062c(ngage_cpu_t *);
+extern void simkin_sub_10220660(ngage_cpu_t *);
+extern void simkin_sub_10220694(ngage_cpu_t *);
+extern void simkin_sub_102206c8(ngage_cpu_t *);
+extern void simkin_sub_102206fc(ngage_cpu_t *);
+extern void simkin_sub_10220730(ngage_cpu_t *);
+extern void simkin_sub_10220764(ngage_cpu_t *);
+extern void simkin_sub_10220798(ngage_cpu_t *);
+extern void simkin_sub_102207cc(ngage_cpu_t *);
+extern void simkin_sub_10220800(ngage_cpu_t *);
+extern void simkin_sub_102208c8(ngage_cpu_t *);
+extern void simkin_sub_10220948(ngage_cpu_t *);
+extern void simkin_sub_102209c4(ngage_cpu_t *);
+extern void simkin_sub_10220d1c(ngage_cpu_t *);
+extern void simkin_sub_10220e98(ngage_cpu_t *);
+extern void simkin_sub_10220eb4(ngage_cpu_t *);
+extern void simkin_sub_10220f70(ngage_cpu_t *);
+extern void simkin_sub_10220fe8(ngage_cpu_t *);
+extern void simkin_sub_10221060(ngage_cpu_t *);
+extern void simkin_sub_102210ec(ngage_cpu_t *);
+extern void simkin_sub_10221118(ngage_cpu_t *);
+extern void simkin_sub_10221144(ngage_cpu_t *);
+extern void simkin_sub_10221170(ngage_cpu_t *);
+extern void simkin_sub_102211a4(ngage_cpu_t *);
+extern void simkin_sub_102211d0(ngage_cpu_t *);
+extern void simkin_sub_10221210(ngage_cpu_t *);
+extern void simkin_sub_1022123c(ngage_cpu_t *);
+extern void simkin_sub_10221268(ngage_cpu_t *);
+extern void simkin_sub_10221294(ngage_cpu_t *);
+extern void simkin_sub_10221488(ngage_cpu_t *);
+extern void simkin_sub_102214e8(ngage_cpu_t *);
+extern void simkin_sub_10221584(ngage_cpu_t *);
+extern void simkin_sub_102218ac(ngage_cpu_t *);
+extern void simkin_sub_102219dc(ngage_cpu_t *);
+extern void simkin_sub_10221b94(ngage_cpu_t *);
+extern void simkin_sub_10221dfc(ngage_cpu_t *);
+extern void simkin_sub_10221e08(ngage_cpu_t *);
+extern void simkin_sub_10222070(ngage_cpu_t *);
+extern void simkin_sub_102221b8(ngage_cpu_t *);
+const simkin_function_entry simkin_function_registry[] = {
+  { 0x10200004u, simkin_export_264_10200004 },
+  { 0x1020003Cu, simkin_export_263_1020003c },
+  { 0x10200078u, simkin_export_095_10200078 },
+  { 0x102000D4u, simkin_export_100_102000d4 },
+  { 0x1020010Cu, simkin_sub_1020010c },
+  { 0x102001A4u, simkin_sub_102001a4 },
+  { 0x10200214u, simkin_sub_10200214 },
+  { 0x102002A0u, simkin_sub_102002a0 },
+  { 0x10200354u, simkin_export_113_10200354 },
+  { 0x102003ECu, simkin_export_104_102003ec },
+  { 0x10200424u, simkin_export_168_10200424 },
+  { 0x102004B8u, simkin_export_169_102004b8 },
+  { 0x10200548u, simkin_export_242_10200548 },
+  { 0x1020054Cu, simkin_sub_1020054c },
+  { 0x102005ACu, simkin_sub_102005ac },
+  { 0x102005E0u, simkin_export_174_102005e0 },
+  { 0x10200620u, simkin_export_171_10200620 },
+  { 0x10200660u, simkin_export_173_10200660 },
+  { 0x102006A4u, simkin_export_238_102006a4 },
+  { 0x10200928u, simkin_export_239_10200928 },
+  { 0x10200BF8u, simkin_export_030_10200bf8 },
+  { 0x10200D6Cu, simkin_export_056_10200d6c },
+  { 0x10200DE8u, simkin_export_053_10200de8 },
+  { 0x10200E9Cu, simkin_export_033_10200e9c },
+  { 0x10200F50u, simkin_export_049_10200f50 },
+  { 0x10201000u, simkin_export_048_10201000 },
+  { 0x1020107Cu, simkin_export_143_1020107c },
+  { 0x102010D4u, simkin_export_148_102010d4 },
+  { 0x10201204u, simkin_export_147_10201204 },
+  { 0x10201340u, simkin_export_145_10201340 },
+  { 0x10201470u, simkin_export_249_10201470 },
+  { 0x1020149Cu, simkin_export_243_1020149c },
+  { 0x102014D0u, simkin_export_146_102014d0 },
+  { 0x102015F4u, simkin_export_187_102015f4 },
+  { 0x10201640u, simkin_export_189_10201640 },
+  { 0x10201794u, simkin_sub_10201794 },
+  { 0x10201890u, simkin_export_036_10201890 },
+  { 0x102018FCu, simkin_export_079_102018fc },
+  { 0x10201940u, simkin_export_248_10201940 },
+  { 0x10201A50u, simkin_export_246_10201a50 },
+  { 0x10201B68u, simkin_sub_10201b68 },
+  { 0x10201C18u, simkin_export_052_10201c18 },
+  { 0x10201C20u, simkin_export_186_10201c20 },
+  { 0x10201C28u, simkin_export_086_10201c28 },
+  { 0x10201C30u, simkin_sub_10201c30 },
+  { 0x10201DF0u, simkin_sub_10201df0 },
+  { 0x10202128u, simkin_sub_10202128 },
+  { 0x10202394u, simkin_sub_10202394 },
+  { 0x1020239Cu, simkin_sub_1020239c },
+  { 0x102023B8u, simkin_export_017_102023b8 },
+  { 0x102023ECu, simkin_sub_102023ec },
+  { 0x10202424u, simkin_export_002_10202424 },
+  { 0x1020244Cu, simkin_export_120_1020244c },
+  { 0x10202454u, simkin_export_183_10202454 },
+  { 0x1020245Cu, simkin_export_140_1020245c },
+  { 0x10202468u, simkin_export_083_10202468 },
+  { 0x10202470u, simkin_export_087_10202470 },
+  { 0x10202478u, simkin_export_235_10202478 },
+  { 0x102024A8u, simkin_export_233_102024a8 },
+  { 0x102024B0u, simkin_sub_102024b0 },
+  { 0x102024B8u, simkin_export_164_102024b8 },
+  { 0x102024C0u, simkin_export_162_102024c0 },
+  { 0x102024C8u, simkin_export_191_102024c8 },
+  { 0x10202BE0u, simkin_export_117_10202be0 },
+  { 0x10202C14u, simkin_export_106_10202c14 },
+  { 0x10202C1Cu, simkin_export_105_10202c1c },
+  { 0x10202C24u, simkin_export_160_10202c24 },
+  { 0x10202C54u, simkin_export_156_10202c54 },
+  { 0x10202C58u, simkin_export_154_10202c58 },
+  { 0x10202C5Cu, simkin_sub_10202c5c },
+  { 0x10202C70u, simkin_sub_10202c70 },
+  { 0x10202C8Cu, simkin_sub_10202c8c },
+  { 0x10202CA4u, simkin_sub_10202ca4 },
+  { 0x10202D10u, simkin_export_097_10202d10 },
+  { 0x10202D58u, simkin_export_090_10202d58 },
+  { 0x10202E54u, simkin_export_091_10202e54 },
+  { 0x10202F50u, simkin_export_093_10202f50 },
+  { 0x10203064u, simkin_export_179_10203064 },
+  { 0x10203210u, simkin_sub_10203210 },
+  { 0x1020335Cu, simkin_sub_1020335c },
+  { 0x10203490u, simkin_sub_10203490 },
+  { 0x102035ACu, simkin_sub_102035ac },
+  { 0x102036D0u, simkin_export_004_102036d0 },
+  { 0x102036E0u, simkin_export_015_102036e0 },
+  { 0x10203720u, simkin_export_016_10203720 },
+  { 0x10203760u, simkin_export_258_10203760 },
+  { 0x102037A4u, simkin_export_203_102037a4 },
+  { 0x10203860u, simkin_export_202_10203860 },
+  { 0x10203968u, simkin_export_114_10203968 },
+  { 0x10203994u, simkin_export_166_10203994 },
+  { 0x10203A00u, simkin_export_209_10203a00 },
+  { 0x10203E9Cu, simkin_export_206_10203e9c },
+  { 0x10203F0Cu, simkin_export_019_10203f0c },
+  { 0x10203FA0u, simkin_export_005_10203fa0 },
+  { 0x10203FF4u, simkin_export_115_10203ff4 },
+  { 0x1020401Cu, simkin_export_167_1020401c },
+  { 0x102040BCu, simkin_export_207_102040bc },
+  { 0x10204164u, simkin_export_210_10204164 },
+  { 0x102041C4u, simkin_export_020_102041c4 },
+  { 0x10204244u, simkin_export_177_10204244 },
+  { 0x10204364u, simkin_sub_10204364 },
+  { 0x102043E8u, simkin_sub_102043e8 },
+  { 0x10204624u, simkin_export_135_10204624 },
+  { 0x102047D0u, simkin_export_060_102047d0 },
+  { 0x102049CCu, simkin_export_216_102049cc },
+  { 0x102049D4u, simkin_export_059_102049d4 },
+  { 0x10204AE4u, simkin_export_215_10204ae4 },
+  { 0x10204BECu, simkin_export_155_10204bec },
+  { 0x10204BF4u, simkin_sub_10204bf4 },
+  { 0x10204CE4u, simkin_sub_10204ce4 },
+  { 0x10204E74u, simkin_export_122_10204e74 },
+  { 0x1020502Cu, simkin_export_205_1020502c },
+  { 0x102052ACu, simkin_export_204_102052ac },
+  { 0x10205498u, simkin_export_123_10205498 },
+  { 0x10205568u, simkin_export_124_10205568 },
+  { 0x10205634u, simkin_sub_10205634 },
+  { 0x10205704u, simkin_sub_10205704 },
+  { 0x102058A8u, simkin_sub_102058a8 },
+  { 0x10205958u, simkin_sub_10205958 },
+  { 0x10205A08u, simkin_export_225_10205a08 },
+  { 0x10205D28u, simkin_export_224_10205d28 },
+  { 0x10205DA0u, simkin_export_252_10205da0 },
+  { 0x10205DD4u, simkin_export_251_10205dd4 },
+  { 0x10205E8Cu, simkin_export_231_10205e8c },
+  { 0x10205E94u, simkin_export_230_10205e94 },
+  { 0x10205E9Cu, simkin_sub_10205e9c },
+  { 0x1020611Cu, simkin_export_119_1020611c },
+  { 0x102061B4u, simkin_sub_102061b4 },
+  { 0x10206460u, simkin_sub_10206460 },
+  { 0x10206E48u, simkin_sub_10206e48 },
+  { 0x1020723Cu, simkin_sub_1020723c },
+  { 0x10207E84u, simkin_sub_10207e84 },
+  { 0x10207F1Cu, simkin_sub_10207f1c },
+  { 0x10208038u, simkin_sub_10208038 },
+  { 0x102081CCu, simkin_sub_102081cc },
+  { 0x102084F4u, simkin_sub_102084f4 },
+  { 0x10208E44u, simkin_sub_10208e44 },
+  { 0x102097B8u, simkin_sub_102097b8 },
+  { 0x1020A968u, simkin_sub_1020a968 },
+  { 0x1020AAACu, simkin_sub_1020aaac },
+  { 0x1020AC48u, simkin_sub_1020ac48 },
+  { 0x1020BCF0u, simkin_sub_1020bcf0 },
+  { 0x1020BE8Cu, simkin_sub_1020be8c },
+  { 0x1020DDA8u, simkin_sub_1020dda8 },
+  { 0x1020DE68u, simkin_export_018_1020de68 },
+  { 0x1020DEE0u, simkin_export_003_1020dee0 },
+  { 0x1020DF1Cu, simkin_export_254_1020df1c },
+  { 0x1020DF58u, simkin_export_253_1020df58 },
+  { 0x1020DF8Cu, simkin_export_021_1020df8c },
+  { 0x1020DFB8u, simkin_export_006_1020dfb8 },
+  { 0x1020DFC8u, simkin_export_256_1020dfc8 },
+  { 0x1020DFD0u, simkin_export_255_1020dfd0 },
+  { 0x1020DFDCu, simkin_sub_1020dfdc },
+  { 0x1021011Cu, simkin_sub_1021011c },
+  { 0x10210260u, simkin_sub_10210260 },
+  { 0x102103F8u, simkin_sub_102103f8 },
+  { 0x1021052Cu, simkin_sub_1021052c },
+  { 0x10211210u, simkin_sub_10211210 },
+  { 0x102112D8u, simkin_sub_102112d8 },
+  { 0x102112E0u, simkin_sub_102112e0 },
+  { 0x10211330u, simkin_sub_10211330 },
+  { 0x102117B0u, simkin_sub_102117b0 },
+  { 0x10211C6Cu, simkin_sub_10211c6c },
+  { 0x10211C74u, simkin_sub_10211c74 },
+  { 0x10211D0Cu, simkin_sub_10211d0c },
+  { 0x10211DACu, simkin_sub_10211dac },
+  { 0x10211DD4u, simkin_sub_10211dd4 },
+  { 0x10211E14u, simkin_export_029_10211e14 },
+  { 0x10211F08u, simkin_export_040_10211f08 },
+  { 0x10211F94u, simkin_export_042_10211f94 },
+  { 0x10212020u, simkin_export_041_10212020 },
+  { 0x102120ACu, simkin_export_039_102120ac },
+  { 0x1021213Cu, simkin_export_038_1021213c },
+  { 0x10212284u, simkin_export_037_10212284 },
+  { 0x10212450u, simkin_export_089_10212450 },
+  { 0x10212528u, simkin_export_185_10212528 },
+  { 0x102125A8u, simkin_export_142_102125a8 },
+  { 0x10212658u, simkin_export_085_10212658 },
+  { 0x102127D0u, simkin_export_237_102127d0 },
+  { 0x10212B70u, simkin_export_046_10212b70 },
+  { 0x10212F04u, simkin_sub_10212f04 },
+  { 0x10212F3Cu, simkin_sub_10212f3c },
+  { 0x10212FBCu, simkin_sub_10212fbc },
+  { 0x10212FE4u, simkin_sub_10212fe4 },
+  { 0x1021300Cu, simkin_sub_1021300c },
+  { 0x10213078u, simkin_export_098_10213078 },
+  { 0x102130C0u, simkin_export_092_102130c0 },
+  { 0x102131BCu, simkin_export_094_102131bc },
+  { 0x102132B8u, simkin_export_180_102132b8 },
+  { 0x10213610u, simkin_export_111_10213610 },
+  { 0x102137E0u, simkin_export_218_102137e0 },
+  { 0x10213998u, simkin_export_045_10213998 },
+  { 0x10213B78u, simkin_sub_10213b78 },
+  { 0x10213C20u, simkin_sub_10213c20 },
+  { 0x10213C7Cu, simkin_export_101_10213c7c },
+  { 0x10213D34u, simkin_sub_10213d34 },
+  { 0x10213D9Cu, simkin_sub_10213d9c },
+  { 0x10213DD0u, simkin_export_176_10213dd0 },
+  { 0x10213E18u, simkin_export_172_10213e18 },
+  { 0x10213E60u, simkin_export_175_10213e60 },
+  { 0x10213EA8u, simkin_export_240_10213ea8 },
+  { 0x10214068u, simkin_export_241_10214068 },
+  { 0x102143ACu, simkin_export_031_102143ac },
+  { 0x102144C0u, simkin_export_057_102144c0 },
+  { 0x10214638u, simkin_export_055_10214638 },
+  { 0x102147A0u, simkin_export_054_102147a0 },
+  { 0x10214958u, simkin_export_043_10214958 },
+  { 0x10214A14u, simkin_export_051_10214a14 },
+  { 0x10214AC4u, simkin_export_050_10214ac4 },
+  { 0x10214AFCu, simkin_export_144_10214afc },
+  { 0x10214BFCu, simkin_export_152_10214bfc },
+  { 0x10214CF0u, simkin_export_151_10214cf0 },
+  { 0x10214DF0u, simkin_export_149_10214df0 },
+  { 0x10214EE4u, simkin_export_250_10214ee4 },
+  { 0x10214F3Cu, simkin_export_244_10214f3c },
+  { 0x10214FA4u, simkin_export_150_10214fa4 },
+  { 0x10215058u, simkin_export_188_10215058 },
+  { 0x102150DCu, simkin_export_190_102150dc },
+  { 0x102151D8u, simkin_export_080_102151d8 },
+  { 0x10215344u, simkin_export_116_10215344 },
+  { 0x102153F8u, simkin_export_221_102153f8 },
+  { 0x1021576Cu, simkin_export_220_1021576c },
+  { 0x102159C0u, simkin_export_222_102159c0 },
+  { 0x10215DB8u, simkin_export_217_10215db8 },
+  { 0x10216044u, simkin_export_061_10216044 },
+  { 0x10216264u, simkin_export_067_10216264 },
+  { 0x10216304u, simkin_export_062_10216304 },
+  { 0x102163DCu, simkin_export_063_102163dc },
+  { 0x102164D0u, simkin_export_064_102164d0 },
+  { 0x102165E0u, simkin_export_065_102165e0 },
+  { 0x1021670Cu, simkin_export_066_1021670c },
+  { 0x10216854u, simkin_export_068_10216854 },
+  { 0x10216A9Cu, simkin_export_074_10216a9c },
+  { 0x10216B58u, simkin_export_069_10216b58 },
+  { 0x10216C6Cu, simkin_export_070_10216c6c },
+  { 0x10216DACu, simkin_export_071_10216dac },
+  { 0x10216F18u, simkin_export_072_10216f18 },
+  { 0x102170B4u, simkin_export_073_102170b4 },
+  { 0x1021727Cu, simkin_export_044_1021727c },
+  { 0x10217328u, simkin_export_219_10217328 },
+  { 0x10217394u, simkin_export_007_10217394 },
+  { 0x102173D0u, simkin_export_034_102173d0 },
+  { 0x10217440u, simkin_export_078_10217440 },
+  { 0x10217488u, simkin_export_077_10217488 },
+  { 0x10217504u, simkin_export_075_10217504 },
+  { 0x10217558u, simkin_export_076_10217558 },
+  { 0x102175CCu, simkin_export_247_102175cc },
+  { 0x10217778u, simkin_export_245_10217778 },
+  { 0x10217830u, simkin_sub_10217830 },
+  { 0x102178E8u, simkin_export_178_102178e8 },
+  { 0x10217ABCu, simkin_sub_10217abc },
+  { 0x10217B60u, simkin_sub_10217b60 },
+  { 0x10217C84u, simkin_export_170_10217c84 },
+  { 0x10217CB0u, simkin_export_194_10217cb0 },
+  { 0x10217D2Cu, simkin_export_195_10217d2c },
+  { 0x10217E24u, simkin_export_103_10217e24 },
+  { 0x10217E78u, simkin_sub_10217e78 },
+  { 0x10217F30u, simkin_sub_10217f30 },
+  { 0x10217F9Cu, simkin_sub_10217f9c },
+  { 0x102180C4u, simkin_sub_102180c4 },
+  { 0x102181FCu, simkin_sub_102181fc },
+  { 0x1021834Cu, simkin_sub_1021834c },
+  { 0x10218354u, simkin_export_012_10218354 },
+  { 0x102184B8u, simkin_export_014_102184b8 },
+  { 0x1021864Cu, simkin_export_013_1021864c },
+  { 0x102187E0u, simkin_export_261_102187e0 },
+  { 0x1021886Cu, simkin_export_032_1021886c },
+  { 0x10218A7Cu, simkin_export_081_10218a7c },
+  { 0x10218B48u, simkin_export_181_10218b48 },
+  { 0x10218C54u, simkin_export_138_10218c54 },
+  { 0x10218D60u, simkin_export_082_10218d60 },
+  { 0x10218DCCu, simkin_export_096_10218dcc },
+  { 0x10218DDCu, simkin_export_102_10218ddc },
+  { 0x10218E58u, simkin_export_193_10218e58 },
+  { 0x10218F24u, simkin_export_200_10218f24 },
+  { 0x10218F3Cu, simkin_export_198_10218f3c },
+  { 0x10218F7Cu, simkin_export_227_10218f7c },
+  { 0x10219180u, simkin_export_208_10219180 },
+  { 0x102191E0u, simkin_export_058_102191e0 },
+  { 0x10219274u, simkin_export_214_10219274 },
+  { 0x10219284u, simkin_export_112_10219284 },
+  { 0x102192C0u, simkin_sub_102192c0 },
+  { 0x102192C8u, simkin_export_201_102192c8 },
+  { 0x102192D0u, simkin_export_182_102192d0 },
+  { 0x102192D8u, simkin_export_139_102192d8 },
+  { 0x102192E0u, simkin_export_196_102192e0 },
+  { 0x10219378u, simkin_export_197_10219378 },
+  { 0x10219394u, simkin_export_127_10219394 },
+  { 0x102195ACu, simkin_export_126_102195ac },
+  { 0x10219794u, simkin_export_125_10219794 },
+  { 0x102198A8u, simkin_export_134_102198a8 },
+  { 0x102198D0u, simkin_export_130_102198d0 },
+  { 0x102198F8u, simkin_export_129_102198f8 },
+  { 0x10219A0Cu, simkin_export_128_10219a0c },
+  { 0x10219A34u, simkin_export_132_10219a34 },
+  { 0x10219A5Cu, simkin_export_131_10219a5c },
+  { 0x10219B68u, simkin_export_133_10219b68 },
+  { 0x10219B90u, simkin_sub_10219b90 },
+  { 0x10219BDCu, simkin_export_001_10219bdc },
+  { 0x10219C28u, simkin_export_257_10219c28 },
+  { 0x1021A188u, simkin_export_211_1021a188 },
+  { 0x1021A318u, simkin_export_047_1021a318 },
+  { 0x1021A320u, simkin_export_110_1021a320 },
+  { 0x1021A490u, simkin_export_026_1021a490 },
+  { 0x1021A4C4u, simkin_export_011_1021a4c4 },
+  { 0x1021A4D4u, simkin_export_223_1021a4d4 },
+  { 0x1021A4E0u, simkin_export_259_1021a4e0 },
+  { 0x1021A520u, simkin_export_260_1021a520 },
+  { 0x1021A560u, simkin_export_008_1021a560 },
+  { 0x1021A5A8u, simkin_export_136_1021a5a8 },
+  { 0x1021A720u, simkin_export_137_1021a720 },
+  { 0x1021A9D0u, simkin_export_035_1021a9d0 },
+  { 0x1021AC2Cu, simkin_export_199_1021ac2c },
+  { 0x1021AC58u, simkin_export_024_1021ac58 },
+  { 0x1021ACC4u, simkin_export_025_1021acc4 },
+  { 0x1021AD68u, simkin_export_010_1021ad68 },
+  { 0x1021ADC0u, simkin_export_099_1021adc0 },
+  { 0x1021ADE4u, simkin_sub_1021ade4 },
+  { 0x1021AE08u, simkin_sub_1021ae08 },
+  { 0x1021AE4Cu, simkin_sub_1021ae4c },
+  { 0x1021AE70u, simkin_sub_1021ae70 },
+  { 0x1021AE88u, simkin_export_212_1021ae88 },
+  { 0x1021AF4Cu, simkin_export_213_1021af4c },
+  { 0x1021B104u, simkin_sub_1021b104 },
+  { 0x1021B304u, simkin_sub_1021b304 },
+  { 0x1021B38Cu, simkin_sub_1021b38c },
+  { 0x1021B6F4u, simkin_export_262_1021b6f4 },
+  { 0x1021B6F8u, simkin_export_022_1021b6f8 },
+  { 0x1021B75Cu, simkin_export_023_1021b75c },
+  { 0x1021B7FCu, simkin_export_009_1021b7fc },
+  { 0x1021B8A0u, simkin_export_121_1021b8a0 },
+  { 0x1021B8A8u, simkin_export_184_1021b8a8 },
+  { 0x1021B8B0u, simkin_export_141_1021b8b0 },
+  { 0x1021B8B8u, simkin_export_084_1021b8b8 },
+  { 0x1021B8C0u, simkin_export_088_1021b8c0 },
+  { 0x1021B988u, simkin_export_236_1021b988 },
+  { 0x1021B9ECu, simkin_export_232_1021b9ec },
+  { 0x1021BC64u, simkin_export_234_1021bc64 },
+  { 0x1021BF28u, simkin_export_159_1021bf28 },
+  { 0x1021BF30u, simkin_export_229_1021bf30 },
+  { 0x1021C060u, simkin_export_228_1021c060 },
+  { 0x1021C178u, simkin_export_163_1021c178 },
+  { 0x1021C424u, simkin_export_165_1021c424 },
+  { 0x1021C80Cu, simkin_export_192_1021c80c },
+  { 0x1021D4FCu, simkin_sub_1021d4fc },
+  { 0x1021D554u, simkin_export_158_1021d554 },
+  { 0x1021D5B4u, simkin_export_108_1021d5b4 },
+  { 0x1021D64Cu, simkin_export_107_1021d64c },
+  { 0x1021D6DCu, simkin_export_161_1021d6dc },
+  { 0x1021DD1Cu, simkin_export_157_1021dd1c },
+  { 0x1021DF50u, simkin_export_226_1021df50 },
+  { 0x1021DF58u, simkin_export_153_1021df58 },
+  { 0x1021DF60u, simkin_export_109_1021df60 },
+  { 0x1021DFC0u, simkin_export_118_1021dfc0 },
+  { 0x1021E164u, simkin_export_027_1021e164 },
+  { 0x1021E244u, simkin_export_028_1021e244 },
+  { 0x1021E320u, simkin_sub_1021e320 },
+  { 0x1021E3C0u, simkin_sub_1021e3c0 },
+  { 0x1021E570u, simkin_sub_1021e570 },
+  { 0x1021E6D0u, simkin_sub_1021e6d0 },
+  { 0x1021E788u, simkin_sub_1021e788 },
+  { 0x1021E7B8u, simkin_sub_1021e7b8 },
+  { 0x1021E7E4u, simkin_sub_1021e7e4 },
+  { 0x1021E838u, simkin_sub_1021e838 },
+  { 0x1021E880u, simkin_sub_1021e880 },
+  { 0x1021E8A8u, simkin_sub_1021e8a8 },
+  { 0x1021E9D4u, simkin_sub_1021e9d4 },
+  { 0x1021EA1Cu, simkin_sub_1021ea1c },
+  { 0x1021EA38u, simkin_sub_1021ea38 },
+  { 0x1021EBBCu, simkin_sub_1021ebbc },
+  { 0x1021EC6Cu, simkin_sub_1021ec6c },
+  { 0x1021EC84u, simkin_sub_1021ec84 },
+  { 0x1021ED14u, simkin_sub_1021ed14 },
+  { 0x1021EE2Cu, simkin_sub_1021ee2c },
+  { 0x1021EEA0u, simkin_sub_1021eea0 },
+  { 0x1021EEF0u, simkin_sub_1021eef0 },
+  { 0x1021EF18u, simkin_sub_1021ef18 },
+  { 0x1021EF4Cu, simkin_sub_1021ef4c },
+  { 0x1021EF5Cu, simkin_sub_1021ef5c },
+  { 0x1021EF6Cu, simkin_sub_1021ef6c },
+  { 0x1021EF7Cu, simkin_sub_1021ef7c },
+  { 0x1021EF8Cu, simkin_sub_1021ef8c },
+  { 0x1021EF9Cu, simkin_sub_1021ef9c },
+  { 0x1021EFACu, simkin_sub_1021efac },
+  { 0x1021EFBCu, simkin_sub_1021efbc },
+  { 0x1021EFCCu, simkin_sub_1021efcc },
+  { 0x1021EFDCu, simkin_sub_1021efdc },
+  { 0x1021EFECu, simkin_sub_1021efec },
+  { 0x1021EFFCu, simkin_sub_1021effc },
+  { 0x1021F00Cu, simkin_sub_1021f00c },
+  { 0x1021F01Cu, simkin_sub_1021f01c },
+  { 0x1021F02Cu, simkin_sub_1021f02c },
+  { 0x1021F03Cu, simkin_sub_1021f03c },
+  { 0x1021F04Cu, simkin_sub_1021f04c },
+  { 0x1021F05Cu, simkin_sub_1021f05c },
+  { 0x1021F06Cu, simkin_sub_1021f06c },
+  { 0x1021F07Cu, simkin_sub_1021f07c },
+  { 0x1021F08Cu, simkin_sub_1021f08c },
+  { 0x1021F09Cu, simkin_sub_1021f09c },
+  { 0x1021F0ACu, simkin_sub_1021f0ac },
+  { 0x1021F0BCu, simkin_sub_1021f0bc },
+  { 0x1021F0CCu, simkin_sub_1021f0cc },
+  { 0x1021F0DCu, simkin_sub_1021f0dc },
+  { 0x1021F0ECu, simkin_sub_1021f0ec },
+  { 0x1021F0FCu, simkin_sub_1021f0fc },
+  { 0x1021F10Cu, simkin_sub_1021f10c },
+  { 0x1021F11Cu, simkin_sub_1021f11c },
+  { 0x1021F12Cu, simkin_sub_1021f12c },
+  { 0x1021F13Cu, simkin_sub_1021f13c },
+  { 0x1021F14Cu, simkin_sub_1021f14c },
+  { 0x1021F15Cu, simkin_sub_1021f15c },
+  { 0x1021F16Cu, simkin_sub_1021f16c },
+  { 0x1021F17Cu, simkin_sub_1021f17c },
+  { 0x1021F18Cu, simkin_sub_1021f18c },
+  { 0x1021F19Cu, simkin_sub_1021f19c },
+  { 0x1021F1ACu, simkin_sub_1021f1ac },
+  { 0x1021F1BCu, simkin_sub_1021f1bc },
+  { 0x1021F1CCu, simkin_sub_1021f1cc },
+  { 0x1021F1DCu, simkin_sub_1021f1dc },
+  { 0x1021F1ECu, simkin_sub_1021f1ec },
+  { 0x1021F1FCu, simkin_sub_1021f1fc },
+  { 0x1021F20Cu, simkin_sub_1021f20c },
+  { 0x1021F21Cu, simkin_sub_1021f21c },
+  { 0x1021F22Cu, simkin_sub_1021f22c },
+  { 0x1021F23Cu, simkin_sub_1021f23c },
+  { 0x1021F24Cu, simkin_sub_1021f24c },
+  { 0x1021F25Cu, simkin_sub_1021f25c },
+  { 0x1021F26Cu, simkin_sub_1021f26c },
+  { 0x1021F27Cu, simkin_sub_1021f27c },
+  { 0x1021F28Cu, simkin_sub_1021f28c },
+  { 0x1021F29Cu, simkin_sub_1021f29c },
+  { 0x1021F2ACu, simkin_sub_1021f2ac },
+  { 0x1021F2BCu, simkin_sub_1021f2bc },
+  { 0x1021F2CCu, simkin_sub_1021f2cc },
+  { 0x1021F2DCu, simkin_sub_1021f2dc },
+  { 0x1021F2ECu, simkin_sub_1021f2ec },
+  { 0x1021F2FCu, simkin_sub_1021f2fc },
+  { 0x1021F30Cu, simkin_sub_1021f30c },
+  { 0x1021F31Cu, simkin_sub_1021f31c },
+  { 0x1021F32Cu, simkin_sub_1021f32c },
+  { 0x1021F33Cu, simkin_sub_1021f33c },
+  { 0x1021F34Cu, simkin_sub_1021f34c },
+  { 0x1021F35Cu, simkin_sub_1021f35c },
+  { 0x1021F36Cu, simkin_sub_1021f36c },
+  { 0x1021F37Cu, simkin_sub_1021f37c },
+  { 0x1021F38Cu, simkin_sub_1021f38c },
+  { 0x1021F39Cu, simkin_sub_1021f39c },
+  { 0x1021F3ACu, simkin_sub_1021f3ac },
+  { 0x1021F3BCu, simkin_sub_1021f3bc },
+  { 0x1021F3CCu, simkin_sub_1021f3cc },
+  { 0x1021F3DCu, simkin_sub_1021f3dc },
+  { 0x1021F3ECu, simkin_sub_1021f3ec },
+  { 0x1021F3FCu, simkin_sub_1021f3fc },
+  { 0x1021F40Cu, simkin_sub_1021f40c },
+  { 0x1021F41Cu, simkin_sub_1021f41c },
+  { 0x1021F42Cu, simkin_sub_1021f42c },
+  { 0x1021F444u, simkin_sub_1021f444 },
+  { 0x1021F4BCu, simkin_sub_1021f4bc },
+  { 0x1021F548u, simkin_sub_1021f548 },
+  { 0x1021F5B8u, simkin_sub_1021f5b8 },
+  { 0x1021F5E4u, simkin_sub_1021f5e4 },
+  { 0x1021F610u, simkin_sub_1021f610 },
+  { 0x1021F650u, simkin_sub_1021f650 },
+  { 0x1021F67Cu, simkin_sub_1021f67c },
+  { 0x1021F6A8u, simkin_sub_1021f6a8 },
+  { 0x1021F6D4u, simkin_sub_1021f6d4 },
+  { 0x1021F700u, simkin_sub_1021f700 },
+  { 0x1021F730u, simkin_sub_1021f730 },
+  { 0x1021F7C8u, simkin_sub_1021f7c8 },
+  { 0x1021F83Cu, simkin_sub_1021f83c },
+  { 0x1021F8B0u, simkin_sub_1021f8b0 },
+  { 0x1021F93Cu, simkin_sub_1021f93c },
+  { 0x1021F970u, simkin_sub_1021f970 },
+  { 0x1021F9C8u, simkin_sub_1021f9c8 },
+  { 0x1021FA44u, simkin_sub_1021fa44 },
+  { 0x1021FAD4u, simkin_sub_1021fad4 },
+  { 0x1021FB78u, simkin_sub_1021fb78 },
+  { 0x1021FC2Cu, simkin_sub_1021fc2c },
+  { 0x1021FC90u, simkin_sub_1021fc90 },
+  { 0x1021FD10u, simkin_sub_1021fd10 },
+  { 0x1021FD44u, simkin_sub_1021fd44 },
+  { 0x1021FD5Cu, simkin_sub_1021fd5c },
+  { 0x1021FDC4u, simkin_sub_1021fdc4 },
+  { 0x1021FE2Cu, simkin_sub_1021fe2c },
+  { 0x1021FEA4u, simkin_sub_1021fea4 },
+  { 0x1021FF18u, simkin_sub_1021ff18 },
+  { 0x1021FF4Cu, simkin_sub_1021ff4c },
+  { 0x1021FFA4u, simkin_sub_1021ffa4 },
+  { 0x1022007Cu, simkin_sub_1022007c },
+  { 0x102200ECu, simkin_sub_102200ec },
+  { 0x102201B4u, simkin_sub_102201b4 },
+  { 0x10220230u, simkin_sub_10220230 },
+  { 0x102202B0u, simkin_sub_102202b0 },
+  { 0x10220348u, simkin_sub_10220348 },
+  { 0x102203D8u, simkin_sub_102203d8 },
+  { 0x1022044Cu, simkin_sub_1022044c },
+  { 0x102204A4u, simkin_sub_102204a4 },
+  { 0x102204D8u, simkin_sub_102204d8 },
+  { 0x102205A8u, simkin_sub_102205a8 },
+  { 0x1022062Cu, simkin_sub_1022062c },
+  { 0x10220660u, simkin_sub_10220660 },
+  { 0x10220694u, simkin_sub_10220694 },
+  { 0x102206C8u, simkin_sub_102206c8 },
+  { 0x102206FCu, simkin_sub_102206fc },
+  { 0x10220730u, simkin_sub_10220730 },
+  { 0x10220764u, simkin_sub_10220764 },
+  { 0x10220798u, simkin_sub_10220798 },
+  { 0x102207CCu, simkin_sub_102207cc },
+  { 0x10220800u, simkin_sub_10220800 },
+  { 0x102208C8u, simkin_sub_102208c8 },
+  { 0x10220948u, simkin_sub_10220948 },
+  { 0x102209C4u, simkin_sub_102209c4 },
+  { 0x10220D1Cu, simkin_sub_10220d1c },
+  { 0x10220E98u, simkin_sub_10220e98 },
+  { 0x10220EB4u, simkin_sub_10220eb4 },
+  { 0x10220F70u, simkin_sub_10220f70 },
+  { 0x10220FE8u, simkin_sub_10220fe8 },
+  { 0x10221060u, simkin_sub_10221060 },
+  { 0x102210ECu, simkin_sub_102210ec },
+  { 0x10221118u, simkin_sub_10221118 },
+  { 0x10221144u, simkin_sub_10221144 },
+  { 0x10221170u, simkin_sub_10221170 },
+  { 0x102211A4u, simkin_sub_102211a4 },
+  { 0x102211D0u, simkin_sub_102211d0 },
+  { 0x10221210u, simkin_sub_10221210 },
+  { 0x1022123Cu, simkin_sub_1022123c },
+  { 0x10221268u, simkin_sub_10221268 },
+  { 0x10221294u, simkin_sub_10221294 },
+  { 0x10221488u, simkin_sub_10221488 },
+  { 0x102214E8u, simkin_sub_102214e8 },
+  { 0x10221584u, simkin_sub_10221584 },
+  { 0x102218ACu, simkin_sub_102218ac },
+  { 0x102219DCu, simkin_sub_102219dc },
+  { 0x10221B94u, simkin_sub_10221b94 },
+  { 0x10221DFCu, simkin_sub_10221dfc },
+  { 0x10221E08u, simkin_sub_10221e08 },
+  { 0x10222070u, simkin_sub_10222070 },
+  { 0x102221B8u, simkin_sub_102221b8 },
+};
+const uint32_t simkin_function_registry_count = sizeof(simkin_function_registry)/sizeof(simkin_function_registry[0]);
+ngage_guest_fn simkin_find_function(uint32_t a) {
+  for (uint32_t i=0;i<simkin_function_registry_count;i++) if(simkin_function_registry[i].address==a) return simkin_function_registry[i].fn;
+  return 0;
+}

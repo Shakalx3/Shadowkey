@@ -1,0 +1,13 @@
+{
+	saved_WeTalked[0]
+	Init[()
+	{
+		SetUseText(1342);
+		SetUsable(false);
+		SetInvulnerable(true);
+	}]
+	OnUse[()
+	{
+		OpenMenu("fearfrst\\\\Ivgrizt_convo2");
+	}]
+}

@@ -1,0 +1,14 @@
+{
+	Init[()
+	{
+		SetUseText(746);
+		SetUsable(true);
+	}]
+	OnUse[()
+	{
+		if(GetPlayer().HasItem("skey4"))
+		{	
+			OpenMenu("fearfrst\\\\HeroPointMenu");
+		}
+	}]
+}

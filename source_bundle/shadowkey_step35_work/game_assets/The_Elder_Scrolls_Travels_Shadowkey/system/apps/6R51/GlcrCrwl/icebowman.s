@@ -1,0 +1,33 @@
+{
+	Init[()
+	{
+		SetName(2092);
+		SetExpWorth(440);
+		SetLevel(10);
+		SetSkin(0);
+		SetAttachedWeapon(225);
+		SetAggressive(true);
+		SetAttack(11);
+		SetDefense(5);
+		SetSpellcast(0);
+		SetMagicResistance(8);
+		SetDamageMin(4);
+		SetDamageMax(36);
+		SetArmorValue(4);
+		SetMaxHealth(45);
+		SetWimpy(5);
+		SetChaseRadius(18000);
+		SetAttackNoise(1);
+		SetDeathNoise(0);
+		SetIsHitNoise(38);
+		SetWalkAnimation(5);
+		SetSwingAnimation(2);
+		SetDeathAnimation(6);
+		SetIdleAnimation(8);
+		PlayAnimationOffset(0);
+		SetAttackRange(12000);
+
+		SetLoot( 300, "GlcrCrwl\\\\Loot_Key" );
+		SetMob(4);
+	}]
+}

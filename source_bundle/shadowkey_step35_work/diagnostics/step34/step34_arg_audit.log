@@ -1,0 +1,6 @@
+PASS: exactly two direct callsites to sub_10023608 are present
+PASS: both callers write outgoing stack args +0x14=0 and +0x18=1
+PASS: callee frame arithmetic maps those words to LDRB inputs r6=0 and r5=1
+PASS: GDI101 conditional path is taken (r5=1), GDI108 gets r1=r10=0 (r6=0)
+PASS: r10 += 13 occurs only after the GDI108 call; it is not that call argument
+LIMIT: GDI ordinal 101/108 identities and parameter semantics remain unverified

@@ -1,0 +1,19 @@
+{
+	saved_Opened[0]
+	Init[()
+	{
+		SetUseText(610);
+		SetUsable(true);
+	}]
+	OnUse[()
+	{
+		if(saved_Opened = 0)
+		{
+			OpenMenu("ffarena\\\\loot1_menu");
+		}
+		else
+		{
+			OpenMenu("NoLoot");
+		}
+	}]
+}

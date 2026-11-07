@@ -1,0 +1,80 @@
+{
+	Init[ (s)
+	{
+		//SetModel(202);
+		SetUseText(400);
+		SetSkin(6);
+		SetName(399);
+		SetID("bbrawler");
+		SetAttack(5);
+		SetDefense(3);
+		SetSpellcast(0);
+		SetMagicResistance(3);
+		SetDamageMin(2);
+		SetDamageMax(8);
+		SetArmorValue(2);
+		SetMaxHealth(30);
+		SetWimpy(5);
+		SetChaseRadius(18000);
+		SetAttackNoise(3);
+		SetDeathNoise(0);
+		SetIsHitNoise(38);
+		SetWalkAnimation(5);
+                SetSwingAnimation(1);
+                SetDeathAnimation(6);
+                SetIdleAnimation(8);
+		PlayAnimation(8);
+		SetLoot(300, "Loot_Gold6-10", 1, 2 );
+
+		// Try to detect the player, but do not attack.
+		// Instead, if a non-aggressive NPC detects the player,
+		// OnDetect will be called!
+		SetAggressive(false);
+		AiDetect();
+
+	} ]
+
+	OnUse[ (s)
+	{
+		//OpenMenu("Acolyte Menlin");
+		OpenMenu("Talker");
+	} ]
+
+	OnKilled [ (s)
+	{
+		//GetPlayer().StatModXP(68);
+		if ( Random(1,12)=12)
+		{
+			//Ratseye = CreateItem("Gold");
+			//DropItem( Gold );
+			return;
+		}
+		else
+		{
+			return;
+		}
+
+
+	}]
+
+
+	OnDetect[ (s)
+	{
+		// The player must be within my chase radius.
+		// Talk to him, then kill him.
+		OpenMenu("Talker");
+		AiSleep();
+	} ]
+
+	MenuClosed[ (s)
+	{
+		SetAggressive( true );
+		AiDetect();
+	} ]
+
+
+
+
+
+
+}

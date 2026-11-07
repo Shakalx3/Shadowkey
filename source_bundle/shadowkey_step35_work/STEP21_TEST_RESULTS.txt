@@ -1,0 +1,18 @@
+Shadowkey v8.4 step21 verification
+
+PASS: shadowkey_step21_drawtext_audit.py
+PASS: shadowkey_step20_font_draw_audit.py
+PASS: shadowkey_step19_tfont_device_audit.py
+PASS: shadowkey_step18_text_chain_audit.py
+PASS: shadowkey_step17_text_chain_audit.py
+PASS: build_and_test.sh (core tests and HLE compilation; expected unresolved imports are reported by diagnostic app run)
+PASS: build_arm11_core.sh (ARM EABI5 relocatable core)
+PASS: build_arm11_linkcheck.sh (static ARM ELF, no undefined symbols)
+
+NOT REACHED: trace_asset_loader_vfs.sh did not reach the graphics-context virtual-call chain; script exits nonzero with "FAIL: graphics-context virtual call chain was not reached".
+
+LIMITATIONS:
+- DrawText and DiscardFont are high-confidence ABI/API matches, not confirmed against an exact S60 3rd FP1 vtable export map.
+- HLE DrawText handler logs geometry/arguments only; no glyph rasterization or pixel writes.
+- linkcheck ELF still uses a no-op E32Main; it is not a Symbian E32Image.
+- no physical Nokia N95 launch or real graphics-server execution was performed.

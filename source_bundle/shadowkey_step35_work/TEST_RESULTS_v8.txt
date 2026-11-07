@@ -1,0 +1,3 @@
+PASS: app factory, document vtable dispatch, AppUi construction (51 import calls), engine object/back-pointer, allocation failure and IAT-slot dispatch pass
+
+Diagnostic asset trace: reaches a real 37,956-byte image resource in global.spr (offset 0x163B1F; 176 x 208 header), then stops at an unimplemented CONE ordinal 226 returning null. This diagnostic run is not a game-launch test.

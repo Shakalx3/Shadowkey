@@ -1,0 +1,25 @@
+Shadowkey v8.4 step 3 validation — 2026-11-02
+
+Fresh clean-extraction reproduction:
+  ./build_and_test.sh                         PASS
+  ./trace_asset_loader_vfs.sh                 PASS (diagnostic run exit 90 is the expected OOB stop)
+  python3 shadowkey_gc_trace_regression.py .build/asset_vfs_trace.log  PASS
+  ./build_arm11_core.sh                       PASS
+  ./build_arm11_linkcheck.sh                  PASS after build manifest fix
+
+Fresh trace assets:
+  StringTable.eng  OPENED
+  global.spr       OPENED
+  entities.txt     OPENED
+  menu_sprites.txt OPENED
+
+Expected remaining stop:
+  OOB 00000080/4, LR=0
+  source=0x10111208, source+0x14A3C=0
+
+Not validated:
+  - Full Symbian runtime / rendering
+  - Native E32Image package
+  - Launch on Nokia N95
+
+Legacy test script shadowkey_regression_tests.py was attempted but is not a v8.4 test: it requires missing historical artifacts shadowkey_functions_v2.json and shadowkey_lifted_v4.c. It fails with FileNotFoundError and is not counted as a current regression pass.

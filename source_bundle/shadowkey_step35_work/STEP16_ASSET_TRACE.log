@@ -1,0 +1,18 @@
+  VFS RFile::Open path='z:\system\apps\6R51\StringTable.eng' -> '/mnt/data/step16work/shadowkey_step12_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/StringTable.eng' OPENED size=338078 mode=00000002 obj=102fe79c
+  VFS RFile::Open path='e:\system\apps\6R51\global.spr' -> '/mnt/data/step16work/shadowkey_step12_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/global.spr' OPENED size=1646707 mode=00000002 obj=102fe72c
+  VFS RFile::Open path='' -> '/mnt/data/step16work/shadowkey_step12_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/' MISSING/FAILED size=0 mode=00000002 obj=102fe72c
+  VFS RFile::Open path='e:\system\apps\6R51\global.spr' -> '/mnt/data/step16work/shadowkey_step12_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/global.spr' OPENED size=1646707 mode=00000002 obj=102fe72c
+  VFS RFile::Open path='z:\system\apps\6R51\entities.txt' -> '/mnt/data/step16work/shadowkey_step12_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/entities.txt' OPENED size=22064 mode=00000002 obj=102fe6a4
+  VFS RFile::Open path='e:\system\apps\6R51\menu_sprites.txt' -> '/mnt/data/step16work/shadowkey_step12_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/menu_sprites.txt' OPENED size=252 mode=00000002 obj=102fe534
+ENGINE RUNL forced-zero returned r0=00000000 engine+0x30=10111288 engine+0x34=00000000 engine+0x3ad=01
+PASS: app factory, document vtable dispatch, AppUi construction (51 import calls), engine object/back-pointer, allocation failure and IAT-slot dispatch pass
+Diagnostic VFS run exit code: 0 (real asset opens/reads are enabled; this is not a game-launch test).
+PASS: assets, StringTable conversion, FBS shared chunks and RGB565 decode
+PASS: bitmap device/context and diagnostic font model reached
+PASS: +0x2E4/+0x2E8/+0x2EC object chain and graphics-context virtuals verified
+PASS: bitmap/font callback is separated from the FBS pixel buffer
+PASS: CONE ordinal 160 callsites reached without fake BX tail-return
+PASS: EUSER ordinal 1431 zero-fill callsite contract applied
+PASS: no OOB at 0x102FDC68; caller continuation is handled by lifted C caller
+FRONTIER: diagnostic RunL returns; unresolved platform imports/HLE semantics remain
+NOTE: host diagnostic trace only; not a complete game launch or N95 test

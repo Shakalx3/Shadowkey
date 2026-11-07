@@ -1,0 +1,4 @@
+PASS: ESTLIB 317/315 produce a non-empty UTF-16 message
+PASS: EUSER 248 copies 'has paused the game' (19) and 'd the game' (10)
+PASS: both non-empty descriptors reach DrawText
+LIMIT: EUSER 711 remains unresolved; DrawText does not rasterize pixels

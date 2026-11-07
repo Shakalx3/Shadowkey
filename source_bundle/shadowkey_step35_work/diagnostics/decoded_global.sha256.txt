@@ -1,0 +1,5 @@
+NOTE: legacy filename decoded_global.rgb565 is misleading; the decoded words are RGB444 (R[11:8], G[7:4], B[3:0]) stored in 16-bit slots.
+Raw RGB444 (12-bit values in 16-bit storage) surface: 176x233, stride 352, 82016 bytes
+Decoded image payload: 176x208, 73216 bytes
+Payload SHA-256: fcd14f0f6074ea28687c52adae42fc60b7037db12f597ba0c82816386b1f640c
+Full surface SHA-256: b92f44fef66927a85a392392b7197968dd8c3a055f81cdc84a77f437dd1b40e3

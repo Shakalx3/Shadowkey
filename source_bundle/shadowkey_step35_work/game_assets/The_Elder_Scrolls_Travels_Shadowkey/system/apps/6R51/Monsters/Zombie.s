@@ -1,0 +1,29 @@
+{
+	Init[ (s)
+	{
+		SetName(2156);
+		SetExpWorth(0);
+		SetAggressive(true);
+		SetAttack(0);
+		SetDefense(0);
+		SetSpellcast(0);
+		SetMagicResistance(0);
+		SetDamageMin(0);
+		SetDamageMax(0);
+		SetArmorValue(0);
+		SetMaxHealth(0);
+		SetWimpy(0);
+		SetChaseRadius(18000);
+		SetAttackNoise(0);
+		SetDeathNoise(0);
+		SetWalkAnimation(0);
+		SetSwingAnimation(0);
+		SetDeathAnimation(0);
+		SetIdleAnimation(0);
+		PlayAnimationOffset(0);
+		SetUndead(true);
+		SetLoot(300, "Loot_Gold5-15", 1, 4 );
+
+		SetMob(3);
+	} ]
+}

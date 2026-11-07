@@ -1,0 +1,49 @@
+PASS: E32 header/table offsets, code insertion, direct branch, checksum, and import table validated
+NOTE: this validates binary rewriting only; it does not validate EKA2 loader compatibility or game behavior
+Input: /mnt/data/shadowkey_step34_work/shadowkey_step33_work/6R51.APP
+Input SHA-256: 3c3376945f6798a17bd4972f17a3f5c8ba1b9515386acc1c86f9ab1f9e07e98e
+Output: /tmp/shadowkey_step35_4370/6R51_probe.APP
+Output SHA-256: 4457b9e47ba54eece2e167581dda874545ca57c6df233cb79cb1f2035d7a84ba
+Image base: 0x10000000
+Original text size: 0x100340
+Injected stub VA: 0x10100340
+Injected bytes: 8
+Code size: 0x1009C4 -> 0x1009CC
+Text size: 0x100340 -> 0x100348
+Relocation blocks: 168
+Relocation entries: 10104
+Relocation types: {3: 10104, 0: 88}
+IAT-target relocations shifted: 415
+Original code checksum field: 0x67F7151E
+Original additive code sum: 0x6387532B
+Patched additive code checksum: 0x2AB91FDF
+Patched thunk VA: 0x100A00B0
+Branch target VA: 0x10100340
+ARM B opcode: 0xEA0180A2
+Limitations: this is a structural E32 image patch experiment, not a complete Symbian compatibility implementation.
+The additive code checksum at header offset 0x18 is recalculated. Target-loader acceptance remains unverified.
+
+Image: /tmp/shadowkey_step35_4370/6R51_probe.APP
+DLL reference blocks: 20; total imports: 415
+IAT base: 0x10100348; import thunks mapped: 413
+  APPARC[10003a3d].DLL: 4 imports
+  AVKON[100056c6].DLL: 20 imports
+  BITGDI[10003b18].DLL: 5 imports
+  CONE[10003a41].DLL: 43 imports
+  EFSRV[100039e4].DLL: 19 imports
+  EIKCORE[10004892].DLL: 60 imports
+  ESOCK[10003d3f].DLL: 7 imports
+  ESTLIB[10003b0b].DLL: 29 imports
+  ETEL[10003d46].DLL: 16 imports
+  EUSER[100039e5].DLL: 101 imports
+  EZLIB[10005706].DLL: 1 imports
+  FBSCLI[10003a15].DLL: 6 imports
+  GAMECOMMS[101f5ee2].DLL: 27 imports
+  GDI[10003b15].DLL: 3 imports
+  HAL[100039e8].DLL: 1 imports
+  MEDIACLIENTAUDIOSTREAM[10003996].DLL: 1 imports
+  MSGS[10004e66].DLL: 3 imports
+  MEDIACLIENTAUDIOSTREAM[10003996].DLL: 1 imports
+  SIMKIN[101fae0a].DLL: 64 imports
+  WS32[10003b21].DLL: 4 imports
+Wrote /tmp/shadowkey_step35_4370/import_thunks.csv and /tmp/shadowkey_step35_4370/import_blocks.csv

@@ -1,0 +1,10 @@
+{
+	Init[ ()
+	{
+	AddStaticItem(
+
+	MenuQuit[ ()
+	{
+		Quit();
+	}]
+}

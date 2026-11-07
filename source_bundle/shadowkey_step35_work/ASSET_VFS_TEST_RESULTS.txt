@@ -1,0 +1,8 @@
+  VFS RFile::Open path='z:\system\apps\6R51\StringTable.eng' -> '/mnt/data/shadowkey_recomp_bundle_v7/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/StringTable.eng' OPENED size=338078 mode=00000002 obj=1017f79c
+  VFS RFile::Open path='e:\system\apps\6R51\global.spr' -> '/mnt/data/shadowkey_recomp_bundle_v7/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/global.spr' OPENED size=1646707 mode=00000002 obj=1017f72c
+  VFS RFile::Open path='' -> '/mnt/data/shadowkey_recomp_bundle_v7/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/' MISSING/FAILED size=0 mode=00000002 obj=1017f72c
+  VFS RFile::Open path='e:\system\apps\6R51\global.spr' -> '/mnt/data/shadowkey_recomp_bundle_v7/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/global.spr' OPENED size=1646707 mode=00000002 obj=1017f72c
+OOB 00000000/1 lr=10024c18 sp=1017fbec r0=10111208 r1=00000000 r2=00000000 r3=10115668 r4=00000000 r5=101102c8 r6=000003e0 r7=101102c8 r8=00000000 r9=00000001 r10=1017ff60 r11=00000000 r12=10115668 cpsr=60000000
+Diagnostic VFS run exit code: 90 (real asset opens/reads are enabled; this is not a game-launch test).
+
+Interpretation: first resource table populated at 0x1016c948; index 0xF8 resolves to file offset 0x9444. Second loader reads a 1,536-byte chunk from global.spr but returns null; the resulting table entry is zero and the next byte access stops at 0x10024c18.

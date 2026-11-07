@@ -1,0 +1,12 @@
+{
+	Init[()
+	{
+		SetUseText(689);
+		SetUsable(true);
+	}]
+	OnUse[()
+	{
+		GetPlayer().OpenMenu("CryptSH3\\\\luck_menu");
+		SetUsable(false);
+	}]
+}

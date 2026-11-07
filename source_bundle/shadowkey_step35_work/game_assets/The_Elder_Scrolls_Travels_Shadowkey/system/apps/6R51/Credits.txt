@@ -1,0 +1,141 @@
+
+
+
+
+
+
+The Elder Scrolls Travels:
+Shadowkey(TM)
+
+
+
+
+
+
+
+
+Vir2L
+-----
+
+Executive Producer
+Todd Howard
+
+Producer
+Douglas Frederick
+
+Designer
+Greg Gorden
+
+Project Manager
+Greg Gorden
+
+Lead Artist
+Mark Jones
+
+Senior Artist
+John Peason
+
+Additional Art
+Scott Kramer
+
+TKO
+---
+
+Producer
+James Parker
+
+Lead Programmer
+Scott Phillips
+
+Programmers
+Richard Osborne
+Jacob Devore
+Michael Maynard
+
+Engine Programmers
+Jeff Posey
+John Talley
+Danny Padilla
+
+Lead Scripter
+Dan Nanni
+
+Design
+Trent Martinez
+
+Additional Design
+Ben Cureton
+Josh Davis
+Michael Hermes
+Jason Maier
+Adam Schuman
+Robert Smith
+
+Nokia
+-----
+
+Producer
+John Stroppa
+
+Producer
+Shane Neville
+
+QA Test Leads
+Brodie Buchanan
+Terence Tso
+ 
+QA Testers
+Anim Ali
+Jason Au
+Irene Chan
+Andersen Kang
+Jarmo Kuikka
+Jeff Wilson
+
+Localization Test Lead
+Giulia Mauro
+
+Localization Testers
+Luz Ramirez
+Ingrid Schafmeister
+ 
+QA Support Testers
+Julien Escuta
+Trevor Record
+Paul Breland
+Veronica Deluna
+ 
+Babel:
+ 
+Project Manager
+Ashley Parker
+ 
+Project Co-coordinator
+Ben Scott
+ 
+QA Test Lead
+Miles Davies
+ 
+QA Testers
+Joe Shetcliffe
+Laurie May
+Paul Magor
+Rob Swan
+Will Hansen
+
+Alberto Mallo
+Nicole Nothen
+Nicolas Martinez
+Gabriele Ambrosi
+Lewis Merdler
+Alex Chitty
+Michael Gordon
+John Darke
+Alex Bickley
+Daniele Gallori
+
+
+
+
+
+

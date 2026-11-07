@@ -1,0 +1,19 @@
+Shadowkey v8.4 step32 — 2026-11-05
+
+PASS ./build_and_test.sh
+PASS live-state VFS diagnostic trace with EUSER1407 TBuf16<6>, GDI151 TFontSpec72 prefix, and GDI108 TFontStyle default experiments enabled
+PASS five GDI108 callsites audited; all receiver addresses are GDI151 destination + 0x3C
+PASS descriptor copied for GDI151 begins at GDI108 receiver + 4
+PASS write watch armed at 0x102FED2C..0x102FED44; no guest CPU writes to that range before GDI108
+PASS GDI108 experiment initializes exactly 12 bytes at TFontSpec+0x3C to zero for observed r1=0 site
+PASS GFX HLE consumer reads TFontSpec72: Swiss, 213 twips, style=(0,0,0)
+PASS both DrawText diagnostics reached: (0,160) and (0,13)
+PASS live-state RunL returned without forced engine+0x34 write
+
+LIMITATIONS
+- GDI108 identity/signature is still inferred, not confirmed from N95 FP1 GDI.dll.
+- TTypeface as TBufC<24> and the 72-byte layout are cross-target/provisional, not N95-ROM verified.
+- GDI108 experiment only handles LR=0x10023290 with r1=0; other sites remain unimplemented.
+- CFont is synthetic; no glyph rasterization.
+- Direct RunL bypasses CActiveScheduler; HAL free RAM is a configurable diagnostic value.
+- No E32/SIS or physical N95 test.

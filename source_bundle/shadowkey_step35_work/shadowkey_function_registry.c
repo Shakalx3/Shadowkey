@@ -1,0 +1,4748 @@
+/* Generated from the vtable + direct-call-leaf aware Shadowkey recovery map. */
+#include <stdint.h>
+typedef struct { uint32_t r[16]; uint32_t cpsr; uint8_t *mem; } ngage_cpu_t;
+typedef void (*ngage_guest_fn)(ngage_cpu_t *);
+typedef struct { uint32_t address; ngage_guest_fn fn; } ngage_function_entry;
+
+extern void sub_10000004(ngage_cpu_t *);
+extern void sub_100001ac(ngage_cpu_t *);
+extern void sub_10000498(ngage_cpu_t *);
+extern void sub_100008f0(ngage_cpu_t *);
+extern void sub_10000ab8(ngage_cpu_t *);
+extern void sub_10000c64(ngage_cpu_t *);
+extern void sub_100016e0(ngage_cpu_t *);
+extern void sub_100017c8(ngage_cpu_t *);
+extern void sub_10001fd0(ngage_cpu_t *);
+extern void sub_10002458(ngage_cpu_t *);
+extern void sub_10002550(ngage_cpu_t *);
+extern void sub_100027e0(ngage_cpu_t *);
+extern void sub_10002a38(ngage_cpu_t *);
+extern void sub_10002bfc(ngage_cpu_t *);
+extern void sub_10002cf8(ngage_cpu_t *);
+extern void sub_10002f74(ngage_cpu_t *);
+extern void sub_1000308c(ngage_cpu_t *);
+extern void sub_1000336c(ngage_cpu_t *);
+extern void sub_100034f8(ngage_cpu_t *);
+extern void sub_10003674(ngage_cpu_t *);
+extern void sub_10003810(ngage_cpu_t *);
+extern void sub_10004d70(ngage_cpu_t *);
+extern void sub_10004f84(ngage_cpu_t *);
+extern void sub_10005164(ngage_cpu_t *);
+extern void sub_10005320(ngage_cpu_t *);
+extern void sub_10005730(ngage_cpu_t *);
+extern void sub_100058e0(ngage_cpu_t *);
+extern void sub_10005970(ngage_cpu_t *);
+extern void sub_10005a84(ngage_cpu_t *);
+extern void sub_10005ad4(ngage_cpu_t *);
+extern void sub_10005b60(ngage_cpu_t *);
+extern void sub_10005be4(ngage_cpu_t *);
+extern void sub_10005c6c(ngage_cpu_t *);
+extern void sub_10005c74(ngage_cpu_t *);
+extern void sub_10005d58(ngage_cpu_t *);
+extern void sub_10005d5c(ngage_cpu_t *);
+extern void sub_10005d60(ngage_cpu_t *);
+extern void sub_10005e24(ngage_cpu_t *);
+extern void sub_10005e54(ngage_cpu_t *);
+extern void sub_10005e58(ngage_cpu_t *);
+extern void sub_10005f48(ngage_cpu_t *);
+extern void sub_10005fbc(ngage_cpu_t *);
+extern void sub_10005ff8(ngage_cpu_t *);
+extern void sub_1000601c(ngage_cpu_t *);
+extern void sub_10006064(ngage_cpu_t *);
+extern void sub_100060b8(ngage_cpu_t *);
+extern void sub_100060c0(ngage_cpu_t *);
+extern void sub_10006164(ngage_cpu_t *);
+extern void sub_100062ac(ngage_cpu_t *);
+extern void sub_1000634c(ngage_cpu_t *);
+extern void sub_100063ec(ngage_cpu_t *);
+extern void sub_100063f0(ngage_cpu_t *);
+extern void sub_10006480(ngage_cpu_t *);
+extern void sub_10006510(ngage_cpu_t *);
+extern void sub_100065b4(ngage_cpu_t *);
+extern void sub_10006658(ngage_cpu_t *);
+extern void sub_10006670(ngage_cpu_t *);
+extern void sub_1000668c(ngage_cpu_t *);
+extern void sub_100066e8(ngage_cpu_t *);
+extern void sub_100066f4(ngage_cpu_t *);
+extern void sub_10006704(ngage_cpu_t *);
+extern void sub_10006760(ngage_cpu_t *);
+extern void sub_10006800(ngage_cpu_t *);
+extern void sub_10006840(ngage_cpu_t *);
+extern void sub_10006938(ngage_cpu_t *);
+extern void sub_100069fc(ngage_cpu_t *);
+extern void sub_10006a34(ngage_cpu_t *);
+extern void sub_10006a7c(ngage_cpu_t *);
+extern void sub_10006aa4(ngage_cpu_t *);
+extern void sub_10006b0c(ngage_cpu_t *);
+extern void sub_10006b44(ngage_cpu_t *);
+extern void sub_10006c20(ngage_cpu_t *);
+extern void sub_10006c54(ngage_cpu_t *);
+extern void sub_10006dbc(ngage_cpu_t *);
+extern void sub_10006ee4(ngage_cpu_t *);
+extern void sub_10006f8c(ngage_cpu_t *);
+extern void sub_10006f90(ngage_cpu_t *);
+extern void sub_10007008(ngage_cpu_t *);
+extern void sub_1000700c(ngage_cpu_t *);
+extern void sub_1000702c(ngage_cpu_t *);
+extern void sub_100070ec(ngage_cpu_t *);
+extern void sub_100071bc(ngage_cpu_t *);
+extern void sub_10007214(ngage_cpu_t *);
+extern void sub_10007ca8(ngage_cpu_t *);
+extern void sub_10007d84(ngage_cpu_t *);
+extern void sub_10007da0(ngage_cpu_t *);
+extern void sub_10007da4(ngage_cpu_t *);
+extern void sub_10007dec(ngage_cpu_t *);
+extern void sub_10007f34(ngage_cpu_t *);
+extern void sub_10007f64(ngage_cpu_t *);
+extern void sub_10007fb4(ngage_cpu_t *);
+extern void sub_10008064(ngage_cpu_t *);
+extern void sub_100080a0(ngage_cpu_t *);
+extern void sub_10008174(ngage_cpu_t *);
+extern void sub_100081fc(ngage_cpu_t *);
+extern void sub_10008290(ngage_cpu_t *);
+extern void sub_10008464(ngage_cpu_t *);
+extern void sub_1000857c(ngage_cpu_t *);
+extern void sub_10008678(ngage_cpu_t *);
+extern void sub_10008758(ngage_cpu_t *);
+extern void sub_1000881c(ngage_cpu_t *);
+extern void sub_10008b34(ngage_cpu_t *);
+extern void sub_10008cf8(ngage_cpu_t *);
+extern void sub_10008db0(ngage_cpu_t *);
+extern void sub_10008e70(ngage_cpu_t *);
+extern void sub_10008fe8(ngage_cpu_t *);
+extern void sub_100090bc(ngage_cpu_t *);
+extern void sub_1000915c(ngage_cpu_t *);
+extern void sub_100091c8(ngage_cpu_t *);
+extern void sub_10009228(ngage_cpu_t *);
+extern void sub_10009260(ngage_cpu_t *);
+extern void sub_100092b0(ngage_cpu_t *);
+extern void sub_100092f4(ngage_cpu_t *);
+extern void sub_10009324(ngage_cpu_t *);
+extern void sub_10009374(ngage_cpu_t *);
+extern void sub_10009460(ngage_cpu_t *);
+extern void sub_100094ac(ngage_cpu_t *);
+extern void sub_10009530(ngage_cpu_t *);
+extern void sub_100095d4(ngage_cpu_t *);
+extern void sub_10009654(ngage_cpu_t *);
+extern void sub_100096a8(ngage_cpu_t *);
+extern void sub_100096b8(ngage_cpu_t *);
+extern void sub_100096e8(ngage_cpu_t *);
+extern void sub_100097a8(ngage_cpu_t *);
+extern void sub_100097d4(ngage_cpu_t *);
+extern void sub_10009840(ngage_cpu_t *);
+extern void sub_10009874(ngage_cpu_t *);
+extern void sub_100098a8(ngage_cpu_t *);
+extern void sub_10009904(ngage_cpu_t *);
+extern void sub_10009a00(ngage_cpu_t *);
+extern void sub_10009b2c(ngage_cpu_t *);
+extern void sub_10009bc4(ngage_cpu_t *);
+extern void sub_10009f2c(ngage_cpu_t *);
+extern void sub_1000a09c(ngage_cpu_t *);
+extern void sub_1000a21c(ngage_cpu_t *);
+extern void sub_1000a9f4(ngage_cpu_t *);
+extern void sub_1000b064(ngage_cpu_t *);
+extern void sub_1000b0ac(ngage_cpu_t *);
+extern void sub_1000b100(ngage_cpu_t *);
+extern void sub_1000b160(ngage_cpu_t *);
+extern void sub_1000b174(ngage_cpu_t *);
+extern void sub_1000b1e8(ngage_cpu_t *);
+extern void sub_1000b2bc(ngage_cpu_t *);
+extern void sub_1000b378(ngage_cpu_t *);
+extern void sub_1000b3f4(ngage_cpu_t *);
+extern void sub_1000b41c(ngage_cpu_t *);
+extern void sub_1000b49c(ngage_cpu_t *);
+extern void sub_1000b548(ngage_cpu_t *);
+extern void sub_1000b5cc(ngage_cpu_t *);
+extern void sub_1000b634(ngage_cpu_t *);
+extern void sub_1000b798(ngage_cpu_t *);
+extern void sub_1000b92c(ngage_cpu_t *);
+extern void sub_1000b9ac(ngage_cpu_t *);
+extern void sub_1000b9c8(ngage_cpu_t *);
+extern void sub_1000ba24(ngage_cpu_t *);
+extern void sub_1000ba7c(ngage_cpu_t *);
+extern void sub_1000ba9c(ngage_cpu_t *);
+extern void sub_1000bab8(ngage_cpu_t *);
+extern void sub_1000baf4(ngage_cpu_t *);
+extern void sub_1000bb28(ngage_cpu_t *);
+extern void sub_1000bc30(ngage_cpu_t *);
+extern void sub_1000be04(ngage_cpu_t *);
+extern void sub_1000bf14(ngage_cpu_t *);
+extern void sub_1000bff4(ngage_cpu_t *);
+extern void sub_1000c198(ngage_cpu_t *);
+extern void sub_1000c2ac(ngage_cpu_t *);
+extern void sub_1000c35c(ngage_cpu_t *);
+extern void sub_1000c440(ngage_cpu_t *);
+extern void sub_1000c6b0(ngage_cpu_t *);
+extern void sub_1000c7cc(ngage_cpu_t *);
+extern void sub_1000cb58(ngage_cpu_t *);
+extern void sub_1000cd64(ngage_cpu_t *);
+extern void sub_1000ce6c(ngage_cpu_t *);
+extern void sub_1000cf68(ngage_cpu_t *);
+extern void sub_1000d3ec(ngage_cpu_t *);
+extern void sub_1000d534(ngage_cpu_t *);
+extern void sub_1000d690(ngage_cpu_t *);
+extern void sub_1000d7ac(ngage_cpu_t *);
+extern void sub_1000d8c0(ngage_cpu_t *);
+extern void sub_1000d8e0(ngage_cpu_t *);
+extern void sub_1000d930(ngage_cpu_t *);
+extern void sub_1000d980(ngage_cpu_t *);
+extern void sub_1000da2c(ngage_cpu_t *);
+extern void sub_1000da54(ngage_cpu_t *);
+extern void sub_1000daac(ngage_cpu_t *);
+extern void sub_1000dad0(ngage_cpu_t *);
+extern void sub_1000daec(ngage_cpu_t *);
+extern void sub_1000db04(ngage_cpu_t *);
+extern void sub_1000db24(ngage_cpu_t *);
+extern void sub_1000db5c(ngage_cpu_t *);
+extern void sub_1000dbc0(ngage_cpu_t *);
+extern void sub_1000dc08(ngage_cpu_t *);
+extern void sub_1000dc3c(ngage_cpu_t *);
+extern void sub_1000dcb4(ngage_cpu_t *);
+extern void sub_1000dd34(ngage_cpu_t *);
+extern void sub_1000ddec(ngage_cpu_t *);
+extern void sub_1000de50(ngage_cpu_t *);
+extern void sub_1000df3c(ngage_cpu_t *);
+extern void sub_1000dfc4(ngage_cpu_t *);
+extern void sub_1000e02c(ngage_cpu_t *);
+extern void sub_1000e278(ngage_cpu_t *);
+extern void sub_1000e3c4(ngage_cpu_t *);
+extern void sub_1000e5c8(ngage_cpu_t *);
+extern void sub_1000e6cc(ngage_cpu_t *);
+extern void sub_1000e840(ngage_cpu_t *);
+extern void sub_1000ea00(ngage_cpu_t *);
+extern void sub_1000eb58(ngage_cpu_t *);
+extern void sub_1000ecbc(ngage_cpu_t *);
+extern void sub_1000ef74(ngage_cpu_t *);
+extern void sub_1000f130(ngage_cpu_t *);
+extern void sub_1000f304(ngage_cpu_t *);
+extern void sub_1000f4b4(ngage_cpu_t *);
+extern void sub_1000f694(ngage_cpu_t *);
+extern void sub_1000fa7c(ngage_cpu_t *);
+extern void sub_10010804(ngage_cpu_t *);
+extern void sub_10010b08(ngage_cpu_t *);
+extern void sub_10010bc8(ngage_cpu_t *);
+extern void sub_10010cf8(ngage_cpu_t *);
+extern void sub_10010db8(ngage_cpu_t *);
+extern void sub_10010e5c(ngage_cpu_t *);
+extern void sub_10011008(ngage_cpu_t *);
+extern void sub_10011ccc(ngage_cpu_t *);
+extern void sub_10011d70(ngage_cpu_t *);
+extern void sub_10011f1c(ngage_cpu_t *);
+extern void sub_10012584(ngage_cpu_t *);
+extern void sub_10012bb4(ngage_cpu_t *);
+extern void sub_10012c74(ngage_cpu_t *);
+extern void sub_100135f0(ngage_cpu_t *);
+extern void sub_1001379c(ngage_cpu_t *);
+extern void sub_10013894(ngage_cpu_t *);
+extern void sub_10013d54(ngage_cpu_t *);
+extern void sub_10014020(ngage_cpu_t *);
+extern void sub_100149b8(ngage_cpu_t *);
+extern void sub_10014acc(ngage_cpu_t *);
+extern void sub_10014d78(ngage_cpu_t *);
+extern void sub_10014e8c(ngage_cpu_t *);
+extern void sub_10014f30(ngage_cpu_t *);
+extern void sub_10015028(ngage_cpu_t *);
+extern void sub_100150e8(ngage_cpu_t *);
+extern void sub_10015170(ngage_cpu_t *);
+extern void sub_10015268(ngage_cpu_t *);
+extern void sub_1001537c(ngage_cpu_t *);
+extern void sub_10015878(ngage_cpu_t *);
+extern void sub_100159ac(ngage_cpu_t *);
+extern void sub_1001610c(ngage_cpu_t *);
+extern void sub_10016358(ngage_cpu_t *);
+extern void sub_100165a4(ngage_cpu_t *);
+extern void sub_100166c8(ngage_cpu_t *);
+extern void sub_10017f5c(ngage_cpu_t *);
+extern void sub_1001817c(ngage_cpu_t *);
+extern void sub_100182d0(ngage_cpu_t *);
+extern void sub_10018708(ngage_cpu_t *);
+extern void sub_100187d0(ngage_cpu_t *);
+extern void sub_100188dc(ngage_cpu_t *);
+extern void sub_10018e70(ngage_cpu_t *);
+extern void sub_100195b0(ngage_cpu_t *);
+extern void sub_10019780(ngage_cpu_t *);
+extern void sub_100199e0(ngage_cpu_t *);
+extern void sub_10019c04(ngage_cpu_t *);
+extern void sub_10019e34(ngage_cpu_t *);
+extern void sub_1001a064(ngage_cpu_t *);
+extern void sub_1001a220(ngage_cpu_t *);
+extern void sub_1001a378(ngage_cpu_t *);
+extern void sub_1001a3d0(ngage_cpu_t *);
+extern void sub_1001a438(ngage_cpu_t *);
+extern void sub_1001a4d8(ngage_cpu_t *);
+extern void sub_1001a550(ngage_cpu_t *);
+extern void sub_1001a570(ngage_cpu_t *);
+extern void sub_1001a574(ngage_cpu_t *);
+extern void sub_1001a578(ngage_cpu_t *);
+extern void sub_1001a5c4(ngage_cpu_t *);
+extern void sub_1001a610(ngage_cpu_t *);
+extern void sub_1001a67c(ngage_cpu_t *);
+extern void sub_1001a690(ngage_cpu_t *);
+extern void sub_1001a6b8(ngage_cpu_t *);
+extern void sub_1001a6c4(ngage_cpu_t *);
+extern void sub_1001a6dc(ngage_cpu_t *);
+extern void sub_1001a6f0(ngage_cpu_t *);
+extern void sub_1001a700(ngage_cpu_t *);
+extern void sub_1001a724(ngage_cpu_t *);
+extern void sub_1001a744(ngage_cpu_t *);
+extern void sub_1001a770(ngage_cpu_t *);
+extern void sub_1001a784(ngage_cpu_t *);
+extern void sub_1001a79c(ngage_cpu_t *);
+extern void sub_1001a7a0(ngage_cpu_t *);
+extern void sub_1001a7f4(ngage_cpu_t *);
+extern void sub_1001a848(ngage_cpu_t *);
+extern void sub_1001a8b8(ngage_cpu_t *);
+extern void sub_1001a970(ngage_cpu_t *);
+extern void sub_1001a9bc(ngage_cpu_t *);
+extern void sub_1001a9f4(ngage_cpu_t *);
+extern void sub_1001aa38(ngage_cpu_t *);
+extern void sub_1001aa44(ngage_cpu_t *);
+extern void sub_1001aab4(ngage_cpu_t *);
+extern void sub_1001aac0(ngage_cpu_t *);
+extern void sub_1001ab00(ngage_cpu_t *);
+extern void sub_1001ab4c(ngage_cpu_t *);
+extern void sub_1001aba4(ngage_cpu_t *);
+extern void sub_1001acc8(ngage_cpu_t *);
+extern void sub_1001ad2c(ngage_cpu_t *);
+extern void sub_1001ada0(ngage_cpu_t *);
+extern void sub_1001ae10(ngage_cpu_t *);
+extern void sub_1001ae8c(ngage_cpu_t *);
+extern void sub_1001af48(ngage_cpu_t *);
+extern void sub_1001afa4(ngage_cpu_t *);
+extern void sub_1001afb0(ngage_cpu_t *);
+extern void sub_1001afe4(ngage_cpu_t *);
+extern void sub_1001b004(ngage_cpu_t *);
+extern void sub_1001b088(ngage_cpu_t *);
+extern void sub_1001b0cc(ngage_cpu_t *);
+extern void sub_1001b108(ngage_cpu_t *);
+extern void sub_1001b198(ngage_cpu_t *);
+extern void sub_1001b204(ngage_cpu_t *);
+extern void sub_1001b29c(ngage_cpu_t *);
+extern void sub_1001b300(ngage_cpu_t *);
+extern void sub_1001b3a8(ngage_cpu_t *);
+extern void sub_1001b448(ngage_cpu_t *);
+extern void sub_1001b484(ngage_cpu_t *);
+extern void sub_1001b528(ngage_cpu_t *);
+extern void sub_1001b584(ngage_cpu_t *);
+extern void sub_1001b5e8(ngage_cpu_t *);
+extern void sub_1001b64c(ngage_cpu_t *);
+extern void sub_1001b65c(ngage_cpu_t *);
+extern void sub_1001b788(ngage_cpu_t *);
+extern void sub_1001b7a0(ngage_cpu_t *);
+extern void sub_1001b7b8(ngage_cpu_t *);
+extern void sub_1001b7e8(ngage_cpu_t *);
+extern void sub_1001b868(ngage_cpu_t *);
+extern void sub_1001b8d4(ngage_cpu_t *);
+extern void sub_1001b964(ngage_cpu_t *);
+extern void sub_1001ba3c(ngage_cpu_t *);
+extern void sub_1001baf8(ngage_cpu_t *);
+extern void sub_1001bbec(ngage_cpu_t *);
+extern void sub_1001bc5c(ngage_cpu_t *);
+extern void sub_1001bc88(ngage_cpu_t *);
+extern void sub_1001bcac(ngage_cpu_t *);
+extern void sub_1001bd50(ngage_cpu_t *);
+extern void sub_1001bdf4(ngage_cpu_t *);
+extern void sub_1001beac(ngage_cpu_t *);
+extern void sub_1001bf6c(ngage_cpu_t *);
+extern void sub_1001c080(ngage_cpu_t *);
+extern void sub_1001c0f4(ngage_cpu_t *);
+extern void sub_1001c0f8(ngage_cpu_t *);
+extern void sub_1001c1a4(ngage_cpu_t *);
+extern void sub_1001c20c(ngage_cpu_t *);
+extern void sub_1001c31c(ngage_cpu_t *);
+extern void sub_1001c3c0(ngage_cpu_t *);
+extern void sub_1001c4d8(ngage_cpu_t *);
+extern void sub_1001c534(ngage_cpu_t *);
+extern void sub_1001c6ac(ngage_cpu_t *);
+extern void sub_1001c9c0(ngage_cpu_t *);
+extern void sub_1001d3e0(ngage_cpu_t *);
+extern void sub_1001d4dc(ngage_cpu_t *);
+extern void sub_1001d698(ngage_cpu_t *);
+extern void sub_1001d778(ngage_cpu_t *);
+extern void sub_1001d880(ngage_cpu_t *);
+extern void sub_1001d978(ngage_cpu_t *);
+extern void sub_1001db0c(ngage_cpu_t *);
+extern void sub_1001dd40(ngage_cpu_t *);
+extern void sub_1001e068(ngage_cpu_t *);
+extern void sub_1001e2f8(ngage_cpu_t *);
+extern void sub_1001e754(ngage_cpu_t *);
+extern void sub_1001ea54(ngage_cpu_t *);
+extern void sub_1001ecb4(ngage_cpu_t *);
+extern void sub_1001ee20(ngage_cpu_t *);
+extern void sub_1001ee28(ngage_cpu_t *);
+extern void sub_1001ee2c(ngage_cpu_t *);
+extern void sub_1001ee30(ngage_cpu_t *);
+extern void sub_1001ee38(ngage_cpu_t *);
+extern void sub_1001ee4c(ngage_cpu_t *);
+extern void sub_1001ee50(ngage_cpu_t *);
+extern void sub_1001ee68(ngage_cpu_t *);
+extern void sub_1001eed4(ngage_cpu_t *);
+extern void sub_1001ef40(ngage_cpu_t *);
+extern void sub_1001ef5c(ngage_cpu_t *);
+extern void sub_1001ef6c(ngage_cpu_t *);
+extern void sub_1001ef74(ngage_cpu_t *);
+extern void sub_1001ef80(ngage_cpu_t *);
+extern void sub_1001efb8(ngage_cpu_t *);
+extern void sub_1001f230(ngage_cpu_t *);
+extern void sub_1001f2b4(ngage_cpu_t *);
+extern void sub_1001f2e0(ngage_cpu_t *);
+extern void sub_1001f30c(ngage_cpu_t *);
+extern void sub_1001f338(ngage_cpu_t *);
+extern void sub_1001f3e0(ngage_cpu_t *);
+extern void sub_1001f5d8(ngage_cpu_t *);
+extern void sub_1001f5dc(ngage_cpu_t *);
+extern void sub_1001f5e0(ngage_cpu_t *);
+extern void sub_1001f5e4(ngage_cpu_t *);
+extern void sub_1001f5e8(ngage_cpu_t *);
+extern void sub_1001f690(ngage_cpu_t *);
+extern void sub_1001f6f0(ngage_cpu_t *);
+extern void sub_1001f79c(ngage_cpu_t *);
+extern void sub_1001f82c(ngage_cpu_t *);
+extern void sub_1001f9ac(ngage_cpu_t *);
+extern void sub_1001fc24(ngage_cpu_t *);
+extern void sub_100207a0(ngage_cpu_t *);
+extern void sub_100207d0(ngage_cpu_t *);
+extern void sub_1002086c(ngage_cpu_t *);
+extern void sub_10020880(ngage_cpu_t *);
+extern void sub_10020894(ngage_cpu_t *);
+extern void sub_10020904(ngage_cpu_t *);
+extern void sub_100209b4(ngage_cpu_t *);
+extern void sub_100209c4(ngage_cpu_t *);
+extern void sub_100209c8(ngage_cpu_t *);
+extern void sub_10020b04(ngage_cpu_t *);
+extern void sub_10021014(ngage_cpu_t *);
+extern void sub_10021080(ngage_cpu_t *);
+extern void sub_10021138(ngage_cpu_t *);
+extern void sub_100211c0(ngage_cpu_t *);
+extern void sub_10021244(ngage_cpu_t *);
+extern void sub_100214ac(ngage_cpu_t *);
+extern void sub_1002152c(ngage_cpu_t *);
+extern void sub_10021648(ngage_cpu_t *);
+extern void sub_100216f8(ngage_cpu_t *);
+extern void sub_10021b98(ngage_cpu_t *);
+extern void sub_10021fc0(ngage_cpu_t *);
+extern void sub_1002256c(ngage_cpu_t *);
+extern void sub_10022898(ngage_cpu_t *);
+extern void sub_10022b20(ngage_cpu_t *);
+extern void sub_10022d48(ngage_cpu_t *);
+extern void sub_10022f88(ngage_cpu_t *);
+extern void sub_100231b4(ngage_cpu_t *);
+extern void sub_10023608(ngage_cpu_t *);
+extern void sub_10023910(ngage_cpu_t *);
+extern void sub_10023ad0(ngage_cpu_t *);
+extern void sub_10024b3c(ngage_cpu_t *);
+extern void sub_10024c8c(ngage_cpu_t *);
+extern void sub_10024dec(ngage_cpu_t *);
+extern void sub_10026f40(ngage_cpu_t *);
+extern void sub_1002707c(ngage_cpu_t *);
+extern void sub_10027468(ngage_cpu_t *);
+extern void sub_100275e4(ngage_cpu_t *);
+extern void sub_1002778c(ngage_cpu_t *);
+extern void sub_10027980(ngage_cpu_t *);
+extern void sub_10027aec(ngage_cpu_t *);
+extern void sub_10027af0(ngage_cpu_t *);
+extern void sub_10027b3c(ngage_cpu_t *);
+extern void sub_10027b4c(ngage_cpu_t *);
+extern void sub_10027ba4(ngage_cpu_t *);
+extern void sub_10027bb4(ngage_cpu_t *);
+extern void sub_10027bd4(ngage_cpu_t *);
+extern void sub_10027c3c(ngage_cpu_t *);
+extern void sub_10027c94(ngage_cpu_t *);
+extern void sub_10027ce0(ngage_cpu_t *);
+extern void sub_10027d0c(ngage_cpu_t *);
+extern void sub_10027d44(ngage_cpu_t *);
+extern void sub_10027e34(ngage_cpu_t *);
+extern void sub_10027e3c(ngage_cpu_t *);
+extern void sub_10027e58(ngage_cpu_t *);
+extern void sub_10027ef4(ngage_cpu_t *);
+extern void sub_100280a0(ngage_cpu_t *);
+extern void sub_100280f8(ngage_cpu_t *);
+extern void sub_1002812c(ngage_cpu_t *);
+extern void sub_10028158(ngage_cpu_t *);
+extern void sub_10028174(ngage_cpu_t *);
+extern void sub_100281fc(ngage_cpu_t *);
+extern void sub_10028200(ngage_cpu_t *);
+extern void sub_1002821c(ngage_cpu_t *);
+extern void sub_10028260(ngage_cpu_t *);
+extern void sub_100282f0(ngage_cpu_t *);
+extern void sub_100282f4(ngage_cpu_t *);
+extern void sub_100282f8(ngage_cpu_t *);
+extern void sub_10028340(ngage_cpu_t *);
+extern void sub_1002835c(ngage_cpu_t *);
+extern void sub_10028390(ngage_cpu_t *);
+extern void sub_100283b8(ngage_cpu_t *);
+extern void sub_100283bc(ngage_cpu_t *);
+extern void sub_10028400(ngage_cpu_t *);
+extern void sub_1002841c(ngage_cpu_t *);
+extern void sub_1002845c(ngage_cpu_t *);
+extern void sub_100284dc(ngage_cpu_t *);
+extern void sub_10028594(ngage_cpu_t *);
+extern void sub_10028a60(ngage_cpu_t *);
+extern void sub_10028be8(ngage_cpu_t *);
+extern void sub_10028da0(ngage_cpu_t *);
+extern void sub_10028e18(ngage_cpu_t *);
+extern void sub_10028e30(ngage_cpu_t *);
+extern void sub_10028e84(ngage_cpu_t *);
+extern void sub_10028ea4(ngage_cpu_t *);
+extern void sub_10028ee0(ngage_cpu_t *);
+extern void sub_10028f98(ngage_cpu_t *);
+extern void sub_10028fb8(ngage_cpu_t *);
+extern void sub_10029044(ngage_cpu_t *);
+extern void sub_100290a8(ngage_cpu_t *);
+extern void sub_1002958c(ngage_cpu_t *);
+extern void sub_100296fc(ngage_cpu_t *);
+extern void sub_100298a4(ngage_cpu_t *);
+extern void sub_10029a64(ngage_cpu_t *);
+extern void sub_10029cb0(ngage_cpu_t *);
+extern void sub_1002a6d4(ngage_cpu_t *);
+extern void sub_1002a910(ngage_cpu_t *);
+extern void sub_1002aa14(ngage_cpu_t *);
+extern void sub_1002acd4(ngage_cpu_t *);
+extern void sub_1002ae88(ngage_cpu_t *);
+extern void sub_1002b1b0(ngage_cpu_t *);
+extern void sub_1002b430(ngage_cpu_t *);
+extern void sub_1002ba64(ngage_cpu_t *);
+extern void sub_1002bb54(ngage_cpu_t *);
+extern void sub_1002bc6c(ngage_cpu_t *);
+extern void sub_1002bdf4(ngage_cpu_t *);
+extern void sub_1002bfd0(ngage_cpu_t *);
+extern void sub_1002c010(ngage_cpu_t *);
+extern void sub_1002c100(ngage_cpu_t *);
+extern void sub_1002c104(ngage_cpu_t *);
+extern void sub_1002c1a8(ngage_cpu_t *);
+extern void sub_1002c200(ngage_cpu_t *);
+extern void sub_1002c20c(ngage_cpu_t *);
+extern void sub_1002c230(ngage_cpu_t *);
+extern void sub_1002c274(ngage_cpu_t *);
+extern void sub_1002c334(ngage_cpu_t *);
+extern void sub_1002c3a8(ngage_cpu_t *);
+extern void sub_1002c4d8(ngage_cpu_t *);
+extern void sub_1002c654(ngage_cpu_t *);
+extern void sub_1002c75c(ngage_cpu_t *);
+extern void sub_1002c848(ngage_cpu_t *);
+extern void sub_1002ce9c(ngage_cpu_t *);
+extern void sub_1002cfb0(ngage_cpu_t *);
+extern void sub_1002d3c4(ngage_cpu_t *);
+extern void sub_1002d5e4(ngage_cpu_t *);
+extern void sub_1002da3c(ngage_cpu_t *);
+extern void sub_1002dc30(ngage_cpu_t *);
+extern void sub_1002de0c(ngage_cpu_t *);
+extern void sub_1002de24(ngage_cpu_t *);
+extern void sub_1002e024(ngage_cpu_t *);
+extern void sub_1002e434(ngage_cpu_t *);
+extern void sub_1002e5ac(ngage_cpu_t *);
+extern void sub_1002e5ec(ngage_cpu_t *);
+extern void sub_1002e62c(ngage_cpu_t *);
+extern void sub_1002e678(ngage_cpu_t *);
+extern void sub_1002e6cc(ngage_cpu_t *);
+extern void sub_1002e708(ngage_cpu_t *);
+extern void sub_1002e73c(ngage_cpu_t *);
+extern void sub_1002e78c(ngage_cpu_t *);
+extern void sub_1002e844(ngage_cpu_t *);
+extern void sub_1002e910(ngage_cpu_t *);
+extern void sub_1002e91c(ngage_cpu_t *);
+extern void sub_1002e954(ngage_cpu_t *);
+extern void sub_1002ea0c(ngage_cpu_t *);
+extern void sub_1002eaa0(ngage_cpu_t *);
+extern void sub_1002eb48(ngage_cpu_t *);
+extern void sub_1002ebc4(ngage_cpu_t *);
+extern void sub_1002ec10(ngage_cpu_t *);
+extern void sub_1002ec94(ngage_cpu_t *);
+extern void sub_1002ecd8(ngage_cpu_t *);
+extern void sub_1002ece0(ngage_cpu_t *);
+extern void sub_1002ed04(ngage_cpu_t *);
+extern void sub_1002ed3c(ngage_cpu_t *);
+extern void sub_1002ed74(ngage_cpu_t *);
+extern void sub_1002ed7c(ngage_cpu_t *);
+extern void sub_1002ed94(ngage_cpu_t *);
+extern void sub_1002ed9c(ngage_cpu_t *);
+extern void sub_1002edf4(ngage_cpu_t *);
+extern void sub_1002edfc(ngage_cpu_t *);
+extern void sub_1002ee98(ngage_cpu_t *);
+extern void sub_1002eeb8(ngage_cpu_t *);
+extern void sub_1002ef44(ngage_cpu_t *);
+extern void sub_1002f074(ngage_cpu_t *);
+extern void sub_1002f694(ngage_cpu_t *);
+extern void sub_1002f824(ngage_cpu_t *);
+extern void sub_1002f83c(ngage_cpu_t *);
+extern void sub_1002f878(ngage_cpu_t *);
+extern void sub_1002f890(ngage_cpu_t *);
+extern void sub_1002f8e0(ngage_cpu_t *);
+extern void sub_1002f8fc(ngage_cpu_t *);
+extern void sub_1002f914(ngage_cpu_t *);
+extern void sub_1002f934(ngage_cpu_t *);
+extern void sub_1002fa5c(ngage_cpu_t *);
+extern void sub_1002fb84(ngage_cpu_t *);
+extern void sub_1002fbf8(ngage_cpu_t *);
+extern void sub_1002fca4(ngage_cpu_t *);
+extern void sub_1002fd30(ngage_cpu_t *);
+extern void sub_1002fd94(ngage_cpu_t *);
+extern void sub_1003006c(ngage_cpu_t *);
+extern void sub_10030250(ngage_cpu_t *);
+extern void sub_1003136c(ngage_cpu_t *);
+extern void sub_100322a8(ngage_cpu_t *);
+extern void sub_100323f0(ngage_cpu_t *);
+extern void sub_10032530(ngage_cpu_t *);
+extern void sub_100326cc(ngage_cpu_t *);
+extern void sub_10032868(ngage_cpu_t *);
+extern void sub_10032aa4(ngage_cpu_t *);
+extern void sub_10032c88(ngage_cpu_t *);
+extern void sub_10032de0(ngage_cpu_t *);
+extern void sub_10032f78(ngage_cpu_t *);
+extern void sub_10033660(ngage_cpu_t *);
+extern void sub_10033b4c(ngage_cpu_t *);
+extern void sub_10033c88(ngage_cpu_t *);
+extern void sub_10033dd0(ngage_cpu_t *);
+extern void sub_100341ec(ngage_cpu_t *);
+extern void sub_10034588(ngage_cpu_t *);
+extern void sub_100347c8(ngage_cpu_t *);
+extern void sub_10034ad4(ngage_cpu_t *);
+extern void sub_10034ba0(ngage_cpu_t *);
+extern void sub_10034c40(ngage_cpu_t *);
+extern void sub_10034c48(ngage_cpu_t *);
+extern void sub_10034cec(ngage_cpu_t *);
+extern void sub_10034d8c(ngage_cpu_t *);
+extern void sub_10034e90(ngage_cpu_t *);
+extern void sub_10034f38(ngage_cpu_t *);
+extern void sub_10034f4c(ngage_cpu_t *);
+extern void sub_10034f84(ngage_cpu_t *);
+extern void sub_10035000(ngage_cpu_t *);
+extern void sub_10035090(ngage_cpu_t *);
+extern void sub_1003513c(ngage_cpu_t *);
+extern void sub_10035140(ngage_cpu_t *);
+extern void sub_10035144(ngage_cpu_t *);
+extern void sub_100351b4(ngage_cpu_t *);
+extern void sub_10035228(ngage_cpu_t *);
+extern void sub_1003522c(ngage_cpu_t *);
+extern void sub_1003533c(ngage_cpu_t *);
+extern void sub_10035368(ngage_cpu_t *);
+extern void sub_10035458(ngage_cpu_t *);
+extern void sub_100354d0(ngage_cpu_t *);
+extern void sub_10035530(ngage_cpu_t *);
+extern void sub_1003559c(ngage_cpu_t *);
+extern void sub_100355f8(ngage_cpu_t *);
+extern void sub_10035634(ngage_cpu_t *);
+extern void sub_10035948(ngage_cpu_t *);
+extern void sub_10035a48(ngage_cpu_t *);
+extern void sub_10035b44(ngage_cpu_t *);
+extern void sub_10035c28(ngage_cpu_t *);
+extern void sub_10035d3c(ngage_cpu_t *);
+extern void sub_10035da0(ngage_cpu_t *);
+extern void sub_10035da8(ngage_cpu_t *);
+extern void sub_10035e2c(ngage_cpu_t *);
+extern void sub_10035e34(ngage_cpu_t *);
+extern void sub_10035e50(ngage_cpu_t *);
+extern void sub_10035ecc(ngage_cpu_t *);
+extern void sub_10035f40(ngage_cpu_t *);
+extern void sub_10035fac(ngage_cpu_t *);
+extern void sub_10036038(ngage_cpu_t *);
+extern void sub_100360a0(ngage_cpu_t *);
+extern void sub_10036104(ngage_cpu_t *);
+extern void sub_10036214(ngage_cpu_t *);
+extern void sub_1003627c(ngage_cpu_t *);
+extern void sub_10036b1c(ngage_cpu_t *);
+extern void sub_10037188(ngage_cpu_t *);
+extern void sub_100372e4(ngage_cpu_t *);
+extern void sub_100373b8(ngage_cpu_t *);
+extern void sub_1003765c(ngage_cpu_t *);
+extern void sub_100377bc(ngage_cpu_t *);
+extern void sub_10037880(ngage_cpu_t *);
+extern void sub_10037954(ngage_cpu_t *);
+extern void sub_10038008(ngage_cpu_t *);
+extern void sub_10038278(ngage_cpu_t *);
+extern void sub_10038470(ngage_cpu_t *);
+extern void sub_1003857c(ngage_cpu_t *);
+extern void sub_10038674(ngage_cpu_t *);
+extern void sub_1003893c(ngage_cpu_t *);
+extern void sub_10038c94(ngage_cpu_t *);
+extern void sub_10038f80(ngage_cpu_t *);
+extern void sub_1003908c(ngage_cpu_t *);
+extern void sub_100393fc(ngage_cpu_t *);
+extern void sub_100394d0(ngage_cpu_t *);
+extern void sub_100395a4(ngage_cpu_t *);
+extern void sub_10039758(ngage_cpu_t *);
+extern void sub_10039858(ngage_cpu_t *);
+extern void sub_100399a8(ngage_cpu_t *);
+extern void sub_10039a4c(ngage_cpu_t *);
+extern void sub_10039ca4(ngage_cpu_t *);
+extern void sub_10039f50(ngage_cpu_t *);
+extern void sub_1003a5b0(ngage_cpu_t *);
+extern void sub_1003aaf4(ngage_cpu_t *);
+extern void sub_1003b038(ngage_cpu_t *);
+extern void sub_1003b18c(ngage_cpu_t *);
+extern void sub_1003b50c(ngage_cpu_t *);
+extern void sub_1003b5c0(ngage_cpu_t *);
+extern void sub_1003b85c(ngage_cpu_t *);
+extern void sub_1003bbbc(ngage_cpu_t *);
+extern void sub_1003bd58(ngage_cpu_t *);
+extern void sub_1003bf14(ngage_cpu_t *);
+extern void sub_1003bf54(ngage_cpu_t *);
+extern void sub_1003bf58(ngage_cpu_t *);
+extern void sub_1003bfe4(ngage_cpu_t *);
+extern void sub_1003c010(ngage_cpu_t *);
+extern void sub_1003c050(ngage_cpu_t *);
+extern void sub_1003c0c8(ngage_cpu_t *);
+extern void sub_1003c124(ngage_cpu_t *);
+extern void sub_1003c1c0(ngage_cpu_t *);
+extern void sub_1003c2b0(ngage_cpu_t *);
+extern void sub_1003c2b4(ngage_cpu_t *);
+extern void sub_1003c368(ngage_cpu_t *);
+extern void sub_1003c3b8(ngage_cpu_t *);
+extern void sub_1003c45c(ngage_cpu_t *);
+extern void sub_1003c504(ngage_cpu_t *);
+extern void sub_1003c550(ngage_cpu_t *);
+extern void sub_1003c5c0(ngage_cpu_t *);
+extern void sub_1003c648(ngage_cpu_t *);
+extern void sub_1003c6b4(ngage_cpu_t *);
+extern void sub_1003c700(ngage_cpu_t *);
+extern void sub_1003c738(ngage_cpu_t *);
+extern void sub_1003c798(ngage_cpu_t *);
+extern void sub_1003c814(ngage_cpu_t *);
+extern void sub_1003c8ac(ngage_cpu_t *);
+extern void sub_1003c908(ngage_cpu_t *);
+extern void sub_1003c94c(ngage_cpu_t *);
+extern void sub_1003c9a0(ngage_cpu_t *);
+extern void sub_1003c9f4(ngage_cpu_t *);
+extern void sub_1003ca4c(ngage_cpu_t *);
+extern void sub_1003cb08(ngage_cpu_t *);
+extern void sub_1003cb98(ngage_cpu_t *);
+extern void sub_1003cbd0(ngage_cpu_t *);
+extern void sub_1003cc14(ngage_cpu_t *);
+extern void sub_1003cc5c(ngage_cpu_t *);
+extern void sub_1003cd04(ngage_cpu_t *);
+extern void sub_1003cd6c(ngage_cpu_t *);
+extern void sub_1003cdd4(ngage_cpu_t *);
+extern void sub_1003ce3c(ngage_cpu_t *);
+extern void sub_1003ce9c(ngage_cpu_t *);
+extern void sub_1003cee8(ngage_cpu_t *);
+extern void sub_1003cf20(ngage_cpu_t *);
+extern void sub_1003cfac(ngage_cpu_t *);
+extern void sub_1003d020(ngage_cpu_t *);
+extern void sub_1003d07c(ngage_cpu_t *);
+extern void sub_1003d0e0(ngage_cpu_t *);
+extern void sub_1003d13c(ngage_cpu_t *);
+extern void sub_1003d1c4(ngage_cpu_t *);
+extern void sub_1003d1c8(ngage_cpu_t *);
+extern void sub_1003d204(ngage_cpu_t *);
+extern void sub_1003d24c(ngage_cpu_t *);
+extern void sub_1003d308(ngage_cpu_t *);
+extern void sub_1003d34c(ngage_cpu_t *);
+extern void sub_1003d384(ngage_cpu_t *);
+extern void sub_1003d3c4(ngage_cpu_t *);
+extern void sub_1003d434(ngage_cpu_t *);
+extern void sub_1003d478(ngage_cpu_t *);
+extern void sub_1003d4b8(ngage_cpu_t *);
+extern void sub_1003d504(ngage_cpu_t *);
+extern void sub_1003d5c0(ngage_cpu_t *);
+extern void sub_1003d5e0(ngage_cpu_t *);
+extern void sub_1003d670(ngage_cpu_t *);
+extern void sub_1003d8e0(ngage_cpu_t *);
+extern void sub_1003dbdc(ngage_cpu_t *);
+extern void sub_1003e030(ngage_cpu_t *);
+extern void sub_1003e260(ngage_cpu_t *);
+extern void sub_1003e330(ngage_cpu_t *);
+extern void sub_1003e438(ngage_cpu_t *);
+extern void sub_1003e7a4(ngage_cpu_t *);
+extern void sub_1003ebd8(ngage_cpu_t *);
+extern void sub_1003f130(ngage_cpu_t *);
+extern void sub_100422a4(ngage_cpu_t *);
+extern void sub_10042394(ngage_cpu_t *);
+extern void sub_10042490(ngage_cpu_t *);
+extern void sub_100425bc(ngage_cpu_t *);
+extern void sub_10042cb0(ngage_cpu_t *);
+extern void sub_10042e44(ngage_cpu_t *);
+extern void sub_10042fd0(ngage_cpu_t *);
+extern void sub_100431cc(ngage_cpu_t *);
+extern void sub_10043308(ngage_cpu_t *);
+extern void sub_10043bb0(ngage_cpu_t *);
+extern void sub_10044324(ngage_cpu_t *);
+extern void sub_10044400(ngage_cpu_t *);
+extern void sub_100444f0(ngage_cpu_t *);
+extern void sub_10044538(ngage_cpu_t *);
+extern void sub_100445d4(ngage_cpu_t *);
+extern void sub_10044618(ngage_cpu_t *);
+extern void sub_100446c4(ngage_cpu_t *);
+extern void sub_1004476c(ngage_cpu_t *);
+extern void sub_10044814(ngage_cpu_t *);
+extern void sub_100448d4(ngage_cpu_t *);
+extern void sub_10044910(ngage_cpu_t *);
+extern void sub_10044950(ngage_cpu_t *);
+extern void sub_100449f4(ngage_cpu_t *);
+extern void sub_10044ae0(ngage_cpu_t *);
+extern void sub_10044b8c(ngage_cpu_t *);
+extern void sub_10044c04(ngage_cpu_t *);
+extern void sub_10044c50(ngage_cpu_t *);
+extern void sub_10044c9c(ngage_cpu_t *);
+extern void sub_10044cdc(ngage_cpu_t *);
+extern void sub_10044d1c(ngage_cpu_t *);
+extern void sub_10044d28(ngage_cpu_t *);
+extern void sub_10044d3c(ngage_cpu_t *);
+extern void sub_10044d48(ngage_cpu_t *);
+extern void sub_10044d54(ngage_cpu_t *);
+extern void sub_10044d60(ngage_cpu_t *);
+extern void sub_10044d6c(ngage_cpu_t *);
+extern void sub_10044d78(ngage_cpu_t *);
+extern void sub_10044d84(ngage_cpu_t *);
+extern void sub_10044dac(ngage_cpu_t *);
+extern void sub_10044e08(ngage_cpu_t *);
+extern void sub_10044e58(ngage_cpu_t *);
+extern void sub_10044efc(ngage_cpu_t *);
+extern void sub_10044f54(ngage_cpu_t *);
+extern void sub_10044fdc(ngage_cpu_t *);
+extern void sub_10045078(ngage_cpu_t *);
+extern void sub_100450a0(ngage_cpu_t *);
+extern void sub_100450d4(ngage_cpu_t *);
+extern void sub_10045104(ngage_cpu_t *);
+extern void sub_100451ac(ngage_cpu_t *);
+extern void sub_10045228(ngage_cpu_t *);
+extern void sub_10045294(ngage_cpu_t *);
+extern void sub_10045334(ngage_cpu_t *);
+extern void sub_10045520(ngage_cpu_t *);
+extern void sub_10045568(ngage_cpu_t *);
+extern void sub_100455b0(ngage_cpu_t *);
+extern void sub_100455c8(ngage_cpu_t *);
+extern void sub_100455e0(ngage_cpu_t *);
+extern void sub_10045668(ngage_cpu_t *);
+extern void sub_1004569c(ngage_cpu_t *);
+extern void sub_100456dc(ngage_cpu_t *);
+extern void sub_10045768(ngage_cpu_t *);
+extern void sub_100458e4(ngage_cpu_t *);
+extern void sub_10046328(ngage_cpu_t *);
+extern void sub_10046680(ngage_cpu_t *);
+extern void sub_10046764(ngage_cpu_t *);
+extern void sub_1004720c(ngage_cpu_t *);
+extern void sub_100473e8(ngage_cpu_t *);
+extern void sub_10047500(ngage_cpu_t *);
+extern void sub_10047540(ngage_cpu_t *);
+extern void sub_1004754c(ngage_cpu_t *);
+extern void sub_10047584(ngage_cpu_t *);
+extern void sub_100475c0(ngage_cpu_t *);
+extern void sub_100475d8(ngage_cpu_t *);
+extern void sub_100476bc(ngage_cpu_t *);
+extern void sub_100476c8(ngage_cpu_t *);
+extern void sub_10047720(ngage_cpu_t *);
+extern void sub_10047738(ngage_cpu_t *);
+extern void sub_10047740(ngage_cpu_t *);
+extern void sub_100477cc(ngage_cpu_t *);
+extern void sub_1004794c(ngage_cpu_t *);
+extern void sub_10047aa0(ngage_cpu_t *);
+extern void sub_10047f64(ngage_cpu_t *);
+extern void sub_1004801c(ngage_cpu_t *);
+extern void sub_10048140(ngage_cpu_t *);
+extern void sub_10048244(ngage_cpu_t *);
+extern void sub_10049698(ngage_cpu_t *);
+extern void sub_10049780(ngage_cpu_t *);
+extern void sub_10049b64(ngage_cpu_t *);
+extern void sub_10049e78(ngage_cpu_t *);
+extern void sub_1004a020(ngage_cpu_t *);
+extern void sub_1004a104(ngage_cpu_t *);
+extern void sub_1004a284(ngage_cpu_t *);
+extern void sub_1004a6f4(ngage_cpu_t *);
+extern void sub_1004aa28(ngage_cpu_t *);
+extern void sub_1004abe4(ngage_cpu_t *);
+extern void sub_1004ad40(ngage_cpu_t *);
+extern void sub_1004b390(ngage_cpu_t *);
+extern void sub_1004b3c0(ngage_cpu_t *);
+extern void sub_1004b458(ngage_cpu_t *);
+extern void sub_1004b4f0(ngage_cpu_t *);
+extern void sub_1004b544(ngage_cpu_t *);
+extern void sub_1004b610(ngage_cpu_t *);
+extern void sub_1004b618(ngage_cpu_t *);
+extern void sub_1004b620(ngage_cpu_t *);
+extern void sub_1004b71c(ngage_cpu_t *);
+extern void sub_1004b768(ngage_cpu_t *);
+extern void sub_1004b770(ngage_cpu_t *);
+extern void sub_1004b774(ngage_cpu_t *);
+extern void sub_1004b848(ngage_cpu_t *);
+extern void sub_1004b8c8(ngage_cpu_t *);
+extern void sub_1004b8cc(ngage_cpu_t *);
+extern void sub_1004b8d4(ngage_cpu_t *);
+extern void sub_1004b960(ngage_cpu_t *);
+extern void sub_1004ba0c(ngage_cpu_t *);
+extern void sub_1004ba84(ngage_cpu_t *);
+extern void sub_1004bbd0(ngage_cpu_t *);
+extern void sub_1004bc60(ngage_cpu_t *);
+extern void sub_1004bd08(ngage_cpu_t *);
+extern void sub_1004bd24(ngage_cpu_t *);
+extern void sub_1004bd74(ngage_cpu_t *);
+extern void sub_1004bd80(ngage_cpu_t *);
+extern void sub_1004be78(ngage_cpu_t *);
+extern void sub_1004da9c(ngage_cpu_t *);
+extern void sub_1004e3b0(ngage_cpu_t *);
+extern void sub_1004f218(ngage_cpu_t *);
+extern void sub_1004f5fc(ngage_cpu_t *);
+extern void sub_1004f91c(ngage_cpu_t *);
+extern void sub_1004fc50(ngage_cpu_t *);
+extern void sub_1004fe48(ngage_cpu_t *);
+extern void sub_100509a4(ngage_cpu_t *);
+extern void sub_10051460(ngage_cpu_t *);
+extern void sub_10052044(ngage_cpu_t *);
+extern void sub_10052504(ngage_cpu_t *);
+extern void sub_10052ab8(ngage_cpu_t *);
+extern void sub_100536f8(ngage_cpu_t *);
+extern void sub_1005420c(ngage_cpu_t *);
+extern void sub_10054704(ngage_cpu_t *);
+extern void sub_10054d04(ngage_cpu_t *);
+extern void sub_10055a4c(ngage_cpu_t *);
+extern void sub_10055f38(ngage_cpu_t *);
+extern void sub_10056324(ngage_cpu_t *);
+extern void sub_10056aa0(ngage_cpu_t *);
+extern void sub_10056eb0(ngage_cpu_t *);
+extern void sub_10057890(ngage_cpu_t *);
+extern void sub_100581dc(ngage_cpu_t *);
+extern void sub_10059970(ngage_cpu_t *);
+extern void sub_1005a9e0(ngage_cpu_t *);
+extern void sub_1005bbc8(ngage_cpu_t *);
+extern void sub_1005c1a4(ngage_cpu_t *);
+extern void sub_1005c8b4(ngage_cpu_t *);
+extern void sub_1005ccd4(ngage_cpu_t *);
+extern void sub_1005d074(ngage_cpu_t *);
+extern void sub_1005d784(ngage_cpu_t *);
+extern void sub_1005dfe0(ngage_cpu_t *);
+extern void sub_1005e098(ngage_cpu_t *);
+extern void sub_1005e214(ngage_cpu_t *);
+extern void sub_1005e310(ngage_cpu_t *);
+extern void sub_1005e3e8(ngage_cpu_t *);
+extern void sub_1005e498(ngage_cpu_t *);
+extern void sub_1005e54c(ngage_cpu_t *);
+extern void sub_1005eb94(ngage_cpu_t *);
+extern void sub_1005ecb0(ngage_cpu_t *);
+extern void sub_1005ee08(ngage_cpu_t *);
+extern void sub_1005ee80(ngage_cpu_t *);
+extern void sub_1005eedc(ngage_cpu_t *);
+extern void sub_1005ef50(ngage_cpu_t *);
+extern void sub_1005ef94(ngage_cpu_t *);
+extern void sub_1005f0b4(ngage_cpu_t *);
+extern void sub_1005f298(ngage_cpu_t *);
+extern void sub_1005f3c8(ngage_cpu_t *);
+extern void sub_1005f928(ngage_cpu_t *);
+extern void sub_10060414(ngage_cpu_t *);
+extern void sub_100604c0(ngage_cpu_t *);
+extern void sub_10060568(ngage_cpu_t *);
+extern void sub_1006059c(ngage_cpu_t *);
+extern void sub_10060614(ngage_cpu_t *);
+extern void sub_100606d0(ngage_cpu_t *);
+extern void sub_10060744(ngage_cpu_t *);
+extern void sub_100607d8(ngage_cpu_t *);
+extern void sub_100608bc(ngage_cpu_t *);
+extern void sub_100608d0(ngage_cpu_t *);
+extern void sub_100608e4(ngage_cpu_t *);
+extern void sub_1006095c(ngage_cpu_t *);
+extern void sub_1006097c(ngage_cpu_t *);
+extern void sub_100609a8(ngage_cpu_t *);
+extern void sub_100609dc(ngage_cpu_t *);
+extern void sub_100609f0(ngage_cpu_t *);
+extern void sub_10060a08(ngage_cpu_t *);
+extern void sub_10060a8c(ngage_cpu_t *);
+extern void sub_10060ac0(ngage_cpu_t *);
+extern void sub_10060d54(ngage_cpu_t *);
+extern void sub_10060f70(ngage_cpu_t *);
+extern void sub_100610e4(ngage_cpu_t *);
+extern void sub_1006128c(ngage_cpu_t *);
+extern void sub_1006144c(ngage_cpu_t *);
+extern void sub_100615a4(ngage_cpu_t *);
+extern void sub_100618c8(ngage_cpu_t *);
+extern void sub_10061a60(ngage_cpu_t *);
+extern void sub_1006410c(ngage_cpu_t *);
+extern void sub_100645ec(ngage_cpu_t *);
+extern void sub_100646a8(ngage_cpu_t *);
+extern void sub_100648a8(ngage_cpu_t *);
+extern void sub_100649f8(ngage_cpu_t *);
+extern void sub_10064ad8(ngage_cpu_t *);
+extern void sub_10064c60(ngage_cpu_t *);
+extern void sub_10064e00(ngage_cpu_t *);
+extern void sub_10064f08(ngage_cpu_t *);
+extern void sub_10064ffc(ngage_cpu_t *);
+extern void sub_1006517c(ngage_cpu_t *);
+extern void sub_10065438(ngage_cpu_t *);
+extern void sub_100655a8(ngage_cpu_t *);
+extern void sub_100657bc(ngage_cpu_t *);
+extern void sub_1006598c(ngage_cpu_t *);
+extern void sub_10065a70(ngage_cpu_t *);
+extern void sub_10065f7c(ngage_cpu_t *);
+extern void sub_10066204(ngage_cpu_t *);
+extern void sub_1006640c(ngage_cpu_t *);
+extern void sub_10066614(ngage_cpu_t *);
+extern void sub_10066cc4(ngage_cpu_t *);
+extern void sub_1006777c(ngage_cpu_t *);
+extern void sub_100677cc(ngage_cpu_t *);
+extern void sub_10067810(ngage_cpu_t *);
+extern void sub_10067898(ngage_cpu_t *);
+extern void sub_10067974(ngage_cpu_t *);
+extern void sub_10067998(ngage_cpu_t *);
+extern void sub_10067a70(ngage_cpu_t *);
+extern void sub_10067a74(ngage_cpu_t *);
+extern void sub_10067a78(ngage_cpu_t *);
+extern void sub_10067a7c(ngage_cpu_t *);
+extern void sub_10067a9c(ngage_cpu_t *);
+extern void sub_10067ad8(ngage_cpu_t *);
+extern void sub_10067b70(ngage_cpu_t *);
+extern void sub_10067c3c(ngage_cpu_t *);
+extern void sub_10067ca0(ngage_cpu_t *);
+extern void sub_10067db0(ngage_cpu_t *);
+extern void sub_10067ed4(ngage_cpu_t *);
+extern void sub_10067f84(ngage_cpu_t *);
+extern void sub_1006807c(ngage_cpu_t *);
+extern void sub_10068138(ngage_cpu_t *);
+extern void sub_10068140(ngage_cpu_t *);
+extern void sub_10068148(ngage_cpu_t *);
+extern void sub_100681f0(ngage_cpu_t *);
+extern void sub_10068294(ngage_cpu_t *);
+extern void sub_100682b0(ngage_cpu_t *);
+extern void sub_100682cc(ngage_cpu_t *);
+extern void sub_10068324(ngage_cpu_t *);
+extern void sub_1006834c(ngage_cpu_t *);
+extern void sub_10068388(ngage_cpu_t *);
+extern void sub_100683a8(ngage_cpu_t *);
+extern void sub_100683d4(ngage_cpu_t *);
+extern void sub_10068408(ngage_cpu_t *);
+extern void sub_10068418(ngage_cpu_t *);
+extern void sub_1006842c(ngage_cpu_t *);
+extern void sub_10068480(ngage_cpu_t *);
+extern void sub_100684b8(ngage_cpu_t *);
+extern void sub_100684bc(ngage_cpu_t *);
+extern void sub_100684c0(ngage_cpu_t *);
+extern void sub_100684c8(ngage_cpu_t *);
+extern void sub_10068510(ngage_cpu_t *);
+extern void sub_10068604(ngage_cpu_t *);
+extern void sub_10068608(ngage_cpu_t *);
+extern void sub_10068610(ngage_cpu_t *);
+extern void sub_10068614(ngage_cpu_t *);
+extern void sub_10068618(ngage_cpu_t *);
+extern void sub_100686b4(ngage_cpu_t *);
+extern void sub_100686c4(ngage_cpu_t *);
+extern void sub_100686e0(ngage_cpu_t *);
+extern void sub_10068748(ngage_cpu_t *);
+extern void sub_100687e8(ngage_cpu_t *);
+extern void sub_10068814(ngage_cpu_t *);
+extern void sub_10068838(ngage_cpu_t *);
+extern void sub_10068854(ngage_cpu_t *);
+extern void sub_10068948(ngage_cpu_t *);
+extern void sub_10068b68(ngage_cpu_t *);
+extern void sub_10068be8(ngage_cpu_t *);
+extern void sub_10068c40(ngage_cpu_t *);
+extern void sub_10068d10(ngage_cpu_t *);
+extern void sub_10068e0c(ngage_cpu_t *);
+extern void sub_10069b34(ngage_cpu_t *);
+extern void sub_10069cac(ngage_cpu_t *);
+extern void sub_1006a26c(ngage_cpu_t *);
+extern void sub_1006a344(ngage_cpu_t *);
+extern void sub_1006a488(ngage_cpu_t *);
+extern void sub_1006a690(ngage_cpu_t *);
+extern void sub_1006a894(ngage_cpu_t *);
+extern void sub_1006aae4(ngage_cpu_t *);
+extern void sub_1006ad18(ngage_cpu_t *);
+extern void sub_1006aeb0(ngage_cpu_t *);
+extern void sub_1006b168(ngage_cpu_t *);
+extern void sub_1006b288(ngage_cpu_t *);
+extern void sub_1006b3fc(ngage_cpu_t *);
+extern void sub_1006b5c8(ngage_cpu_t *);
+extern void sub_1006b6a8(ngage_cpu_t *);
+extern void sub_1006b9ac(ngage_cpu_t *);
+extern void sub_1006b9c8(ngage_cpu_t *);
+extern void sub_1006bab0(ngage_cpu_t *);
+extern void sub_1006bb4c(ngage_cpu_t *);
+extern void sub_1006bbcc(ngage_cpu_t *);
+extern void sub_1006bbfc(ngage_cpu_t *);
+extern void sub_1006bc68(ngage_cpu_t *);
+extern void sub_1006bccc(ngage_cpu_t *);
+extern void sub_1006bd28(ngage_cpu_t *);
+extern void sub_1006bdc8(ngage_cpu_t *);
+extern void sub_1006be18(ngage_cpu_t *);
+extern void sub_1006be4c(ngage_cpu_t *);
+extern void sub_1006be50(ngage_cpu_t *);
+extern void sub_1006be58(ngage_cpu_t *);
+extern void sub_1006be9c(ngage_cpu_t *);
+extern void sub_1006bee8(ngage_cpu_t *);
+extern void sub_1006bf2c(ngage_cpu_t *);
+extern void sub_1006bfd4(ngage_cpu_t *);
+extern void sub_1006c10c(ngage_cpu_t *);
+extern void sub_1006c16c(ngage_cpu_t *);
+extern void sub_1006c1d0(ngage_cpu_t *);
+extern void sub_1006c240(ngage_cpu_t *);
+extern void sub_1006c274(ngage_cpu_t *);
+extern void sub_1006c2a8(ngage_cpu_t *);
+extern void sub_1006c31c(ngage_cpu_t *);
+extern void sub_1006c408(ngage_cpu_t *);
+extern void sub_1006c414(ngage_cpu_t *);
+extern void sub_1006c42c(ngage_cpu_t *);
+extern void sub_1006c460(ngage_cpu_t *);
+extern void sub_1006c4c8(ngage_cpu_t *);
+extern void sub_1006c4d4(ngage_cpu_t *);
+extern void sub_1006c560(ngage_cpu_t *);
+extern void sub_1006c5c8(ngage_cpu_t *);
+extern void sub_1006c628(ngage_cpu_t *);
+extern void sub_1006c6a8(ngage_cpu_t *);
+extern void sub_1006c6d4(ngage_cpu_t *);
+extern void sub_1006c6f8(ngage_cpu_t *);
+extern void sub_1006c730(ngage_cpu_t *);
+extern void sub_1006c768(ngage_cpu_t *);
+extern void sub_1006c960(ngage_cpu_t *);
+extern void sub_1006ca90(ngage_cpu_t *);
+extern void sub_1006ceb0(ngage_cpu_t *);
+extern void sub_1006cee0(ngage_cpu_t *);
+extern void sub_1006cf14(ngage_cpu_t *);
+extern void sub_1006cf78(ngage_cpu_t *);
+extern void sub_1006cfd8(ngage_cpu_t *);
+extern void sub_1006d08c(ngage_cpu_t *);
+extern void sub_1006d120(ngage_cpu_t *);
+extern void sub_1006d1c0(ngage_cpu_t *);
+extern void sub_1006d1f8(ngage_cpu_t *);
+extern void sub_1006d20c(ngage_cpu_t *);
+extern void sub_1006d258(ngage_cpu_t *);
+extern void sub_1006d290(ngage_cpu_t *);
+extern void sub_1006d2a8(ngage_cpu_t *);
+extern void sub_1006d2ac(ngage_cpu_t *);
+extern void sub_1006d35c(ngage_cpu_t *);
+extern void sub_1006d3e8(ngage_cpu_t *);
+extern void sub_1006d408(ngage_cpu_t *);
+extern void sub_1006d4a8(ngage_cpu_t *);
+extern void sub_1006d508(ngage_cpu_t *);
+extern void sub_1006d510(ngage_cpu_t *);
+extern void sub_1006d518(ngage_cpu_t *);
+extern void sub_1006d520(ngage_cpu_t *);
+extern void sub_1006d5dc(ngage_cpu_t *);
+extern void sub_1006d5e4(ngage_cpu_t *);
+extern void sub_1006d5e8(ngage_cpu_t *);
+extern void sub_1006d654(ngage_cpu_t *);
+extern void sub_1006d6a8(ngage_cpu_t *);
+extern void sub_1006d7bc(ngage_cpu_t *);
+extern void sub_1006d948(ngage_cpu_t *);
+extern void sub_1006da64(ngage_cpu_t *);
+extern void sub_1006dbec(ngage_cpu_t *);
+extern void sub_10070534(ngage_cpu_t *);
+extern void sub_10070a78(ngage_cpu_t *);
+extern void sub_10071038(ngage_cpu_t *);
+extern void sub_100711b4(ngage_cpu_t *);
+extern void sub_100715a8(ngage_cpu_t *);
+extern void sub_10071ac4(ngage_cpu_t *);
+extern void sub_10071f2c(ngage_cpu_t *);
+extern void sub_100726b8(ngage_cpu_t *);
+extern void sub_100729e0(ngage_cpu_t *);
+extern void sub_10072b6c(ngage_cpu_t *);
+extern void sub_1007307c(ngage_cpu_t *);
+extern void sub_100730c8(ngage_cpu_t *);
+extern void sub_100730f0(ngage_cpu_t *);
+extern void sub_100730fc(ngage_cpu_t *);
+extern void sub_10073158(ngage_cpu_t *);
+extern void sub_100731b4(ngage_cpu_t *);
+extern void sub_10073210(ngage_cpu_t *);
+extern void sub_1007326c(ngage_cpu_t *);
+extern void sub_100732c8(ngage_cpu_t *);
+extern void sub_10073324(ngage_cpu_t *);
+extern void sub_10073380(ngage_cpu_t *);
+extern void sub_10073470(ngage_cpu_t *);
+extern void sub_10073528(ngage_cpu_t *);
+extern void sub_10073654(ngage_cpu_t *);
+extern void sub_10073658(ngage_cpu_t *);
+extern void sub_10073760(ngage_cpu_t *);
+extern void sub_100738c4(ngage_cpu_t *);
+extern void sub_10073a70(ngage_cpu_t *);
+extern void sub_10073bd8(ngage_cpu_t *);
+extern void sub_10073d3c(ngage_cpu_t *);
+extern void sub_10075bdc(ngage_cpu_t *);
+extern void sub_100768b4(ngage_cpu_t *);
+extern void sub_10076b64(ngage_cpu_t *);
+extern void sub_10077028(ngage_cpu_t *);
+extern void sub_10077138(ngage_cpu_t *);
+extern void sub_1007722c(ngage_cpu_t *);
+extern void sub_100773a8(ngage_cpu_t *);
+extern void sub_10077554(ngage_cpu_t *);
+extern void sub_100776d0(ngage_cpu_t *);
+extern void sub_100779b8(ngage_cpu_t *);
+extern void sub_10077db8(ngage_cpu_t *);
+extern void sub_10077f74(ngage_cpu_t *);
+extern void sub_100780f8(ngage_cpu_t *);
+extern void sub_10078770(ngage_cpu_t *);
+extern void sub_10078890(ngage_cpu_t *);
+extern void sub_10078c08(ngage_cpu_t *);
+extern void sub_10078de4(ngage_cpu_t *);
+extern void sub_1007dca0(ngage_cpu_t *);
+extern void sub_1007e10c(ngage_cpu_t *);
+extern void sub_1007e458(ngage_cpu_t *);
+extern void sub_1007e540(ngage_cpu_t *);
+extern void sub_1007e7f0(ngage_cpu_t *);
+extern void sub_1007e954(ngage_cpu_t *);
+extern void sub_1007ec80(ngage_cpu_t *);
+extern void sub_1007ef24(ngage_cpu_t *);
+extern void sub_1007f050(ngage_cpu_t *);
+extern void sub_1007f210(ngage_cpu_t *);
+extern void sub_1007f3f4(ngage_cpu_t *);
+extern void sub_1007f49c(ngage_cpu_t *);
+extern void sub_1007f5e4(ngage_cpu_t *);
+extern void sub_1007f600(ngage_cpu_t *);
+extern void sub_1007f608(ngage_cpu_t *);
+extern void sub_1007f610(ngage_cpu_t *);
+extern void sub_1007f614(ngage_cpu_t *);
+extern void sub_1007f61c(ngage_cpu_t *);
+extern void sub_1007f648(ngage_cpu_t *);
+extern void sub_1007f650(ngage_cpu_t *);
+extern void sub_1007f6f0(ngage_cpu_t *);
+extern void sub_1007f784(ngage_cpu_t *);
+extern void sub_1007f7c8(ngage_cpu_t *);
+extern void sub_1007f834(ngage_cpu_t *);
+extern void sub_1007f8bc(ngage_cpu_t *);
+extern void sub_1007f8f8(ngage_cpu_t *);
+extern void sub_1007f9b0(ngage_cpu_t *);
+extern void sub_1007f9b4(ngage_cpu_t *);
+extern void sub_1007f9b8(ngage_cpu_t *);
+extern void sub_1007f9e8(ngage_cpu_t *);
+extern void sub_1007fa10(ngage_cpu_t *);
+extern void sub_1007fa18(ngage_cpu_t *);
+extern void sub_1007fa20(ngage_cpu_t *);
+extern void sub_1007fadc(ngage_cpu_t *);
+extern void sub_1007fb78(ngage_cpu_t *);
+extern void sub_1007fc14(ngage_cpu_t *);
+extern void sub_1007fc20(ngage_cpu_t *);
+extern void sub_1007fc80(ngage_cpu_t *);
+extern void sub_1007fcf4(ngage_cpu_t *);
+extern void sub_1007fd54(ngage_cpu_t *);
+extern void sub_1007fd88(ngage_cpu_t *);
+extern void sub_1007fdd4(ngage_cpu_t *);
+extern void sub_1007fe20(ngage_cpu_t *);
+extern void sub_1007fe88(ngage_cpu_t *);
+extern void sub_1007ff30(ngage_cpu_t *);
+extern void sub_1007ff38(ngage_cpu_t *);
+extern void sub_1007ffa0(ngage_cpu_t *);
+extern void sub_1007ffe8(ngage_cpu_t *);
+extern void sub_10080048(ngage_cpu_t *);
+extern void sub_100800a0(ngage_cpu_t *);
+extern void sub_100800a4(ngage_cpu_t *);
+extern void sub_10080168(ngage_cpu_t *);
+extern void sub_100801fc(ngage_cpu_t *);
+extern void sub_100806ac(ngage_cpu_t *);
+extern void sub_1008078c(ngage_cpu_t *);
+extern void sub_100808ec(ngage_cpu_t *);
+extern void sub_10080a04(ngage_cpu_t *);
+extern void sub_10080c70(ngage_cpu_t *);
+extern void sub_10080c78(ngage_cpu_t *);
+extern void sub_10080c80(ngage_cpu_t *);
+extern void sub_10080c88(ngage_cpu_t *);
+extern void sub_10080ccc(ngage_cpu_t *);
+extern void sub_10080d1c(ngage_cpu_t *);
+extern void sub_10080d20(ngage_cpu_t *);
+extern void sub_10080d98(ngage_cpu_t *);
+extern void sub_10080e28(ngage_cpu_t *);
+extern void sub_10080e34(ngage_cpu_t *);
+extern void sub_10081030(ngage_cpu_t *);
+extern void sub_10081080(ngage_cpu_t *);
+extern void sub_100810e0(ngage_cpu_t *);
+extern void sub_10081130(ngage_cpu_t *);
+extern void sub_1008117c(ngage_cpu_t *);
+extern void sub_10081180(ngage_cpu_t *);
+extern void sub_10081184(ngage_cpu_t *);
+extern void sub_10081320(ngage_cpu_t *);
+extern void sub_100813bc(ngage_cpu_t *);
+extern void sub_1008141c(ngage_cpu_t *);
+extern void sub_1008143c(ngage_cpu_t *);
+extern void sub_100814a8(ngage_cpu_t *);
+extern void sub_100814d4(ngage_cpu_t *);
+extern void sub_10081540(ngage_cpu_t *);
+extern void sub_1008158c(ngage_cpu_t *);
+extern void sub_100815e0(ngage_cpu_t *);
+extern void sub_10081844(ngage_cpu_t *);
+extern void sub_10081e5c(ngage_cpu_t *);
+extern void sub_10082004(ngage_cpu_t *);
+extern void sub_10082224(ngage_cpu_t *);
+extern void sub_10083490(ngage_cpu_t *);
+extern void sub_100835b8(ngage_cpu_t *);
+extern void sub_10083c04(ngage_cpu_t *);
+extern void sub_10084438(ngage_cpu_t *);
+extern void sub_1008457c(ngage_cpu_t *);
+extern void sub_1008467c(ngage_cpu_t *);
+extern void sub_10084924(ngage_cpu_t *);
+extern void sub_1008607c(ngage_cpu_t *);
+extern void sub_10086280(ngage_cpu_t *);
+extern void sub_10086454(ngage_cpu_t *);
+extern void sub_10086514(ngage_cpu_t *);
+extern void sub_100865e4(ngage_cpu_t *);
+extern void sub_10086660(ngage_cpu_t *);
+extern void sub_100866b8(ngage_cpu_t *);
+extern void sub_100866c0(ngage_cpu_t *);
+extern void sub_10086754(ngage_cpu_t *);
+extern void sub_1008679c(ngage_cpu_t *);
+extern void sub_100868cc(ngage_cpu_t *);
+extern void sub_10086970(ngage_cpu_t *);
+extern void sub_10086a18(ngage_cpu_t *);
+extern void sub_10086ab0(ngage_cpu_t *);
+extern void sub_10086b78(ngage_cpu_t *);
+extern void sub_10086b98(ngage_cpu_t *);
+extern void sub_10086c40(ngage_cpu_t *);
+extern void sub_10086cb8(ngage_cpu_t *);
+extern void sub_10086d34(ngage_cpu_t *);
+extern void sub_10086d3c(ngage_cpu_t *);
+extern void sub_10086d60(ngage_cpu_t *);
+extern void sub_10086dec(ngage_cpu_t *);
+extern void sub_10086df0(ngage_cpu_t *);
+extern void sub_10086eb4(ngage_cpu_t *);
+extern void sub_10086f24(ngage_cpu_t *);
+extern void sub_10086f6c(ngage_cpu_t *);
+extern void sub_10086f70(ngage_cpu_t *);
+extern void sub_10086f88(ngage_cpu_t *);
+extern void sub_10086f9c(ngage_cpu_t *);
+extern void sub_10087024(ngage_cpu_t *);
+extern void sub_100870f8(ngage_cpu_t *);
+extern void sub_10087434(ngage_cpu_t *);
+extern void sub_10087438(ngage_cpu_t *);
+extern void sub_10087460(ngage_cpu_t *);
+extern void sub_10087464(ngage_cpu_t *);
+extern void sub_10087468(ngage_cpu_t *);
+extern void sub_1008746c(ngage_cpu_t *);
+extern void sub_10087470(ngage_cpu_t *);
+extern void sub_10087474(ngage_cpu_t *);
+extern void sub_10087478(ngage_cpu_t *);
+extern void sub_1008747c(ngage_cpu_t *);
+extern void sub_10087488(ngage_cpu_t *);
+extern void sub_1008748c(ngage_cpu_t *);
+extern void sub_10087490(ngage_cpu_t *);
+extern void sub_10087494(ngage_cpu_t *);
+extern void sub_10087498(ngage_cpu_t *);
+extern void sub_1008749c(ngage_cpu_t *);
+extern void sub_100874c8(ngage_cpu_t *);
+extern void sub_100874cc(ngage_cpu_t *);
+extern void sub_100874d0(ngage_cpu_t *);
+extern void sub_100874d4(ngage_cpu_t *);
+extern void sub_100874d8(ngage_cpu_t *);
+extern void sub_100874dc(ngage_cpu_t *);
+extern void sub_100874e0(ngage_cpu_t *);
+extern void sub_100874e8(ngage_cpu_t *);
+extern void sub_100874ec(ngage_cpu_t *);
+extern void sub_100874f0(ngage_cpu_t *);
+extern void sub_100874f4(ngage_cpu_t *);
+extern void sub_100874f8(ngage_cpu_t *);
+extern void sub_100874fc(ngage_cpu_t *);
+extern void sub_10087500(ngage_cpu_t *);
+extern void sub_10087504(ngage_cpu_t *);
+extern void sub_10087508(ngage_cpu_t *);
+extern void sub_100875b0(ngage_cpu_t *);
+extern void sub_100875c8(ngage_cpu_t *);
+extern void sub_100875e8(ngage_cpu_t *);
+extern void sub_100876f0(ngage_cpu_t *);
+extern void sub_10087a60(ngage_cpu_t *);
+extern void sub_100884e0(ngage_cpu_t *);
+extern void sub_10088664(ngage_cpu_t *);
+extern void sub_10088778(ngage_cpu_t *);
+extern void sub_10088a40(ngage_cpu_t *);
+extern void sub_10088d9c(ngage_cpu_t *);
+extern void sub_10088da0(ngage_cpu_t *);
+extern void sub_10088da4(ngage_cpu_t *);
+extern void sub_10088dac(ngage_cpu_t *);
+extern void sub_10088db4(ngage_cpu_t *);
+extern void sub_10088df0(ngage_cpu_t *);
+extern void sub_10088e7c(ngage_cpu_t *);
+extern void sub_10088ea4(ngage_cpu_t *);
+extern void sub_10088f00(ngage_cpu_t *);
+extern void sub_10088f60(ngage_cpu_t *);
+extern void sub_1008904c(ngage_cpu_t *);
+extern void sub_100890d4(ngage_cpu_t *);
+extern void sub_100891fc(ngage_cpu_t *);
+extern void sub_1008977c(ngage_cpu_t *);
+extern void sub_10089820(ngage_cpu_t *);
+extern void sub_10089894(ngage_cpu_t *);
+extern void sub_100898d0(ngage_cpu_t *);
+extern void sub_10089a1c(ngage_cpu_t *);
+extern void sub_10089b84(ngage_cpu_t *);
+extern void sub_1008a324(ngage_cpu_t *);
+extern void sub_1008a418(ngage_cpu_t *);
+extern void sub_1008a504(ngage_cpu_t *);
+extern void sub_1008a5c0(ngage_cpu_t *);
+extern void sub_1008a628(ngage_cpu_t *);
+extern void sub_1008a76c(ngage_cpu_t *);
+extern void sub_1008aa30(ngage_cpu_t *);
+extern void sub_1008ae00(ngage_cpu_t *);
+extern void sub_1008ae94(ngage_cpu_t *);
+extern void sub_1008af9c(ngage_cpu_t *);
+extern void sub_1008b000(ngage_cpu_t *);
+extern void sub_1008b074(ngage_cpu_t *);
+extern void sub_1008b118(ngage_cpu_t *);
+extern void sub_1008b15c(ngage_cpu_t *);
+extern void sub_1008b25c(ngage_cpu_t *);
+extern void sub_1008b3ec(ngage_cpu_t *);
+extern void sub_1008b420(ngage_cpu_t *);
+extern void sub_1008b488(ngage_cpu_t *);
+extern void sub_1008b5e0(ngage_cpu_t *);
+extern void sub_1008b748(ngage_cpu_t *);
+extern void sub_1008b76c(ngage_cpu_t *);
+extern void sub_1008b788(ngage_cpu_t *);
+extern void sub_1008b7c4(ngage_cpu_t *);
+extern void sub_1008b8cc(ngage_cpu_t *);
+extern void sub_1008b980(ngage_cpu_t *);
+extern void sub_1008ba2c(ngage_cpu_t *);
+extern void sub_1008ba5c(ngage_cpu_t *);
+extern void sub_1008ba8c(ngage_cpu_t *);
+extern void sub_1008babc(ngage_cpu_t *);
+extern void sub_1008bb04(ngage_cpu_t *);
+extern void sub_1008bb4c(ngage_cpu_t *);
+extern void sub_1008bba0(ngage_cpu_t *);
+extern void sub_1008bbbc(ngage_cpu_t *);
+extern void sub_1008bbd8(ngage_cpu_t *);
+extern void sub_1008bbf4(ngage_cpu_t *);
+extern void sub_1008bc10(ngage_cpu_t *);
+extern void sub_1008bc2c(ngage_cpu_t *);
+extern void sub_1008bccc(ngage_cpu_t *);
+extern void sub_1008bd54(ngage_cpu_t *);
+extern void sub_1008bdc4(ngage_cpu_t *);
+extern void sub_1008be04(ngage_cpu_t *);
+extern void sub_1008be54(ngage_cpu_t *);
+extern void sub_1008bea4(ngage_cpu_t *);
+extern void sub_1008beec(ngage_cpu_t *);
+extern void sub_1008bf38(ngage_cpu_t *);
+extern void sub_1008bf90(ngage_cpu_t *);
+extern void sub_1008bfac(ngage_cpu_t *);
+extern void sub_1008bfc8(ngage_cpu_t *);
+extern void sub_1008bfe4(ngage_cpu_t *);
+extern void sub_1008bff4(ngage_cpu_t *);
+extern void sub_1008c034(ngage_cpu_t *);
+extern void sub_1008c06c(ngage_cpu_t *);
+extern void sub_1008c0a4(ngage_cpu_t *);
+extern void sub_1008c1cc(ngage_cpu_t *);
+extern void sub_1008c22c(ngage_cpu_t *);
+extern void sub_1008c304(ngage_cpu_t *);
+extern void sub_1008c384(ngage_cpu_t *);
+extern void sub_1008c438(ngage_cpu_t *);
+extern void sub_1008c4ec(ngage_cpu_t *);
+extern void sub_1008c56c(ngage_cpu_t *);
+extern void sub_1008c5d4(ngage_cpu_t *);
+extern void sub_1008c634(ngage_cpu_t *);
+extern void sub_1008c698(ngage_cpu_t *);
+extern void sub_1008c720(ngage_cpu_t *);
+extern void sub_1008c7e0(ngage_cpu_t *);
+extern void sub_1008c844(ngage_cpu_t *);
+extern void sub_1008c8c4(ngage_cpu_t *);
+extern void sub_1008c91c(ngage_cpu_t *);
+extern void sub_1008c9a4(ngage_cpu_t *);
+extern void sub_1008c9e8(ngage_cpu_t *);
+extern void sub_1008ca38(ngage_cpu_t *);
+extern void sub_1008cb28(ngage_cpu_t *);
+extern void sub_1008cca8(ngage_cpu_t *);
+extern void sub_1008d0e4(ngage_cpu_t *);
+extern void sub_1008d978(ngage_cpu_t *);
+extern void sub_1008de68(ngage_cpu_t *);
+extern void sub_1008df60(ngage_cpu_t *);
+extern void sub_1008e08c(ngage_cpu_t *);
+extern void sub_1008e094(ngage_cpu_t *);
+extern void sub_1008e09c(ngage_cpu_t *);
+extern void sub_1008e114(ngage_cpu_t *);
+extern void sub_1008e138(ngage_cpu_t *);
+extern void sub_1008e148(ngage_cpu_t *);
+extern void sub_1008e19c(ngage_cpu_t *);
+extern void sub_1008e1ac(ngage_cpu_t *);
+extern void sub_1008e1f8(ngage_cpu_t *);
+extern void sub_1008e200(ngage_cpu_t *);
+extern void sub_1008e210(ngage_cpu_t *);
+extern void sub_1008e218(ngage_cpu_t *);
+extern void sub_1008e31c(ngage_cpu_t *);
+extern void sub_1008e3d8(ngage_cpu_t *);
+extern void sub_1008e43c(ngage_cpu_t *);
+extern void sub_1008e4b0(ngage_cpu_t *);
+extern void sub_1008e518(ngage_cpu_t *);
+extern void sub_1008e56c(ngage_cpu_t *);
+extern void sub_1008e5e0(ngage_cpu_t *);
+extern void sub_1008e608(ngage_cpu_t *);
+extern void sub_1008e634(ngage_cpu_t *);
+extern void sub_1008e974(ngage_cpu_t *);
+extern void sub_1008ec30(ngage_cpu_t *);
+extern void sub_1008eeb4(ngage_cpu_t *);
+extern void sub_1008f0b8(ngage_cpu_t *);
+extern void sub_1008f2cc(ngage_cpu_t *);
+extern void sub_1008f458(ngage_cpu_t *);
+extern void sub_1008f5ac(ngage_cpu_t *);
+extern void sub_1008f724(ngage_cpu_t *);
+extern void sub_1008f7d0(ngage_cpu_t *);
+extern void sub_1008f81c(ngage_cpu_t *);
+extern void sub_1008f824(ngage_cpu_t *);
+extern void sub_1008f82c(ngage_cpu_t *);
+extern void sub_1008f8a4(ngage_cpu_t *);
+extern void sub_1008f97c(ngage_cpu_t *);
+extern void sub_1008fa5c(ngage_cpu_t *);
+extern void sub_1008fab8(ngage_cpu_t *);
+extern void sub_1008fb34(ngage_cpu_t *);
+extern void sub_1008fb9c(ngage_cpu_t *);
+extern void sub_1008fc04(ngage_cpu_t *);
+extern void sub_1008fccc(ngage_cpu_t *);
+extern void sub_1008fd28(ngage_cpu_t *);
+extern void sub_1008ff14(ngage_cpu_t *);
+extern void sub_10090288(ngage_cpu_t *);
+extern void sub_100902a4(ngage_cpu_t *);
+extern void sub_100902a8(ngage_cpu_t *);
+extern void sub_100902b4(ngage_cpu_t *);
+extern void sub_1009037c(ngage_cpu_t *);
+extern void sub_1009040c(ngage_cpu_t *);
+extern void sub_10090500(ngage_cpu_t *);
+extern void sub_10090818(ngage_cpu_t *);
+extern void sub_10091364(ngage_cpu_t *);
+extern void sub_1009138c(ngage_cpu_t *);
+extern void sub_10091410(ngage_cpu_t *);
+extern void sub_10091418(ngage_cpu_t *);
+extern void sub_10091420(ngage_cpu_t *);
+extern void sub_100914a0(ngage_cpu_t *);
+extern void sub_10091540(ngage_cpu_t *);
+extern void sub_10091594(ngage_cpu_t *);
+extern void sub_100916d0(ngage_cpu_t *);
+extern void sub_10091718(ngage_cpu_t *);
+extern void sub_1009178c(ngage_cpu_t *);
+extern void sub_100917dc(ngage_cpu_t *);
+extern void sub_10091804(ngage_cpu_t *);
+extern void sub_10091838(ngage_cpu_t *);
+extern void sub_1009183c(ngage_cpu_t *);
+extern void sub_10091840(ngage_cpu_t *);
+extern void sub_1009186c(ngage_cpu_t *);
+extern void sub_10091878(ngage_cpu_t *);
+extern void sub_100918c8(ngage_cpu_t *);
+extern void sub_10091918(ngage_cpu_t *);
+extern void sub_10091964(ngage_cpu_t *);
+extern void sub_10091a64(ngage_cpu_t *);
+extern void sub_10091ab4(ngage_cpu_t *);
+extern void sub_10091aec(ngage_cpu_t *);
+extern void sub_10091af0(ngage_cpu_t *);
+extern void sub_10091afc(ngage_cpu_t *);
+extern void sub_10091b58(ngage_cpu_t *);
+extern void sub_10091b9c(ngage_cpu_t *);
+extern void sub_10091c94(ngage_cpu_t *);
+extern void sub_10091e14(ngage_cpu_t *);
+extern void sub_10091e18(ngage_cpu_t *);
+extern void sub_10092138(ngage_cpu_t *);
+extern void sub_100922c8(ngage_cpu_t *);
+extern void sub_100925c0(ngage_cpu_t *);
+extern void sub_10092648(ngage_cpu_t *);
+extern void sub_100927b4(ngage_cpu_t *);
+extern void sub_100927dc(ngage_cpu_t *);
+extern void sub_10092b1c(ngage_cpu_t *);
+extern void sub_10092c44(ngage_cpu_t *);
+extern void sub_10092c98(ngage_cpu_t *);
+extern void sub_10092d88(ngage_cpu_t *);
+extern void sub_10092dd8(ngage_cpu_t *);
+extern void sub_10092e2c(ngage_cpu_t *);
+extern void sub_10092e70(ngage_cpu_t *);
+extern void sub_10092eec(ngage_cpu_t *);
+extern void sub_100930f8(ngage_cpu_t *);
+extern void sub_100931c0(ngage_cpu_t *);
+extern void sub_1009326c(ngage_cpu_t *);
+extern void sub_10093304(ngage_cpu_t *);
+extern void sub_100933fc(ngage_cpu_t *);
+extern void sub_100937d0(ngage_cpu_t *);
+extern void sub_1009405c(ngage_cpu_t *);
+extern void sub_1009441c(ngage_cpu_t *);
+extern void sub_1009457c(ngage_cpu_t *);
+extern void sub_10094714(ngage_cpu_t *);
+extern void sub_10094898(ngage_cpu_t *);
+extern void sub_10094938(ngage_cpu_t *);
+extern void sub_10094ac4(ngage_cpu_t *);
+extern void sub_10094b58(ngage_cpu_t *);
+extern void sub_10094bd8(ngage_cpu_t *);
+extern void sub_10094c1c(ngage_cpu_t *);
+extern void sub_10094c40(ngage_cpu_t *);
+extern void sub_10094c6c(ngage_cpu_t *);
+extern void sub_10094c80(ngage_cpu_t *);
+extern void sub_10094ca8(ngage_cpu_t *);
+extern void sub_10094d64(ngage_cpu_t *);
+extern void sub_10094dcc(ngage_cpu_t *);
+extern void sub_10094f18(ngage_cpu_t *);
+extern void sub_10094f3c(ngage_cpu_t *);
+extern void sub_10094f94(ngage_cpu_t *);
+extern void sub_10094fbc(ngage_cpu_t *);
+extern void sub_10094fe8(ngage_cpu_t *);
+extern void sub_10095024(ngage_cpu_t *);
+extern void sub_1009508c(ngage_cpu_t *);
+extern void sub_100950e4(ngage_cpu_t *);
+extern void sub_10095138(ngage_cpu_t *);
+extern void sub_1009516c(ngage_cpu_t *);
+extern void sub_1009520c(ngage_cpu_t *);
+extern void sub_100952c0(ngage_cpu_t *);
+extern void sub_100952f8(ngage_cpu_t *);
+extern void sub_10095330(ngage_cpu_t *);
+extern void sub_10095368(ngage_cpu_t *);
+extern void sub_100953a0(ngage_cpu_t *);
+extern void sub_100953d4(ngage_cpu_t *);
+extern void sub_10095408(ngage_cpu_t *);
+extern void sub_1009543c(ngage_cpu_t *);
+extern void sub_100954ac(ngage_cpu_t *);
+extern void sub_100954e0(ngage_cpu_t *);
+extern void sub_10095520(ngage_cpu_t *);
+extern void sub_100955c8(ngage_cpu_t *);
+extern void sub_10095630(ngage_cpu_t *);
+extern void sub_100956b4(ngage_cpu_t *);
+extern void sub_10095980(ngage_cpu_t *);
+extern void sub_100959d4(ngage_cpu_t *);
+extern void sub_10095a08(ngage_cpu_t *);
+extern void sub_10095a30(ngage_cpu_t *);
+extern void sub_10095a70(ngage_cpu_t *);
+extern void sub_10095af4(ngage_cpu_t *);
+extern void sub_10095ccc(ngage_cpu_t *);
+extern void sub_10095da0(ngage_cpu_t *);
+extern void sub_10095e18(ngage_cpu_t *);
+extern void sub_10095e38(ngage_cpu_t *);
+extern void sub_10096084(ngage_cpu_t *);
+extern void sub_100960b4(ngage_cpu_t *);
+extern void sub_100960ec(ngage_cpu_t *);
+extern void sub_10096128(ngage_cpu_t *);
+extern void sub_10096170(ngage_cpu_t *);
+extern void sub_100961c8(ngage_cpu_t *);
+extern void sub_10096274(ngage_cpu_t *);
+extern void sub_1009630c(ngage_cpu_t *);
+extern void sub_1009637c(ngage_cpu_t *);
+extern void sub_10096390(ngage_cpu_t *);
+extern void sub_100963c4(ngage_cpu_t *);
+extern void sub_10096558(ngage_cpu_t *);
+extern void sub_1009666c(ngage_cpu_t *);
+extern void sub_10096770(ngage_cpu_t *);
+extern void sub_10096aa4(ngage_cpu_t *);
+extern void sub_10096bc4(ngage_cpu_t *);
+extern void sub_10096d88(ngage_cpu_t *);
+extern void sub_10096e10(ngage_cpu_t *);
+extern void sub_10096e3c(ngage_cpu_t *);
+extern void sub_10096e70(ngage_cpu_t *);
+extern void sub_10096f04(ngage_cpu_t *);
+extern void sub_10096f8c(ngage_cpu_t *);
+extern void sub_10096fc0(ngage_cpu_t *);
+extern void sub_10097180(ngage_cpu_t *);
+extern void sub_100971fc(ngage_cpu_t *);
+extern void sub_1009721c(ngage_cpu_t *);
+extern void sub_10097324(ngage_cpu_t *);
+extern void sub_10097978(ngage_cpu_t *);
+extern void sub_100979f8(ngage_cpu_t *);
+extern void sub_10097a60(ngage_cpu_t *);
+extern void sub_10097af0(ngage_cpu_t *);
+extern void sub_10097b44(ngage_cpu_t *);
+extern void sub_10097dac(ngage_cpu_t *);
+extern void sub_10097e08(ngage_cpu_t *);
+extern void sub_10097e44(ngage_cpu_t *);
+extern void sub_10098100(ngage_cpu_t *);
+extern void sub_10098178(ngage_cpu_t *);
+extern void sub_10098330(ngage_cpu_t *);
+extern void sub_100983c0(ngage_cpu_t *);
+extern void sub_10098aec(ngage_cpu_t *);
+extern void sub_10098b24(ngage_cpu_t *);
+extern void sub_10098b40(ngage_cpu_t *);
+extern void sub_10098c68(ngage_cpu_t *);
+extern void sub_10099060(ngage_cpu_t *);
+extern void sub_100993e8(ngage_cpu_t *);
+extern void sub_10099530(ngage_cpu_t *);
+extern void sub_10099944(ngage_cpu_t *);
+extern void sub_10099ca4(ngage_cpu_t *);
+extern void sub_10099ff8(ngage_cpu_t *);
+extern void sub_1009a484(ngage_cpu_t *);
+extern void sub_1009a5cc(ngage_cpu_t *);
+extern void sub_1009aa04(ngage_cpu_t *);
+extern void sub_1009aa30(ngage_cpu_t *);
+extern void sub_1009aa74(ngage_cpu_t *);
+extern void sub_1009ab7c(ngage_cpu_t *);
+extern void sub_1009adc0(ngage_cpu_t *);
+extern void sub_1009af2c(ngage_cpu_t *);
+extern void sub_1009afa0(ngage_cpu_t *);
+extern void sub_1009afd4(ngage_cpu_t *);
+extern void sub_1009b000(ngage_cpu_t *);
+extern void sub_1009b020(ngage_cpu_t *);
+extern void sub_1009b278(ngage_cpu_t *);
+extern void sub_1009b468(ngage_cpu_t *);
+extern void sub_1009b4b8(ngage_cpu_t *);
+extern void sub_1009b594(ngage_cpu_t *);
+extern void sub_1009b878(ngage_cpu_t *);
+extern void sub_1009b974(ngage_cpu_t *);
+extern void sub_1009b9a8(ngage_cpu_t *);
+extern void sub_1009ba34(ngage_cpu_t *);
+extern void sub_1009ba54(ngage_cpu_t *);
+extern void sub_1009ba78(ngage_cpu_t *);
+extern void sub_1009bbe4(ngage_cpu_t *);
+extern void sub_1009be04(ngage_cpu_t *);
+extern void sub_1009c024(ngage_cpu_t *);
+extern void sub_1009c0a4(ngage_cpu_t *);
+extern void sub_1009c124(ngage_cpu_t *);
+extern void sub_1009c2e8(ngage_cpu_t *);
+extern void sub_1009c314(ngage_cpu_t *);
+extern void sub_1009c3b4(ngage_cpu_t *);
+extern void sub_1009c520(ngage_cpu_t *);
+extern void sub_1009c54c(ngage_cpu_t *);
+extern void sub_1009c75c(ngage_cpu_t *);
+extern void sub_1009cb04(ngage_cpu_t *);
+extern void sub_1009e638(ngage_cpu_t *);
+extern void sub_1009e68c(ngage_cpu_t *);
+extern void sub_1009e6d4(ngage_cpu_t *);
+extern void sub_1009e6fc(ngage_cpu_t *);
+extern void sub_1009e820(ngage_cpu_t *);
+extern void sub_1009e828(ngage_cpu_t *);
+extern void sub_1009e870(ngage_cpu_t *);
+extern void sub_1009e88c(ngage_cpu_t *);
+extern void sub_1009ea10(ngage_cpu_t *);
+extern void sub_1009eac0(ngage_cpu_t *);
+extern void sub_1009ead8(ngage_cpu_t *);
+extern void sub_1009eb68(ngage_cpu_t *);
+extern void sub_1009ec80(ngage_cpu_t *);
+extern void sub_1009ecf4(ngage_cpu_t *);
+extern void sub_1009ed44(ngage_cpu_t *);
+extern void sub_1009ed6c(ngage_cpu_t *);
+extern void import_EUSER_ord_1505(ngage_cpu_t *);
+extern void import_EUSER_ord_1359(ngage_cpu_t *);
+extern void import_EUSER_ord_1283(ngage_cpu_t *);
+extern void import_EUSER_ord_1262(ngage_cpu_t *);
+extern void import_EUSER_ord_1506(ngage_cpu_t *);
+extern void import_EUSER_ord_1514(ngage_cpu_t *);
+extern void import_EUSER_ord_630(ngage_cpu_t *);
+extern void import_EUSER_ord_35(ngage_cpu_t *);
+extern void import_EUSER_ord_21(ngage_cpu_t *);
+extern void import_EUSER_ord_1504(ngage_cpu_t *);
+extern void import_EUSER_ord_1507(ngage_cpu_t *);
+extern void import_EUSER_ord_1611(ngage_cpu_t *);
+extern void import_EUSER_ord_1367(ngage_cpu_t *);
+extern void import_EUSER_ord_411(ngage_cpu_t *);
+extern void import_EUSER_ord_1366(ngage_cpu_t *);
+extern void import_EUSER_ord_274(ngage_cpu_t *);
+extern void import_EUSER_ord_289(ngage_cpu_t *);
+extern void import_EUSER_ord_1016(ngage_cpu_t *);
+extern void import_EUSER_ord_954(ngage_cpu_t *);
+extern void import_EUSER_ord_172(ngage_cpu_t *);
+extern void import_EUSER_ord_1113(ngage_cpu_t *);
+extern void import_EUSER_ord_1582(ngage_cpu_t *);
+extern void import_EUSER_ord_1343(ngage_cpu_t *);
+extern void import_EUSER_ord_858(ngage_cpu_t *);
+extern void import_EUSER_ord_569(ngage_cpu_t *);
+extern void import_EUSER_ord_1148(ngage_cpu_t *);
+extern void import_EUSER_ord_1164(ngage_cpu_t *);
+extern void import_EUSER_ord_738(ngage_cpu_t *);
+extern void import_EUSER_ord_1111(ngage_cpu_t *);
+extern void import_EUSER_ord_1107(ngage_cpu_t *);
+extern void import_EUSER_ord_825(ngage_cpu_t *);
+extern void import_EUSER_ord_1212(ngage_cpu_t *);
+extern void import_EUSER_ord_1078(ngage_cpu_t *);
+extern void import_EUSER_ord_746(ngage_cpu_t *);
+extern void import_EUSER_ord_1122(ngage_cpu_t *);
+extern void import_EUSER_ord_152(ngage_cpu_t *);
+extern void import_EUSER_ord_89(ngage_cpu_t *);
+extern void import_EUSER_ord_90(ngage_cpu_t *);
+extern void import_EUSER_ord_1386(ngage_cpu_t *);
+extern void import_EUSER_ord_501(ngage_cpu_t *);
+extern void import_EUSER_ord_3(ngage_cpu_t *);
+extern void import_EUSER_ord_627(ngage_cpu_t *);
+extern void import_EUSER_ord_1370(ngage_cpu_t *);
+extern void import_EUSER_ord_828(ngage_cpu_t *);
+extern void import_EUSER_ord_824(ngage_cpu_t *);
+extern void import_EUSER_ord_1432(ngage_cpu_t *);
+extern void import_EUSER_ord_1422(ngage_cpu_t *);
+extern void import_EUSER_ord_1282(ngage_cpu_t *);
+extern void import_EUSER_ord_251(ngage_cpu_t *);
+extern void import_EUSER_ord_632(ngage_cpu_t *);
+extern void import_EUSER_ord_856(ngage_cpu_t *);
+extern void import_EUSER_ord_1(ngage_cpu_t *);
+extern void import_EUSER_ord_2(ngage_cpu_t *);
+extern void import_EUSER_ord_1407(ngage_cpu_t *);
+extern void import_EUSER_ord_467(ngage_cpu_t *);
+extern void import_EUSER_ord_207(ngage_cpu_t *);
+extern void import_EUSER_ord_91(ngage_cpu_t *);
+extern void import_EUSER_ord_99(ngage_cpu_t *);
+extern void import_EUSER_ord_956(ngage_cpu_t *);
+extern void import_EUSER_ord_1529(ngage_cpu_t *);
+extern void import_EUSER_ord_1614(ngage_cpu_t *);
+extern void import_EUSER_ord_1571(ngage_cpu_t *);
+extern void import_EUSER_ord_1527(ngage_cpu_t *);
+extern void import_EUSER_ord_1455(ngage_cpu_t *);
+extern void import_EUSER_ord_41(ngage_cpu_t *);
+extern void import_EUSER_ord_1569(ngage_cpu_t *);
+extern void import_EUSER_ord_869(ngage_cpu_t *);
+extern void import_EUSER_ord_809(ngage_cpu_t *);
+extern void import_EUSER_ord_1431(ngage_cpu_t *);
+extern void import_EUSER_ord_85(ngage_cpu_t *);
+extern void import_EUSER_ord_1086(ngage_cpu_t *);
+extern void import_EUSER_ord_621(ngage_cpu_t *);
+extern void import_EUSER_ord_248(ngage_cpu_t *);
+extern void import_EUSER_ord_531(ngage_cpu_t *);
+extern void import_EUSER_ord_1575(ngage_cpu_t *);
+extern void import_EUSER_ord_1557(ngage_cpu_t *);
+extern void import_EUSER_ord_1379(ngage_cpu_t *);
+extern void import_EUSER_ord_1515(ngage_cpu_t *);
+extern void import_EUSER_ord_1373(ngage_cpu_t *);
+extern void import_EUSER_ord_530(ngage_cpu_t *);
+extern void import_EUSER_ord_711(ngage_cpu_t *);
+extern void import_EUSER_ord_625(ngage_cpu_t *);
+extern void import_EUSER_ord_211(ngage_cpu_t *);
+extern void import_EUSER_ord_933(ngage_cpu_t *);
+extern void import_EUSER_ord_855(ngage_cpu_t *);
+extern void import_EUSER_ord_1247(ngage_cpu_t *);
+extern void import_EUSER_ord_1520(ngage_cpu_t *);
+extern void import_EUSER_ord_77(ngage_cpu_t *);
+extern void import_EUSER_ord_1246(ngage_cpu_t *);
+extern void import_EUSER_ord_979(ngage_cpu_t *);
+extern void import_EUSER_ord_1265(ngage_cpu_t *);
+extern void import_EUSER_ord_1395(ngage_cpu_t *);
+extern void import_EUSER_ord_13(ngage_cpu_t *);
+extern void import_EUSER_ord_962(ngage_cpu_t *);
+extern void import_EUSER_ord_1616(ngage_cpu_t *);
+extern void import_EUSER_ord_45(ngage_cpu_t *);
+extern void import_EUSER_ord_875(ngage_cpu_t *);
+extern void import_EUSER_ord_476(ngage_cpu_t *);
+extern void import_EUSER_ord_418(ngage_cpu_t *);
+extern void import_EUSER_ord_245(ngage_cpu_t *);
+extern void import_EUSER_ord_1636(ngage_cpu_t *);
+extern void import_EZLIB_ord_65(ngage_cpu_t *);
+extern void import_APPARC_ord_27(ngage_cpu_t *);
+extern void import_APPARC_ord_71(ngage_cpu_t *);
+extern void import_APPARC_ord_6(ngage_cpu_t *);
+extern void import_APPARC_ord_3(ngage_cpu_t *);
+extern void import_CONE_ord_167(ngage_cpu_t *);
+extern void import_CONE_ord_12(ngage_cpu_t *);
+extern void import_CONE_ord_101(ngage_cpu_t *);
+extern void import_CONE_ord_82(ngage_cpu_t *);
+extern void import_CONE_ord_90(ngage_cpu_t *);
+extern void import_CONE_ord_187(ngage_cpu_t *);
+extern void import_CONE_ord_96(ngage_cpu_t *);
+extern void import_CONE_ord_292(ngage_cpu_t *);
+extern void import_CONE_ord_293(ngage_cpu_t *);
+extern void import_CONE_ord_255(ngage_cpu_t *);
+extern void import_CONE_ord_256(ngage_cpu_t *);
+extern void import_CONE_ord_40(ngage_cpu_t *);
+extern void import_CONE_ord_214(ngage_cpu_t *);
+extern void import_CONE_ord_160(ngage_cpu_t *);
+extern void import_CONE_ord_236(ngage_cpu_t *);
+extern void import_CONE_ord_232(ngage_cpu_t *);
+extern void import_CONE_ord_226(ngage_cpu_t *);
+extern void import_CONE_ord_143(ngage_cpu_t *);
+extern void import_CONE_ord_55(ngage_cpu_t *);
+extern void import_CONE_ord_138(ngage_cpu_t *);
+extern void import_CONE_ord_200(ngage_cpu_t *);
+extern void import_CONE_ord_197(ngage_cpu_t *);
+extern void import_CONE_ord_29(ngage_cpu_t *);
+extern void import_CONE_ord_3(ngage_cpu_t *);
+extern void import_CONE_ord_153(ngage_cpu_t *);
+extern void import_CONE_ord_185(ngage_cpu_t *);
+extern void import_CONE_ord_208(ngage_cpu_t *);
+extern void import_CONE_ord_95(ngage_cpu_t *);
+extern void import_CONE_ord_139(ngage_cpu_t *);
+extern void import_CONE_ord_87(ngage_cpu_t *);
+extern void import_CONE_ord_72(ngage_cpu_t *);
+extern void import_CONE_ord_74(ngage_cpu_t *);
+extern void import_CONE_ord_84(ngage_cpu_t *);
+extern void import_CONE_ord_221(ngage_cpu_t *);
+extern void import_CONE_ord_147(ngage_cpu_t *);
+extern void import_CONE_ord_33(ngage_cpu_t *);
+extern void import_CONE_ord_28(ngage_cpu_t *);
+extern void import_CONE_ord_173(ngage_cpu_t *);
+extern void import_CONE_ord_177(ngage_cpu_t *);
+extern void import_CONE_ord_314(ngage_cpu_t *);
+extern void import_CONE_ord_312(ngage_cpu_t *);
+extern void import_CONE_ord_83(ngage_cpu_t *);
+extern void import_CONE_ord_223(ngage_cpu_t *);
+extern void import_EIKCORE_ord_67(ngage_cpu_t *);
+extern void import_EIKCORE_ord_224(ngage_cpu_t *);
+extern void import_EIKCORE_ord_233(ngage_cpu_t *);
+extern void import_EIKCORE_ord_144(ngage_cpu_t *);
+extern void import_EIKCORE_ord_147(ngage_cpu_t *);
+extern void import_EIKCORE_ord_74(ngage_cpu_t *);
+extern void import_EIKCORE_ord_81(ngage_cpu_t *);
+extern void import_EIKCORE_ord_133(ngage_cpu_t *);
+extern void import_EIKCORE_ord_198(ngage_cpu_t *);
+extern void import_EIKCORE_ord_134(ngage_cpu_t *);
+extern void import_EIKCORE_ord_124(ngage_cpu_t *);
+extern void import_EIKCORE_ord_51(ngage_cpu_t *);
+extern void import_EIKCORE_ord_82(ngage_cpu_t *);
+extern void import_EIKCORE_ord_206(ngage_cpu_t *);
+extern void import_EIKCORE_ord_149(ngage_cpu_t *);
+extern void import_EIKCORE_ord_150(ngage_cpu_t *);
+extern void import_EIKCORE_ord_84(ngage_cpu_t *);
+extern void import_EIKCORE_ord_179(ngage_cpu_t *);
+extern void import_EIKCORE_ord_48(ngage_cpu_t *);
+extern void import_EIKCORE_ord_75(ngage_cpu_t *);
+extern void import_EIKCORE_ord_31(ngage_cpu_t *);
+extern void import_EIKCORE_ord_157(ngage_cpu_t *);
+extern void import_EIKCORE_ord_65(ngage_cpu_t *);
+extern void import_EIKCORE_ord_64(ngage_cpu_t *);
+extern void import_EIKCORE_ord_121(ngage_cpu_t *);
+extern void import_EIKCORE_ord_226(ngage_cpu_t *);
+extern void import_EIKCORE_ord_40(ngage_cpu_t *);
+extern void import_EIKCORE_ord_76(ngage_cpu_t *);
+extern void import_EIKCORE_ord_264(ngage_cpu_t *);
+extern void import_EIKCORE_ord_290(ngage_cpu_t *);
+extern void import_EIKCORE_ord_80(ngage_cpu_t *);
+extern void import_EIKCORE_ord_243(ngage_cpu_t *);
+extern void import_EIKCORE_ord_213(ngage_cpu_t *);
+extern void import_EIKCORE_ord_219(ngage_cpu_t *);
+extern void import_EIKCORE_ord_116(ngage_cpu_t *);
+extern void import_EIKCORE_ord_52(ngage_cpu_t *);
+extern void import_EIKCORE_ord_66(ngage_cpu_t *);
+extern void import_EIKCORE_ord_130(ngage_cpu_t *);
+extern void import_EIKCORE_ord_161(ngage_cpu_t *);
+extern void import_EIKCORE_ord_200(ngage_cpu_t *);
+extern void import_EIKCORE_ord_155(ngage_cpu_t *);
+extern void import_EIKCORE_ord_68(ngage_cpu_t *);
+extern void import_EIKCORE_ord_100(ngage_cpu_t *);
+extern void import_EIKCORE_ord_86(ngage_cpu_t *);
+extern void import_EIKCORE_ord_142(ngage_cpu_t *);
+extern void import_EIKCORE_ord_146(ngage_cpu_t *);
+extern void import_EIKCORE_ord_123(ngage_cpu_t *);
+extern void import_EIKCORE_ord_204(ngage_cpu_t *);
+extern void import_EIKCORE_ord_253(ngage_cpu_t *);
+extern void import_EIKCORE_ord_222(ngage_cpu_t *);
+extern void import_EIKCORE_ord_49(ngage_cpu_t *);
+extern void import_EIKCORE_ord_122(ngage_cpu_t *);
+extern void import_EIKCORE_ord_30(ngage_cpu_t *);
+extern void import_EIKCORE_ord_143(ngage_cpu_t *);
+extern void import_EIKCORE_ord_71(ngage_cpu_t *);
+extern void import_EIKCORE_ord_20(ngage_cpu_t *);
+extern void import_EIKCORE_ord_151(ngage_cpu_t *);
+extern void import_EIKCORE_ord_214(ngage_cpu_t *);
+extern void import_EIKCORE_ord_17(ngage_cpu_t *);
+extern void import_EIKCORE_ord_61(ngage_cpu_t *);
+extern void import_AVKON_ord_757(ngage_cpu_t *);
+extern void import_AVKON_ord_1213(ngage_cpu_t *);
+extern void import_AVKON_ord_1529(ngage_cpu_t *);
+extern void import_AVKON_ord_2048(ngage_cpu_t *);
+extern void import_AVKON_ord_63(ngage_cpu_t *);
+extern void import_AVKON_ord_874(ngage_cpu_t *);
+extern void import_AVKON_ord_1272(ngage_cpu_t *);
+extern void import_AVKON_ord_808(ngage_cpu_t *);
+extern void import_AVKON_ord_1254(ngage_cpu_t *);
+extern void import_AVKON_ord_803(ngage_cpu_t *);
+extern void import_AVKON_ord_750(ngage_cpu_t *);
+extern void import_AVKON_ord_1352(ngage_cpu_t *);
+extern void import_AVKON_ord_1348(ngage_cpu_t *);
+extern void import_AVKON_ord_802(ngage_cpu_t *);
+extern void import_AVKON_ord_805(ngage_cpu_t *);
+extern void import_AVKON_ord_1267(ngage_cpu_t *);
+extern void import_AVKON_ord_1234(ngage_cpu_t *);
+extern void import_AVKON_ord_1206(ngage_cpu_t *);
+extern void import_AVKON_ord_2105(ngage_cpu_t *);
+extern void import_AVKON_ord_662(ngage_cpu_t *);
+extern void import_ETEL_ord_29(ngage_cpu_t *);
+extern void import_ETEL_ord_102(ngage_cpu_t *);
+extern void import_ETEL_ord_56(ngage_cpu_t *);
+extern void import_ETEL_ord_74(ngage_cpu_t *);
+extern void import_ETEL_ord_153(ngage_cpu_t *);
+extern void import_ETEL_ord_55(ngage_cpu_t *);
+extern void import_ETEL_ord_72(ngage_cpu_t *);
+extern void import_ETEL_ord_152(ngage_cpu_t *);
+extern void import_ETEL_ord_127(ngage_cpu_t *);
+extern void import_ETEL_ord_77(ngage_cpu_t *);
+extern void import_ETEL_ord_125(ngage_cpu_t *);
+extern void import_ETEL_ord_26(ngage_cpu_t *);
+extern void import_ETEL_ord_27(ngage_cpu_t *);
+extern void import_ETEL_ord_204(ngage_cpu_t *);
+extern void import_ETEL_ord_211(ngage_cpu_t *);
+extern void import_ETEL_ord_210(ngage_cpu_t *);
+extern void import_FBSCLI_ord_135(ngage_cpu_t *);
+extern void import_FBSCLI_ord_76(ngage_cpu_t *);
+extern void import_FBSCLI_ord_21(ngage_cpu_t *);
+extern void import_FBSCLI_ord_110(ngage_cpu_t *);
+extern void import_FBSCLI_ord_16(ngage_cpu_t *);
+extern void import_FBSCLI_ord_17(ngage_cpu_t *);
+extern void import_BITGDI_ord_86(ngage_cpu_t *);
+extern void import_BITGDI_ord_23(ngage_cpu_t *);
+extern void import_BITGDI_ord_112(ngage_cpu_t *);
+extern void import_BITGDI_ord_120(ngage_cpu_t *);
+extern void import_BITGDI_ord_123(ngage_cpu_t *);
+extern void import_EFSRV_ord_18(ngage_cpu_t *);
+extern void import_EFSRV_ord_146(ngage_cpu_t *);
+extern void import_EFSRV_ord_106(ngage_cpu_t *);
+extern void import_EFSRV_ord_21(ngage_cpu_t *);
+extern void import_EFSRV_ord_121(ngage_cpu_t *);
+extern void import_EFSRV_ord_25(ngage_cpu_t *);
+extern void import_EFSRV_ord_185(ngage_cpu_t *);
+extern void import_EFSRV_ord_136(ngage_cpu_t *);
+extern void import_EFSRV_ord_194(ngage_cpu_t *);
+extern void import_EFSRV_ord_162(ngage_cpu_t *);
+extern void import_EFSRV_ord_15(ngage_cpu_t *);
+extern void import_EFSRV_ord_29(ngage_cpu_t *);
+extern void import_EFSRV_ord_86(ngage_cpu_t *);
+extern void import_EFSRV_ord_212(ngage_cpu_t *);
+extern void import_EFSRV_ord_193(ngage_cpu_t *);
+extern void import_EFSRV_ord_230(ngage_cpu_t *);
+extern void import_EFSRV_ord_183(ngage_cpu_t *);
+extern void import_EFSRV_ord_33(ngage_cpu_t *);
+extern void import_EFSRV_ord_51(ngage_cpu_t *);
+extern void import_MEDIACLIENTAUDIOSTREAM_ord_1(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_1(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_30(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_37(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_41(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_27(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_28(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_20(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_2(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_34(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_6(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_40(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_36(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_39(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_24(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_3(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_57(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_9(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_15(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_14(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_8(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_11(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_7(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_56(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_33(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_32(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_5(ngage_cpu_t *);
+extern void import_GAMECOMMS_ord_53(ngage_cpu_t *);
+extern void sub_100a0090(ngage_cpu_t *);
+extern void import_GDI_ord_151(ngage_cpu_t *);
+extern void import_GDI_ord_101(ngage_cpu_t *);
+extern void import_GDI_ord_108(ngage_cpu_t *);
+extern void import_HAL_ord_1(ngage_cpu_t *);
+extern void import_MSGS_ord_185(ngage_cpu_t *);
+extern void import_MSGS_ord_143(ngage_cpu_t *);
+extern void import_MSGS_ord_3(ngage_cpu_t *);
+extern void import_SIMKIN_ord_185(ngage_cpu_t *);
+extern void import_SIMKIN_ord_85(ngage_cpu_t *);
+extern void import_SIMKIN_ord_29(ngage_cpu_t *);
+extern void import_SIMKIN_ord_237(ngage_cpu_t *);
+extern void import_SIMKIN_ord_42(ngage_cpu_t *);
+extern void import_SIMKIN_ord_37(ngage_cpu_t *);
+extern void import_SIMKIN_ord_40(ngage_cpu_t *);
+extern void import_SIMKIN_ord_80(ngage_cpu_t *);
+extern void import_SIMKIN_ord_22(ngage_cpu_t *);
+extern void import_SIMKIN_ord_9(ngage_cpu_t *);
+extern void import_SIMKIN_ord_192(ngage_cpu_t *);
+extern void import_SIMKIN_ord_158(ngage_cpu_t *);
+extern void import_SIMKIN_ord_109(ngage_cpu_t *);
+extern void import_SIMKIN_ord_121(ngage_cpu_t *);
+extern void import_SIMKIN_ord_184(ngage_cpu_t *);
+extern void import_SIMKIN_ord_84(ngage_cpu_t *);
+extern void import_SIMKIN_ord_88(ngage_cpu_t *);
+extern void import_SIMKIN_ord_236(ngage_cpu_t *);
+extern void import_SIMKIN_ord_141(ngage_cpu_t *);
+extern void import_SIMKIN_ord_232(ngage_cpu_t *);
+extern void import_SIMKIN_ord_163(ngage_cpu_t *);
+extern void import_SIMKIN_ord_118(ngage_cpu_t *);
+extern void import_SIMKIN_ord_108(ngage_cpu_t *);
+extern void import_SIMKIN_ord_107(ngage_cpu_t *);
+extern void import_SIMKIN_ord_161(ngage_cpu_t *);
+extern void import_SIMKIN_ord_157(ngage_cpu_t *);
+extern void import_SIMKIN_ord_154(ngage_cpu_t *);
+extern void import_SIMKIN_ord_234(ngage_cpu_t *);
+extern void import_SIMKIN_ord_165(ngage_cpu_t *);
+extern void import_SIMKIN_ord_20(ngage_cpu_t *);
+extern void import_SIMKIN_ord_177(ngage_cpu_t *);
+extern void import_SIMKIN_ord_59(ngage_cpu_t *);
+extern void import_SIMKIN_ord_43(ngage_cpu_t *);
+extern void import_SIMKIN_ord_60(ngage_cpu_t *);
+extern void import_SIMKIN_ord_101(ngage_cpu_t *);
+extern void import_SIMKIN_ord_38(ngage_cpu_t *);
+extern void import_SIMKIN_ord_159(ngage_cpu_t *);
+extern void import_SIMKIN_ord_198(ngage_cpu_t *);
+extern void import_SIMKIN_ord_200(ngage_cpu_t *);
+extern void import_SIMKIN_ord_50(ngage_cpu_t *);
+extern void import_SIMKIN_ord_211(ngage_cpu_t *);
+extern void import_SIMKIN_ord_229(ngage_cpu_t *);
+extern void import_SIMKIN_ord_132(ngage_cpu_t *);
+extern void import_SIMKIN_ord_26(ngage_cpu_t *);
+extern void import_SIMKIN_ord_259(ngage_cpu_t *);
+extern void import_SIMKIN_ord_11(ngage_cpu_t *);
+extern void import_SIMKIN_ord_17(ngage_cpu_t *);
+extern void import_SIMKIN_ord_120(ngage_cpu_t *);
+extern void import_SIMKIN_ord_183(ngage_cpu_t *);
+extern void import_SIMKIN_ord_83(ngage_cpu_t *);
+extern void import_SIMKIN_ord_87(ngage_cpu_t *);
+extern void import_SIMKIN_ord_235(ngage_cpu_t *);
+extern void import_SIMKIN_ord_140(ngage_cpu_t *);
+extern void import_SIMKIN_ord_233(ngage_cpu_t *);
+extern void import_SIMKIN_ord_164(ngage_cpu_t *);
+extern void import_SIMKIN_ord_191(ngage_cpu_t *);
+extern void import_SIMKIN_ord_117(ngage_cpu_t *);
+extern void import_SIMKIN_ord_106(ngage_cpu_t *);
+extern void import_SIMKIN_ord_105(ngage_cpu_t *);
+extern void import_SIMKIN_ord_160(ngage_cpu_t *);
+extern void import_SIMKIN_ord_156(ngage_cpu_t *);
+extern void import_SIMKIN_ord_2(ngage_cpu_t *);
+extern void import_SIMKIN_ord_102(ngage_cpu_t *);
+extern void import_SIMKIN_ord_89(ngage_cpu_t *);
+extern void import_ESTLIB_ord_82(ngage_cpu_t *);
+extern void import_ESTLIB_ord_316(ngage_cpu_t *);
+extern void import_ESTLIB_ord_342(ngage_cpu_t *);
+extern void import_ESTLIB_ord_317(ngage_cpu_t *);
+extern void import_ESTLIB_ord_188(ngage_cpu_t *);
+extern void import_ESTLIB_ord_180(ngage_cpu_t *);
+extern void import_ESTLIB_ord_193(ngage_cpu_t *);
+extern void import_ESTLIB_ord_83(ngage_cpu_t *);
+extern void import_ESTLIB_ord_9(ngage_cpu_t *);
+extern void import_ESTLIB_ord_181(ngage_cpu_t *);
+extern void import_ESTLIB_ord_177(ngage_cpu_t *);
+extern void import_ESTLIB_ord_315(ngage_cpu_t *);
+extern void import_ESTLIB_ord_157(ngage_cpu_t *);
+extern void import_ESTLIB_ord_187(ngage_cpu_t *);
+extern void import_ESTLIB_ord_58(ngage_cpu_t *);
+extern void import_ESTLIB_ord_64(ngage_cpu_t *);
+extern void import_ESTLIB_ord_51(ngage_cpu_t *);
+extern void import_ESTLIB_ord_49(ngage_cpu_t *);
+extern void import_ESTLIB_ord_59(ngage_cpu_t *);
+extern void import_ESTLIB_ord_6(ngage_cpu_t *);
+extern void import_ESTLIB_ord_291(ngage_cpu_t *);
+extern void import_ESTLIB_ord_128(ngage_cpu_t *);
+extern void import_ESTLIB_ord_178(ngage_cpu_t *);
+extern void import_ESTLIB_ord_56(ngage_cpu_t *);
+extern void import_ESTLIB_ord_3(ngage_cpu_t *);
+extern void import_ESTLIB_ord_65(ngage_cpu_t *);
+extern void import_ESTLIB_ord_173(ngage_cpu_t *);
+extern void import_ESTLIB_ord_171(ngage_cpu_t *);
+extern void import_ESTLIB_ord_174(ngage_cpu_t *);
+extern void import_WS32_ord_268(ngage_cpu_t *);
+extern void import_WS32_ord_43(ngage_cpu_t *);
+extern void import_WS32_ord_109(ngage_cpu_t *);
+extern void import_WS32_ord_74(ngage_cpu_t *);
+extern void import_ESOCK_ord_209(ngage_cpu_t *);
+extern void import_ESOCK_ord_217(ngage_cpu_t *);
+extern void import_ESOCK_ord_48(ngage_cpu_t *);
+extern void import_ESOCK_ord_62(ngage_cpu_t *);
+extern void import_ESOCK_ord_129(ngage_cpu_t *);
+extern void import_ESOCK_ord_87(ngage_cpu_t *);
+extern void import_ESOCK_ord_45(ngage_cpu_t *);
+extern void sub_100a0790(ngage_cpu_t *);
+extern void sub_100a0798(ngage_cpu_t *);
+extern void sub_100a079c(ngage_cpu_t *);
+extern void sub_100a07e8(ngage_cpu_t *);
+extern void sub_100a0834(ngage_cpu_t *);
+extern void sub_100a0880(ngage_cpu_t *);
+extern void sub_100a08a8(ngage_cpu_t *);
+extern void sub_100a08b0(ngage_cpu_t *);
+extern void sub_100a08d0(ngage_cpu_t *);
+extern void sub_100a0934(ngage_cpu_t *);
+extern void sub_100a0968(ngage_cpu_t *);
+extern void sub_100a099c(ngage_cpu_t *);
+extern void sub_100a0a28(ngage_cpu_t *);
+extern void sub_100a0ab4(ngage_cpu_t *);
+extern void sub_100a0b40(ngage_cpu_t *);
+extern void sub_100a0bcc(ngage_cpu_t *);
+extern void sub_100a0c58(ngage_cpu_t *);
+extern void sub_100a0ce4(ngage_cpu_t *);
+extern void sub_100a0ce8(ngage_cpu_t *);
+extern void sub_100a0cec(ngage_cpu_t *);
+extern void sub_100a14ec(ngage_cpu_t *);
+extern void sub_100a14f8(ngage_cpu_t *);
+extern void sub_100a150c(ngage_cpu_t *);
+extern void sub_100a1514(ngage_cpu_t *);
+extern void sub_100a151c(ngage_cpu_t *);
+extern void sub_100a152c(ngage_cpu_t *);
+extern void sub_100a1534(ngage_cpu_t *);
+extern void sub_100a153c(ngage_cpu_t *);
+extern void sub_100a1544(ngage_cpu_t *);
+extern void sub_100a154c(ngage_cpu_t *);
+extern void sub_100a1554(ngage_cpu_t *);
+extern void sub_100a155c(ngage_cpu_t *);
+extern void sub_100a1564(ngage_cpu_t *);
+extern void sub_100a1574(ngage_cpu_t *);
+extern void sub_100a1584(ngage_cpu_t *);
+extern void sub_100a158c(ngage_cpu_t *);
+extern void sub_100a1594(ngage_cpu_t *);
+extern void sub_100a15a4(ngage_cpu_t *);
+extern void sub_100a15ac(ngage_cpu_t *);
+extern void sub_100a15b8(ngage_cpu_t *);
+extern void sub_100a15c0(ngage_cpu_t *);
+extern void sub_100a15c8(ngage_cpu_t *);
+extern void sub_100a15d0(ngage_cpu_t *);
+extern void sub_100a15d8(ngage_cpu_t *);
+extern void sub_100a15e0(ngage_cpu_t *);
+extern void sub_100a15f0(ngage_cpu_t *);
+extern void sub_100a15f8(ngage_cpu_t *);
+extern void sub_100a1600(ngage_cpu_t *);
+extern void sub_100a1608(ngage_cpu_t *);
+extern void sub_100a161c(ngage_cpu_t *);
+extern void sub_100a1624(ngage_cpu_t *);
+extern void sub_100a162c(ngage_cpu_t *);
+extern void sub_100a1634(ngage_cpu_t *);
+extern void sub_100a163c(ngage_cpu_t *);
+extern void sub_100a1644(ngage_cpu_t *);
+extern void sub_100a164c(ngage_cpu_t *);
+extern void sub_100a1654(ngage_cpu_t *);
+extern void sub_100a165c(ngage_cpu_t *);
+extern void sub_100a1664(ngage_cpu_t *);
+extern void sub_100a166c(ngage_cpu_t *);
+extern void sub_100a1674(ngage_cpu_t *);
+extern void sub_100a167c(ngage_cpu_t *);
+extern void sub_100a1684(ngage_cpu_t *);
+extern void sub_100a168c(ngage_cpu_t *);
+extern void sub_100a169c(ngage_cpu_t *);
+extern void sub_100a16a4(ngage_cpu_t *);
+extern void sub_100a16ac(ngage_cpu_t *);
+extern void sub_100a16c4(ngage_cpu_t *);
+extern void sub_100a16cc(ngage_cpu_t *);
+extern void sub_100a16d4(ngage_cpu_t *);
+extern void sub_100a16dc(ngage_cpu_t *);
+extern void sub_100a16e4(ngage_cpu_t *);
+extern void sub_100a16ec(ngage_cpu_t *);
+extern void sub_100a16f4(ngage_cpu_t *);
+extern void sub_100a16fc(ngage_cpu_t *);
+extern void sub_100a1704(ngage_cpu_t *);
+extern void sub_100a1714(ngage_cpu_t *);
+extern void sub_100a171c(ngage_cpu_t *);
+extern void sub_100a1724(ngage_cpu_t *);
+extern void sub_100a172c(ngage_cpu_t *);
+extern void sub_100a1734(ngage_cpu_t *);
+extern void sub_100a173c(ngage_cpu_t *);
+extern void sub_100a1744(ngage_cpu_t *);
+extern void sub_100a174c(ngage_cpu_t *);
+extern void sub_100a175c(ngage_cpu_t *);
+extern void sub_100a1770(ngage_cpu_t *);
+extern void sub_100a1778(ngage_cpu_t *);
+extern void sub_100a17c0(ngage_cpu_t *);
+extern void sub_100a17dc(ngage_cpu_t *);
+extern void sub_100a17e0(ngage_cpu_t *);
+extern void sub_100a17e4(ngage_cpu_t *);
+extern void sub_100a17ec(ngage_cpu_t *);
+extern void sub_100a17f0(ngage_cpu_t *);
+extern void sub_100a17f4(ngage_cpu_t *);
+extern void sub_100a17f8(ngage_cpu_t *);
+extern void sub_100a193c(ngage_cpu_t *);
+extern void sub_100a19c8(ngage_cpu_t *);
+extern void sub_100a1a20(ngage_cpu_t *);
+extern void sub_100a1a78(ngage_cpu_t *);
+extern void sub_100a1ad0(ngage_cpu_t *);
+extern void sub_100a1b28(ngage_cpu_t *);
+extern void sub_100a1b80(ngage_cpu_t *);
+extern void sub_100a1bd8(ngage_cpu_t *);
+extern void sub_100a1c30(ngage_cpu_t *);
+extern void sub_100a1c88(ngage_cpu_t *);
+extern void sub_100a1ce0(ngage_cpu_t *);
+extern void sub_100a1d38(ngage_cpu_t *);
+extern void sub_100a1d90(ngage_cpu_t *);
+extern void sub_100a1de8(ngage_cpu_t *);
+extern void sub_100a1e40(ngage_cpu_t *);
+extern void sub_100a1e98(ngage_cpu_t *);
+extern void sub_100a1ef0(ngage_cpu_t *);
+extern void sub_100a1f48(ngage_cpu_t *);
+extern void sub_100a1fa0(ngage_cpu_t *);
+extern void sub_100a1ff8(ngage_cpu_t *);
+extern void sub_100a2050(ngage_cpu_t *);
+extern void sub_100a20a8(ngage_cpu_t *);
+extern void sub_100a2104(ngage_cpu_t *);
+extern void sub_100a210c(ngage_cpu_t *);
+extern void sub_100a211c(ngage_cpu_t *);
+extern void sub_100a2124(ngage_cpu_t *);
+extern void sub_100a212c(ngage_cpu_t *);
+extern void sub_100a2134(ngage_cpu_t *);
+extern void sub_100a213c(ngage_cpu_t *);
+extern void sub_100a2148(ngage_cpu_t *);
+extern void sub_100a2168(ngage_cpu_t *);
+extern void sub_100a216c(ngage_cpu_t *);
+extern void sub_100a2178(ngage_cpu_t *);
+extern void sub_100a2180(ngage_cpu_t *);
+extern void sub_100a2188(ngage_cpu_t *);
+extern void sub_100a21ec(ngage_cpu_t *);
+extern void sub_100a21f4(ngage_cpu_t *);
+extern void sub_100a22e8(ngage_cpu_t *);
+extern void sub_100a22f4(ngage_cpu_t *);
+extern void sub_100a2318(ngage_cpu_t *);
+extern void sub_100a2330(ngage_cpu_t *);
+extern void sub_100a2348(ngage_cpu_t *);
+extern void sub_100a2354(ngage_cpu_t *);
+extern void sub_100a2360(ngage_cpu_t *);
+extern void sub_100a2378(ngage_cpu_t *);
+extern void sub_100a2390(ngage_cpu_t *);
+extern void sub_100a239c(ngage_cpu_t *);
+extern void sub_100a23a8(ngage_cpu_t *);
+extern void sub_100a23b4(ngage_cpu_t *);
+extern void sub_100a23cc(ngage_cpu_t *);
+extern void sub_100a23d8(ngage_cpu_t *);
+extern void sub_100a23e4(ngage_cpu_t *);
+extern void sub_100a23f0(ngage_cpu_t *);
+extern void sub_100a23fc(ngage_cpu_t *);
+extern void sub_100a2408(ngage_cpu_t *);
+extern void sub_100a2414(ngage_cpu_t *);
+extern void sub_100a2420(ngage_cpu_t *);
+extern void sub_100a242c(ngage_cpu_t *);
+extern void sub_100a2450(ngage_cpu_t *);
+extern void sub_100a245c(ngage_cpu_t *);
+extern void sub_100a2468(ngage_cpu_t *);
+extern void sub_100a2474(ngage_cpu_t *);
+extern void sub_100a2480(ngage_cpu_t *);
+extern void sub_100a2498(ngage_cpu_t *);
+extern void sub_100a24a4(ngage_cpu_t *);
+extern void sub_100a24bc(ngage_cpu_t *);
+extern void sub_100a24ec(ngage_cpu_t *);
+extern void sub_100a24f8(ngage_cpu_t *);
+extern void sub_100a2504(ngage_cpu_t *);
+extern void sub_100a2528(ngage_cpu_t *);
+extern void sub_100a2534(ngage_cpu_t *);
+extern void sub_100a254c(ngage_cpu_t *);
+extern void sub_100a2558(ngage_cpu_t *);
+extern void sub_100a2564(ngage_cpu_t *);
+extern void sub_100a25a0(ngage_cpu_t *);
+extern void sub_100a25c4(ngage_cpu_t *);
+extern void sub_100a25d0(ngage_cpu_t *);
+extern void sub_100a25e8(ngage_cpu_t *);
+extern void sub_100a2600(ngage_cpu_t *);
+extern void sub_100a2648(ngage_cpu_t *);
+extern void sub_100a2650(ngage_cpu_t *);
+extern void sub_100a2664(ngage_cpu_t *);
+extern void sub_100a266c(ngage_cpu_t *);
+extern void sub_100a2678(ngage_cpu_t *);
+extern void sub_100a2680(ngage_cpu_t *);
+extern void sub_100a2684(ngage_cpu_t *);
+extern void sub_100a26a4(ngage_cpu_t *);
+extern void sub_100a2708(ngage_cpu_t *);
+extern void sub_100a2798(ngage_cpu_t *);
+extern void sub_100a28e4(ngage_cpu_t *);
+extern void sub_100a2944(ngage_cpu_t *);
+extern void sub_100a29c4(ngage_cpu_t *);
+extern void sub_100a2a38(ngage_cpu_t *);
+extern void sub_100a2b38(ngage_cpu_t *);
+extern void sub_100a2b50(ngage_cpu_t *);
+extern void sub_100a2c3c(ngage_cpu_t *);
+extern void sub_100a2c84(ngage_cpu_t *);
+extern void sub_100a2ce0(ngage_cpu_t *);
+extern void sub_100a2d00(ngage_cpu_t *);
+extern void sub_100a2d8c(ngage_cpu_t *);
+extern void sub_100a2df0(ngage_cpu_t *);
+extern void sub_100a2f40(ngage_cpu_t *);
+extern void sub_100a2f88(ngage_cpu_t *);
+extern void sub_100a3064(ngage_cpu_t *);
+extern void sub_100a30ec(ngage_cpu_t *);
+extern void sub_100a3168(ngage_cpu_t *);
+extern void sub_100a31f0(ngage_cpu_t *);
+extern void sub_100a3284(ngage_cpu_t *);
+extern void sub_100a32dc(ngage_cpu_t *);
+extern void sub_100a3310(ngage_cpu_t *);
+extern void sub_100a3398(ngage_cpu_t *);
+extern void sub_100a3420(ngage_cpu_t *);
+extern void sub_100a3498(ngage_cpu_t *);
+extern void sub_100a34fc(ngage_cpu_t *);
+extern void sub_100a354c(ngage_cpu_t *);
+extern void sub_100a359c(ngage_cpu_t *);
+extern void sub_100a35ec(ngage_cpu_t *);
+extern void sub_100a363c(ngage_cpu_t *);
+extern void sub_100a368c(ngage_cpu_t *);
+extern void sub_100a36dc(ngage_cpu_t *);
+extern void sub_100a372c(ngage_cpu_t *);
+extern void sub_100a377c(ngage_cpu_t *);
+extern void sub_100a37cc(ngage_cpu_t *);
+extern void sub_100a381c(ngage_cpu_t *);
+extern void sub_100a386c(ngage_cpu_t *);
+extern void sub_100a38bc(ngage_cpu_t *);
+extern void sub_100a390c(ngage_cpu_t *);
+extern void sub_100a395c(ngage_cpu_t *);
+extern void sub_100a39ac(ngage_cpu_t *);
+extern void sub_100a39fc(ngage_cpu_t *);
+extern void sub_100a3a4c(ngage_cpu_t *);
+extern void sub_100a3a9c(ngage_cpu_t *);
+extern void sub_100a3aec(ngage_cpu_t *);
+extern void sub_100a3b3c(ngage_cpu_t *);
+extern void sub_100a3b8c(ngage_cpu_t *);
+extern void sub_100a3c0c(ngage_cpu_t *);
+extern void sub_100a3c30(ngage_cpu_t *);
+extern void sub_100a3f8c(ngage_cpu_t *);
+extern void sub_100a3f94(ngage_cpu_t *);
+extern void sub_100a3fa8(ngage_cpu_t *);
+extern void sub_100a3fbc(ngage_cpu_t *);
+extern void sub_100a3fd0(ngage_cpu_t *);
+extern void sub_100a3fe4(ngage_cpu_t *);
+extern void sub_100a3ff8(ngage_cpu_t *);
+extern void sub_100a400c(ngage_cpu_t *);
+extern void sub_100a4020(ngage_cpu_t *);
+extern void sub_100a4034(ngage_cpu_t *);
+extern void sub_100a4048(ngage_cpu_t *);
+extern void sub_100a405c(ngage_cpu_t *);
+extern void sub_100a4070(ngage_cpu_t *);
+extern void sub_100a4084(ngage_cpu_t *);
+extern void sub_100a4098(ngage_cpu_t *);
+extern void sub_100a40ac(ngage_cpu_t *);
+extern void sub_100a40c0(ngage_cpu_t *);
+extern void sub_100a40d4(ngage_cpu_t *);
+extern void sub_100a40e8(ngage_cpu_t *);
+extern void sub_100a40fc(ngage_cpu_t *);
+extern void sub_100a4110(ngage_cpu_t *);
+extern void sub_100a4124(ngage_cpu_t *);
+extern void sub_100a4138(ngage_cpu_t *);
+extern void sub_100a414c(ngage_cpu_t *);
+extern void sub_100a4160(ngage_cpu_t *);
+extern void sub_100a45c8(ngage_cpu_t *);
+extern void sub_100a45e4(ngage_cpu_t *);
+extern void sub_100a464c(ngage_cpu_t *);
+extern void sub_100a468c(ngage_cpu_t *);
+extern void sub_100a46cc(ngage_cpu_t *);
+extern void sub_100a470c(ngage_cpu_t *);
+extern void sub_100a474c(ngage_cpu_t *);
+extern void sub_100a478c(ngage_cpu_t *);
+extern void sub_100a47cc(ngage_cpu_t *);
+extern void sub_100a480c(ngage_cpu_t *);
+extern void sub_100a484c(ngage_cpu_t *);
+extern void sub_100a488c(ngage_cpu_t *);
+extern void sub_100a48cc(ngage_cpu_t *);
+extern void sub_100a490c(ngage_cpu_t *);
+extern void sub_100a494c(ngage_cpu_t *);
+extern void sub_100a498c(ngage_cpu_t *);
+extern void sub_100a49cc(ngage_cpu_t *);
+extern void sub_100a4a40(ngage_cpu_t *);
+extern void sub_100a4ac8(ngage_cpu_t *);
+extern void sub_100a4af4(ngage_cpu_t *);
+extern void sub_100a4b20(ngage_cpu_t *);
+extern void sub_100a4b4c(ngage_cpu_t *);
+extern void sub_100a4b80(ngage_cpu_t *);
+extern void sub_100a4ce4(ngage_cpu_t *);
+extern void sub_100f6afc(ngage_cpu_t *);
+
+const ngage_function_entry shadowkey_function_registry[] = {
+    { 0x10000004u, sub_10000004 },
+    { 0x100001acu, sub_100001ac },
+    { 0x10000498u, sub_10000498 },
+    { 0x100008f0u, sub_100008f0 },
+    { 0x10000ab8u, sub_10000ab8 },
+    { 0x10000c64u, sub_10000c64 },
+    { 0x100016e0u, sub_100016e0 },
+    { 0x100017c8u, sub_100017c8 },
+    { 0x10001fd0u, sub_10001fd0 },
+    { 0x10002458u, sub_10002458 },
+    { 0x10002550u, sub_10002550 },
+    { 0x100027e0u, sub_100027e0 },
+    { 0x10002a38u, sub_10002a38 },
+    { 0x10002bfcu, sub_10002bfc },
+    { 0x10002cf8u, sub_10002cf8 },
+    { 0x10002f74u, sub_10002f74 },
+    { 0x1000308cu, sub_1000308c },
+    { 0x1000336cu, sub_1000336c },
+    { 0x100034f8u, sub_100034f8 },
+    { 0x10003674u, sub_10003674 },
+    { 0x10003810u, sub_10003810 },
+    { 0x10004d70u, sub_10004d70 },
+    { 0x10004f84u, sub_10004f84 },
+    { 0x10005164u, sub_10005164 },
+    { 0x10005320u, sub_10005320 },
+    { 0x10005730u, sub_10005730 },
+    { 0x100058e0u, sub_100058e0 },
+    { 0x10005970u, sub_10005970 },
+    { 0x10005a84u, sub_10005a84 },
+    { 0x10005ad4u, sub_10005ad4 },
+    { 0x10005b60u, sub_10005b60 },
+    { 0x10005be4u, sub_10005be4 },
+    { 0x10005c6cu, sub_10005c6c },
+    { 0x10005c74u, sub_10005c74 },
+    { 0x10005d58u, sub_10005d58 },
+    { 0x10005d5cu, sub_10005d5c },
+    { 0x10005d60u, sub_10005d60 },
+    { 0x10005e24u, sub_10005e24 },
+    { 0x10005e54u, sub_10005e54 },
+    { 0x10005e58u, sub_10005e58 },
+    { 0x10005f48u, sub_10005f48 },
+    { 0x10005fbcu, sub_10005fbc },
+    { 0x10005ff8u, sub_10005ff8 },
+    { 0x1000601cu, sub_1000601c },
+    { 0x10006064u, sub_10006064 },
+    { 0x100060b8u, sub_100060b8 },
+    { 0x100060c0u, sub_100060c0 },
+    { 0x10006164u, sub_10006164 },
+    { 0x100062acu, sub_100062ac },
+    { 0x1000634cu, sub_1000634c },
+    { 0x100063ecu, sub_100063ec },
+    { 0x100063f0u, sub_100063f0 },
+    { 0x10006480u, sub_10006480 },
+    { 0x10006510u, sub_10006510 },
+    { 0x100065b4u, sub_100065b4 },
+    { 0x10006658u, sub_10006658 },
+    { 0x10006670u, sub_10006670 },
+    { 0x1000668cu, sub_1000668c },
+    { 0x100066e8u, sub_100066e8 },
+    { 0x100066f4u, sub_100066f4 },
+    { 0x10006704u, sub_10006704 },
+    { 0x10006760u, sub_10006760 },
+    { 0x10006800u, sub_10006800 },
+    { 0x10006840u, sub_10006840 },
+    { 0x10006938u, sub_10006938 },
+    { 0x100069fcu, sub_100069fc },
+    { 0x10006a34u, sub_10006a34 },
+    { 0x10006a7cu, sub_10006a7c },
+    { 0x10006aa4u, sub_10006aa4 },
+    { 0x10006b0cu, sub_10006b0c },
+    { 0x10006b44u, sub_10006b44 },
+    { 0x10006c20u, sub_10006c20 },
+    { 0x10006c54u, sub_10006c54 },
+    { 0x10006dbcu, sub_10006dbc },
+    { 0x10006ee4u, sub_10006ee4 },
+    { 0x10006f8cu, sub_10006f8c },
+    { 0x10006f90u, sub_10006f90 },
+    { 0x10007008u, sub_10007008 },
+    { 0x1000700cu, sub_1000700c },
+    { 0x1000702cu, sub_1000702c },
+    { 0x100070ecu, sub_100070ec },
+    { 0x100071bcu, sub_100071bc },
+    { 0x10007214u, sub_10007214 },
+    { 0x10007ca8u, sub_10007ca8 },
+    { 0x10007d84u, sub_10007d84 },
+    { 0x10007da0u, sub_10007da0 },
+    { 0x10007da4u, sub_10007da4 },
+    { 0x10007decu, sub_10007dec },
+    { 0x10007f34u, sub_10007f34 },
+    { 0x10007f64u, sub_10007f64 },
+    { 0x10007fb4u, sub_10007fb4 },
+    { 0x10008064u, sub_10008064 },
+    { 0x100080a0u, sub_100080a0 },
+    { 0x10008174u, sub_10008174 },
+    { 0x100081fcu, sub_100081fc },
+    { 0x10008290u, sub_10008290 },
+    { 0x10008464u, sub_10008464 },
+    { 0x1000857cu, sub_1000857c },
+    { 0x10008678u, sub_10008678 },
+    { 0x10008758u, sub_10008758 },
+    { 0x1000881cu, sub_1000881c },
+    { 0x10008b34u, sub_10008b34 },
+    { 0x10008cf8u, sub_10008cf8 },
+    { 0x10008db0u, sub_10008db0 },
+    { 0x10008e70u, sub_10008e70 },
+    { 0x10008fe8u, sub_10008fe8 },
+    { 0x100090bcu, sub_100090bc },
+    { 0x1000915cu, sub_1000915c },
+    { 0x100091c8u, sub_100091c8 },
+    { 0x10009228u, sub_10009228 },
+    { 0x10009260u, sub_10009260 },
+    { 0x100092b0u, sub_100092b0 },
+    { 0x100092f4u, sub_100092f4 },
+    { 0x10009324u, sub_10009324 },
+    { 0x10009374u, sub_10009374 },
+    { 0x10009460u, sub_10009460 },
+    { 0x100094acu, sub_100094ac },
+    { 0x10009530u, sub_10009530 },
+    { 0x100095d4u, sub_100095d4 },
+    { 0x10009654u, sub_10009654 },
+    { 0x100096a8u, sub_100096a8 },
+    { 0x100096b8u, sub_100096b8 },
+    { 0x100096e8u, sub_100096e8 },
+    { 0x100097a8u, sub_100097a8 },
+    { 0x100097d4u, sub_100097d4 },
+    { 0x10009840u, sub_10009840 },
+    { 0x10009874u, sub_10009874 },
+    { 0x100098a8u, sub_100098a8 },
+    { 0x10009904u, sub_10009904 },
+    { 0x10009a00u, sub_10009a00 },
+    { 0x10009b2cu, sub_10009b2c },
+    { 0x10009bc4u, sub_10009bc4 },
+    { 0x10009f2cu, sub_10009f2c },
+    { 0x1000a09cu, sub_1000a09c },
+    { 0x1000a21cu, sub_1000a21c },
+    { 0x1000a9f4u, sub_1000a9f4 },
+    { 0x1000b064u, sub_1000b064 },
+    { 0x1000b0acu, sub_1000b0ac },
+    { 0x1000b100u, sub_1000b100 },
+    { 0x1000b160u, sub_1000b160 },
+    { 0x1000b174u, sub_1000b174 },
+    { 0x1000b1e8u, sub_1000b1e8 },
+    { 0x1000b2bcu, sub_1000b2bc },
+    { 0x1000b378u, sub_1000b378 },
+    { 0x1000b3f4u, sub_1000b3f4 },
+    { 0x1000b41cu, sub_1000b41c },
+    { 0x1000b49cu, sub_1000b49c },
+    { 0x1000b548u, sub_1000b548 },
+    { 0x1000b5ccu, sub_1000b5cc },
+    { 0x1000b634u, sub_1000b634 },
+    { 0x1000b798u, sub_1000b798 },
+    { 0x1000b92cu, sub_1000b92c },
+    { 0x1000b9acu, sub_1000b9ac },
+    { 0x1000b9c8u, sub_1000b9c8 },
+    { 0x1000ba24u, sub_1000ba24 },
+    { 0x1000ba7cu, sub_1000ba7c },
+    { 0x1000ba9cu, sub_1000ba9c },
+    { 0x1000bab8u, sub_1000bab8 },
+    { 0x1000baf4u, sub_1000baf4 },
+    { 0x1000bb28u, sub_1000bb28 },
+    { 0x1000bc30u, sub_1000bc30 },
+    { 0x1000be04u, sub_1000be04 },
+    { 0x1000bf14u, sub_1000bf14 },
+    { 0x1000bff4u, sub_1000bff4 },
+    { 0x1000c198u, sub_1000c198 },
+    { 0x1000c2acu, sub_1000c2ac },
+    { 0x1000c35cu, sub_1000c35c },
+    { 0x1000c440u, sub_1000c440 },
+    { 0x1000c6b0u, sub_1000c6b0 },
+    { 0x1000c7ccu, sub_1000c7cc },
+    { 0x1000cb58u, sub_1000cb58 },
+    { 0x1000cd64u, sub_1000cd64 },
+    { 0x1000ce6cu, sub_1000ce6c },
+    { 0x1000cf68u, sub_1000cf68 },
+    { 0x1000d3ecu, sub_1000d3ec },
+    { 0x1000d534u, sub_1000d534 },
+    { 0x1000d690u, sub_1000d690 },
+    { 0x1000d7acu, sub_1000d7ac },
+    { 0x1000d8c0u, sub_1000d8c0 },
+    { 0x1000d8e0u, sub_1000d8e0 },
+    { 0x1000d930u, sub_1000d930 },
+    { 0x1000d980u, sub_1000d980 },
+    { 0x1000da2cu, sub_1000da2c },
+    { 0x1000da54u, sub_1000da54 },
+    { 0x1000daacu, sub_1000daac },
+    { 0x1000dad0u, sub_1000dad0 },
+    { 0x1000daecu, sub_1000daec },
+    { 0x1000db04u, sub_1000db04 },
+    { 0x1000db24u, sub_1000db24 },
+    { 0x1000db5cu, sub_1000db5c },
+    { 0x1000dbc0u, sub_1000dbc0 },
+    { 0x1000dc08u, sub_1000dc08 },
+    { 0x1000dc3cu, sub_1000dc3c },
+    { 0x1000dcb4u, sub_1000dcb4 },
+    { 0x1000dd34u, sub_1000dd34 },
+    { 0x1000ddecu, sub_1000ddec },
+    { 0x1000de50u, sub_1000de50 },
+    { 0x1000df3cu, sub_1000df3c },
+    { 0x1000dfc4u, sub_1000dfc4 },
+    { 0x1000e02cu, sub_1000e02c },
+    { 0x1000e278u, sub_1000e278 },
+    { 0x1000e3c4u, sub_1000e3c4 },
+    { 0x1000e5c8u, sub_1000e5c8 },
+    { 0x1000e6ccu, sub_1000e6cc },
+    { 0x1000e840u, sub_1000e840 },
+    { 0x1000ea00u, sub_1000ea00 },
+    { 0x1000eb58u, sub_1000eb58 },
+    { 0x1000ecbcu, sub_1000ecbc },
+    { 0x1000ef74u, sub_1000ef74 },
+    { 0x1000f130u, sub_1000f130 },
+    { 0x1000f304u, sub_1000f304 },
+    { 0x1000f4b4u, sub_1000f4b4 },
+    { 0x1000f694u, sub_1000f694 },
+    { 0x1000fa7cu, sub_1000fa7c },
+    { 0x10010804u, sub_10010804 },
+    { 0x10010b08u, sub_10010b08 },
+    { 0x10010bc8u, sub_10010bc8 },
+    { 0x10010cf8u, sub_10010cf8 },
+    { 0x10010db8u, sub_10010db8 },
+    { 0x10010e5cu, sub_10010e5c },
+    { 0x10011008u, sub_10011008 },
+    { 0x10011cccu, sub_10011ccc },
+    { 0x10011d70u, sub_10011d70 },
+    { 0x10011f1cu, sub_10011f1c },
+    { 0x10012584u, sub_10012584 },
+    { 0x10012bb4u, sub_10012bb4 },
+    { 0x10012c74u, sub_10012c74 },
+    { 0x100135f0u, sub_100135f0 },
+    { 0x1001379cu, sub_1001379c },
+    { 0x10013894u, sub_10013894 },
+    { 0x10013d54u, sub_10013d54 },
+    { 0x10014020u, sub_10014020 },
+    { 0x100149b8u, sub_100149b8 },
+    { 0x10014accu, sub_10014acc },
+    { 0x10014d78u, sub_10014d78 },
+    { 0x10014e8cu, sub_10014e8c },
+    { 0x10014f30u, sub_10014f30 },
+    { 0x10015028u, sub_10015028 },
+    { 0x100150e8u, sub_100150e8 },
+    { 0x10015170u, sub_10015170 },
+    { 0x10015268u, sub_10015268 },
+    { 0x1001537cu, sub_1001537c },
+    { 0x10015878u, sub_10015878 },
+    { 0x100159acu, sub_100159ac },
+    { 0x1001610cu, sub_1001610c },
+    { 0x10016358u, sub_10016358 },
+    { 0x100165a4u, sub_100165a4 },
+    { 0x100166c8u, sub_100166c8 },
+    { 0x10017f5cu, sub_10017f5c },
+    { 0x1001817cu, sub_1001817c },
+    { 0x100182d0u, sub_100182d0 },
+    { 0x10018708u, sub_10018708 },
+    { 0x100187d0u, sub_100187d0 },
+    { 0x100188dcu, sub_100188dc },
+    { 0x10018e70u, sub_10018e70 },
+    { 0x100195b0u, sub_100195b0 },
+    { 0x10019780u, sub_10019780 },
+    { 0x100199e0u, sub_100199e0 },
+    { 0x10019c04u, sub_10019c04 },
+    { 0x10019e34u, sub_10019e34 },
+    { 0x1001a064u, sub_1001a064 },
+    { 0x1001a220u, sub_1001a220 },
+    { 0x1001a378u, sub_1001a378 },
+    { 0x1001a3d0u, sub_1001a3d0 },
+    { 0x1001a438u, sub_1001a438 },
+    { 0x1001a4d8u, sub_1001a4d8 },
+    { 0x1001a550u, sub_1001a550 },
+    { 0x1001a570u, sub_1001a570 },
+    { 0x1001a574u, sub_1001a574 },
+    { 0x1001a578u, sub_1001a578 },
+    { 0x1001a5c4u, sub_1001a5c4 },
+    { 0x1001a610u, sub_1001a610 },
+    { 0x1001a67cu, sub_1001a67c },
+    { 0x1001a690u, sub_1001a690 },
+    { 0x1001a6b8u, sub_1001a6b8 },
+    { 0x1001a6c4u, sub_1001a6c4 },
+    { 0x1001a6dcu, sub_1001a6dc },
+    { 0x1001a6f0u, sub_1001a6f0 },
+    { 0x1001a700u, sub_1001a700 },
+    { 0x1001a724u, sub_1001a724 },
+    { 0x1001a744u, sub_1001a744 },
+    { 0x1001a770u, sub_1001a770 },
+    { 0x1001a784u, sub_1001a784 },
+    { 0x1001a79cu, sub_1001a79c },
+    { 0x1001a7a0u, sub_1001a7a0 },
+    { 0x1001a7f4u, sub_1001a7f4 },
+    { 0x1001a848u, sub_1001a848 },
+    { 0x1001a8b8u, sub_1001a8b8 },
+    { 0x1001a970u, sub_1001a970 },
+    { 0x1001a9bcu, sub_1001a9bc },
+    { 0x1001a9f4u, sub_1001a9f4 },
+    { 0x1001aa38u, sub_1001aa38 },
+    { 0x1001aa44u, sub_1001aa44 },
+    { 0x1001aab4u, sub_1001aab4 },
+    { 0x1001aac0u, sub_1001aac0 },
+    { 0x1001ab00u, sub_1001ab00 },
+    { 0x1001ab4cu, sub_1001ab4c },
+    { 0x1001aba4u, sub_1001aba4 },
+    { 0x1001acc8u, sub_1001acc8 },
+    { 0x1001ad2cu, sub_1001ad2c },
+    { 0x1001ada0u, sub_1001ada0 },
+    { 0x1001ae10u, sub_1001ae10 },
+    { 0x1001ae8cu, sub_1001ae8c },
+    { 0x1001af48u, sub_1001af48 },
+    { 0x1001afa4u, sub_1001afa4 },
+    { 0x1001afb0u, sub_1001afb0 },
+    { 0x1001afe4u, sub_1001afe4 },
+    { 0x1001b004u, sub_1001b004 },
+    { 0x1001b088u, sub_1001b088 },
+    { 0x1001b0ccu, sub_1001b0cc },
+    { 0x1001b108u, sub_1001b108 },
+    { 0x1001b198u, sub_1001b198 },
+    { 0x1001b204u, sub_1001b204 },
+    { 0x1001b29cu, sub_1001b29c },
+    { 0x1001b300u, sub_1001b300 },
+    { 0x1001b3a8u, sub_1001b3a8 },
+    { 0x1001b448u, sub_1001b448 },
+    { 0x1001b484u, sub_1001b484 },
+    { 0x1001b528u, sub_1001b528 },
+    { 0x1001b584u, sub_1001b584 },
+    { 0x1001b5e8u, sub_1001b5e8 },
+    { 0x1001b64cu, sub_1001b64c },
+    { 0x1001b65cu, sub_1001b65c },
+    { 0x1001b788u, sub_1001b788 },
+    { 0x1001b7a0u, sub_1001b7a0 },
+    { 0x1001b7b8u, sub_1001b7b8 },
+    { 0x1001b7e8u, sub_1001b7e8 },
+    { 0x1001b868u, sub_1001b868 },
+    { 0x1001b8d4u, sub_1001b8d4 },
+    { 0x1001b964u, sub_1001b964 },
+    { 0x1001ba3cu, sub_1001ba3c },
+    { 0x1001baf8u, sub_1001baf8 },
+    { 0x1001bbecu, sub_1001bbec },
+    { 0x1001bc5cu, sub_1001bc5c },
+    { 0x1001bc88u, sub_1001bc88 },
+    { 0x1001bcacu, sub_1001bcac },
+    { 0x1001bd50u, sub_1001bd50 },
+    { 0x1001bdf4u, sub_1001bdf4 },
+    { 0x1001beacu, sub_1001beac },
+    { 0x1001bf6cu, sub_1001bf6c },
+    { 0x1001c080u, sub_1001c080 },
+    { 0x1001c0f4u, sub_1001c0f4 },
+    { 0x1001c0f8u, sub_1001c0f8 },
+    { 0x1001c1a4u, sub_1001c1a4 },
+    { 0x1001c20cu, sub_1001c20c },
+    { 0x1001c31cu, sub_1001c31c },
+    { 0x1001c3c0u, sub_1001c3c0 },
+    { 0x1001c4d8u, sub_1001c4d8 },
+    { 0x1001c534u, sub_1001c534 },
+    { 0x1001c6acu, sub_1001c6ac },
+    { 0x1001c9c0u, sub_1001c9c0 },
+    { 0x1001d3e0u, sub_1001d3e0 },
+    { 0x1001d4dcu, sub_1001d4dc },
+    { 0x1001d698u, sub_1001d698 },
+    { 0x1001d778u, sub_1001d778 },
+    { 0x1001d880u, sub_1001d880 },
+    { 0x1001d978u, sub_1001d978 },
+    { 0x1001db0cu, sub_1001db0c },
+    { 0x1001dd40u, sub_1001dd40 },
+    { 0x1001e068u, sub_1001e068 },
+    { 0x1001e2f8u, sub_1001e2f8 },
+    { 0x1001e754u, sub_1001e754 },
+    { 0x1001ea54u, sub_1001ea54 },
+    { 0x1001ecb4u, sub_1001ecb4 },
+    { 0x1001ee20u, sub_1001ee20 },
+    { 0x1001ee28u, sub_1001ee28 },
+    { 0x1001ee2cu, sub_1001ee2c },
+    { 0x1001ee30u, sub_1001ee30 },
+    { 0x1001ee38u, sub_1001ee38 },
+    { 0x1001ee4cu, sub_1001ee4c },
+    { 0x1001ee50u, sub_1001ee50 },
+    { 0x1001ee68u, sub_1001ee68 },
+    { 0x1001eed4u, sub_1001eed4 },
+    { 0x1001ef40u, sub_1001ef40 },
+    { 0x1001ef5cu, sub_1001ef5c },
+    { 0x1001ef6cu, sub_1001ef6c },
+    { 0x1001ef74u, sub_1001ef74 },
+    { 0x1001ef80u, sub_1001ef80 },
+    { 0x1001efb8u, sub_1001efb8 },
+    { 0x1001f230u, sub_1001f230 },
+    { 0x1001f2b4u, sub_1001f2b4 },
+    { 0x1001f2e0u, sub_1001f2e0 },
+    { 0x1001f30cu, sub_1001f30c },
+    { 0x1001f338u, sub_1001f338 },
+    { 0x1001f3e0u, sub_1001f3e0 },
+    { 0x1001f5d8u, sub_1001f5d8 },
+    { 0x1001f5dcu, sub_1001f5dc },
+    { 0x1001f5e0u, sub_1001f5e0 },
+    { 0x1001f5e4u, sub_1001f5e4 },
+    { 0x1001f5e8u, sub_1001f5e8 },
+    { 0x1001f690u, sub_1001f690 },
+    { 0x1001f6f0u, sub_1001f6f0 },
+    { 0x1001f79cu, sub_1001f79c },
+    { 0x1001f82cu, sub_1001f82c },
+    { 0x1001f9acu, sub_1001f9ac },
+    { 0x1001fc24u, sub_1001fc24 },
+    { 0x100207a0u, sub_100207a0 },
+    { 0x100207d0u, sub_100207d0 },
+    { 0x1002086cu, sub_1002086c },
+    { 0x10020880u, sub_10020880 },
+    { 0x10020894u, sub_10020894 },
+    { 0x10020904u, sub_10020904 },
+    { 0x100209b4u, sub_100209b4 },
+    { 0x100209c4u, sub_100209c4 },
+    { 0x100209c8u, sub_100209c8 },
+    { 0x10020b04u, sub_10020b04 },
+    { 0x10021014u, sub_10021014 },
+    { 0x10021080u, sub_10021080 },
+    { 0x10021138u, sub_10021138 },
+    { 0x100211c0u, sub_100211c0 },
+    { 0x10021244u, sub_10021244 },
+    { 0x100214acu, sub_100214ac },
+    { 0x1002152cu, sub_1002152c },
+    { 0x10021648u, sub_10021648 },
+    { 0x100216f8u, sub_100216f8 },
+    { 0x10021b98u, sub_10021b98 },
+    { 0x10021fc0u, sub_10021fc0 },
+    { 0x1002256cu, sub_1002256c },
+    { 0x10022898u, sub_10022898 },
+    { 0x10022b20u, sub_10022b20 },
+    { 0x10022d48u, sub_10022d48 },
+    { 0x10022f88u, sub_10022f88 },
+    { 0x100231b4u, sub_100231b4 },
+    { 0x10023608u, sub_10023608 },
+    { 0x10023910u, sub_10023910 },
+    { 0x10023ad0u, sub_10023ad0 },
+    { 0x10024b3cu, sub_10024b3c },
+    { 0x10024c8cu, sub_10024c8c },
+    { 0x10024decu, sub_10024dec },
+    { 0x10026f40u, sub_10026f40 },
+    { 0x1002707cu, sub_1002707c },
+    { 0x10027468u, sub_10027468 },
+    { 0x100275e4u, sub_100275e4 },
+    { 0x1002778cu, sub_1002778c },
+    { 0x10027980u, sub_10027980 },
+    { 0x10027aecu, sub_10027aec },
+    { 0x10027af0u, sub_10027af0 },
+    { 0x10027b3cu, sub_10027b3c },
+    { 0x10027b4cu, sub_10027b4c },
+    { 0x10027ba4u, sub_10027ba4 },
+    { 0x10027bb4u, sub_10027bb4 },
+    { 0x10027bd4u, sub_10027bd4 },
+    { 0x10027c3cu, sub_10027c3c },
+    { 0x10027c94u, sub_10027c94 },
+    { 0x10027ce0u, sub_10027ce0 },
+    { 0x10027d0cu, sub_10027d0c },
+    { 0x10027d44u, sub_10027d44 },
+    { 0x10027e34u, sub_10027e34 },
+    { 0x10027e3cu, sub_10027e3c },
+    { 0x10027e58u, sub_10027e58 },
+    { 0x10027ef4u, sub_10027ef4 },
+    { 0x100280a0u, sub_100280a0 },
+    { 0x100280f8u, sub_100280f8 },
+    { 0x1002812cu, sub_1002812c },
+    { 0x10028158u, sub_10028158 },
+    { 0x10028174u, sub_10028174 },
+    { 0x100281fcu, sub_100281fc },
+    { 0x10028200u, sub_10028200 },
+    { 0x1002821cu, sub_1002821c },
+    { 0x10028260u, sub_10028260 },
+    { 0x100282f0u, sub_100282f0 },
+    { 0x100282f4u, sub_100282f4 },
+    { 0x100282f8u, sub_100282f8 },
+    { 0x10028340u, sub_10028340 },
+    { 0x1002835cu, sub_1002835c },
+    { 0x10028390u, sub_10028390 },
+    { 0x100283b8u, sub_100283b8 },
+    { 0x100283bcu, sub_100283bc },
+    { 0x10028400u, sub_10028400 },
+    { 0x1002841cu, sub_1002841c },
+    { 0x1002845cu, sub_1002845c },
+    { 0x100284dcu, sub_100284dc },
+    { 0x10028594u, sub_10028594 },
+    { 0x10028a60u, sub_10028a60 },
+    { 0x10028be8u, sub_10028be8 },
+    { 0x10028da0u, sub_10028da0 },
+    { 0x10028e18u, sub_10028e18 },
+    { 0x10028e30u, sub_10028e30 },
+    { 0x10028e84u, sub_10028e84 },
+    { 0x10028ea4u, sub_10028ea4 },
+    { 0x10028ee0u, sub_10028ee0 },
+    { 0x10028f98u, sub_10028f98 },
+    { 0x10028fb8u, sub_10028fb8 },
+    { 0x10029044u, sub_10029044 },
+    { 0x100290a8u, sub_100290a8 },
+    { 0x1002958cu, sub_1002958c },
+    { 0x100296fcu, sub_100296fc },
+    { 0x100298a4u, sub_100298a4 },
+    { 0x10029a64u, sub_10029a64 },
+    { 0x10029cb0u, sub_10029cb0 },
+    { 0x1002a6d4u, sub_1002a6d4 },
+    { 0x1002a910u, sub_1002a910 },
+    { 0x1002aa14u, sub_1002aa14 },
+    { 0x1002acd4u, sub_1002acd4 },
+    { 0x1002ae88u, sub_1002ae88 },
+    { 0x1002b1b0u, sub_1002b1b0 },
+    { 0x1002b430u, sub_1002b430 },
+    { 0x1002ba64u, sub_1002ba64 },
+    { 0x1002bb54u, sub_1002bb54 },
+    { 0x1002bc6cu, sub_1002bc6c },
+    { 0x1002bdf4u, sub_1002bdf4 },
+    { 0x1002bfd0u, sub_1002bfd0 },
+    { 0x1002c010u, sub_1002c010 },
+    { 0x1002c100u, sub_1002c100 },
+    { 0x1002c104u, sub_1002c104 },
+    { 0x1002c1a8u, sub_1002c1a8 },
+    { 0x1002c200u, sub_1002c200 },
+    { 0x1002c20cu, sub_1002c20c },
+    { 0x1002c230u, sub_1002c230 },
+    { 0x1002c274u, sub_1002c274 },
+    { 0x1002c334u, sub_1002c334 },
+    { 0x1002c3a8u, sub_1002c3a8 },
+    { 0x1002c4d8u, sub_1002c4d8 },
+    { 0x1002c654u, sub_1002c654 },
+    { 0x1002c75cu, sub_1002c75c },
+    { 0x1002c848u, sub_1002c848 },
+    { 0x1002ce9cu, sub_1002ce9c },
+    { 0x1002cfb0u, sub_1002cfb0 },
+    { 0x1002d3c4u, sub_1002d3c4 },
+    { 0x1002d5e4u, sub_1002d5e4 },
+    { 0x1002da3cu, sub_1002da3c },
+    { 0x1002dc30u, sub_1002dc30 },
+    { 0x1002de0cu, sub_1002de0c },
+    { 0x1002de24u, sub_1002de24 },
+    { 0x1002e024u, sub_1002e024 },
+    { 0x1002e434u, sub_1002e434 },
+    { 0x1002e5acu, sub_1002e5ac },
+    { 0x1002e5ecu, sub_1002e5ec },
+    { 0x1002e62cu, sub_1002e62c },
+    { 0x1002e678u, sub_1002e678 },
+    { 0x1002e6ccu, sub_1002e6cc },
+    { 0x1002e708u, sub_1002e708 },
+    { 0x1002e73cu, sub_1002e73c },
+    { 0x1002e78cu, sub_1002e78c },
+    { 0x1002e844u, sub_1002e844 },
+    { 0x1002e910u, sub_1002e910 },
+    { 0x1002e91cu, sub_1002e91c },
+    { 0x1002e954u, sub_1002e954 },
+    { 0x1002ea0cu, sub_1002ea0c },
+    { 0x1002eaa0u, sub_1002eaa0 },
+    { 0x1002eb48u, sub_1002eb48 },
+    { 0x1002ebc4u, sub_1002ebc4 },
+    { 0x1002ec10u, sub_1002ec10 },
+    { 0x1002ec94u, sub_1002ec94 },
+    { 0x1002ecd8u, sub_1002ecd8 },
+    { 0x1002ece0u, sub_1002ece0 },
+    { 0x1002ed04u, sub_1002ed04 },
+    { 0x1002ed3cu, sub_1002ed3c },
+    { 0x1002ed74u, sub_1002ed74 },
+    { 0x1002ed7cu, sub_1002ed7c },
+    { 0x1002ed94u, sub_1002ed94 },
+    { 0x1002ed9cu, sub_1002ed9c },
+    { 0x1002edf4u, sub_1002edf4 },
+    { 0x1002edfcu, sub_1002edfc },
+    { 0x1002ee98u, sub_1002ee98 },
+    { 0x1002eeb8u, sub_1002eeb8 },
+    { 0x1002ef44u, sub_1002ef44 },
+    { 0x1002f074u, sub_1002f074 },
+    { 0x1002f694u, sub_1002f694 },
+    { 0x1002f824u, sub_1002f824 },
+    { 0x1002f83cu, sub_1002f83c },
+    { 0x1002f878u, sub_1002f878 },
+    { 0x1002f890u, sub_1002f890 },
+    { 0x1002f8e0u, sub_1002f8e0 },
+    { 0x1002f8fcu, sub_1002f8fc },
+    { 0x1002f914u, sub_1002f914 },
+    { 0x1002f934u, sub_1002f934 },
+    { 0x1002fa5cu, sub_1002fa5c },
+    { 0x1002fb84u, sub_1002fb84 },
+    { 0x1002fbf8u, sub_1002fbf8 },
+    { 0x1002fca4u, sub_1002fca4 },
+    { 0x1002fd30u, sub_1002fd30 },
+    { 0x1002fd94u, sub_1002fd94 },
+    { 0x1003006cu, sub_1003006c },
+    { 0x10030250u, sub_10030250 },
+    { 0x1003136cu, sub_1003136c },
+    { 0x100322a8u, sub_100322a8 },
+    { 0x100323f0u, sub_100323f0 },
+    { 0x10032530u, sub_10032530 },
+    { 0x100326ccu, sub_100326cc },
+    { 0x10032868u, sub_10032868 },
+    { 0x10032aa4u, sub_10032aa4 },
+    { 0x10032c88u, sub_10032c88 },
+    { 0x10032de0u, sub_10032de0 },
+    { 0x10032f78u, sub_10032f78 },
+    { 0x10033660u, sub_10033660 },
+    { 0x10033b4cu, sub_10033b4c },
+    { 0x10033c88u, sub_10033c88 },
+    { 0x10033dd0u, sub_10033dd0 },
+    { 0x100341ecu, sub_100341ec },
+    { 0x10034588u, sub_10034588 },
+    { 0x100347c8u, sub_100347c8 },
+    { 0x10034ad4u, sub_10034ad4 },
+    { 0x10034ba0u, sub_10034ba0 },
+    { 0x10034c40u, sub_10034c40 },
+    { 0x10034c48u, sub_10034c48 },
+    { 0x10034cecu, sub_10034cec },
+    { 0x10034d8cu, sub_10034d8c },
+    { 0x10034e90u, sub_10034e90 },
+    { 0x10034f38u, sub_10034f38 },
+    { 0x10034f4cu, sub_10034f4c },
+    { 0x10034f84u, sub_10034f84 },
+    { 0x10035000u, sub_10035000 },
+    { 0x10035090u, sub_10035090 },
+    { 0x1003513cu, sub_1003513c },
+    { 0x10035140u, sub_10035140 },
+    { 0x10035144u, sub_10035144 },
+    { 0x100351b4u, sub_100351b4 },
+    { 0x10035228u, sub_10035228 },
+    { 0x1003522cu, sub_1003522c },
+    { 0x1003533cu, sub_1003533c },
+    { 0x10035368u, sub_10035368 },
+    { 0x10035458u, sub_10035458 },
+    { 0x100354d0u, sub_100354d0 },
+    { 0x10035530u, sub_10035530 },
+    { 0x1003559cu, sub_1003559c },
+    { 0x100355f8u, sub_100355f8 },
+    { 0x10035634u, sub_10035634 },
+    { 0x10035948u, sub_10035948 },
+    { 0x10035a48u, sub_10035a48 },
+    { 0x10035b44u, sub_10035b44 },
+    { 0x10035c28u, sub_10035c28 },
+    { 0x10035d3cu, sub_10035d3c },
+    { 0x10035da0u, sub_10035da0 },
+    { 0x10035da8u, sub_10035da8 },
+    { 0x10035e2cu, sub_10035e2c },
+    { 0x10035e34u, sub_10035e34 },
+    { 0x10035e50u, sub_10035e50 },
+    { 0x10035eccu, sub_10035ecc },
+    { 0x10035f40u, sub_10035f40 },
+    { 0x10035facu, sub_10035fac },
+    { 0x10036038u, sub_10036038 },
+    { 0x100360a0u, sub_100360a0 },
+    { 0x10036104u, sub_10036104 },
+    { 0x10036214u, sub_10036214 },
+    { 0x1003627cu, sub_1003627c },
+    { 0x10036b1cu, sub_10036b1c },
+    { 0x10037188u, sub_10037188 },
+    { 0x100372e4u, sub_100372e4 },
+    { 0x100373b8u, sub_100373b8 },
+    { 0x1003765cu, sub_1003765c },
+    { 0x100377bcu, sub_100377bc },
+    { 0x10037880u, sub_10037880 },
+    { 0x10037954u, sub_10037954 },
+    { 0x10038008u, sub_10038008 },
+    { 0x10038278u, sub_10038278 },
+    { 0x10038470u, sub_10038470 },
+    { 0x1003857cu, sub_1003857c },
+    { 0x10038674u, sub_10038674 },
+    { 0x1003893cu, sub_1003893c },
+    { 0x10038c94u, sub_10038c94 },
+    { 0x10038f80u, sub_10038f80 },
+    { 0x1003908cu, sub_1003908c },
+    { 0x100393fcu, sub_100393fc },
+    { 0x100394d0u, sub_100394d0 },
+    { 0x100395a4u, sub_100395a4 },
+    { 0x10039758u, sub_10039758 },
+    { 0x10039858u, sub_10039858 },
+    { 0x100399a8u, sub_100399a8 },
+    { 0x10039a4cu, sub_10039a4c },
+    { 0x10039ca4u, sub_10039ca4 },
+    { 0x10039f50u, sub_10039f50 },
+    { 0x1003a5b0u, sub_1003a5b0 },
+    { 0x1003aaf4u, sub_1003aaf4 },
+    { 0x1003b038u, sub_1003b038 },
+    { 0x1003b18cu, sub_1003b18c },
+    { 0x1003b50cu, sub_1003b50c },
+    { 0x1003b5c0u, sub_1003b5c0 },
+    { 0x1003b85cu, sub_1003b85c },
+    { 0x1003bbbcu, sub_1003bbbc },
+    { 0x1003bd58u, sub_1003bd58 },
+    { 0x1003bf14u, sub_1003bf14 },
+    { 0x1003bf54u, sub_1003bf54 },
+    { 0x1003bf58u, sub_1003bf58 },
+    { 0x1003bfe4u, sub_1003bfe4 },
+    { 0x1003c010u, sub_1003c010 },
+    { 0x1003c050u, sub_1003c050 },
+    { 0x1003c0c8u, sub_1003c0c8 },
+    { 0x1003c124u, sub_1003c124 },
+    { 0x1003c1c0u, sub_1003c1c0 },
+    { 0x1003c2b0u, sub_1003c2b0 },
+    { 0x1003c2b4u, sub_1003c2b4 },
+    { 0x1003c368u, sub_1003c368 },
+    { 0x1003c3b8u, sub_1003c3b8 },
+    { 0x1003c45cu, sub_1003c45c },
+    { 0x1003c504u, sub_1003c504 },
+    { 0x1003c550u, sub_1003c550 },
+    { 0x1003c5c0u, sub_1003c5c0 },
+    { 0x1003c648u, sub_1003c648 },
+    { 0x1003c6b4u, sub_1003c6b4 },
+    { 0x1003c700u, sub_1003c700 },
+    { 0x1003c738u, sub_1003c738 },
+    { 0x1003c798u, sub_1003c798 },
+    { 0x1003c814u, sub_1003c814 },
+    { 0x1003c8acu, sub_1003c8ac },
+    { 0x1003c908u, sub_1003c908 },
+    { 0x1003c94cu, sub_1003c94c },
+    { 0x1003c9a0u, sub_1003c9a0 },
+    { 0x1003c9f4u, sub_1003c9f4 },
+    { 0x1003ca4cu, sub_1003ca4c },
+    { 0x1003cb08u, sub_1003cb08 },
+    { 0x1003cb98u, sub_1003cb98 },
+    { 0x1003cbd0u, sub_1003cbd0 },
+    { 0x1003cc14u, sub_1003cc14 },
+    { 0x1003cc5cu, sub_1003cc5c },
+    { 0x1003cd04u, sub_1003cd04 },
+    { 0x1003cd6cu, sub_1003cd6c },
+    { 0x1003cdd4u, sub_1003cdd4 },
+    { 0x1003ce3cu, sub_1003ce3c },
+    { 0x1003ce9cu, sub_1003ce9c },
+    { 0x1003cee8u, sub_1003cee8 },
+    { 0x1003cf20u, sub_1003cf20 },
+    { 0x1003cfacu, sub_1003cfac },
+    { 0x1003d020u, sub_1003d020 },
+    { 0x1003d07cu, sub_1003d07c },
+    { 0x1003d0e0u, sub_1003d0e0 },
+    { 0x1003d13cu, sub_1003d13c },
+    { 0x1003d1c4u, sub_1003d1c4 },
+    { 0x1003d1c8u, sub_1003d1c8 },
+    { 0x1003d204u, sub_1003d204 },
+    { 0x1003d24cu, sub_1003d24c },
+    { 0x1003d308u, sub_1003d308 },
+    { 0x1003d34cu, sub_1003d34c },
+    { 0x1003d384u, sub_1003d384 },
+    { 0x1003d3c4u, sub_1003d3c4 },
+    { 0x1003d434u, sub_1003d434 },
+    { 0x1003d478u, sub_1003d478 },
+    { 0x1003d4b8u, sub_1003d4b8 },
+    { 0x1003d504u, sub_1003d504 },
+    { 0x1003d5c0u, sub_1003d5c0 },
+    { 0x1003d5e0u, sub_1003d5e0 },
+    { 0x1003d670u, sub_1003d670 },
+    { 0x1003d8e0u, sub_1003d8e0 },
+    { 0x1003dbdcu, sub_1003dbdc },
+    { 0x1003e030u, sub_1003e030 },
+    { 0x1003e260u, sub_1003e260 },
+    { 0x1003e330u, sub_1003e330 },
+    { 0x1003e438u, sub_1003e438 },
+    { 0x1003e7a4u, sub_1003e7a4 },
+    { 0x1003ebd8u, sub_1003ebd8 },
+    { 0x1003f130u, sub_1003f130 },
+    { 0x100422a4u, sub_100422a4 },
+    { 0x10042394u, sub_10042394 },
+    { 0x10042490u, sub_10042490 },
+    { 0x100425bcu, sub_100425bc },
+    { 0x10042cb0u, sub_10042cb0 },
+    { 0x10042e44u, sub_10042e44 },
+    { 0x10042fd0u, sub_10042fd0 },
+    { 0x100431ccu, sub_100431cc },
+    { 0x10043308u, sub_10043308 },
+    { 0x10043bb0u, sub_10043bb0 },
+    { 0x10044324u, sub_10044324 },
+    { 0x10044400u, sub_10044400 },
+    { 0x100444f0u, sub_100444f0 },
+    { 0x10044538u, sub_10044538 },
+    { 0x100445d4u, sub_100445d4 },
+    { 0x10044618u, sub_10044618 },
+    { 0x100446c4u, sub_100446c4 },
+    { 0x1004476cu, sub_1004476c },
+    { 0x10044814u, sub_10044814 },
+    { 0x100448d4u, sub_100448d4 },
+    { 0x10044910u, sub_10044910 },
+    { 0x10044950u, sub_10044950 },
+    { 0x100449f4u, sub_100449f4 },
+    { 0x10044ae0u, sub_10044ae0 },
+    { 0x10044b8cu, sub_10044b8c },
+    { 0x10044c04u, sub_10044c04 },
+    { 0x10044c50u, sub_10044c50 },
+    { 0x10044c9cu, sub_10044c9c },
+    { 0x10044cdcu, sub_10044cdc },
+    { 0x10044d1cu, sub_10044d1c },
+    { 0x10044d28u, sub_10044d28 },
+    { 0x10044d3cu, sub_10044d3c },
+    { 0x10044d48u, sub_10044d48 },
+    { 0x10044d54u, sub_10044d54 },
+    { 0x10044d60u, sub_10044d60 },
+    { 0x10044d6cu, sub_10044d6c },
+    { 0x10044d78u, sub_10044d78 },
+    { 0x10044d84u, sub_10044d84 },
+    { 0x10044dacu, sub_10044dac },
+    { 0x10044e08u, sub_10044e08 },
+    { 0x10044e58u, sub_10044e58 },
+    { 0x10044efcu, sub_10044efc },
+    { 0x10044f54u, sub_10044f54 },
+    { 0x10044fdcu, sub_10044fdc },
+    { 0x10045078u, sub_10045078 },
+    { 0x100450a0u, sub_100450a0 },
+    { 0x100450d4u, sub_100450d4 },
+    { 0x10045104u, sub_10045104 },
+    { 0x100451acu, sub_100451ac },
+    { 0x10045228u, sub_10045228 },
+    { 0x10045294u, sub_10045294 },
+    { 0x10045334u, sub_10045334 },
+    { 0x10045520u, sub_10045520 },
+    { 0x10045568u, sub_10045568 },
+    { 0x100455b0u, sub_100455b0 },
+    { 0x100455c8u, sub_100455c8 },
+    { 0x100455e0u, sub_100455e0 },
+    { 0x10045668u, sub_10045668 },
+    { 0x1004569cu, sub_1004569c },
+    { 0x100456dcu, sub_100456dc },
+    { 0x10045768u, sub_10045768 },
+    { 0x100458e4u, sub_100458e4 },
+    { 0x10046328u, sub_10046328 },
+    { 0x10046680u, sub_10046680 },
+    { 0x10046764u, sub_10046764 },
+    { 0x1004720cu, sub_1004720c },
+    { 0x100473e8u, sub_100473e8 },
+    { 0x10047500u, sub_10047500 },
+    { 0x10047540u, sub_10047540 },
+    { 0x1004754cu, sub_1004754c },
+    { 0x10047584u, sub_10047584 },
+    { 0x100475c0u, sub_100475c0 },
+    { 0x100475d8u, sub_100475d8 },
+    { 0x100476bcu, sub_100476bc },
+    { 0x100476c8u, sub_100476c8 },
+    { 0x10047720u, sub_10047720 },
+    { 0x10047738u, sub_10047738 },
+    { 0x10047740u, sub_10047740 },
+    { 0x100477ccu, sub_100477cc },
+    { 0x1004794cu, sub_1004794c },
+    { 0x10047aa0u, sub_10047aa0 },
+    { 0x10047f64u, sub_10047f64 },
+    { 0x1004801cu, sub_1004801c },
+    { 0x10048140u, sub_10048140 },
+    { 0x10048244u, sub_10048244 },
+    { 0x10049698u, sub_10049698 },
+    { 0x10049780u, sub_10049780 },
+    { 0x10049b64u, sub_10049b64 },
+    { 0x10049e78u, sub_10049e78 },
+    { 0x1004a020u, sub_1004a020 },
+    { 0x1004a104u, sub_1004a104 },
+    { 0x1004a284u, sub_1004a284 },
+    { 0x1004a6f4u, sub_1004a6f4 },
+    { 0x1004aa28u, sub_1004aa28 },
+    { 0x1004abe4u, sub_1004abe4 },
+    { 0x1004ad40u, sub_1004ad40 },
+    { 0x1004b390u, sub_1004b390 },
+    { 0x1004b3c0u, sub_1004b3c0 },
+    { 0x1004b458u, sub_1004b458 },
+    { 0x1004b4f0u, sub_1004b4f0 },
+    { 0x1004b544u, sub_1004b544 },
+    { 0x1004b610u, sub_1004b610 },
+    { 0x1004b618u, sub_1004b618 },
+    { 0x1004b620u, sub_1004b620 },
+    { 0x1004b71cu, sub_1004b71c },
+    { 0x1004b768u, sub_1004b768 },
+    { 0x1004b770u, sub_1004b770 },
+    { 0x1004b774u, sub_1004b774 },
+    { 0x1004b848u, sub_1004b848 },
+    { 0x1004b8c8u, sub_1004b8c8 },
+    { 0x1004b8ccu, sub_1004b8cc },
+    { 0x1004b8d4u, sub_1004b8d4 },
+    { 0x1004b960u, sub_1004b960 },
+    { 0x1004ba0cu, sub_1004ba0c },
+    { 0x1004ba84u, sub_1004ba84 },
+    { 0x1004bbd0u, sub_1004bbd0 },
+    { 0x1004bc60u, sub_1004bc60 },
+    { 0x1004bd08u, sub_1004bd08 },
+    { 0x1004bd24u, sub_1004bd24 },
+    { 0x1004bd74u, sub_1004bd74 },
+    { 0x1004bd80u, sub_1004bd80 },
+    { 0x1004be78u, sub_1004be78 },
+    { 0x1004da9cu, sub_1004da9c },
+    { 0x1004e3b0u, sub_1004e3b0 },
+    { 0x1004f218u, sub_1004f218 },
+    { 0x1004f5fcu, sub_1004f5fc },
+    { 0x1004f91cu, sub_1004f91c },
+    { 0x1004fc50u, sub_1004fc50 },
+    { 0x1004fe48u, sub_1004fe48 },
+    { 0x100509a4u, sub_100509a4 },
+    { 0x10051460u, sub_10051460 },
+    { 0x10052044u, sub_10052044 },
+    { 0x10052504u, sub_10052504 },
+    { 0x10052ab8u, sub_10052ab8 },
+    { 0x100536f8u, sub_100536f8 },
+    { 0x1005420cu, sub_1005420c },
+    { 0x10054704u, sub_10054704 },
+    { 0x10054d04u, sub_10054d04 },
+    { 0x10055a4cu, sub_10055a4c },
+    { 0x10055f38u, sub_10055f38 },
+    { 0x10056324u, sub_10056324 },
+    { 0x10056aa0u, sub_10056aa0 },
+    { 0x10056eb0u, sub_10056eb0 },
+    { 0x10057890u, sub_10057890 },
+    { 0x100581dcu, sub_100581dc },
+    { 0x10059970u, sub_10059970 },
+    { 0x1005a9e0u, sub_1005a9e0 },
+    { 0x1005bbc8u, sub_1005bbc8 },
+    { 0x1005c1a4u, sub_1005c1a4 },
+    { 0x1005c8b4u, sub_1005c8b4 },
+    { 0x1005ccd4u, sub_1005ccd4 },
+    { 0x1005d074u, sub_1005d074 },
+    { 0x1005d784u, sub_1005d784 },
+    { 0x1005dfe0u, sub_1005dfe0 },
+    { 0x1005e098u, sub_1005e098 },
+    { 0x1005e214u, sub_1005e214 },
+    { 0x1005e310u, sub_1005e310 },
+    { 0x1005e3e8u, sub_1005e3e8 },
+    { 0x1005e498u, sub_1005e498 },
+    { 0x1005e54cu, sub_1005e54c },
+    { 0x1005eb94u, sub_1005eb94 },
+    { 0x1005ecb0u, sub_1005ecb0 },
+    { 0x1005ee08u, sub_1005ee08 },
+    { 0x1005ee80u, sub_1005ee80 },
+    { 0x1005eedcu, sub_1005eedc },
+    { 0x1005ef50u, sub_1005ef50 },
+    { 0x1005ef94u, sub_1005ef94 },
+    { 0x1005f0b4u, sub_1005f0b4 },
+    { 0x1005f298u, sub_1005f298 },
+    { 0x1005f3c8u, sub_1005f3c8 },
+    { 0x1005f928u, sub_1005f928 },
+    { 0x10060414u, sub_10060414 },
+    { 0x100604c0u, sub_100604c0 },
+    { 0x10060568u, sub_10060568 },
+    { 0x1006059cu, sub_1006059c },
+    { 0x10060614u, sub_10060614 },
+    { 0x100606d0u, sub_100606d0 },
+    { 0x10060744u, sub_10060744 },
+    { 0x100607d8u, sub_100607d8 },
+    { 0x100608bcu, sub_100608bc },
+    { 0x100608d0u, sub_100608d0 },
+    { 0x100608e4u, sub_100608e4 },
+    { 0x1006095cu, sub_1006095c },
+    { 0x1006097cu, sub_1006097c },
+    { 0x100609a8u, sub_100609a8 },
+    { 0x100609dcu, sub_100609dc },
+    { 0x100609f0u, sub_100609f0 },
+    { 0x10060a08u, sub_10060a08 },
+    { 0x10060a8cu, sub_10060a8c },
+    { 0x10060ac0u, sub_10060ac0 },
+    { 0x10060d54u, sub_10060d54 },
+    { 0x10060f70u, sub_10060f70 },
+    { 0x100610e4u, sub_100610e4 },
+    { 0x1006128cu, sub_1006128c },
+    { 0x1006144cu, sub_1006144c },
+    { 0x100615a4u, sub_100615a4 },
+    { 0x100618c8u, sub_100618c8 },
+    { 0x10061a60u, sub_10061a60 },
+    { 0x1006410cu, sub_1006410c },
+    { 0x100645ecu, sub_100645ec },
+    { 0x100646a8u, sub_100646a8 },
+    { 0x100648a8u, sub_100648a8 },
+    { 0x100649f8u, sub_100649f8 },
+    { 0x10064ad8u, sub_10064ad8 },
+    { 0x10064c60u, sub_10064c60 },
+    { 0x10064e00u, sub_10064e00 },
+    { 0x10064f08u, sub_10064f08 },
+    { 0x10064ffcu, sub_10064ffc },
+    { 0x1006517cu, sub_1006517c },
+    { 0x10065438u, sub_10065438 },
+    { 0x100655a8u, sub_100655a8 },
+    { 0x100657bcu, sub_100657bc },
+    { 0x1006598cu, sub_1006598c },
+    { 0x10065a70u, sub_10065a70 },
+    { 0x10065f7cu, sub_10065f7c },
+    { 0x10066204u, sub_10066204 },
+    { 0x1006640cu, sub_1006640c },
+    { 0x10066614u, sub_10066614 },
+    { 0x10066cc4u, sub_10066cc4 },
+    { 0x1006777cu, sub_1006777c },
+    { 0x100677ccu, sub_100677cc },
+    { 0x10067810u, sub_10067810 },
+    { 0x10067898u, sub_10067898 },
+    { 0x10067974u, sub_10067974 },
+    { 0x10067998u, sub_10067998 },
+    { 0x10067a70u, sub_10067a70 },
+    { 0x10067a74u, sub_10067a74 },
+    { 0x10067a78u, sub_10067a78 },
+    { 0x10067a7cu, sub_10067a7c },
+    { 0x10067a9cu, sub_10067a9c },
+    { 0x10067ad8u, sub_10067ad8 },
+    { 0x10067b70u, sub_10067b70 },
+    { 0x10067c3cu, sub_10067c3c },
+    { 0x10067ca0u, sub_10067ca0 },
+    { 0x10067db0u, sub_10067db0 },
+    { 0x10067ed4u, sub_10067ed4 },
+    { 0x10067f84u, sub_10067f84 },
+    { 0x1006807cu, sub_1006807c },
+    { 0x10068138u, sub_10068138 },
+    { 0x10068140u, sub_10068140 },
+    { 0x10068148u, sub_10068148 },
+    { 0x100681f0u, sub_100681f0 },
+    { 0x10068294u, sub_10068294 },
+    { 0x100682b0u, sub_100682b0 },
+    { 0x100682ccu, sub_100682cc },
+    { 0x10068324u, sub_10068324 },
+    { 0x1006834cu, sub_1006834c },
+    { 0x10068388u, sub_10068388 },
+    { 0x100683a8u, sub_100683a8 },
+    { 0x100683d4u, sub_100683d4 },
+    { 0x10068408u, sub_10068408 },
+    { 0x10068418u, sub_10068418 },
+    { 0x1006842cu, sub_1006842c },
+    { 0x10068480u, sub_10068480 },
+    { 0x100684b8u, sub_100684b8 },
+    { 0x100684bcu, sub_100684bc },
+    { 0x100684c0u, sub_100684c0 },
+    { 0x100684c8u, sub_100684c8 },
+    { 0x10068510u, sub_10068510 },
+    { 0x10068604u, sub_10068604 },
+    { 0x10068608u, sub_10068608 },
+    { 0x10068610u, sub_10068610 },
+    { 0x10068614u, sub_10068614 },
+    { 0x10068618u, sub_10068618 },
+    { 0x100686b4u, sub_100686b4 },
+    { 0x100686c4u, sub_100686c4 },
+    { 0x100686e0u, sub_100686e0 },
+    { 0x10068748u, sub_10068748 },
+    { 0x100687e8u, sub_100687e8 },
+    { 0x10068814u, sub_10068814 },
+    { 0x10068838u, sub_10068838 },
+    { 0x10068854u, sub_10068854 },
+    { 0x10068948u, sub_10068948 },
+    { 0x10068b68u, sub_10068b68 },
+    { 0x10068be8u, sub_10068be8 },
+    { 0x10068c40u, sub_10068c40 },
+    { 0x10068d10u, sub_10068d10 },
+    { 0x10068e0cu, sub_10068e0c },
+    { 0x10069b34u, sub_10069b34 },
+    { 0x10069cacu, sub_10069cac },
+    { 0x1006a26cu, sub_1006a26c },
+    { 0x1006a344u, sub_1006a344 },
+    { 0x1006a488u, sub_1006a488 },
+    { 0x1006a690u, sub_1006a690 },
+    { 0x1006a894u, sub_1006a894 },
+    { 0x1006aae4u, sub_1006aae4 },
+    { 0x1006ad18u, sub_1006ad18 },
+    { 0x1006aeb0u, sub_1006aeb0 },
+    { 0x1006b168u, sub_1006b168 },
+    { 0x1006b288u, sub_1006b288 },
+    { 0x1006b3fcu, sub_1006b3fc },
+    { 0x1006b5c8u, sub_1006b5c8 },
+    { 0x1006b6a8u, sub_1006b6a8 },
+    { 0x1006b9acu, sub_1006b9ac },
+    { 0x1006b9c8u, sub_1006b9c8 },
+    { 0x1006bab0u, sub_1006bab0 },
+    { 0x1006bb4cu, sub_1006bb4c },
+    { 0x1006bbccu, sub_1006bbcc },
+    { 0x1006bbfcu, sub_1006bbfc },
+    { 0x1006bc68u, sub_1006bc68 },
+    { 0x1006bcccu, sub_1006bccc },
+    { 0x1006bd28u, sub_1006bd28 },
+    { 0x1006bdc8u, sub_1006bdc8 },
+    { 0x1006be18u, sub_1006be18 },
+    { 0x1006be4cu, sub_1006be4c },
+    { 0x1006be50u, sub_1006be50 },
+    { 0x1006be58u, sub_1006be58 },
+    { 0x1006be9cu, sub_1006be9c },
+    { 0x1006bee8u, sub_1006bee8 },
+    { 0x1006bf2cu, sub_1006bf2c },
+    { 0x1006bfd4u, sub_1006bfd4 },
+    { 0x1006c10cu, sub_1006c10c },
+    { 0x1006c16cu, sub_1006c16c },
+    { 0x1006c1d0u, sub_1006c1d0 },
+    { 0x1006c240u, sub_1006c240 },
+    { 0x1006c274u, sub_1006c274 },
+    { 0x1006c2a8u, sub_1006c2a8 },
+    { 0x1006c31cu, sub_1006c31c },
+    { 0x1006c408u, sub_1006c408 },
+    { 0x1006c414u, sub_1006c414 },
+    { 0x1006c42cu, sub_1006c42c },
+    { 0x1006c460u, sub_1006c460 },
+    { 0x1006c4c8u, sub_1006c4c8 },
+    { 0x1006c4d4u, sub_1006c4d4 },
+    { 0x1006c560u, sub_1006c560 },
+    { 0x1006c5c8u, sub_1006c5c8 },
+    { 0x1006c628u, sub_1006c628 },
+    { 0x1006c6a8u, sub_1006c6a8 },
+    { 0x1006c6d4u, sub_1006c6d4 },
+    { 0x1006c6f8u, sub_1006c6f8 },
+    { 0x1006c730u, sub_1006c730 },
+    { 0x1006c768u, sub_1006c768 },
+    { 0x1006c960u, sub_1006c960 },
+    { 0x1006ca90u, sub_1006ca90 },
+    { 0x1006ceb0u, sub_1006ceb0 },
+    { 0x1006cee0u, sub_1006cee0 },
+    { 0x1006cf14u, sub_1006cf14 },
+    { 0x1006cf78u, sub_1006cf78 },
+    { 0x1006cfd8u, sub_1006cfd8 },
+    { 0x1006d08cu, sub_1006d08c },
+    { 0x1006d120u, sub_1006d120 },
+    { 0x1006d1c0u, sub_1006d1c0 },
+    { 0x1006d1f8u, sub_1006d1f8 },
+    { 0x1006d20cu, sub_1006d20c },
+    { 0x1006d258u, sub_1006d258 },
+    { 0x1006d290u, sub_1006d290 },
+    { 0x1006d2a8u, sub_1006d2a8 },
+    { 0x1006d2acu, sub_1006d2ac },
+    { 0x1006d35cu, sub_1006d35c },
+    { 0x1006d3e8u, sub_1006d3e8 },
+    { 0x1006d408u, sub_1006d408 },
+    { 0x1006d4a8u, sub_1006d4a8 },
+    { 0x1006d508u, sub_1006d508 },
+    { 0x1006d510u, sub_1006d510 },
+    { 0x1006d518u, sub_1006d518 },
+    { 0x1006d520u, sub_1006d520 },
+    { 0x1006d5dcu, sub_1006d5dc },
+    { 0x1006d5e4u, sub_1006d5e4 },
+    { 0x1006d5e8u, sub_1006d5e8 },
+    { 0x1006d654u, sub_1006d654 },
+    { 0x1006d6a8u, sub_1006d6a8 },
+    { 0x1006d7bcu, sub_1006d7bc },
+    { 0x1006d948u, sub_1006d948 },
+    { 0x1006da64u, sub_1006da64 },
+    { 0x1006dbecu, sub_1006dbec },
+    { 0x10070534u, sub_10070534 },
+    { 0x10070a78u, sub_10070a78 },
+    { 0x10071038u, sub_10071038 },
+    { 0x100711b4u, sub_100711b4 },
+    { 0x100715a8u, sub_100715a8 },
+    { 0x10071ac4u, sub_10071ac4 },
+    { 0x10071f2cu, sub_10071f2c },
+    { 0x100726b8u, sub_100726b8 },
+    { 0x100729e0u, sub_100729e0 },
+    { 0x10072b6cu, sub_10072b6c },
+    { 0x1007307cu, sub_1007307c },
+    { 0x100730c8u, sub_100730c8 },
+    { 0x100730f0u, sub_100730f0 },
+    { 0x100730fcu, sub_100730fc },
+    { 0x10073158u, sub_10073158 },
+    { 0x100731b4u, sub_100731b4 },
+    { 0x10073210u, sub_10073210 },
+    { 0x1007326cu, sub_1007326c },
+    { 0x100732c8u, sub_100732c8 },
+    { 0x10073324u, sub_10073324 },
+    { 0x10073380u, sub_10073380 },
+    { 0x10073470u, sub_10073470 },
+    { 0x10073528u, sub_10073528 },
+    { 0x10073654u, sub_10073654 },
+    { 0x10073658u, sub_10073658 },
+    { 0x10073760u, sub_10073760 },
+    { 0x100738c4u, sub_100738c4 },
+    { 0x10073a70u, sub_10073a70 },
+    { 0x10073bd8u, sub_10073bd8 },
+    { 0x10073d3cu, sub_10073d3c },
+    { 0x10075bdcu, sub_10075bdc },
+    { 0x100768b4u, sub_100768b4 },
+    { 0x10076b64u, sub_10076b64 },
+    { 0x10077028u, sub_10077028 },
+    { 0x10077138u, sub_10077138 },
+    { 0x1007722cu, sub_1007722c },
+    { 0x100773a8u, sub_100773a8 },
+    { 0x10077554u, sub_10077554 },
+    { 0x100776d0u, sub_100776d0 },
+    { 0x100779b8u, sub_100779b8 },
+    { 0x10077db8u, sub_10077db8 },
+    { 0x10077f74u, sub_10077f74 },
+    { 0x100780f8u, sub_100780f8 },
+    { 0x10078770u, sub_10078770 },
+    { 0x10078890u, sub_10078890 },
+    { 0x10078c08u, sub_10078c08 },
+    { 0x10078de4u, sub_10078de4 },
+    { 0x1007dca0u, sub_1007dca0 },
+    { 0x1007e10cu, sub_1007e10c },
+    { 0x1007e458u, sub_1007e458 },
+    { 0x1007e540u, sub_1007e540 },
+    { 0x1007e7f0u, sub_1007e7f0 },
+    { 0x1007e954u, sub_1007e954 },
+    { 0x1007ec80u, sub_1007ec80 },
+    { 0x1007ef24u, sub_1007ef24 },
+    { 0x1007f050u, sub_1007f050 },
+    { 0x1007f210u, sub_1007f210 },
+    { 0x1007f3f4u, sub_1007f3f4 },
+    { 0x1007f49cu, sub_1007f49c },
+    { 0x1007f5e4u, sub_1007f5e4 },
+    { 0x1007f600u, sub_1007f600 },
+    { 0x1007f608u, sub_1007f608 },
+    { 0x1007f610u, sub_1007f610 },
+    { 0x1007f614u, sub_1007f614 },
+    { 0x1007f61cu, sub_1007f61c },
+    { 0x1007f648u, sub_1007f648 },
+    { 0x1007f650u, sub_1007f650 },
+    { 0x1007f6f0u, sub_1007f6f0 },
+    { 0x1007f784u, sub_1007f784 },
+    { 0x1007f7c8u, sub_1007f7c8 },
+    { 0x1007f834u, sub_1007f834 },
+    { 0x1007f8bcu, sub_1007f8bc },
+    { 0x1007f8f8u, sub_1007f8f8 },
+    { 0x1007f9b0u, sub_1007f9b0 },
+    { 0x1007f9b4u, sub_1007f9b4 },
+    { 0x1007f9b8u, sub_1007f9b8 },
+    { 0x1007f9e8u, sub_1007f9e8 },
+    { 0x1007fa10u, sub_1007fa10 },
+    { 0x1007fa18u, sub_1007fa18 },
+    { 0x1007fa20u, sub_1007fa20 },
+    { 0x1007fadcu, sub_1007fadc },
+    { 0x1007fb78u, sub_1007fb78 },
+    { 0x1007fc14u, sub_1007fc14 },
+    { 0x1007fc20u, sub_1007fc20 },
+    { 0x1007fc80u, sub_1007fc80 },
+    { 0x1007fcf4u, sub_1007fcf4 },
+    { 0x1007fd54u, sub_1007fd54 },
+    { 0x1007fd88u, sub_1007fd88 },
+    { 0x1007fdd4u, sub_1007fdd4 },
+    { 0x1007fe20u, sub_1007fe20 },
+    { 0x1007fe88u, sub_1007fe88 },
+    { 0x1007ff30u, sub_1007ff30 },
+    { 0x1007ff38u, sub_1007ff38 },
+    { 0x1007ffa0u, sub_1007ffa0 },
+    { 0x1007ffe8u, sub_1007ffe8 },
+    { 0x10080048u, sub_10080048 },
+    { 0x100800a0u, sub_100800a0 },
+    { 0x100800a4u, sub_100800a4 },
+    { 0x10080168u, sub_10080168 },
+    { 0x100801fcu, sub_100801fc },
+    { 0x100806acu, sub_100806ac },
+    { 0x1008078cu, sub_1008078c },
+    { 0x100808ecu, sub_100808ec },
+    { 0x10080a04u, sub_10080a04 },
+    { 0x10080c70u, sub_10080c70 },
+    { 0x10080c78u, sub_10080c78 },
+    { 0x10080c80u, sub_10080c80 },
+    { 0x10080c88u, sub_10080c88 },
+    { 0x10080cccu, sub_10080ccc },
+    { 0x10080d1cu, sub_10080d1c },
+    { 0x10080d20u, sub_10080d20 },
+    { 0x10080d98u, sub_10080d98 },
+    { 0x10080e28u, sub_10080e28 },
+    { 0x10080e34u, sub_10080e34 },
+    { 0x10081030u, sub_10081030 },
+    { 0x10081080u, sub_10081080 },
+    { 0x100810e0u, sub_100810e0 },
+    { 0x10081130u, sub_10081130 },
+    { 0x1008117cu, sub_1008117c },
+    { 0x10081180u, sub_10081180 },
+    { 0x10081184u, sub_10081184 },
+    { 0x10081320u, sub_10081320 },
+    { 0x100813bcu, sub_100813bc },
+    { 0x1008141cu, sub_1008141c },
+    { 0x1008143cu, sub_1008143c },
+    { 0x100814a8u, sub_100814a8 },
+    { 0x100814d4u, sub_100814d4 },
+    { 0x10081540u, sub_10081540 },
+    { 0x1008158cu, sub_1008158c },
+    { 0x100815e0u, sub_100815e0 },
+    { 0x10081844u, sub_10081844 },
+    { 0x10081e5cu, sub_10081e5c },
+    { 0x10082004u, sub_10082004 },
+    { 0x10082224u, sub_10082224 },
+    { 0x10083490u, sub_10083490 },
+    { 0x100835b8u, sub_100835b8 },
+    { 0x10083c04u, sub_10083c04 },
+    { 0x10084438u, sub_10084438 },
+    { 0x1008457cu, sub_1008457c },
+    { 0x1008467cu, sub_1008467c },
+    { 0x10084924u, sub_10084924 },
+    { 0x1008607cu, sub_1008607c },
+    { 0x10086280u, sub_10086280 },
+    { 0x10086454u, sub_10086454 },
+    { 0x10086514u, sub_10086514 },
+    { 0x100865e4u, sub_100865e4 },
+    { 0x10086660u, sub_10086660 },
+    { 0x100866b8u, sub_100866b8 },
+    { 0x100866c0u, sub_100866c0 },
+    { 0x10086754u, sub_10086754 },
+    { 0x1008679cu, sub_1008679c },
+    { 0x100868ccu, sub_100868cc },
+    { 0x10086970u, sub_10086970 },
+    { 0x10086a18u, sub_10086a18 },
+    { 0x10086ab0u, sub_10086ab0 },
+    { 0x10086b78u, sub_10086b78 },
+    { 0x10086b98u, sub_10086b98 },
+    { 0x10086c40u, sub_10086c40 },
+    { 0x10086cb8u, sub_10086cb8 },
+    { 0x10086d34u, sub_10086d34 },
+    { 0x10086d3cu, sub_10086d3c },
+    { 0x10086d60u, sub_10086d60 },
+    { 0x10086decu, sub_10086dec },
+    { 0x10086df0u, sub_10086df0 },
+    { 0x10086eb4u, sub_10086eb4 },
+    { 0x10086f24u, sub_10086f24 },
+    { 0x10086f6cu, sub_10086f6c },
+    { 0x10086f70u, sub_10086f70 },
+    { 0x10086f88u, sub_10086f88 },
+    { 0x10086f9cu, sub_10086f9c },
+    { 0x10087024u, sub_10087024 },
+    { 0x100870f8u, sub_100870f8 },
+    { 0x10087434u, sub_10087434 },
+    { 0x10087438u, sub_10087438 },
+    { 0x10087460u, sub_10087460 },
+    { 0x10087464u, sub_10087464 },
+    { 0x10087468u, sub_10087468 },
+    { 0x1008746cu, sub_1008746c },
+    { 0x10087470u, sub_10087470 },
+    { 0x10087474u, sub_10087474 },
+    { 0x10087478u, sub_10087478 },
+    { 0x1008747cu, sub_1008747c },
+    { 0x10087488u, sub_10087488 },
+    { 0x1008748cu, sub_1008748c },
+    { 0x10087490u, sub_10087490 },
+    { 0x10087494u, sub_10087494 },
+    { 0x10087498u, sub_10087498 },
+    { 0x1008749cu, sub_1008749c },
+    { 0x100874c8u, sub_100874c8 },
+    { 0x100874ccu, sub_100874cc },
+    { 0x100874d0u, sub_100874d0 },
+    { 0x100874d4u, sub_100874d4 },
+    { 0x100874d8u, sub_100874d8 },
+    { 0x100874dcu, sub_100874dc },
+    { 0x100874e0u, sub_100874e0 },
+    { 0x100874e8u, sub_100874e8 },
+    { 0x100874ecu, sub_100874ec },
+    { 0x100874f0u, sub_100874f0 },
+    { 0x100874f4u, sub_100874f4 },
+    { 0x100874f8u, sub_100874f8 },
+    { 0x100874fcu, sub_100874fc },
+    { 0x10087500u, sub_10087500 },
+    { 0x10087504u, sub_10087504 },
+    { 0x10087508u, sub_10087508 },
+    { 0x100875b0u, sub_100875b0 },
+    { 0x100875c8u, sub_100875c8 },
+    { 0x100875e8u, sub_100875e8 },
+    { 0x100876f0u, sub_100876f0 },
+    { 0x10087a60u, sub_10087a60 },
+    { 0x100884e0u, sub_100884e0 },
+    { 0x10088664u, sub_10088664 },
+    { 0x10088778u, sub_10088778 },
+    { 0x10088a40u, sub_10088a40 },
+    { 0x10088d9cu, sub_10088d9c },
+    { 0x10088da0u, sub_10088da0 },
+    { 0x10088da4u, sub_10088da4 },
+    { 0x10088dacu, sub_10088dac },
+    { 0x10088db4u, sub_10088db4 },
+    { 0x10088df0u, sub_10088df0 },
+    { 0x10088e7cu, sub_10088e7c },
+    { 0x10088ea4u, sub_10088ea4 },
+    { 0x10088f00u, sub_10088f00 },
+    { 0x10088f60u, sub_10088f60 },
+    { 0x1008904cu, sub_1008904c },
+    { 0x100890d4u, sub_100890d4 },
+    { 0x100891fcu, sub_100891fc },
+    { 0x1008977cu, sub_1008977c },
+    { 0x10089820u, sub_10089820 },
+    { 0x10089894u, sub_10089894 },
+    { 0x100898d0u, sub_100898d0 },
+    { 0x10089a1cu, sub_10089a1c },
+    { 0x10089b84u, sub_10089b84 },
+    { 0x1008a324u, sub_1008a324 },
+    { 0x1008a418u, sub_1008a418 },
+    { 0x1008a504u, sub_1008a504 },
+    { 0x1008a5c0u, sub_1008a5c0 },
+    { 0x1008a628u, sub_1008a628 },
+    { 0x1008a76cu, sub_1008a76c },
+    { 0x1008aa30u, sub_1008aa30 },
+    { 0x1008ae00u, sub_1008ae00 },
+    { 0x1008ae94u, sub_1008ae94 },
+    { 0x1008af9cu, sub_1008af9c },
+    { 0x1008b000u, sub_1008b000 },
+    { 0x1008b074u, sub_1008b074 },
+    { 0x1008b118u, sub_1008b118 },
+    { 0x1008b15cu, sub_1008b15c },
+    { 0x1008b25cu, sub_1008b25c },
+    { 0x1008b3ecu, sub_1008b3ec },
+    { 0x1008b420u, sub_1008b420 },
+    { 0x1008b488u, sub_1008b488 },
+    { 0x1008b5e0u, sub_1008b5e0 },
+    { 0x1008b748u, sub_1008b748 },
+    { 0x1008b76cu, sub_1008b76c },
+    { 0x1008b788u, sub_1008b788 },
+    { 0x1008b7c4u, sub_1008b7c4 },
+    { 0x1008b8ccu, sub_1008b8cc },
+    { 0x1008b980u, sub_1008b980 },
+    { 0x1008ba2cu, sub_1008ba2c },
+    { 0x1008ba5cu, sub_1008ba5c },
+    { 0x1008ba8cu, sub_1008ba8c },
+    { 0x1008babcu, sub_1008babc },
+    { 0x1008bb04u, sub_1008bb04 },
+    { 0x1008bb4cu, sub_1008bb4c },
+    { 0x1008bba0u, sub_1008bba0 },
+    { 0x1008bbbcu, sub_1008bbbc },
+    { 0x1008bbd8u, sub_1008bbd8 },
+    { 0x1008bbf4u, sub_1008bbf4 },
+    { 0x1008bc10u, sub_1008bc10 },
+    { 0x1008bc2cu, sub_1008bc2c },
+    { 0x1008bcccu, sub_1008bccc },
+    { 0x1008bd54u, sub_1008bd54 },
+    { 0x1008bdc4u, sub_1008bdc4 },
+    { 0x1008be04u, sub_1008be04 },
+    { 0x1008be54u, sub_1008be54 },
+    { 0x1008bea4u, sub_1008bea4 },
+    { 0x1008beecu, sub_1008beec },
+    { 0x1008bf38u, sub_1008bf38 },
+    { 0x1008bf90u, sub_1008bf90 },
+    { 0x1008bfacu, sub_1008bfac },
+    { 0x1008bfc8u, sub_1008bfc8 },
+    { 0x1008bfe4u, sub_1008bfe4 },
+    { 0x1008bff4u, sub_1008bff4 },
+    { 0x1008c034u, sub_1008c034 },
+    { 0x1008c06cu, sub_1008c06c },
+    { 0x1008c0a4u, sub_1008c0a4 },
+    { 0x1008c1ccu, sub_1008c1cc },
+    { 0x1008c22cu, sub_1008c22c },
+    { 0x1008c304u, sub_1008c304 },
+    { 0x1008c384u, sub_1008c384 },
+    { 0x1008c438u, sub_1008c438 },
+    { 0x1008c4ecu, sub_1008c4ec },
+    { 0x1008c56cu, sub_1008c56c },
+    { 0x1008c5d4u, sub_1008c5d4 },
+    { 0x1008c634u, sub_1008c634 },
+    { 0x1008c698u, sub_1008c698 },
+    { 0x1008c720u, sub_1008c720 },
+    { 0x1008c7e0u, sub_1008c7e0 },
+    { 0x1008c844u, sub_1008c844 },
+    { 0x1008c8c4u, sub_1008c8c4 },
+    { 0x1008c91cu, sub_1008c91c },
+    { 0x1008c9a4u, sub_1008c9a4 },
+    { 0x1008c9e8u, sub_1008c9e8 },
+    { 0x1008ca38u, sub_1008ca38 },
+    { 0x1008cb28u, sub_1008cb28 },
+    { 0x1008cca8u, sub_1008cca8 },
+    { 0x1008d0e4u, sub_1008d0e4 },
+    { 0x1008d978u, sub_1008d978 },
+    { 0x1008de68u, sub_1008de68 },
+    { 0x1008df60u, sub_1008df60 },
+    { 0x1008e08cu, sub_1008e08c },
+    { 0x1008e094u, sub_1008e094 },
+    { 0x1008e09cu, sub_1008e09c },
+    { 0x1008e114u, sub_1008e114 },
+    { 0x1008e138u, sub_1008e138 },
+    { 0x1008e148u, sub_1008e148 },
+    { 0x1008e19cu, sub_1008e19c },
+    { 0x1008e1acu, sub_1008e1ac },
+    { 0x1008e1f8u, sub_1008e1f8 },
+    { 0x1008e200u, sub_1008e200 },
+    { 0x1008e210u, sub_1008e210 },
+    { 0x1008e218u, sub_1008e218 },
+    { 0x1008e31cu, sub_1008e31c },
+    { 0x1008e3d8u, sub_1008e3d8 },
+    { 0x1008e43cu, sub_1008e43c },
+    { 0x1008e4b0u, sub_1008e4b0 },
+    { 0x1008e518u, sub_1008e518 },
+    { 0x1008e56cu, sub_1008e56c },
+    { 0x1008e5e0u, sub_1008e5e0 },
+    { 0x1008e608u, sub_1008e608 },
+    { 0x1008e634u, sub_1008e634 },
+    { 0x1008e974u, sub_1008e974 },
+    { 0x1008ec30u, sub_1008ec30 },
+    { 0x1008eeb4u, sub_1008eeb4 },
+    { 0x1008f0b8u, sub_1008f0b8 },
+    { 0x1008f2ccu, sub_1008f2cc },
+    { 0x1008f458u, sub_1008f458 },
+    { 0x1008f5acu, sub_1008f5ac },
+    { 0x1008f724u, sub_1008f724 },
+    { 0x1008f7d0u, sub_1008f7d0 },
+    { 0x1008f81cu, sub_1008f81c },
+    { 0x1008f824u, sub_1008f824 },
+    { 0x1008f82cu, sub_1008f82c },
+    { 0x1008f8a4u, sub_1008f8a4 },
+    { 0x1008f97cu, sub_1008f97c },
+    { 0x1008fa5cu, sub_1008fa5c },
+    { 0x1008fab8u, sub_1008fab8 },
+    { 0x1008fb34u, sub_1008fb34 },
+    { 0x1008fb9cu, sub_1008fb9c },
+    { 0x1008fc04u, sub_1008fc04 },
+    { 0x1008fcccu, sub_1008fccc },
+    { 0x1008fd28u, sub_1008fd28 },
+    { 0x1008ff14u, sub_1008ff14 },
+    { 0x10090288u, sub_10090288 },
+    { 0x100902a4u, sub_100902a4 },
+    { 0x100902a8u, sub_100902a8 },
+    { 0x100902b4u, sub_100902b4 },
+    { 0x1009037cu, sub_1009037c },
+    { 0x1009040cu, sub_1009040c },
+    { 0x10090500u, sub_10090500 },
+    { 0x10090818u, sub_10090818 },
+    { 0x10091364u, sub_10091364 },
+    { 0x1009138cu, sub_1009138c },
+    { 0x10091410u, sub_10091410 },
+    { 0x10091418u, sub_10091418 },
+    { 0x10091420u, sub_10091420 },
+    { 0x100914a0u, sub_100914a0 },
+    { 0x10091540u, sub_10091540 },
+    { 0x10091594u, sub_10091594 },
+    { 0x100916d0u, sub_100916d0 },
+    { 0x10091718u, sub_10091718 },
+    { 0x1009178cu, sub_1009178c },
+    { 0x100917dcu, sub_100917dc },
+    { 0x10091804u, sub_10091804 },
+    { 0x10091838u, sub_10091838 },
+    { 0x1009183cu, sub_1009183c },
+    { 0x10091840u, sub_10091840 },
+    { 0x1009186cu, sub_1009186c },
+    { 0x10091878u, sub_10091878 },
+    { 0x100918c8u, sub_100918c8 },
+    { 0x10091918u, sub_10091918 },
+    { 0x10091964u, sub_10091964 },
+    { 0x10091a64u, sub_10091a64 },
+    { 0x10091ab4u, sub_10091ab4 },
+    { 0x10091aecu, sub_10091aec },
+    { 0x10091af0u, sub_10091af0 },
+    { 0x10091afcu, sub_10091afc },
+    { 0x10091b58u, sub_10091b58 },
+    { 0x10091b9cu, sub_10091b9c },
+    { 0x10091c94u, sub_10091c94 },
+    { 0x10091e14u, sub_10091e14 },
+    { 0x10091e18u, sub_10091e18 },
+    { 0x10092138u, sub_10092138 },
+    { 0x100922c8u, sub_100922c8 },
+    { 0x100925c0u, sub_100925c0 },
+    { 0x10092648u, sub_10092648 },
+    { 0x100927b4u, sub_100927b4 },
+    { 0x100927dcu, sub_100927dc },
+    { 0x10092b1cu, sub_10092b1c },
+    { 0x10092c44u, sub_10092c44 },
+    { 0x10092c98u, sub_10092c98 },
+    { 0x10092d88u, sub_10092d88 },
+    { 0x10092dd8u, sub_10092dd8 },
+    { 0x10092e2cu, sub_10092e2c },
+    { 0x10092e70u, sub_10092e70 },
+    { 0x10092eecu, sub_10092eec },
+    { 0x100930f8u, sub_100930f8 },
+    { 0x100931c0u, sub_100931c0 },
+    { 0x1009326cu, sub_1009326c },
+    { 0x10093304u, sub_10093304 },
+    { 0x100933fcu, sub_100933fc },
+    { 0x100937d0u, sub_100937d0 },
+    { 0x1009405cu, sub_1009405c },
+    { 0x1009441cu, sub_1009441c },
+    { 0x1009457cu, sub_1009457c },
+    { 0x10094714u, sub_10094714 },
+    { 0x10094898u, sub_10094898 },
+    { 0x10094938u, sub_10094938 },
+    { 0x10094ac4u, sub_10094ac4 },
+    { 0x10094b58u, sub_10094b58 },
+    { 0x10094bd8u, sub_10094bd8 },
+    { 0x10094c1cu, sub_10094c1c },
+    { 0x10094c40u, sub_10094c40 },
+    { 0x10094c6cu, sub_10094c6c },
+    { 0x10094c80u, sub_10094c80 },
+    { 0x10094ca8u, sub_10094ca8 },
+    { 0x10094d64u, sub_10094d64 },
+    { 0x10094dccu, sub_10094dcc },
+    { 0x10094f18u, sub_10094f18 },
+    { 0x10094f3cu, sub_10094f3c },
+    { 0x10094f94u, sub_10094f94 },
+    { 0x10094fbcu, sub_10094fbc },
+    { 0x10094fe8u, sub_10094fe8 },
+    { 0x10095024u, sub_10095024 },
+    { 0x1009508cu, sub_1009508c },
+    { 0x100950e4u, sub_100950e4 },
+    { 0x10095138u, sub_10095138 },
+    { 0x1009516cu, sub_1009516c },
+    { 0x1009520cu, sub_1009520c },
+    { 0x100952c0u, sub_100952c0 },
+    { 0x100952f8u, sub_100952f8 },
+    { 0x10095330u, sub_10095330 },
+    { 0x10095368u, sub_10095368 },
+    { 0x100953a0u, sub_100953a0 },
+    { 0x100953d4u, sub_100953d4 },
+    { 0x10095408u, sub_10095408 },
+    { 0x1009543cu, sub_1009543c },
+    { 0x100954acu, sub_100954ac },
+    { 0x100954e0u, sub_100954e0 },
+    { 0x10095520u, sub_10095520 },
+    { 0x100955c8u, sub_100955c8 },
+    { 0x10095630u, sub_10095630 },
+    { 0x100956b4u, sub_100956b4 },
+    { 0x10095980u, sub_10095980 },
+    { 0x100959d4u, sub_100959d4 },
+    { 0x10095a08u, sub_10095a08 },
+    { 0x10095a30u, sub_10095a30 },
+    { 0x10095a70u, sub_10095a70 },
+    { 0x10095af4u, sub_10095af4 },
+    { 0x10095cccu, sub_10095ccc },
+    { 0x10095da0u, sub_10095da0 },
+    { 0x10095e18u, sub_10095e18 },
+    { 0x10095e38u, sub_10095e38 },
+    { 0x10096084u, sub_10096084 },
+    { 0x100960b4u, sub_100960b4 },
+    { 0x100960ecu, sub_100960ec },
+    { 0x10096128u, sub_10096128 },
+    { 0x10096170u, sub_10096170 },
+    { 0x100961c8u, sub_100961c8 },
+    { 0x10096274u, sub_10096274 },
+    { 0x1009630cu, sub_1009630c },
+    { 0x1009637cu, sub_1009637c },
+    { 0x10096390u, sub_10096390 },
+    { 0x100963c4u, sub_100963c4 },
+    { 0x10096558u, sub_10096558 },
+    { 0x1009666cu, sub_1009666c },
+    { 0x10096770u, sub_10096770 },
+    { 0x10096aa4u, sub_10096aa4 },
+    { 0x10096bc4u, sub_10096bc4 },
+    { 0x10096d88u, sub_10096d88 },
+    { 0x10096e10u, sub_10096e10 },
+    { 0x10096e3cu, sub_10096e3c },
+    { 0x10096e70u, sub_10096e70 },
+    { 0x10096f04u, sub_10096f04 },
+    { 0x10096f8cu, sub_10096f8c },
+    { 0x10096fc0u, sub_10096fc0 },
+    { 0x10097180u, sub_10097180 },
+    { 0x100971fcu, sub_100971fc },
+    { 0x1009721cu, sub_1009721c },
+    { 0x10097324u, sub_10097324 },
+    { 0x10097978u, sub_10097978 },
+    { 0x100979f8u, sub_100979f8 },
+    { 0x10097a60u, sub_10097a60 },
+    { 0x10097af0u, sub_10097af0 },
+    { 0x10097b44u, sub_10097b44 },
+    { 0x10097dacu, sub_10097dac },
+    { 0x10097e08u, sub_10097e08 },
+    { 0x10097e44u, sub_10097e44 },
+    { 0x10098100u, sub_10098100 },
+    { 0x10098178u, sub_10098178 },
+    { 0x10098330u, sub_10098330 },
+    { 0x100983c0u, sub_100983c0 },
+    { 0x10098aecu, sub_10098aec },
+    { 0x10098b24u, sub_10098b24 },
+    { 0x10098b40u, sub_10098b40 },
+    { 0x10098c68u, sub_10098c68 },
+    { 0x10099060u, sub_10099060 },
+    { 0x100993e8u, sub_100993e8 },
+    { 0x10099530u, sub_10099530 },
+    { 0x10099944u, sub_10099944 },
+    { 0x10099ca4u, sub_10099ca4 },
+    { 0x10099ff8u, sub_10099ff8 },
+    { 0x1009a484u, sub_1009a484 },
+    { 0x1009a5ccu, sub_1009a5cc },
+    { 0x1009aa04u, sub_1009aa04 },
+    { 0x1009aa30u, sub_1009aa30 },
+    { 0x1009aa74u, sub_1009aa74 },
+    { 0x1009ab7cu, sub_1009ab7c },
+    { 0x1009adc0u, sub_1009adc0 },
+    { 0x1009af2cu, sub_1009af2c },
+    { 0x1009afa0u, sub_1009afa0 },
+    { 0x1009afd4u, sub_1009afd4 },
+    { 0x1009b000u, sub_1009b000 },
+    { 0x1009b020u, sub_1009b020 },
+    { 0x1009b278u, sub_1009b278 },
+    { 0x1009b468u, sub_1009b468 },
+    { 0x1009b4b8u, sub_1009b4b8 },
+    { 0x1009b594u, sub_1009b594 },
+    { 0x1009b878u, sub_1009b878 },
+    { 0x1009b974u, sub_1009b974 },
+    { 0x1009b9a8u, sub_1009b9a8 },
+    { 0x1009ba34u, sub_1009ba34 },
+    { 0x1009ba54u, sub_1009ba54 },
+    { 0x1009ba78u, sub_1009ba78 },
+    { 0x1009bbe4u, sub_1009bbe4 },
+    { 0x1009be04u, sub_1009be04 },
+    { 0x1009c024u, sub_1009c024 },
+    { 0x1009c0a4u, sub_1009c0a4 },
+    { 0x1009c124u, sub_1009c124 },
+    { 0x1009c2e8u, sub_1009c2e8 },
+    { 0x1009c314u, sub_1009c314 },
+    { 0x1009c3b4u, sub_1009c3b4 },
+    { 0x1009c520u, sub_1009c520 },
+    { 0x1009c54cu, sub_1009c54c },
+    { 0x1009c75cu, sub_1009c75c },
+    { 0x1009cb04u, sub_1009cb04 },
+    { 0x1009e638u, sub_1009e638 },
+    { 0x1009e68cu, sub_1009e68c },
+    { 0x1009e6d4u, sub_1009e6d4 },
+    { 0x1009e6fcu, sub_1009e6fc },
+    { 0x1009e820u, sub_1009e820 },
+    { 0x1009e828u, sub_1009e828 },
+    { 0x1009e870u, sub_1009e870 },
+    { 0x1009e88cu, sub_1009e88c },
+    { 0x1009ea10u, sub_1009ea10 },
+    { 0x1009eac0u, sub_1009eac0 },
+    { 0x1009ead8u, sub_1009ead8 },
+    { 0x1009eb68u, sub_1009eb68 },
+    { 0x1009ec80u, sub_1009ec80 },
+    { 0x1009ecf4u, sub_1009ecf4 },
+    { 0x1009ed44u, sub_1009ed44 },
+    { 0x1009ed6cu, sub_1009ed6c },
+    { 0x1009eda0u, import_EUSER_ord_1505 },
+    { 0x1009edb0u, import_EUSER_ord_1359 },
+    { 0x1009edc0u, import_EUSER_ord_1283 },
+    { 0x1009edd0u, import_EUSER_ord_1262 },
+    { 0x1009ede0u, import_EUSER_ord_1506 },
+    { 0x1009edf0u, import_EUSER_ord_1514 },
+    { 0x1009ee00u, import_EUSER_ord_630 },
+    { 0x1009ee10u, import_EUSER_ord_35 },
+    { 0x1009ee20u, import_EUSER_ord_21 },
+    { 0x1009ee30u, import_EUSER_ord_1504 },
+    { 0x1009ee40u, import_EUSER_ord_1507 },
+    { 0x1009ee50u, import_EUSER_ord_1611 },
+    { 0x1009ee60u, import_EUSER_ord_1367 },
+    { 0x1009ee70u, import_EUSER_ord_411 },
+    { 0x1009ee80u, import_EUSER_ord_1366 },
+    { 0x1009ee90u, import_EUSER_ord_274 },
+    { 0x1009eea0u, import_EUSER_ord_289 },
+    { 0x1009eeb0u, import_EUSER_ord_1016 },
+    { 0x1009eec0u, import_EUSER_ord_954 },
+    { 0x1009eed0u, import_EUSER_ord_172 },
+    { 0x1009eee0u, import_EUSER_ord_1113 },
+    { 0x1009eef0u, import_EUSER_ord_1582 },
+    { 0x1009ef00u, import_EUSER_ord_1343 },
+    { 0x1009ef10u, import_EUSER_ord_858 },
+    { 0x1009ef20u, import_EUSER_ord_569 },
+    { 0x1009ef30u, import_EUSER_ord_1148 },
+    { 0x1009ef40u, import_EUSER_ord_1164 },
+    { 0x1009ef50u, import_EUSER_ord_738 },
+    { 0x1009ef60u, import_EUSER_ord_1111 },
+    { 0x1009ef70u, import_EUSER_ord_1107 },
+    { 0x1009ef80u, import_EUSER_ord_825 },
+    { 0x1009ef90u, import_EUSER_ord_1212 },
+    { 0x1009efa0u, import_EUSER_ord_1078 },
+    { 0x1009efb0u, import_EUSER_ord_746 },
+    { 0x1009efc0u, import_EUSER_ord_1122 },
+    { 0x1009efd0u, import_EUSER_ord_152 },
+    { 0x1009efe0u, import_EUSER_ord_89 },
+    { 0x1009eff0u, import_EUSER_ord_90 },
+    { 0x1009f000u, import_EUSER_ord_1386 },
+    { 0x1009f010u, import_EUSER_ord_501 },
+    { 0x1009f020u, import_EUSER_ord_3 },
+    { 0x1009f030u, import_EUSER_ord_627 },
+    { 0x1009f040u, import_EUSER_ord_1370 },
+    { 0x1009f050u, import_EUSER_ord_828 },
+    { 0x1009f060u, import_EUSER_ord_824 },
+    { 0x1009f070u, import_EUSER_ord_1432 },
+    { 0x1009f080u, import_EUSER_ord_1422 },
+    { 0x1009f090u, import_EUSER_ord_1282 },
+    { 0x1009f0a0u, import_EUSER_ord_251 },
+    { 0x1009f0b0u, import_EUSER_ord_632 },
+    { 0x1009f0c0u, import_EUSER_ord_856 },
+    { 0x1009f0d0u, import_EUSER_ord_1 },
+    { 0x1009f0e0u, import_EUSER_ord_2 },
+    { 0x1009f0f0u, import_EUSER_ord_1407 },
+    { 0x1009f100u, import_EUSER_ord_467 },
+    { 0x1009f110u, import_EUSER_ord_207 },
+    { 0x1009f120u, import_EUSER_ord_91 },
+    { 0x1009f130u, import_EUSER_ord_99 },
+    { 0x1009f140u, import_EUSER_ord_956 },
+    { 0x1009f150u, import_EUSER_ord_1529 },
+    { 0x1009f160u, import_EUSER_ord_1614 },
+    { 0x1009f170u, import_EUSER_ord_1571 },
+    { 0x1009f180u, import_EUSER_ord_1527 },
+    { 0x1009f190u, import_EUSER_ord_1455 },
+    { 0x1009f1a0u, import_EUSER_ord_41 },
+    { 0x1009f1b0u, import_EUSER_ord_1569 },
+    { 0x1009f1c0u, import_EUSER_ord_869 },
+    { 0x1009f1d0u, import_EUSER_ord_809 },
+    { 0x1009f1e0u, import_EUSER_ord_1431 },
+    { 0x1009f1f0u, import_EUSER_ord_85 },
+    { 0x1009f200u, import_EUSER_ord_1086 },
+    { 0x1009f210u, import_EUSER_ord_621 },
+    { 0x1009f220u, import_EUSER_ord_248 },
+    { 0x1009f230u, import_EUSER_ord_531 },
+    { 0x1009f240u, import_EUSER_ord_1575 },
+    { 0x1009f250u, import_EUSER_ord_1557 },
+    { 0x1009f260u, import_EUSER_ord_1379 },
+    { 0x1009f270u, import_EUSER_ord_1515 },
+    { 0x1009f280u, import_EUSER_ord_1373 },
+    { 0x1009f290u, import_EUSER_ord_530 },
+    { 0x1009f2a0u, import_EUSER_ord_711 },
+    { 0x1009f2b0u, import_EUSER_ord_625 },
+    { 0x1009f2c0u, import_EUSER_ord_211 },
+    { 0x1009f2d0u, import_EUSER_ord_933 },
+    { 0x1009f2e0u, import_EUSER_ord_855 },
+    { 0x1009f2f0u, import_EUSER_ord_1247 },
+    { 0x1009f300u, import_EUSER_ord_1520 },
+    { 0x1009f310u, import_EUSER_ord_77 },
+    { 0x1009f320u, import_EUSER_ord_1246 },
+    { 0x1009f330u, import_EUSER_ord_979 },
+    { 0x1009f340u, import_EUSER_ord_1265 },
+    { 0x1009f350u, import_EUSER_ord_1395 },
+    { 0x1009f360u, import_EUSER_ord_13 },
+    { 0x1009f370u, import_EUSER_ord_962 },
+    { 0x1009f380u, import_EUSER_ord_1616 },
+    { 0x1009f390u, import_EUSER_ord_45 },
+    { 0x1009f3a0u, import_EUSER_ord_875 },
+    { 0x1009f3b0u, import_EUSER_ord_476 },
+    { 0x1009f3c0u, import_EUSER_ord_418 },
+    { 0x1009f3d0u, import_EUSER_ord_245 },
+    { 0x1009f3e0u, import_EUSER_ord_1636 },
+    { 0x1009f3f0u, import_EZLIB_ord_65 },
+    { 0x1009f400u, import_APPARC_ord_27 },
+    { 0x1009f410u, import_APPARC_ord_71 },
+    { 0x1009f420u, import_APPARC_ord_6 },
+    { 0x1009f430u, import_APPARC_ord_3 },
+    { 0x1009f440u, import_CONE_ord_167 },
+    { 0x1009f450u, import_CONE_ord_12 },
+    { 0x1009f460u, import_CONE_ord_101 },
+    { 0x1009f470u, import_CONE_ord_82 },
+    { 0x1009f480u, import_CONE_ord_90 },
+    { 0x1009f490u, import_CONE_ord_187 },
+    { 0x1009f4a0u, import_CONE_ord_96 },
+    { 0x1009f4b0u, import_CONE_ord_292 },
+    { 0x1009f4c0u, import_CONE_ord_293 },
+    { 0x1009f4d0u, import_CONE_ord_255 },
+    { 0x1009f4e0u, import_CONE_ord_256 },
+    { 0x1009f4f0u, import_CONE_ord_40 },
+    { 0x1009f500u, import_CONE_ord_214 },
+    { 0x1009f510u, import_CONE_ord_160 },
+    { 0x1009f520u, import_CONE_ord_236 },
+    { 0x1009f530u, import_CONE_ord_232 },
+    { 0x1009f540u, import_CONE_ord_226 },
+    { 0x1009f550u, import_CONE_ord_143 },
+    { 0x1009f560u, import_CONE_ord_55 },
+    { 0x1009f570u, import_CONE_ord_138 },
+    { 0x1009f580u, import_CONE_ord_200 },
+    { 0x1009f590u, import_CONE_ord_197 },
+    { 0x1009f5a0u, import_CONE_ord_29 },
+    { 0x1009f5b0u, import_CONE_ord_3 },
+    { 0x1009f5c0u, import_CONE_ord_153 },
+    { 0x1009f5d0u, import_CONE_ord_185 },
+    { 0x1009f5e0u, import_CONE_ord_208 },
+    { 0x1009f5f0u, import_CONE_ord_95 },
+    { 0x1009f600u, import_CONE_ord_139 },
+    { 0x1009f610u, import_CONE_ord_87 },
+    { 0x1009f620u, import_CONE_ord_72 },
+    { 0x1009f630u, import_CONE_ord_74 },
+    { 0x1009f640u, import_CONE_ord_84 },
+    { 0x1009f650u, import_CONE_ord_221 },
+    { 0x1009f660u, import_CONE_ord_147 },
+    { 0x1009f670u, import_CONE_ord_33 },
+    { 0x1009f680u, import_CONE_ord_28 },
+    { 0x1009f690u, import_CONE_ord_173 },
+    { 0x1009f6a0u, import_CONE_ord_177 },
+    { 0x1009f6b0u, import_CONE_ord_314 },
+    { 0x1009f6c0u, import_CONE_ord_312 },
+    { 0x1009f6d0u, import_CONE_ord_83 },
+    { 0x1009f6e0u, import_CONE_ord_223 },
+    { 0x1009f6f0u, import_EIKCORE_ord_67 },
+    { 0x1009f700u, import_EIKCORE_ord_224 },
+    { 0x1009f710u, import_EIKCORE_ord_233 },
+    { 0x1009f720u, import_EIKCORE_ord_144 },
+    { 0x1009f730u, import_EIKCORE_ord_147 },
+    { 0x1009f740u, import_EIKCORE_ord_74 },
+    { 0x1009f750u, import_EIKCORE_ord_81 },
+    { 0x1009f760u, import_EIKCORE_ord_133 },
+    { 0x1009f770u, import_EIKCORE_ord_198 },
+    { 0x1009f780u, import_EIKCORE_ord_134 },
+    { 0x1009f790u, import_EIKCORE_ord_124 },
+    { 0x1009f7a0u, import_EIKCORE_ord_51 },
+    { 0x1009f7b0u, import_EIKCORE_ord_82 },
+    { 0x1009f7c0u, import_EIKCORE_ord_206 },
+    { 0x1009f7d0u, import_EIKCORE_ord_149 },
+    { 0x1009f7e0u, import_EIKCORE_ord_150 },
+    { 0x1009f7f0u, import_EIKCORE_ord_84 },
+    { 0x1009f800u, import_EIKCORE_ord_179 },
+    { 0x1009f810u, import_EIKCORE_ord_48 },
+    { 0x1009f820u, import_EIKCORE_ord_75 },
+    { 0x1009f830u, import_EIKCORE_ord_31 },
+    { 0x1009f840u, import_EIKCORE_ord_157 },
+    { 0x1009f850u, import_EIKCORE_ord_65 },
+    { 0x1009f860u, import_EIKCORE_ord_64 },
+    { 0x1009f870u, import_EIKCORE_ord_121 },
+    { 0x1009f880u, import_EIKCORE_ord_226 },
+    { 0x1009f890u, import_EIKCORE_ord_40 },
+    { 0x1009f8a0u, import_EIKCORE_ord_76 },
+    { 0x1009f8b0u, import_EIKCORE_ord_264 },
+    { 0x1009f8c0u, import_EIKCORE_ord_290 },
+    { 0x1009f8d0u, import_EIKCORE_ord_80 },
+    { 0x1009f8e0u, import_EIKCORE_ord_243 },
+    { 0x1009f8f0u, import_EIKCORE_ord_213 },
+    { 0x1009f900u, import_EIKCORE_ord_219 },
+    { 0x1009f910u, import_EIKCORE_ord_116 },
+    { 0x1009f920u, import_EIKCORE_ord_52 },
+    { 0x1009f930u, import_EIKCORE_ord_66 },
+    { 0x1009f940u, import_EIKCORE_ord_130 },
+    { 0x1009f950u, import_EIKCORE_ord_161 },
+    { 0x1009f960u, import_EIKCORE_ord_200 },
+    { 0x1009f970u, import_EIKCORE_ord_155 },
+    { 0x1009f980u, import_EIKCORE_ord_68 },
+    { 0x1009f990u, import_EIKCORE_ord_100 },
+    { 0x1009f9a0u, import_EIKCORE_ord_86 },
+    { 0x1009f9b0u, import_EIKCORE_ord_142 },
+    { 0x1009f9c0u, import_EIKCORE_ord_146 },
+    { 0x1009f9d0u, import_EIKCORE_ord_123 },
+    { 0x1009f9e0u, import_EIKCORE_ord_204 },
+    { 0x1009f9f0u, import_EIKCORE_ord_253 },
+    { 0x1009fa00u, import_EIKCORE_ord_222 },
+    { 0x1009fa10u, import_EIKCORE_ord_49 },
+    { 0x1009fa20u, import_EIKCORE_ord_122 },
+    { 0x1009fa30u, import_EIKCORE_ord_30 },
+    { 0x1009fa40u, import_EIKCORE_ord_143 },
+    { 0x1009fa50u, import_EIKCORE_ord_71 },
+    { 0x1009fa60u, import_EIKCORE_ord_20 },
+    { 0x1009fa70u, import_EIKCORE_ord_151 },
+    { 0x1009fa80u, import_EIKCORE_ord_214 },
+    { 0x1009fa90u, import_EIKCORE_ord_17 },
+    { 0x1009faa0u, import_EIKCORE_ord_61 },
+    { 0x1009fab0u, import_AVKON_ord_757 },
+    { 0x1009fac0u, import_AVKON_ord_1213 },
+    { 0x1009fad0u, import_AVKON_ord_1529 },
+    { 0x1009fae0u, import_AVKON_ord_2048 },
+    { 0x1009faf0u, import_AVKON_ord_63 },
+    { 0x1009fb00u, import_AVKON_ord_874 },
+    { 0x1009fb10u, import_AVKON_ord_1272 },
+    { 0x1009fb20u, import_AVKON_ord_808 },
+    { 0x1009fb30u, import_AVKON_ord_1254 },
+    { 0x1009fb40u, import_AVKON_ord_803 },
+    { 0x1009fb50u, import_AVKON_ord_750 },
+    { 0x1009fb60u, import_AVKON_ord_1352 },
+    { 0x1009fb70u, import_AVKON_ord_1348 },
+    { 0x1009fb80u, import_AVKON_ord_802 },
+    { 0x1009fb90u, import_AVKON_ord_805 },
+    { 0x1009fba0u, import_AVKON_ord_1267 },
+    { 0x1009fbb0u, import_AVKON_ord_1234 },
+    { 0x1009fbc0u, import_AVKON_ord_1206 },
+    { 0x1009fbd0u, import_AVKON_ord_2105 },
+    { 0x1009fbe0u, import_AVKON_ord_662 },
+    { 0x1009fbf0u, import_ETEL_ord_29 },
+    { 0x1009fc00u, import_ETEL_ord_102 },
+    { 0x1009fc10u, import_ETEL_ord_56 },
+    { 0x1009fc20u, import_ETEL_ord_74 },
+    { 0x1009fc30u, import_ETEL_ord_153 },
+    { 0x1009fc40u, import_ETEL_ord_55 },
+    { 0x1009fc50u, import_ETEL_ord_72 },
+    { 0x1009fc60u, import_ETEL_ord_152 },
+    { 0x1009fc70u, import_ETEL_ord_127 },
+    { 0x1009fc80u, import_ETEL_ord_77 },
+    { 0x1009fc90u, import_ETEL_ord_125 },
+    { 0x1009fca0u, import_ETEL_ord_26 },
+    { 0x1009fcb0u, import_ETEL_ord_27 },
+    { 0x1009fcc0u, import_ETEL_ord_204 },
+    { 0x1009fcd0u, import_ETEL_ord_211 },
+    { 0x1009fce0u, import_ETEL_ord_210 },
+    { 0x1009fcf0u, import_FBSCLI_ord_135 },
+    { 0x1009fd00u, import_FBSCLI_ord_76 },
+    { 0x1009fd10u, import_FBSCLI_ord_21 },
+    { 0x1009fd20u, import_FBSCLI_ord_110 },
+    { 0x1009fd30u, import_FBSCLI_ord_16 },
+    { 0x1009fd40u, import_FBSCLI_ord_17 },
+    { 0x1009fd50u, import_BITGDI_ord_86 },
+    { 0x1009fd60u, import_BITGDI_ord_23 },
+    { 0x1009fd70u, import_BITGDI_ord_112 },
+    { 0x1009fd80u, import_BITGDI_ord_120 },
+    { 0x1009fd90u, import_BITGDI_ord_123 },
+    { 0x1009fda0u, import_EFSRV_ord_18 },
+    { 0x1009fdb0u, import_EFSRV_ord_146 },
+    { 0x1009fdc0u, import_EFSRV_ord_106 },
+    { 0x1009fdd0u, import_EFSRV_ord_21 },
+    { 0x1009fde0u, import_EFSRV_ord_121 },
+    { 0x1009fdf0u, import_EFSRV_ord_25 },
+    { 0x1009fe00u, import_EFSRV_ord_185 },
+    { 0x1009fe10u, import_EFSRV_ord_136 },
+    { 0x1009fe20u, import_EFSRV_ord_194 },
+    { 0x1009fe30u, import_EFSRV_ord_162 },
+    { 0x1009fe40u, import_EFSRV_ord_15 },
+    { 0x1009fe50u, import_EFSRV_ord_29 },
+    { 0x1009fe60u, import_EFSRV_ord_86 },
+    { 0x1009fe70u, import_EFSRV_ord_212 },
+    { 0x1009fe80u, import_EFSRV_ord_193 },
+    { 0x1009fe90u, import_EFSRV_ord_230 },
+    { 0x1009fea0u, import_EFSRV_ord_183 },
+    { 0x1009feb0u, import_EFSRV_ord_33 },
+    { 0x1009fec0u, import_EFSRV_ord_51 },
+    { 0x1009fed0u, import_MEDIACLIENTAUDIOSTREAM_ord_1 },
+    { 0x1009fee0u, import_GAMECOMMS_ord_1 },
+    { 0x1009fef0u, import_GAMECOMMS_ord_30 },
+    { 0x1009ff00u, import_GAMECOMMS_ord_37 },
+    { 0x1009ff10u, import_GAMECOMMS_ord_41 },
+    { 0x1009ff20u, import_GAMECOMMS_ord_27 },
+    { 0x1009ff30u, import_GAMECOMMS_ord_28 },
+    { 0x1009ff40u, import_GAMECOMMS_ord_20 },
+    { 0x1009ff50u, import_GAMECOMMS_ord_2 },
+    { 0x1009ff60u, import_GAMECOMMS_ord_34 },
+    { 0x1009ff70u, import_GAMECOMMS_ord_6 },
+    { 0x1009ff80u, import_GAMECOMMS_ord_40 },
+    { 0x1009ff90u, import_GAMECOMMS_ord_36 },
+    { 0x1009ffa0u, import_GAMECOMMS_ord_39 },
+    { 0x1009ffb0u, import_GAMECOMMS_ord_24 },
+    { 0x1009ffc0u, import_GAMECOMMS_ord_3 },
+    { 0x1009ffd0u, import_GAMECOMMS_ord_57 },
+    { 0x1009ffe0u, import_GAMECOMMS_ord_9 },
+    { 0x1009fff0u, import_GAMECOMMS_ord_15 },
+    { 0x100a0000u, import_GAMECOMMS_ord_14 },
+    { 0x100a0010u, import_GAMECOMMS_ord_8 },
+    { 0x100a0020u, import_GAMECOMMS_ord_11 },
+    { 0x100a0030u, import_GAMECOMMS_ord_7 },
+    { 0x100a0040u, import_GAMECOMMS_ord_56 },
+    { 0x100a0050u, import_GAMECOMMS_ord_33 },
+    { 0x100a0060u, import_GAMECOMMS_ord_32 },
+    { 0x100a0070u, import_GAMECOMMS_ord_5 },
+    { 0x100a0080u, import_GAMECOMMS_ord_53 },
+    { 0x100a0090u, sub_100a0090 },
+    { 0x100a00a0u, import_GDI_ord_151 },
+    { 0x100a00b0u, import_GDI_ord_101 },
+    { 0x100a00c0u, import_GDI_ord_108 },
+    { 0x100a00d0u, import_HAL_ord_1 },
+    { 0x100a00e0u, import_MSGS_ord_185 },
+    { 0x100a00f0u, import_MSGS_ord_143 },
+    { 0x100a0100u, import_MSGS_ord_3 },
+    { 0x100a0110u, import_SIMKIN_ord_185 },
+    { 0x100a0120u, import_SIMKIN_ord_85 },
+    { 0x100a0130u, import_SIMKIN_ord_29 },
+    { 0x100a0140u, import_SIMKIN_ord_237 },
+    { 0x100a0150u, import_SIMKIN_ord_42 },
+    { 0x100a0160u, import_SIMKIN_ord_37 },
+    { 0x100a0170u, import_SIMKIN_ord_40 },
+    { 0x100a0180u, import_SIMKIN_ord_80 },
+    { 0x100a0190u, import_SIMKIN_ord_22 },
+    { 0x100a01a0u, import_SIMKIN_ord_9 },
+    { 0x100a01b0u, import_SIMKIN_ord_192 },
+    { 0x100a01c0u, import_SIMKIN_ord_158 },
+    { 0x100a01d0u, import_SIMKIN_ord_109 },
+    { 0x100a01e0u, import_SIMKIN_ord_121 },
+    { 0x100a01f0u, import_SIMKIN_ord_184 },
+    { 0x100a0200u, import_SIMKIN_ord_84 },
+    { 0x100a0210u, import_SIMKIN_ord_88 },
+    { 0x100a0220u, import_SIMKIN_ord_236 },
+    { 0x100a0230u, import_SIMKIN_ord_141 },
+    { 0x100a0240u, import_SIMKIN_ord_232 },
+    { 0x100a0250u, import_SIMKIN_ord_163 },
+    { 0x100a0260u, import_SIMKIN_ord_118 },
+    { 0x100a0270u, import_SIMKIN_ord_108 },
+    { 0x100a0280u, import_SIMKIN_ord_107 },
+    { 0x100a0290u, import_SIMKIN_ord_161 },
+    { 0x100a02a0u, import_SIMKIN_ord_157 },
+    { 0x100a02b0u, import_SIMKIN_ord_154 },
+    { 0x100a02c0u, import_SIMKIN_ord_234 },
+    { 0x100a02d0u, import_SIMKIN_ord_165 },
+    { 0x100a02e0u, import_SIMKIN_ord_20 },
+    { 0x100a02f0u, import_SIMKIN_ord_177 },
+    { 0x100a0300u, import_SIMKIN_ord_59 },
+    { 0x100a0310u, import_SIMKIN_ord_43 },
+    { 0x100a0320u, import_SIMKIN_ord_60 },
+    { 0x100a0330u, import_SIMKIN_ord_101 },
+    { 0x100a0340u, import_SIMKIN_ord_38 },
+    { 0x100a0350u, import_SIMKIN_ord_159 },
+    { 0x100a0360u, import_SIMKIN_ord_198 },
+    { 0x100a0370u, import_SIMKIN_ord_200 },
+    { 0x100a0380u, import_SIMKIN_ord_50 },
+    { 0x100a0390u, import_SIMKIN_ord_211 },
+    { 0x100a03a0u, import_SIMKIN_ord_229 },
+    { 0x100a03b0u, import_SIMKIN_ord_132 },
+    { 0x100a03c0u, import_SIMKIN_ord_26 },
+    { 0x100a03d0u, import_SIMKIN_ord_259 },
+    { 0x100a03e0u, import_SIMKIN_ord_11 },
+    { 0x100a03f0u, import_SIMKIN_ord_17 },
+    { 0x100a0400u, import_SIMKIN_ord_120 },
+    { 0x100a0410u, import_SIMKIN_ord_183 },
+    { 0x100a0420u, import_SIMKIN_ord_83 },
+    { 0x100a0430u, import_SIMKIN_ord_87 },
+    { 0x100a0440u, import_SIMKIN_ord_235 },
+    { 0x100a0450u, import_SIMKIN_ord_140 },
+    { 0x100a0460u, import_SIMKIN_ord_233 },
+    { 0x100a0470u, import_SIMKIN_ord_164 },
+    { 0x100a0480u, import_SIMKIN_ord_191 },
+    { 0x100a0490u, import_SIMKIN_ord_117 },
+    { 0x100a04a0u, import_SIMKIN_ord_106 },
+    { 0x100a04b0u, import_SIMKIN_ord_105 },
+    { 0x100a04c0u, import_SIMKIN_ord_160 },
+    { 0x100a04d0u, import_SIMKIN_ord_156 },
+    { 0x100a04e0u, import_SIMKIN_ord_2 },
+    { 0x100a04f0u, import_SIMKIN_ord_102 },
+    { 0x100a0500u, import_SIMKIN_ord_89 },
+    { 0x100a0510u, import_ESTLIB_ord_82 },
+    { 0x100a0520u, import_ESTLIB_ord_316 },
+    { 0x100a0530u, import_ESTLIB_ord_342 },
+    { 0x100a0540u, import_ESTLIB_ord_317 },
+    { 0x100a0550u, import_ESTLIB_ord_188 },
+    { 0x100a0560u, import_ESTLIB_ord_180 },
+    { 0x100a0570u, import_ESTLIB_ord_193 },
+    { 0x100a0580u, import_ESTLIB_ord_83 },
+    { 0x100a0590u, import_ESTLIB_ord_9 },
+    { 0x100a05a0u, import_ESTLIB_ord_181 },
+    { 0x100a05b0u, import_ESTLIB_ord_177 },
+    { 0x100a05c0u, import_ESTLIB_ord_315 },
+    { 0x100a05d0u, import_ESTLIB_ord_157 },
+    { 0x100a05e0u, import_ESTLIB_ord_187 },
+    { 0x100a05f0u, import_ESTLIB_ord_58 },
+    { 0x100a0600u, import_ESTLIB_ord_64 },
+    { 0x100a0610u, import_ESTLIB_ord_51 },
+    { 0x100a0620u, import_ESTLIB_ord_49 },
+    { 0x100a0630u, import_ESTLIB_ord_59 },
+    { 0x100a0640u, import_ESTLIB_ord_6 },
+    { 0x100a0650u, import_ESTLIB_ord_291 },
+    { 0x100a0660u, import_ESTLIB_ord_128 },
+    { 0x100a0670u, import_ESTLIB_ord_178 },
+    { 0x100a0680u, import_ESTLIB_ord_56 },
+    { 0x100a0690u, import_ESTLIB_ord_3 },
+    { 0x100a06a0u, import_ESTLIB_ord_65 },
+    { 0x100a06b0u, import_ESTLIB_ord_173 },
+    { 0x100a06c0u, import_ESTLIB_ord_171 },
+    { 0x100a06d0u, import_ESTLIB_ord_174 },
+    { 0x100a06e0u, import_WS32_ord_268 },
+    { 0x100a06f0u, import_WS32_ord_43 },
+    { 0x100a0700u, import_WS32_ord_109 },
+    { 0x100a0710u, import_WS32_ord_74 },
+    { 0x100a0720u, import_ESOCK_ord_209 },
+    { 0x100a0730u, import_ESOCK_ord_217 },
+    { 0x100a0740u, import_ESOCK_ord_48 },
+    { 0x100a0750u, import_ESOCK_ord_62 },
+    { 0x100a0760u, import_ESOCK_ord_129 },
+    { 0x100a0770u, import_ESOCK_ord_87 },
+    { 0x100a0780u, import_ESOCK_ord_45 },
+    { 0x100a0790u, sub_100a0790 },
+    { 0x100a0798u, sub_100a0798 },
+    { 0x100a079cu, sub_100a079c },
+    { 0x100a07e8u, sub_100a07e8 },
+    { 0x100a0834u, sub_100a0834 },
+    { 0x100a0880u, sub_100a0880 },
+    { 0x100a08a8u, sub_100a08a8 },
+    { 0x100a08b0u, sub_100a08b0 },
+    { 0x100a08d0u, sub_100a08d0 },
+    { 0x100a0934u, sub_100a0934 },
+    { 0x100a0968u, sub_100a0968 },
+    { 0x100a099cu, sub_100a099c },
+    { 0x100a0a28u, sub_100a0a28 },
+    { 0x100a0ab4u, sub_100a0ab4 },
+    { 0x100a0b40u, sub_100a0b40 },
+    { 0x100a0bccu, sub_100a0bcc },
+    { 0x100a0c58u, sub_100a0c58 },
+    { 0x100a0ce4u, sub_100a0ce4 },
+    { 0x100a0ce8u, sub_100a0ce8 },
+    { 0x100a0cecu, sub_100a0cec },
+    { 0x100a14ecu, sub_100a14ec },
+    { 0x100a14f8u, sub_100a14f8 },
+    { 0x100a150cu, sub_100a150c },
+    { 0x100a1514u, sub_100a1514 },
+    { 0x100a151cu, sub_100a151c },
+    { 0x100a152cu, sub_100a152c },
+    { 0x100a1534u, sub_100a1534 },
+    { 0x100a153cu, sub_100a153c },
+    { 0x100a1544u, sub_100a1544 },
+    { 0x100a154cu, sub_100a154c },
+    { 0x100a1554u, sub_100a1554 },
+    { 0x100a155cu, sub_100a155c },
+    { 0x100a1564u, sub_100a1564 },
+    { 0x100a1574u, sub_100a1574 },
+    { 0x100a1584u, sub_100a1584 },
+    { 0x100a158cu, sub_100a158c },
+    { 0x100a1594u, sub_100a1594 },
+    { 0x100a15a4u, sub_100a15a4 },
+    { 0x100a15acu, sub_100a15ac },
+    { 0x100a15b8u, sub_100a15b8 },
+    { 0x100a15c0u, sub_100a15c0 },
+    { 0x100a15c8u, sub_100a15c8 },
+    { 0x100a15d0u, sub_100a15d0 },
+    { 0x100a15d8u, sub_100a15d8 },
+    { 0x100a15e0u, sub_100a15e0 },
+    { 0x100a15f0u, sub_100a15f0 },
+    { 0x100a15f8u, sub_100a15f8 },
+    { 0x100a1600u, sub_100a1600 },
+    { 0x100a1608u, sub_100a1608 },
+    { 0x100a161cu, sub_100a161c },
+    { 0x100a1624u, sub_100a1624 },
+    { 0x100a162cu, sub_100a162c },
+    { 0x100a1634u, sub_100a1634 },
+    { 0x100a163cu, sub_100a163c },
+    { 0x100a1644u, sub_100a1644 },
+    { 0x100a164cu, sub_100a164c },
+    { 0x100a1654u, sub_100a1654 },
+    { 0x100a165cu, sub_100a165c },
+    { 0x100a1664u, sub_100a1664 },
+    { 0x100a166cu, sub_100a166c },
+    { 0x100a1674u, sub_100a1674 },
+    { 0x100a167cu, sub_100a167c },
+    { 0x100a1684u, sub_100a1684 },
+    { 0x100a168cu, sub_100a168c },
+    { 0x100a169cu, sub_100a169c },
+    { 0x100a16a4u, sub_100a16a4 },
+    { 0x100a16acu, sub_100a16ac },
+    { 0x100a16c4u, sub_100a16c4 },
+    { 0x100a16ccu, sub_100a16cc },
+    { 0x100a16d4u, sub_100a16d4 },
+    { 0x100a16dcu, sub_100a16dc },
+    { 0x100a16e4u, sub_100a16e4 },
+    { 0x100a16ecu, sub_100a16ec },
+    { 0x100a16f4u, sub_100a16f4 },
+    { 0x100a16fcu, sub_100a16fc },
+    { 0x100a1704u, sub_100a1704 },
+    { 0x100a1714u, sub_100a1714 },
+    { 0x100a171cu, sub_100a171c },
+    { 0x100a1724u, sub_100a1724 },
+    { 0x100a172cu, sub_100a172c },
+    { 0x100a1734u, sub_100a1734 },
+    { 0x100a173cu, sub_100a173c },
+    { 0x100a1744u, sub_100a1744 },
+    { 0x100a174cu, sub_100a174c },
+    { 0x100a175cu, sub_100a175c },
+    { 0x100a1770u, sub_100a1770 },
+    { 0x100a1778u, sub_100a1778 },
+    { 0x100a17c0u, sub_100a17c0 },
+    { 0x100a17dcu, sub_100a17dc },
+    { 0x100a17e0u, sub_100a17e0 },
+    { 0x100a17e4u, sub_100a17e4 },
+    { 0x100a17ecu, sub_100a17ec },
+    { 0x100a17f0u, sub_100a17f0 },
+    { 0x100a17f4u, sub_100a17f4 },
+    { 0x100a17f8u, sub_100a17f8 },
+    { 0x100a193cu, sub_100a193c },
+    { 0x100a19c8u, sub_100a19c8 },
+    { 0x100a1a20u, sub_100a1a20 },
+    { 0x100a1a78u, sub_100a1a78 },
+    { 0x100a1ad0u, sub_100a1ad0 },
+    { 0x100a1b28u, sub_100a1b28 },
+    { 0x100a1b80u, sub_100a1b80 },
+    { 0x100a1bd8u, sub_100a1bd8 },
+    { 0x100a1c30u, sub_100a1c30 },
+    { 0x100a1c88u, sub_100a1c88 },
+    { 0x100a1ce0u, sub_100a1ce0 },
+    { 0x100a1d38u, sub_100a1d38 },
+    { 0x100a1d90u, sub_100a1d90 },
+    { 0x100a1de8u, sub_100a1de8 },
+    { 0x100a1e40u, sub_100a1e40 },
+    { 0x100a1e98u, sub_100a1e98 },
+    { 0x100a1ef0u, sub_100a1ef0 },
+    { 0x100a1f48u, sub_100a1f48 },
+    { 0x100a1fa0u, sub_100a1fa0 },
+    { 0x100a1ff8u, sub_100a1ff8 },
+    { 0x100a2050u, sub_100a2050 },
+    { 0x100a20a8u, sub_100a20a8 },
+    { 0x100a2104u, sub_100a2104 },
+    { 0x100a210cu, sub_100a210c },
+    { 0x100a211cu, sub_100a211c },
+    { 0x100a2124u, sub_100a2124 },
+    { 0x100a212cu, sub_100a212c },
+    { 0x100a2134u, sub_100a2134 },
+    { 0x100a213cu, sub_100a213c },
+    { 0x100a2148u, sub_100a2148 },
+    { 0x100a2168u, sub_100a2168 },
+    { 0x100a216cu, sub_100a216c },
+    { 0x100a2178u, sub_100a2178 },
+    { 0x100a2180u, sub_100a2180 },
+    { 0x100a2188u, sub_100a2188 },
+    { 0x100a21ecu, sub_100a21ec },
+    { 0x100a21f4u, sub_100a21f4 },
+    { 0x100a22e8u, sub_100a22e8 },
+    { 0x100a22f4u, sub_100a22f4 },
+    { 0x100a2318u, sub_100a2318 },
+    { 0x100a2330u, sub_100a2330 },
+    { 0x100a2348u, sub_100a2348 },
+    { 0x100a2354u, sub_100a2354 },
+    { 0x100a2360u, sub_100a2360 },
+    { 0x100a2378u, sub_100a2378 },
+    { 0x100a2390u, sub_100a2390 },
+    { 0x100a239cu, sub_100a239c },
+    { 0x100a23a8u, sub_100a23a8 },
+    { 0x100a23b4u, sub_100a23b4 },
+    { 0x100a23ccu, sub_100a23cc },
+    { 0x100a23d8u, sub_100a23d8 },
+    { 0x100a23e4u, sub_100a23e4 },
+    { 0x100a23f0u, sub_100a23f0 },
+    { 0x100a23fcu, sub_100a23fc },
+    { 0x100a2408u, sub_100a2408 },
+    { 0x100a2414u, sub_100a2414 },
+    { 0x100a2420u, sub_100a2420 },
+    { 0x100a242cu, sub_100a242c },
+    { 0x100a2450u, sub_100a2450 },
+    { 0x100a245cu, sub_100a245c },
+    { 0x100a2468u, sub_100a2468 },
+    { 0x100a2474u, sub_100a2474 },
+    { 0x100a2480u, sub_100a2480 },
+    { 0x100a2498u, sub_100a2498 },
+    { 0x100a24a4u, sub_100a24a4 },
+    { 0x100a24bcu, sub_100a24bc },
+    { 0x100a24ecu, sub_100a24ec },
+    { 0x100a24f8u, sub_100a24f8 },
+    { 0x100a2504u, sub_100a2504 },
+    { 0x100a2528u, sub_100a2528 },
+    { 0x100a2534u, sub_100a2534 },
+    { 0x100a254cu, sub_100a254c },
+    { 0x100a2558u, sub_100a2558 },
+    { 0x100a2564u, sub_100a2564 },
+    { 0x100a25a0u, sub_100a25a0 },
+    { 0x100a25c4u, sub_100a25c4 },
+    { 0x100a25d0u, sub_100a25d0 },
+    { 0x100a25e8u, sub_100a25e8 },
+    { 0x100a2600u, sub_100a2600 },
+    { 0x100a2648u, sub_100a2648 },
+    { 0x100a2650u, sub_100a2650 },
+    { 0x100a2664u, sub_100a2664 },
+    { 0x100a266cu, sub_100a266c },
+    { 0x100a2678u, sub_100a2678 },
+    { 0x100a2680u, sub_100a2680 },
+    { 0x100a2684u, sub_100a2684 },
+    { 0x100a26a4u, sub_100a26a4 },
+    { 0x100a2708u, sub_100a2708 },
+    { 0x100a2798u, sub_100a2798 },
+    { 0x100a28e4u, sub_100a28e4 },
+    { 0x100a2944u, sub_100a2944 },
+    { 0x100a29c4u, sub_100a29c4 },
+    { 0x100a2a38u, sub_100a2a38 },
+    { 0x100a2b38u, sub_100a2b38 },
+    { 0x100a2b50u, sub_100a2b50 },
+    { 0x100a2c3cu, sub_100a2c3c },
+    { 0x100a2c84u, sub_100a2c84 },
+    { 0x100a2ce0u, sub_100a2ce0 },
+    { 0x100a2d00u, sub_100a2d00 },
+    { 0x100a2d8cu, sub_100a2d8c },
+    { 0x100a2df0u, sub_100a2df0 },
+    { 0x100a2f40u, sub_100a2f40 },
+    { 0x100a2f88u, sub_100a2f88 },
+    { 0x100a3064u, sub_100a3064 },
+    { 0x100a30ecu, sub_100a30ec },
+    { 0x100a3168u, sub_100a3168 },
+    { 0x100a31f0u, sub_100a31f0 },
+    { 0x100a3284u, sub_100a3284 },
+    { 0x100a32dcu, sub_100a32dc },
+    { 0x100a3310u, sub_100a3310 },
+    { 0x100a3398u, sub_100a3398 },
+    { 0x100a3420u, sub_100a3420 },
+    { 0x100a3498u, sub_100a3498 },
+    { 0x100a34fcu, sub_100a34fc },
+    { 0x100a354cu, sub_100a354c },
+    { 0x100a359cu, sub_100a359c },
+    { 0x100a35ecu, sub_100a35ec },
+    { 0x100a363cu, sub_100a363c },
+    { 0x100a368cu, sub_100a368c },
+    { 0x100a36dcu, sub_100a36dc },
+    { 0x100a372cu, sub_100a372c },
+    { 0x100a377cu, sub_100a377c },
+    { 0x100a37ccu, sub_100a37cc },
+    { 0x100a381cu, sub_100a381c },
+    { 0x100a386cu, sub_100a386c },
+    { 0x100a38bcu, sub_100a38bc },
+    { 0x100a390cu, sub_100a390c },
+    { 0x100a395cu, sub_100a395c },
+    { 0x100a39acu, sub_100a39ac },
+    { 0x100a39fcu, sub_100a39fc },
+    { 0x100a3a4cu, sub_100a3a4c },
+    { 0x100a3a9cu, sub_100a3a9c },
+    { 0x100a3aecu, sub_100a3aec },
+    { 0x100a3b3cu, sub_100a3b3c },
+    { 0x100a3b8cu, sub_100a3b8c },
+    { 0x100a3c0cu, sub_100a3c0c },
+    { 0x100a3c30u, sub_100a3c30 },
+    { 0x100a3f8cu, sub_100a3f8c },
+    { 0x100a3f94u, sub_100a3f94 },
+    { 0x100a3fa8u, sub_100a3fa8 },
+    { 0x100a3fbcu, sub_100a3fbc },
+    { 0x100a3fd0u, sub_100a3fd0 },
+    { 0x100a3fe4u, sub_100a3fe4 },
+    { 0x100a3ff8u, sub_100a3ff8 },
+    { 0x100a400cu, sub_100a400c },
+    { 0x100a4020u, sub_100a4020 },
+    { 0x100a4034u, sub_100a4034 },
+    { 0x100a4048u, sub_100a4048 },
+    { 0x100a405cu, sub_100a405c },
+    { 0x100a4070u, sub_100a4070 },
+    { 0x100a4084u, sub_100a4084 },
+    { 0x100a4098u, sub_100a4098 },
+    { 0x100a40acu, sub_100a40ac },
+    { 0x100a40c0u, sub_100a40c0 },
+    { 0x100a40d4u, sub_100a40d4 },
+    { 0x100a40e8u, sub_100a40e8 },
+    { 0x100a40fcu, sub_100a40fc },
+    { 0x100a4110u, sub_100a4110 },
+    { 0x100a4124u, sub_100a4124 },
+    { 0x100a4138u, sub_100a4138 },
+    { 0x100a414cu, sub_100a414c },
+    { 0x100a4160u, sub_100a4160 },
+    { 0x100a45c8u, sub_100a45c8 },
+    { 0x100a45e4u, sub_100a45e4 },
+    { 0x100a464cu, sub_100a464c },
+    { 0x100a468cu, sub_100a468c },
+    { 0x100a46ccu, sub_100a46cc },
+    { 0x100a470cu, sub_100a470c },
+    { 0x100a474cu, sub_100a474c },
+    { 0x100a478cu, sub_100a478c },
+    { 0x100a47ccu, sub_100a47cc },
+    { 0x100a480cu, sub_100a480c },
+    { 0x100a484cu, sub_100a484c },
+    { 0x100a488cu, sub_100a488c },
+    { 0x100a48ccu, sub_100a48cc },
+    { 0x100a490cu, sub_100a490c },
+    { 0x100a494cu, sub_100a494c },
+    { 0x100a498cu, sub_100a498c },
+    { 0x100a49ccu, sub_100a49cc },
+    { 0x100a4a40u, sub_100a4a40 },
+    { 0x100a4ac8u, sub_100a4ac8 },
+    { 0x100a4af4u, sub_100a4af4 },
+    { 0x100a4b20u, sub_100a4b20 },
+    { 0x100a4b4cu, sub_100a4b4c },
+    { 0x100a4b80u, sub_100a4b80 },
+    { 0x100a4ce4u, sub_100a4ce4 },
+    { 0x100f6afcu, sub_100f6afc },
+};
+const uint32_t shadowkey_function_registry_count = 2364u;
+
+ngage_guest_fn shadowkey_find_function(uint32_t address) {
+    address &= ~1u;
+    uint32_t lo=0, hi=shadowkey_function_registry_count;
+    while (lo<hi) { uint32_t mid=lo+(hi-lo)/2; uint32_t a=shadowkey_function_registry[mid].address;
+        if (a<address) lo=mid+1; else hi=mid; }
+    if (lo<shadowkey_function_registry_count && shadowkey_function_registry[lo].address==address)
+        return shadowkey_function_registry[lo].fn;
+    return 0;
+}

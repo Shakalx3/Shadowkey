@@ -1,0 +1,1 @@
+// locked door, rating 5.

@@ -1,0 +1,28 @@
+Shadowkey v8.4 step29/30 test results — 2026-11-04
+
+PASS build_and_test.sh
+PASS ARM Operand2 helper: LSL/LSR/ASR/ROR/RRX, immediate/register forms, carry semantics
+PASS static audit: 4,961 shifted ARM data-processing instructions use shadowkey_arm_shift_operand
+PASS DrawText ABI test: TPoint decode, stack args, no unintended pixel writes
+PASS EUSER711 test: two-coordinate TPoint write; r3 and stack preserved
+PASS EUSER1373/530/711 paired point API test
+PASS natural high-RAM RunL path: engine+0x34=0, reaches DrawText without forced state write
+PASS DrawText text descriptor: "has paused the game", 19 UTF-16 characters
+PASS first DrawText point=(0,160), baseline=83
+PASS second point=(0,13); DiscardFont and bitmap/font callback reached
+PASS FBS shared chunk and RGB444 asset decode regressions
+PASS 15,073,516-byte host allocation serviced at 0x10400000 after FBS reserved region
+PASS HAL high-RAM audit at 33,554,432 bytes
+PASS HAL low-RAM audit at 4,194,304 bytes; low-memory branch remains distinct and does not reach DrawText
+PASS frontier regression on natural high-RAM trace
+PASS ARM11 EABI5 relocatable core build
+PASS static ARM EABI5 ELF linkcheck; no undefined symbols
+
+LIMITATIONS
+- EUSER1407/GDI151 still experimental; TFontSpec layout provisional.
+- GDI108 unresolved.
+- CFont model is synthetic/diagnostic; no real font-store integration.
+- DrawText does not rasterize; text pixels remain unchanged.
+- Direct RunL test bypasses CActiveScheduler.
+- ARM ELF linkcheck is not an E32Image or SIS installer.
+- No physical Nokia N95 test or launch.

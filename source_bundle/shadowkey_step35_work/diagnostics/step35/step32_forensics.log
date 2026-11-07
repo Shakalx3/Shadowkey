@@ -1,0 +1,9 @@
+PASS: all five GDI108 callsites are accounted for
+PASS: each receiver is exactly TFontSpec candidate base + 0x3C; source descriptor starts at receiver + 4
+PASS: conflicting legacy GDI151 layout is isolated behind a separate opt-in
+PASS: live watch instruments guest WRITE8/WRITE16/WRITE32 paths
+Traceback (most recent call last):
+  File "/mnt/data/shadowkey_step34_work/shadowkey_step33_work/shadowkey_step32_gdi108_forensics.py", line 47, in <module>
+    assert log_path.exists(), 'run trace_asset_loader_live_vfs.sh first; the live trace must be generated in .build'
+           ~~~~~~~~~~~~~~~^^
+AssertionError: run trace_asset_loader_live_vfs.sh first; the live trace must be generated in .build

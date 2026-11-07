@@ -1,0 +1,14 @@
+Shadowkey v8.4 step18 verification
+Date: 2026-11-03
+
+PASS: shadowkey_step17_text_chain_audit.py
+PASS: shadowkey_step18_text_chain_audit.py
+PASS: step12_forensics/build_and_test.sh (exit 0)
+PASS: build_arm11_core.sh (ARM EABI5 relocatable object)
+PASS: build_arm11_linkcheck.sh (static ARM ELF, no undefined symbols)
+
+Important scope limitation:
+- ARM linkcheck uses arm11_freestanding_stubs.c and a no-op E32Main.
+- This is not a Symbian E32Image and not a playable game binary.
+- No physical Nokia N95 test was performed.
+- No unverified GDI/EUSER/CONE handlers were added.

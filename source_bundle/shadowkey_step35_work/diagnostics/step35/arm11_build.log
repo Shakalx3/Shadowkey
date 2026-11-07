@@ -1,0 +1,15 @@
+[ARM11] shadowkey_lifted_v6.c
+[ARM11] simkin_lifted_runtime_v4.c
+[ARM11] shadowkey_function_registry.c
+[ARM11] shadowkey_import_dispatch.c
+[ARM11] shadowkey_dispatch_trace.c
+[ARM11] shadowkey_hle_bootstrap_v2.c
+[ARM11] shadowkey_cone_gc_hle.c
+[ARM11] shadowkey_fbs_hle.c
+[ARM11] shadowkey_bitgdi_hle.c
+[ARM11] simkin_function_registry.c
+[ARM11] simkin_export_registry.c
+[ARM11] simkin_import_dispatch.c
+[ARM11] arm_fallback.c
+[ARM11] shadowkey_runtime_core.c
+arm11_objects/shadowkey_arm11_core.o: ELF 32-bit LSB relocatable, ARM, EABI5 version 1 (SYSV), not stripped

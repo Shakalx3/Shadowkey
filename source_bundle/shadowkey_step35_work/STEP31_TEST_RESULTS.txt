@@ -1,0 +1,28 @@
+HISTORICAL STEP31 RESULTS — SUPERSEDED BY STEP32
+The claim that the GDI108 receiver was a valid separate vtable object was withdrawn. Its bytes were captured pre-call only; step32 identifies the receiver as the TFontSpec+0x3C style subobject and adds a dynamic write watch. Do not use the GDI108 object claim below as a current conclusion.
+
+Shadowkey v8.4 step31 experimental font-path validation — 2026-11-05
+
+PASS build_and_test.sh (baseline regression suite)
+PASS trace_asset_loader_live_vfs.sh with:
+  SHADOWKEY_EXPERIMENTAL_EUSER1407_FONT_TBUF=1
+  SHADOWKEY_EXPERIMENTAL_GDI151_TFONTSPEC=1
+PASS EUSER1407 font path produces TBuf16<6>: type=3, length=5, max=6, UTF-16 "Swiss"
+PASS EUSER1282 copies the exact 20-byte descriptor object
+PASS GDI151 experimental constructor writes a 60-byte TFontSpec
+PASS TFontSpec HLE consumer accepts name "Swiss", height 213 twips
+PASS synthetic host CFont returned (14 px under provisional 96-dpi conversion)
+PASS GDI108 receiver has a vtable-like image pointer and embedded Swiss descriptor
+PASS live path reaches DrawText with "has paused the game" (19 UTF-16 chars), point=(0,160), baseline=83
+PASS second DrawText candidate reached with empty descriptor, point=(0,13)
+PASS DiscardFont and diagnostic bitmap/font callback reached
+
+LIMITATIONS
+- EUSER1407 full formatter/export identity is inferred, not FP1 export-table verified.
+- GDI151 implementation is environment-gated and experimental; not yet promoted to normal HLE.
+- TFontStyle default fields are provisional.
+- GDI108 remains unimplemented and its exact API/class is unknown.
+- Synthetic CFont is not the real FBS font store object.
+- DrawText records arguments but does not rasterize glyphs; no text pixel changes demonstrated.
+- Direct RunL test bypasses CActiveScheduler.
+- No E32Image/SIS and no physical N95 test.

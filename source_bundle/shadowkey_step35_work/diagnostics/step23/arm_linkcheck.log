@@ -1,0 +1,21 @@
+[ARM11] up to date: shadowkey_lifted_v6.c
+[ARM11] up to date: simkin_lifted_runtime_v4.c
+[ARM11] up to date: shadowkey_function_registry.c
+[ARM11] up to date: shadowkey_import_dispatch.c
+[ARM11] up to date: shadowkey_dispatch_trace.c
+[ARM11] up to date: shadowkey_hle_bootstrap_v2.c
+[ARM11] up to date: shadowkey_cone_gc_hle.c
+[ARM11] up to date: shadowkey_fbs_hle.c
+[ARM11] up to date: shadowkey_bitgdi_hle.c
+[ARM11] up to date: simkin_function_registry.c
+[ARM11] up to date: simkin_export_registry.c
+[ARM11] up to date: simkin_import_dispatch.c
+[ARM11] up to date: arm_fallback.c
+[ARM11] up to date: shadowkey_runtime_core.c
+arm11_objects/shadowkey_arm11_core.o: ELF 32-bit LSB relocatable, ARM, EABI5 version 1 (SYSV), not stripped
+arm11_objects/shadowkey_arm11_linkcheck.elf: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), statically linked, not stripped
+  Type:                              EXEC (Executable file)
+  Machine:                           ARM
+  Entry point address:               0x4ff928
+  Flags:                             0x5000200, Version5 EABI, soft-float ABI
+PASS: statically linked ARM ELF; no undefined symbols. E32Main is deliberately a no-op stub.

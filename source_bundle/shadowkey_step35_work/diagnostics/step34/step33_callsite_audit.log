@@ -1,0 +1,9 @@
+PASS: exactly five GDI108 callsites are mapped to their callers
+PASS: all five receiver expressions and r1 provenance branches are accounted for
+PASS: r1 is not uniform: incoming value / local 0-or-1 / accumulated +13 paths remain distinct
+PASS: current GDI108 experiment remains limited to the observed r1=0 callsite
+PASS: live watch covers 8-, 16-, and 32-bit guest stores
+PASS: conflicting legacy GDI151 layout requires a separate opt-in
+PASS: unknown GDI108/GDI151 callsites fail closed instead of returning synthetic zero
+LIMIT: GDI108 signature, enum semantics, and nonzero-r1 cases are not identified
+LIMIT: GDI151 argument variants at the five sites are not all dynamically observed

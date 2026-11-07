@@ -1,0 +1,29 @@
+{
+	Init[ (s)
+	{
+		SetName(2123);
+		SetSkin(2);
+		SetExpWorth(0);
+		SetInvulnerable(true);
+		SetAggressive(false);
+		SetLevel(0);
+		SetAttack(0);
+		SetDefense(0);
+		SetSpellcast(0);
+		SetMagicResistance(0);
+		SetDamageMin(0);
+		SetDamageMax(0);
+		SetArmorValue(0);
+		SetMaxHealth(0);
+		SetWimpy(0);
+		SetChaseRadius(18000);
+		SetAttackNoise(24);
+		SetDeathNoise(25);
+		SetIsHitNoise(26);
+		SetWalkAnimation(5);
+		SetSwingAnimation(1);
+		SetDeathAnimation(6);
+		SetIdleAnimation(7);
+		PlayAnimationOffset(7);
+	} ]
+}

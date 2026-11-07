@@ -1,0 +1,13 @@
+{
+	Init[()
+	{
+		SetUseText(1369);
+		SetUsable(true);
+		SetIcon(212);
+		SetMPUsable(true);
+	}]
+	OnUse[()
+	{
+		OpenMenu("fearfrst\\\\Mushroom_menu");
+	}]
+}

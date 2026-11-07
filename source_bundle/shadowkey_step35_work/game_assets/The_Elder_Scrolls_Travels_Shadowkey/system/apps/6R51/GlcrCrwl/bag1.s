@@ -1,0 +1,11 @@
+{
+	Init[()
+	{
+		SetUseText(863);
+		SetUsable(true);
+	}]
+	OnUse[()
+	{
+		OpenMenu("glcrcrwl\\\\loot4.s");
+	}]
+}

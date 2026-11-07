@@ -1,0 +1,15 @@
+Shadowkey v8.4 step20 verification
+
+PASS: shadowkey_step20_font_draw_audit.py
+PASS: shadowkey_step19_tfont_device_audit.py
+PASS: shadowkey_step18_text_chain_audit.py
+PASS: shadowkey_step17_text_chain_audit.py
+PASS: build_arm11_core.sh (ARM EABI5 relocatable core)
+PASS: build_arm11_linkcheck.sh (static ARM ELF, no undefined symbols)
+
+LIMITATIONS:
+- linkcheck ELF still uses a no-op E32Main stub; it is not a Symbian E32Image.
+- no matching S60 3rd FP1 SDK export/vtable map was available in this workspace.
+- no physical Nokia N95 launch or real graphics-server execution was performed.
+- exact method names for graphics-context vtable offsets +0x24/+0x28/+0x3c/+0xA8 remain to be confirmed.
+- fifth text site sub_10023608 differs from the other four and is not forced into their call sequence.

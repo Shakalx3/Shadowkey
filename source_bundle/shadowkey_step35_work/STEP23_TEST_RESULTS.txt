@@ -1,0 +1,23 @@
+Shadowkey v8.4 step23 test results
+=================================
+PASS  build_and_test.sh
+PASS  shadowkey_step17_text_chain_audit.py
+PASS  shadowkey_step18_text_chain_audit.py
+PASS  shadowkey_step19_tfont_device_audit.py
+PASS  shadowkey_step20_font_draw_audit.py
+PASS  shadowkey_step21_drawtext_audit.py
+PASS  shadowkey_step23_drawtext_abi_test.sh
+PASS  trace_asset_loader_live_vfs.sh with SHADOWKEY_HLE_FREE_RAM_BYTES=33554432
+PASS  trace_asset_loader_live_vfs.sh with SHADOWKEY_HLE_FREE_RAM_BYTES=4194304
+PASS  trace_asset_loader_vfs.sh forced-zero diagnostic regression
+PASS  build_arm11_core.sh (ARM EABI5 relocatable object)
+PASS  build_arm11_linkcheck.sh (static ARM EABI5 linkcheck, no undefined symbols)
+
+High-memory live path: HAL::Get attribute 16 returns 32 MiB; constructor leaves engine+0x34=0; direct single RunL reaches DrawText and DiscardFont.
+Low-memory branch: HAL::Get attribute 16 returns 4 MiB; constructor sets engine+0x34=1; DrawText is not reached by the one-call probe.
+
+LIMIT  Live harness still invokes RunL directly, not through CActiveScheduler.
+LIMIT  HAL free RAM is a configurable host model, not a measured N95 value.
+LIMIT  DrawText is diagnostic only; descriptor length is zero and rectangle output is stale because EUSER 248 and 711 remain unmapped.
+LIMIT  ARM ELF linkcheck is not a Symbian E32Image; required Symbian tools are absent.
+LIMIT  No physical N95 test.

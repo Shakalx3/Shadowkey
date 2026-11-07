@@ -1,0 +1,8 @@
+Next step for the native Shadowkey port
+
+1. Build/install a Symbian-compatible elf2e32/elf2e32_next and the S60 3rd Edition FP1 SDK (Symbian OS 9.2 target).
+2. Replace arm11_freestanding_stubs.c's no-op E32Main with a real Symbian entry point and runtime initialization. The original 6R51.APP has DLL UID1 0x10000079, so it is not a standalone EXE.
+3. Convert the target-base ELF to E32Image only after the entry point, ABI, memory layout, and required imports are correct.
+4. Validate the E32 header/imports/relocations with an E32-aware parser, then test manually on the N95.
+
+Do not copy the current ELF to the phone as an .app. It is not an E32Image and E32Main currently returns immediately.

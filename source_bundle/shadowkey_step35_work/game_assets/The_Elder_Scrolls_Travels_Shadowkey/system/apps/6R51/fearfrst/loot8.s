@@ -1,0 +1,11 @@
+{
+	Init[()
+	{
+		SetUseText(1367);
+		SetUsable(true);
+	}]
+	OnUse[()
+	{
+		OpenMenu("fearfrst\\\\loot8_menu");
+	}]
+}

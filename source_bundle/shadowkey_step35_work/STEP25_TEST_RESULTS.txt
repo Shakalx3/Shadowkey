@@ -1,0 +1,22 @@
+Shadowkey v8.4 step25 test results
+
+PASS  starting v8.4 step24 archive verified (ZIP integrity and SHA-256)
+PASS  build_and_test.sh
+PASS  step17/18/19/20/21 text-chain static audits
+PASS  step23 DrawText ABI test; no fake pixel writes
+PASS  step24 EUSER 248 focused UTF-16 test
+PASS  step24 ESTLIB 317/315 wide-string test
+PASS  step25 EUSER 711 focused this+4xTInt rectangle ABI test
+PASS  step25 ARM-core HLE parity test for EUSER 248, EUSER 711, ESTLIB 315/317
+PASS  natural high-RAM constructor/RunL VFS probe; no forced engine+0x34 write
+PASS  step25 live trace: EUSER 711 initializes 16-byte object; following DrawText receives it
+PASS  low-RAM branch remains distinct in host trace harness
+PASS  ARM11 EABI5 relocatable core build
+PASS  static ARM EABI5 ELF linkcheck, no undefined symbols
+
+LIMIT  EUSER 711 exact FP1 export name and ctor-vs-setter identity not proven
+LIMIT  first DrawText still precedes rectangle setup and sees stale memory
+LIMIT  rectangle values [0,13,-15,0] are preserved verbatim; downstream normalization not known
+LIMIT  DrawText still does not rasterize glyphs or write pixels
+LIMIT  HAL 32 MiB free-RAM model remains host-only; no real device HAL query in ARM core
+LIMIT  no full CActiveScheduler, E32Image/SIS package, or physical N95 launch

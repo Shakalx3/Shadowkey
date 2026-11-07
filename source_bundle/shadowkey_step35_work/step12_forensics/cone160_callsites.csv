@@ -1,0 +1,5 @@
+callsite,caller,r0_hidden_result,r1_this,observed_use
+0x10021400,sub_10021244,r0=sp+0x0c,r1=r7,Immediately copies 8 bytes from returned temporary via EUSER ordinal 1086; then passes pair as dimensions to internal bitmap constructor
+0x10021D8C,sub_10021B98,r0=sp+0x430,r1=r7,Returned temporary later consumed by control vtable slots +0x48 and +0xB8
+0x10022AD4,sub_10022898,r0=sp+0x3c,r1=r8,Returned temporary passed to another object through vtable slot +0xC0
+0x100282A8,sub_10028260,r0=sp+0x204,r1=r6,Returned temporary later consumed by control vtable slots +0x48 and +0xB8

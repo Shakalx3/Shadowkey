@@ -47,6 +47,22 @@ static uint32_t rd32(ngage_cpu_t*c,uint32_t a){uint8_t*p=guest_ptr(c,a,4);if(!p)
 static void wr32(ngage_cpu_t*c,uint32_t a,uint32_t v){uint8_t*p=guest_ptr(c,a,4);if(!p)return;p[0]=v;p[1]=v>>8;p[2]=v>>16;p[3]=v>>24;}
 static size_t guest_cstr(ngage_cpu_t*c,uint32_t a,char*out,size_t cap){if(!out||!cap||a<0x10000000u||a>=0x12000000u){if(cap)out[0]=0;return 0;}size_t n=0;while(n+1<cap&&a+n<0x12000000u){char ch=(char)c->mem[(a-0x10000000u)+n];out[n++]=ch;if(!ch)break;}out[cap-1]=0;return n?n-1:0;}
 static void guest_put_cstr(ngage_cpu_t*c,uint32_t a,const char*s){if(a<0x10000000u||a>=0x12000000u)return;size_t n=strlen(s);if(n>0x1000)n=0x1000;uint8_t*p=guest_ptr(c,a,(uint32_t)n+1);if(p){memcpy(p,s,n);p[n]=0;}}
+static uint32_t guest_wstr_len(ngage_cpu_t*c,uint32_t a,uint32_t max){
+    uint32_t n=0;for(;n<max;n++){uint8_t*p=guest_ptr(c,a+n*2u,2u);if(!p||(!p[0]&&!p[1]))break;}return n;
+}
+static int vfs_host_path_cstr(ngage_cpu_t*c,uint32_t name,char*out,size_t cap,char*display,size_t display_cap){
+    if(!guest_cstr(c,name,display,display_cap))return 0;
+    const char*tail=strrchr(display,'\\');const char*slash=strrchr(display,'/');
+    if(slash&&(!tail||slash>tail))tail=slash;
+    tail=tail?tail+1:display;
+    const char*root=getenv("SHADOWKEY_ASSET_ROOT");if(!root||!*root)return 0;
+    int n=snprintf(out,cap,"%s/%s",root,tail);return n>0&&(size_t)n<cap;
+}
+static uint32_t guest_vararg(ngage_cpu_t*c,unsigned index){
+    if(index==0u)return c->r[2];if(index==1u)return c->r[3];
+    return rd32(c,c->r[13]+(index-2u)*4u);
+}
+
 static int descriptor_info(ngage_cpu_t*c,uint32_t a,uint32_t*len,uint32_t*max,uint32_t*data){
     if(a<0x10000000u || a>=0x12000000u)return 0;
     uint32_t h=rd32(c,a),type=h>>28;*len=h&0x0fffffffu;*max=*len;*data=0;
@@ -319,26 +335,71 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         fprintf(stderr,"  HLE SDK EFSRV15 CFileBase destructor this=%08x\\n",c->r[0]);return;
     }
     if (!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==89u || ordinal==1359u || ordinal==35u || ordinal==90u)) { uint32_t a=c->r[0]; if(a>=0x10000000u && a<0x12000000u){uint8_t *p=c->mem+(a-0x10000000u); fprintf(stderr,"  MEM r0: %08x %08x %08x %08x %08x %08x\n",*(uint32_t*)(p),*(uint32_t*)(p+4),*(uint32_t*)(p+8),*(uint32_t*)(p+12),*(uint32_t*)(p+16),*(uint32_t*)(p+20));}}
-    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && (ordinal==315u || ordinal==317u)){
-        /* Call-site evidence: these are UTF-16 C-string operations. Ordinal
-           317 initializes/replaces the destination; ordinal 315 appends to
-           an existing UTF-16 string. The exact export names are not yet
-           checked against the FP1 ESTLIB export table. */
-        uint32_t dst=c->r[0],src=c->r[1],dlen=0,slen=0;
-        if(dst<0x10000000u || dst>=0x12000000u || src<0x10000000u || src>=0x12000000u){c->r[0]=(uint32_t)-6;return;}
-        if(ordinal==315u){
-            for(;dlen<0x10000u;dlen++){uint8_t*q=guest_ptr(c,dst+dlen*2u,2u);if(!q){c->r[0]=(uint32_t)-6;return;}if(!q[0]&&!q[1])break;}
-            if(dlen==0x10000u){c->r[0]=(uint32_t)-6;return;}
-        }
-        for(;slen<0x10000u;slen++){uint8_t*q=guest_ptr(c,src+slen*2u,2u);if(!q){c->r[0]=(uint32_t)-6;return;}if(!q[0]&&!q[1])break;}
-        if(slen==0x10000u || (uint64_t)dst+(uint64_t)(dlen+slen+1u)*2u>0x12000000ull){c->r[0]=(uint32_t)-6;return;}
-        uint32_t start=(ordinal==315u)?dlen:0u;
-        for(uint32_t i=0;i<=slen;i++){uint8_t*q=guest_ptr(c,src+i*2u,2u),*d=guest_ptr(c,dst+(start+i)*2u,2u);if(!q||!d){c->r[0]=(uint32_t)-6;return;}d[0]=q[0];d[1]=q[1];}
-        c->r[0]=dst;
-        fprintf(stderr,"  HLE ESTLIB ordinal %u UTF16 %s dst=%08x src=%08x old=%u appended=%u\n",ordinal,ordinal==315u?"append":"copy",dst,src,dlen,slen);
-        return;
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==315u){
+        fprintf(stderr,"  HLE ESTLIB315 _wclosedir handle=%08x\\n",c->r[0]);c->r[0]=0;return;
     }
-    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==58u){uint32_t dst=c->r[0],src=c->r[1];char tmp[4096];guest_cstr(c,src,tmp,sizeof(tmp));guest_put_cstr(c,dst,tmp);c->r[0]=dst;return;}
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==316u){
+        uint32_t dst=c->r[0],src=c->r[1],dl=guest_wstr_len(c,dst,0x10000u),sl=guest_wstr_len(c,src,0x10000u);
+        if(dl+sl+1u>0x10000u){c->r[0]=(uint32_t)-6;return;}
+        for(uint32_t i=0;i<=sl;i++){uint8_t*s=guest_ptr(c,src+i*2u,2u),*d=guest_ptr(c,dst+(dl+i)*2u,2u);if(!s||!d){c->r[0]=(uint32_t)-6;return;}d[0]=s[0];d[1]=s[1];}
+        c->r[0]=dst;return;
+    }
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==317u){
+        uint32_t a=c->r[0],b=c->r[1];int result=0;
+        for(uint32_t i=0;i<0x10000u;i++){uint8_t*x=guest_ptr(c,a+i*2u,2u),*y=guest_ptr(c,b+i*2u,2u);if(!x||!y){result=x?1:(y?-1:0);break;}uint16_t xv=(uint16_t)x[0]|((uint16_t)x[1]<<8),yv=(uint16_t)y[0]|((uint16_t)y[1]<<8);if(xv!=yv){result=xv<yv?-1:1;break;}if(!xv)break;}
+        c->r[0]=(uint32_t)result;return;
+    }
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==58u){
+        char display[1024]={0},host[2048]={0},mode[16]="rb";
+        if(!vfs_host_path_cstr(c,c->r[0],host,sizeof(host),display,sizeof(display))){c->r[0]=0;return;}
+        guest_cstr(c,c->r[1],mode,sizeof(mode));
+        if(mode[0]!='r'){fprintf(stderr,"  HALT ESTLIB58 _fopen write mode rejected path='%s' mode='%s'\\n",display,mode);c->r[0]=0;return;}
+        FILE*fp=fopen(host,"rb");if(!fp){fprintf(stderr,"  ESTLIB58 _fopen missing path='%s' host='%s'\\n",display,host);c->r[0]=0;return;}
+        uint32_t handle=shadowkey_heap_alloc(c,16u);vfile_t*vf=handle?vfile_for(handle,1):NULL;
+        if(!vf){fclose(fp);c->r[0]=0;return;}
+        vf->fp=fp;snprintf(vf->path,sizeof(vf->path),"%s",host);c->r[0]=handle;
+        fprintf(stderr,"  HLE ESTLIB58 _fopen path='%s' -> handle=%08x\\n",display,handle);return;
+    }
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==49u){
+        vfile_t*vf=vfile_for(c->r[0],0);int rc=-1;if(vf&&vf->fp){rc=fclose(vf->fp);vf->fp=NULL;vf->object=0;}c->r[0]=(uint32_t)rc;return;
+    }
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==51u){
+        vfile_t*vf=vfile_for(c->r[0],0);c->r[0]=(vf&&vf->fp&&feof(vf->fp))?1u:0u;return;
+    }
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==56u){
+        uint32_t dst=c->r[0],limit=c->r[1],handle=c->r[2];vfile_t*vf=vfile_for(handle,0);
+        if(!vf||!vf->fp||!limit){c->r[0]=0;return;}
+        char tmp[8192];size_t n=limit<sizeof(tmp)?limit:sizeof(tmp);
+        if(!fgets(tmp,(int)n,vf->fp)){c->r[0]=0;return;}
+        guest_put_cstr(c,dst,tmp);c->r[0]=dst;return;
+    }
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==65u){
+        vfile_t*vf=vfile_for(c->r[0],0);c->r[0]=(vf&&vf->fp)?(uint32_t)fseek(vf->fp,(long)(int32_t)c->r[1],(int)c->r[2]):(uint32_t)-1;return;
+    }
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==64u){
+        vfile_t*vf=vfile_for(c->r[0],0);char fmt[1024];
+        if(!vf||!vf->fp||!guest_cstr(c,c->r[1],fmt,sizeof(fmt))){c->r[0]=(uint32_t)-1;return;}
+        unsigned ai=0;int assigned=0;
+        for(size_t i=0;fmt[i];i++){
+            if(fmt[i]==' '||fmt[i]=='\\t'||fmt[i]=='\\n'){while(fmt[i+1]==' '||fmt[i+1]=='\\t'||fmt[i+1]=='\\n')i++;fscanf(vf->fp," ");continue;}
+            if(fmt[i]!='%'){int ch=fgetc(vf->fp);if(ch!=fmt[i]){if(ch!=EOF)ungetc(ch,vf->fp);break;}continue;}
+            i++;if(fmt[i]=='%'){int ch=fgetc(vf->fp);if(ch!='%')break;continue;}
+            while(fmt[i]=='*'||(fmt[i]>='0'&&fmt[i]<='9')||fmt[i]=='h'||fmt[i]=='l'||fmt[i]=='L')i++;
+            char spec=fmt[i];uint32_t arg=guest_vararg(c,ai++);int ok=0;
+            if(spec=='d'||spec=='i'){int v=0;ok=fscanf(vf->fp,"%d",&v)==1;if(ok)wr32(c,arg,(uint32_t)v);}
+            else if(spec=='u'){unsigned v=0;ok=fscanf(vf->fp,"%u",&v)==1;if(ok)wr32(c,arg,v);}
+            else if(spec=='x'||spec=='X'){unsigned v=0;ok=fscanf(vf->fp,"%x",&v)==1;if(ok)wr32(c,arg,v);}
+            else if(spec=='c'){int v=fgetc(vf->fp);ok=v!=EOF;if(ok){uint8_t*p=guest_ptr(c,arg,1u);if(p)*p=(uint8_t)v;}}
+            else if(spec=='s'){char tmp[1024];ok=fscanf(vf->fp,"%1023s",tmp)==1;if(ok)guest_put_cstr(c,arg,tmp);}
+            else if(spec=='f'){float v=0;ok=fscanf(vf->fp,"%f",&v)==1;if(ok){uint32_t bits=0;memcpy(&bits,&v,4);wr32(c,arg,bits);}}
+            else {fprintf(stderr,"  HALT ESTLIB64 unsupported fscanf format %%%c\\n",spec);exit(95);}
+            if(!ok)break;assigned++;
+        }
+        c->r[0]=(uint32_t)assigned;return;
+    }
+    if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==180u){
+        char a[4096],b[4096];guest_cstr(c,c->r[0],a,sizeof(a));guest_cstr(c,c->r[1],b,sizeof(b));int v=strcmp(a,b);c->r[0]=(uint32_t)(v<0?-1:(v>0?1:0));return;
+    }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==82u){uint32_t dst=c->r[0],fmtp=c->r[1];char fmt[2048],out[4096];guest_cstr(c,fmtp,fmt,sizeof(fmt));size_t oi=0;unsigned ai=2;for(size_t i=0;fmt[i]&&oi+2<sizeof(out);i++){if(fmt[i]!='%'){out[oi++]=fmt[i];continue;}char spec=fmt[++i];if(!spec)break;if(spec=='%'){out[oi++]='%';continue;}uint32_t arg=0;if(ai<=12)arg=c->r[ai++];else{arg=ngage_r32(c,c->r[13]+(ai-13)*4u);ai++;}char t[512];t[0]=0;if(spec=='s')guest_cstr(c,arg,t,sizeof(t));else if(spec=='d'||spec=='i')snprintf(t,sizeof(t),"%d",(int32_t)arg);else if(spec=='u')snprintf(t,sizeof(t),"%u",arg);else if(spec=='x'||spec=='X')snprintf(t,sizeof(t),spec=='x'?"%x":"%X",arg);else if(spec=='c'){t[0]=(char)arg;t[1]=0;}else{t[0]='%';t[1]=spec;t[2]=0;}size_t n=strlen(t);if(n>sizeof(out)-oi-2)n=sizeof(out)-oi-2;memcpy(out+oi,t,n);oi+=n;}out[oi]=0;guest_put_cstr(c,dst,out);c->r[0]=(uint32_t)oi;return;}
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && (ordinal==51u || ordinal==64u || ordinal==180u)){
         /* String-helper exports used with a live destination buffer. Exact
@@ -347,7 +408,10 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         return;
     }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==9u){
-        uint32_t a=c->r[0], n=c->r[2]; uint8_t *p=guest_ptr(c,a,n); if(p && n<0x100000u)memset(p,(uint8_t)c->r[1],n); c->r[0]=a; return;
+        uint32_t a=c->r[0],n=0;uint8_t*p=guest_ptr(c,a,1u);
+        if(!p){c->r[0]=0;return;}
+        while(n<0x100000u){uint8_t*q=guest_ptr(c,a+n,1u);if(!q||!*q)break;n++;}
+        c->r[0]=n;return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==90u){
         uint32_t dst=c->r[0],src=c->r[1],dl=0,dm=0,dd=0,sl=0,sm=0,sd=0;

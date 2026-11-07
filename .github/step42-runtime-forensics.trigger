@@ -9,3 +9,4 @@ trace-host-writes
 inspect-pixel-writer
 track-active-guest-function
 inspect-active-writer-1006a488
+inspect-imgdec-args

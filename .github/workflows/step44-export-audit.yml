@@ -1,0 +1,34 @@
+name: Symbian 6.1 export ordinal audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/step44-export-audit.trigger"
+  workflow_dispatch:
+concurrency:
+  group: shadowkey-step44-export-audit
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch original N-Gage SDK DLLs
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/ngagesdk/sdk.git /tmp/ngagesdk-sdk
+          cd /tmp/ngagesdk-sdk
+          git sparse-checkout set 6.1/Series60/Epoc32/Release/wins/urel
+      - name: Parse original Symbian 6.1 exports
+        run: python3 tools/step44_symbian61_export_audit.py /tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins/urel
+      - name: Commit ordinal map
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md
+          git commit -m "Resolve original Symbian 6.1 export ordinals"
+          git pull --rebase origin main
+          git push origin HEAD:main

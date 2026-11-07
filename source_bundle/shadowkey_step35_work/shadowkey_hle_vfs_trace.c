@@ -120,6 +120,24 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         trace_guest_bytes(c,"EUSER1282 destination before",c->r[0],c->r[2]);
         trace_guest_bytes(c,"EUSER1282 source before",c->r[1],c->r[2]);
     }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1575u) {
+        fprintf(stderr,"  EUSER1575 FORENSIC r0(out)=%08x r1(obj+310)=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
+                c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
+        trace_guest_bytes(c,"EUSER1575 output pair PRE",c->r[0],8u);
+        if(c->r[1]>=0x10000010u && c->r[1]<0x12000000u)
+            trace_guest_bytes(c,"EUSER1575 object fields around +310",c->r[1]-16u,0x70u);
+        if(c->r[2]>=0x10000000u && c->r[2]<0x12000000u)
+            trace_guest_bytes(c,"EUSER1575 arg2",c->r[2],16u);
+        if(c->r[3]>=0x10000000u && c->r[3]<0x12000000u)
+            trace_guest_bytes(c,"EUSER1575 arg3",c->r[3],16u);
+    }
+    if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==160u) {
+        fprintf(stderr,"  CONE160 FORENSIC hidden-result=%08x this=%08x sp=%08x lr=%08x\\n",
+                c->r[0],c->r[1],c->r[13],c->r[14]);
+        trace_guest_bytes(c,"CONE160 hidden-result PRE",c->r[0],8u);
+        if(c->r[1]>=0x10000000u && c->r[1]<0x12000000u)
+            trace_guest_bytes(c,"CONE160 control object prefix",c->r[1],0x80u);
+    }
     if(!strcmp(dll,"GDI[10003b15].DLL") && (ordinal==151u || ordinal==108u || ordinal==101u)) {
         fprintf(stderr,"  GDI FORENSIC ordinal=%u args=(%08x,%08x,%08x,%08x) stack=%08x\n",ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13]);
         if(ordinal==151u){

@@ -86,6 +86,12 @@ The short-import records are parsed directly. NameType=0 means the 16-bit field 
 - Ordinal 108: ?NewL@CPalette@@SAPAV1@H@Z; NameType=[0]
 - Ordinal 151: ?StoreL@CPicture@@UBE?AVTStreamId@@AAVCStreamStore@@@Z; NameType=[0]
 
+## Exact symbol map for imports used by 6R51.APP
+
+- Game import slots mapped: 0
+| Thunk | Slot | DLL | Ordinal | Original SDK symbol |
+|---:|---:|---|---:|---|
+
 ## ARM import library symbol scan
 
 The WINS PE DLLs export by ordinal only. The ARM import libraries are scanned for symbol names to recover the ordinal/name map.

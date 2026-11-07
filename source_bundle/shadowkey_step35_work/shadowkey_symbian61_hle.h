@@ -1,0 +1,32 @@
+#ifndef SHADOWKEY_SYMBIAN61_HLE_H
+#define SHADOWKEY_SYMBIAN61_HLE_H
+#include <stdint.h>
+#include "shadowkey_cone_gc_hle.h"
+
+extern uint32_t ngage_r32(ngage_cpu_t *,uint32_t);
+extern void ngage_w32(ngage_cpu_t *,uint32_t,uint32_t);
+
+/* Symbian 6.1 SDK: EUSER ordinal 1407 = TDblQueBase::SetOffset(TInt).
+   TDblQueBase layout: TDblQueLink iHead at +0, TInt iOffset at +8. */
+static inline int shadowkey_hle_euser1407_setoffset(ngage_cpu_t *c){
+    uint32_t self=c->r[0];
+    if(!c || self<0x10000000u || (uint64_t)self+12u>0x12000000ull) return 0;
+    ngage_w32(c,self+8u,c->r[1]);
+    return 1;
+}
+
+/* Symbian 6.1 SDK: CONE ordinal 160 = CCoeControl::Position() const.
+   CCoeControl::iPosition is the TPoint at object offset +0x0c.
+   ARM callsite uses r0 as the hidden TPoint result buffer and r1 as this. */
+static inline int shadowkey_hle_cone160_position(ngage_cpu_t *c){
+    uint32_t result=c->r[0],self=c->r[1];
+    if(!c || result<0x10000000u || (uint64_t)result+8u>0x12000000ull ||
+       self<0x10000000u || (uint64_t)self+0x14u>0x12000000ull) return 0;
+    uint32_t x=ngage_r32(c,self+0x0cu);
+    uint32_t y=ngage_r32(c,self+0x10u);
+    ngage_w32(c,result,x);
+    ngage_w32(c,result+4u,y);
+    c->r[0]=result;
+    return 1;
+}
+#endif

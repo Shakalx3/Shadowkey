@@ -20,6 +20,16 @@ uint32_t simkin_export_calls=0, simkin_system_import_calls=0;
 extern void ngage_runtime_guest_function_enter(uint32_t) __attribute__((weak));
 extern void ngage_runtime_guest_function_exit(void) __attribute__((weak));
 static void tracked_guest_call(uint32_t address,ngage_guest_fn fn,ngage_cpu_t*c){
+    if(address==0x10081030u){
+        fprintf(stderr,"FILEDEC ENTER fn=%08x r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
+                address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
+        if(c->r[0]>=0x10000000u && c->r[0]<0x12000000u)
+            for(uint32_t off=0;off<0x30u;off+=4u)
+                fprintf(stderr,"FILEDEC object[%02x]=%08x\\n",off,ngage_r32(c,c->r[0]+off));
+        if(c->r[1]>=0x10000000u && c->r[1]<0x12000000u)
+            for(uint32_t off=0;off<0x30u;off+=4u)
+                fprintf(stderr,"FILEDEC arg1[%02x]=%08x\\n",off,ngage_r32(c,c->r[1]+off));
+    }
     if(address==0x100275e4u){
         fprintf(stderr,"RESLOAD ENTER fn=%08x r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
                 address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
@@ -55,6 +65,9 @@ static void tracked_guest_call(uint32_t address,ngage_guest_fn fn,ngage_cpu_t*c)
     fn(c);
     if(address==0x1006a488u)
         fprintf(stderr,"IMGDEC EXIT fn=%08x r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
+                address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
+    if(address==0x10081030u)
+        fprintf(stderr,"FILEDEC EXIT fn=%08x r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
                 address,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
     if(address==0x100275e4u)
         fprintf(stderr,"RESLOAD EXIT fn=%08x r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",

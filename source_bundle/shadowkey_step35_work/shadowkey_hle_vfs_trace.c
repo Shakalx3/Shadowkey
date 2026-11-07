@@ -123,13 +123,19 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1575u) {
         fprintf(stderr,"  EUSER1575 FORENSIC r0(out)=%08x r1(obj+310)=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
                 c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
-        trace_guest_bytes(c,"EUSER1575 output pair PRE",c->r[0],8u);
-        if(c->r[1]>=0x10000010u && c->r[1]<0x12000000u)
-            trace_guest_bytes(c,"EUSER1575 object fields around +310",c->r[1]-16u,0x70u);
+        trace_guest_bytes(c,"EUSER1575 arg0/out-candidate PRE",c->r[0],16u);
+        if(c->r[1]>=0x10000010u && c->r[1]<0x12000000u) {
+            trace_guest_bytes(c,"EUSER1575 arg1 object fields around +310",c->r[1]-16u,0x70u);
+            uint32_t p=ngage_r32(c,c->r[1]);
+            if(p>=0x10000000u && p<0x12000000u)
+                trace_guest_bytes(c,"EUSER1575 arg1 first-word pointee",p,0x50u);
+        }
         if(c->r[2]>=0x10000000u && c->r[2]<0x12000000u)
-            trace_guest_bytes(c,"EUSER1575 arg2",c->r[2],16u);
+            trace_guest_bytes(c,"EUSER1575 arg2 pointee",c->r[2],0x30u);
         if(c->r[3]>=0x10000000u && c->r[3]<0x12000000u)
-            trace_guest_bytes(c,"EUSER1575 arg3",c->r[3],16u);
+            trace_guest_bytes(c,"EUSER1575 arg3 object",c->r[3],0x30u);
+        if(c->r[13]>=0x10000000u && c->r[13]<0x12000000u)
+            trace_guest_bytes(c,"EUSER1575 caller stack args",c->r[13],0x30u);
     }
     if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==160u) {
         fprintf(stderr,"  CONE160 FORENSIC hidden-result=%08x this=%08x sp=%08x lr=%08x\\n",

@@ -9,7 +9,7 @@ Technical project to run **The Elder Scrolls Travels: Shadowkey** on Nokia N95 8
 - A SIS installer is not required.
 - No successful launch on a physical N95 has been demonstrated.
 
-## Current verified state — step 36
+## Current verified state — step 37
 
 The step35 archive was checked on 2026-11-07:
 
@@ -20,21 +20,23 @@ The step35 archive was checked on 2026-11-07:
 - The ARM11 cross-build is a relocatable ARM EABI object, not a Symbian executable.
 - The old-E32 patcher proves structural image rewriting only; its no-op stub is not a working compatibility shim and does not make the old App-DLL image EKA2-compatible.
 
-The strongest toolchain candidate is [hpnkv/symbian-platform v0.3.0](https://github.com/hpnkv/symbian-platform). Its documentation explicitly advertises EKA2 ARMv6 libraries and ELF-to-E32 EXE/DLL conversion. The full Linux x86_64 SDK archive is about 326 MB and has not yet been downloaded or tested against Shadowkey or the RM-320 firmware.
+The strongest toolchain candidate remains [hpnkv/symbian-platform v0.3.0](https://github.com/hpnkv/symbian-platform). Step 37 confirmed its documented ARMv6/EKA2 and ELF-to-E32 capabilities, but its published test matrix does not include N95/RM-320. The native Linux x86_64 SDK has not been downloaded because DNS resolution to GitHub is unavailable in the build container. Exact RM-320 firmware export compatibility remains unproven.
 
 See:
 - [Archive import status](docs/ARCHIVE_IMPORT_STATUS.md)
 - [Step 35 structural patch test](docs/STEP35_STRUCTURAL_PATCH_TEST.md)
 - [Step 36 EKA2 toolchain audit](docs/STEP36_EKA2_TOOLCHAIN_AUDIT.md)
 - [Step 36 native ARM build validation](docs/STEP36_NATIVE_ARM_BUILD_VALIDATION.md)
+- [Step 37 EKA2 target-compatibility audit](docs/STEP37_EKA2_TOOLCHAIN_TARGET_COMPATIBILITY.md)
+- [Step 37 build-script portability patch](patches/STEP37_BUILD_SCRIPT_PORTABILITY.patch)
 - [Step 34 GDI108 call-boundary audit](docs/STEP34_GDI108_CALL_BOUNDARY_ARGUMENTS.md)
 - [Step 33 GDI callsite/write-watch audit](docs/STEP33_GDI_CALLSITE_PROVENANCE_AND_WATCH_FIX.md)
 - [Step 32 TFontSpec structural finding](docs/STEP32_GDI108_TFONTSPEC72.md)
 - [Legacy E32 research tools](tools/e32/README.md)
 
-## Public repository boundary
+## Private repository and archive status
 
-This repository is public. Original game executables, proprietary game assets, audio, models, textures and lifted/decompiled game-code outputs from the supplied archive are intentionally not mirrored here. The repository contains project-authored analysis and format-research utilities. The complete supplied archive remains the separately held source input. See [archive import status](docs/ARCHIVE_IMPORT_STATUS.md).
+This repository is private. The supplied step35 ZIP has been verified in the current working session but has not yet been uploaded to GitHub: the connected GitHub interface can commit text and Git objects, but does not expose a binary-file upload action from the working container. The archive remains the authoritative local source input until it is uploaded through GitHub's web interface. See [archive import status](docs/ARCHIVE_IMPORT_STATUS.md).
 
 ## Working rules
 

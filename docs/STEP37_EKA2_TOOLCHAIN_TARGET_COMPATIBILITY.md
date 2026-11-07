@@ -24,7 +24,7 @@ Sources:
 
 ## Target compatibility: not established
 
-The SDK's documented executable matrix covers E71/RM-346 and 6120c/RM-243 (ARMv5T), C7/RM-675 and E6/RM-609 (ARMv6), and Nokia 808/RM-807 (ARMv6 with an exact ROM/EUSER executive profile). It does **not** list N95/RM-320 or S60 3rd FP1.
+The SDK's documented executable matrix covers E71/RM-346 and 6120c/RM-243 (ARMv5T), C7/RM-675 and E6/RM-609 (ARMv6), and Nokia 808/RM-807 (ARMv6 with an exact ROM/EUSER executive profile). It does **not** list N95/RM-320 or S60 3rd FP1. Its native facilities inventory explicitly marks the availability of platform libraries such as FBSCLI, CONE, EIKCORE and ETEXT as `unknown_firmware`. AVKON is additionally marked selection-blocked in that inventory because its generated resource inputs are not currently reproducibly supplied.
 
 The SDK itself states that firmware compatibility is determined by the target firmware's DLL exports and services, and that unknown firmware must be checked against its actual exports. Its import-proxy source definitions are not proof that an older N95 ROM implements the same ordinal map or all required entry points.
 
@@ -63,6 +63,8 @@ Both scripts were then run with `build_arm11_core.sh` deliberately non-executabl
 The outputs are still ELF files, not E32 images. The `E32Main` symbol disassembles to `mov r0, #0; bx lr`: a deliberate no-op. The ELF entry is therefore not a usable Symbian process entry point. The script's own limitation message is accurate: a real Symbian startup/runtime and ELF-to-E32 conversion are still required.
 
 This patch is a build-script portability correction only. It does not change game behavior or create a device-ready binary.
+
+The archive's `shadowkey_step35_e32_patch_test.sh` and `build_and_test.sh` were also rerun during this checkpoint; both passed. The patch test still reports the original 6R51.APP additive-checksum discrepancy and explicitly leaves target-loader acceptance unverified. The host suite still emits unimplemented import diagnostics and uses synthetic FBS/GDI/CONE behavior in places; its PASS result remains a host-harness regression result only.
 
 ## Current conclusion
 

@@ -76,10 +76,12 @@ jobs:
             echo "- GDI151 and GDI108 are still enabled only through their existing experimental downstream probes."
             echo "- This is host diagnostic execution, not a Symbian OS 9.2 runtime or physical N95 launch."
           } > docs/STEP40_EUSER1407_LITERAL_FORMAT_VALIDATION.md
+          cat docs/STEP40_EUSER1407_LITERAL_FORMAT_VALIDATION.md
       - name: Commit validation report
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/STEP40_EUSER1407_LITERAL_FORMAT_VALIDATION.md
           git commit -m "Record EUSER1407 literal subset validation"
+          git pull --rebase origin main
           git push origin HEAD:main

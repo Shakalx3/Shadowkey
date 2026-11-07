@@ -1,0 +1,123 @@
+name: Step 45 — SDK-mapped HLE validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - "source_bundle/shadowkey_step35_work/shadowkey_hle_vfs_trace.c"
+      - "source_bundle/shadowkey_step35_work/shadowkey_hle_bootstrap_v2.c"
+      - "source_bundle/shadowkey_step35_work/shadowkey_symbian61_hle.h"
+      - "source_bundle/shadowkey_step35_work/shadowkey_step45_sdk_identity_test.c"
+      - "source_bundle/shadowkey_step35_work/build_and_test.sh"
+      - ".github/step45-validation.trigger"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: shadowkey-step45-validation
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run host regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd source_bundle/shadowkey_step35_work
+          bash build_and_test.sh > /tmp/step45_build.log 2>&1 || { tail -n 120 /tmp/step45_build.log; exit 1; }
+          tail -n 50 /tmp/step45_build.log
+      - name: Run live VFS trace with exact ordinal handlers and fail-closed imports
+        shell: bash
+        run: |
+          set -u
+          cd source_bundle/shadowkey_step35_work
+          set +e
+          SHADOWKEY_HLE_FREE_RAM_BYTES=33554432 bash trace_asset_loader_live_vfs.sh > /tmp/step45_trace_runner.log 2>&1
+          rc=$?
+          set -e
+          echo "$rc" > /tmp/step45_trace_exit_code.txt
+          echo "trace exit code: $rc"
+          if [ -f .build/live_hal_vfs_trace.log ]; then
+            grep -E "HLE SDK EFSRV|HALT SDK EFSRV|HLE ESTLIB|HALT ESTLIB|HALT UNIMPLEMENTED|HLE SDK EUSER|HLE SDK CONE|IMGDEC|resource index|DrawText|DiscardFont|UNIMPLEMENTED" .build/live_hal_vfs_trace.log | tail -n 160 > /tmp/step45_trace_excerpt.log || true
+          else
+            echo "live trace log not produced" > /tmp/step45_trace_excerpt.log
+          fi
+      - name: Write correction and validation report
+        shell: bash
+        run: |
+          {
+            echo "# Step 45 — SDK-mapped import correction and validation"
+            echo
+            echo "## Ground truth"
+            echo
+            echo "- Original Symbian 6.1 SDK import libraries were parsed into docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md."
+            echo "- This exposed mismapped EUSER, EFSRV, ESTLIB, CONE and GDI handlers. Prior HLE results using those mappings are superseded."
+            echo "- EUSER1407 is TDblQueBase::SetOffset; CONE160 is CCoeControl::Position; EFSRV162 is RFs::ReadFileSection; EFSRV185 is TParse::Set."
+            echo "- GDI108 is CPalette::NewL and GDI151 is CPicture::StoreL, not font construction."
+            echo
+            echo "## Host regression suite"
+            echo
+            echo "BEGIN HOST LOG"
+            tail -n 50 /tmp/step45_build.log
+            echo "END HOST LOG"
+            echo
+            echo "## Live trace runner"
+            echo
+            cat /tmp/step45_trace_runner.log
+            echo
+            echo "Live trace exit code: $(cat /tmp/step45_trace_exit_code.txt). Exit 95 is the intentional fail-closed stop at the first unresolved import."
+            echo
+            echo "## Selected trace evidence"
+            echo
+            cat /tmp/step45_trace_excerpt.log
+            echo
+            echo "## Interpretation limits"
+            echo
+            echo "- Earlier framebuffer capture is a real guest-memory snapshot, but its asset provenance is not established because earlier EFSRV/ESTLIB HLE ordinals were misidentified."
+            echo "- The image must not be treated as proof of a correct original VFS read until the trace reaches RFs::ReadFileSection with a verified path, offset, and output descriptor."
+            echo "- No Symbian OS 9.2 runtime or physical Nokia N95 launch is claimed."
+          } > docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md
+          cat docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md
+      - name: Commit report without branch-race conflicts
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            {
+              echo "# Step 45 — SDK-mapped import correction and validation"
+              echo
+              echo "- Original Symbian 6.1 SDK import libraries were parsed into docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md."
+              echo "- The current HLE uses verified identities for EUSER1407, CONE160, EFSRV162 and EFSRV185; false Swiss/font mappings were removed."
+              echo
+              echo "## Host regression suite"
+              echo
+              echo "BEGIN HOST LOG"
+              tail -n 50 /tmp/step45_build.log
+              echo "END HOST LOG"
+              echo
+              echo "## Live trace runner"
+              echo
+              cat /tmp/step45_trace_runner.log
+              echo
+              echo "Live trace exit code: $(cat /tmp/step45_trace_exit_code.txt). Exit 95 is an intentional fail-closed stop."
+              echo
+              echo "## Selected trace evidence"
+              echo
+              cat /tmp/step45_trace_excerpt.log
+              echo
+              echo "## Interpretation limits"
+              echo
+              echo "- Earlier framebuffer capture is real guest memory, but its source asset path is unverified because earlier EFSRV/ESTLIB ordinal mappings were wrong."
+              echo "- This report does not claim a Symbian OS 9.2 runtime or physical N95 launch."
+            } > docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md
+            git add docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md
+            git commit -m "Record SDK-mapped HLE validation"
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 2
+          done
+          exit 1

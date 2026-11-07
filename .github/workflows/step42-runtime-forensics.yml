@@ -33,7 +33,23 @@ jobs:
             bash trace_asset_loader_live_vfs.sh > /tmp/step42_trace_runner.log 2>&1
           python3 shadowkey_step32_gdi108_forensics.py > /tmp/step42_gdi_audit.log 2>&1
           python3 shadowkey_fbs_capture_to_png.py .build/live_run_bitmap.rgb565 .build/live_run_bitmap.meta .build/live_run_bitmap.png > /tmp/step42_framebuffer.log 2>&1
-          grep -E "BITMAP CPU WRITE|EUSER1575 FORENSIC|TRACE EUSER1575|CONE160 FORENSIC|TRACE CONE160|HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import: (EUSER.*(1575|248)|CONE.*160)" .build/live_hal_vfs_trace.log > /tmp/step42_trace_excerpt.log || true
+          python3 - <<'PY' > /tmp/step42_pixel_writer_source.log
+          from pathlib import Path
+          p=Path("shadowkey_lifted_v6.c").read_text(errors="replace")
+          start=p.find("void sub_100677cc")
+          if start<0:
+              print("Function sub_100677cc not found")
+          else:
+              end=p.find("\\nvoid sub_",start+1)
+              if end<0: end=len(p)
+              body=p[start:end]
+              lines=body.splitlines()
+              print(f"Function sub_100677cc: {len(lines)} source lines")
+              for i,line in enumerate(lines,1):
+                  if i<=180:
+                      print(f"{i}: {line}")
+          PY
+          grep -E "BITMAP CPU WRITE|BITMAP HOST WRITE|EUSER1575 FORENSIC|TRACE EUSER1575|CONE160 FORENSIC|TRACE CONE160|HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import: (EUSER.*(1575|248)|CONE.*160)" .build/live_hal_vfs_trace.log > /tmp/step42_trace_excerpt.log || true
       - name: Upload actual framebuffer capture
         uses: actions/upload-artifact@v4
         with:
@@ -73,6 +89,12 @@ jobs:
             echo
             echo '---'
             cat /tmp/step42_framebuffer.log
+            echo '---'
+            echo
+            echo "## Guest pixel writer source at PC 0x100677d0"
+            echo
+            echo '---'
+            cat /tmp/step42_pixel_writer_source.log
             echo '---'
             echo
             echo "## Runtime evidence"

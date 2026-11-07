@@ -120,7 +120,7 @@ for dll,ordinals in TARGETS.items():
 import re
 dispatch_path=Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c")
 dispatch_text=dispatch_path.read_text(errors="replace")
-entry_re=re.compile(r'\\{\\s*(0x[0-9a-fA-F]+)u?,\\s*(0x[0-9a-fA-F]+)u?,\\s*"([A-Z0-9]+)\\[[^]]+\\]\\.DLL",\\s*(\\d+)u\\s*\\}')
+entry_re=re.compile(r'\{\s*(0x[0-9a-fA-F]+)u?,\s*(0x[0-9a-fA-F]+)u?,\s*"([A-Z0-9]+)\[[^]]+\]\.DLL",\s*(\d+)u\s*\}')
 entries=[]
 for thunk,slot,dll,ordtext in entry_re.findall(dispatch_text):
     if dll.lower() in ("efsrv","euser","cone","gdi"):

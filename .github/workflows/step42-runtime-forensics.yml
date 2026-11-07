@@ -35,6 +35,7 @@ jobs:
             bash trace_asset_loader_live_vfs.sh > /tmp/step42_trace_runner.log 2>&1
           python3 shadowkey_step32_gdi108_forensics.py > /tmp/step42_gdi_audit.log 2>&1
           python3 ../../tools/step43_imgdec_callsite.py > /tmp/step43_imgdec_callsite.log 2>&1
+          python3 ../../tools/step43_global_spr_probe.py > /tmp/step43_global_spr_probe.log 2>&1
           python3 shadowkey_fbs_capture_to_png.py .build/live_run_bitmap.rgb565 .build/live_run_bitmap.meta .build/live_run_bitmap.png > /tmp/step42_framebuffer.log 2>&1
           python3 - <<'PY' > /tmp/step42_pixel_writer_source.log
           from pathlib import Path
@@ -51,7 +52,7 @@ jobs:
               for i,line in enumerate(lines,1):
                   print(f"{i}: {line}")
           PY
-          grep -E "TRACE resource index=|TRACE loaded resource|IMGDEC ENTER|IMGDEC stack|IMGDEC source_base|IMGDEC header|IMGDEC payload|IMGDEC EXIT|BITMAP CPU WRITE|BITMAP HOST WRITE|EUSER1575 FORENSIC|TRACE EUSER1575|CONE160 FORENSIC|TRACE CONE160|HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import: (EUSER.*(1575|248)|CONE.*160)" .build/live_hal_vfs_trace.log > /tmp/step42_trace_excerpt.log || true
+          grep -E "TRACE resource index=|TRACE loaded resource|IMGDEC source_base|IMGDEC header|IMGDEC payload|IMGDEC ENTER|IMGDEC stack|IMGDEC source_base|IMGDEC header|IMGDEC payload|IMGDEC EXIT|BITMAP CPU WRITE|BITMAP HOST WRITE|EUSER1575 FORENSIC|TRACE EUSER1575|CONE160 FORENSIC|TRACE CONE160|HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import: (EUSER.*(1575|248)|CONE.*160)" .build/live_hal_vfs_trace.log > /tmp/step42_trace_excerpt.log || true
       - name: Upload actual framebuffer capture
         uses: actions/upload-artifact@v4
         with:
@@ -91,6 +92,12 @@ jobs:
             echo
             echo '---'
             cat /tmp/step43_imgdec_callsite.log
+            echo '---'
+            echo
+            echo "## global.spr resource identity check"
+            echo
+            echo '---'
+            cat /tmp/step43_global_spr_probe.log
             echo '---'
             echo
             echo "## Raw framebuffer capture"

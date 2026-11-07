@@ -4,3 +4,4 @@ inspect-lib-format-and-strings
 scan-wins-debug-symbols
 fix-debug-symbol-scan-order
 import-subprocess-fix
+parse-coff-import-ordinals

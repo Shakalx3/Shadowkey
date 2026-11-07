@@ -5,3 +5,4 @@ adjacent-buffer-pointer
 commit-framebuffer-to-docs
 trace-bitmap-writes
 capture-nonzero-stores
+trace-host-writes

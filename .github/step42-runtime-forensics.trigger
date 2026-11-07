@@ -14,3 +14,4 @@ bound-imgdec-body
 single-run-function-bound
 exact-function-boundary
 dump-imgdec-source-header
+audit-imgdec-caller

@@ -76,6 +76,37 @@ report=Path("docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md")
 report.parent.mkdir(parents=True,exist_ok=True)
 report.write_text("\n".join(out)+"\n")
 
+# Compare debug WINS DLLs and import libraries, which may retain decorated names.
+debugroot=root.parent/"udeb"
+out += ["## WINS UDEB export and import-library scan",""]
+for dll,ordinals in TARGETS.items():
+    debugdll=debugroot/f"{dll}.dll"
+    if debugdll.exists():
+        try:
+            base,nf,nn,items=parse_exports(debugdll)
+            out += [f"### {dll.upper()}.DLL (UDEB)","",
+                    f"- Export ordinal base: {base}; functions: {nf}; named exports: {nn}",
+                    "| Ordinal | Export name | RVA |","|---:|---|---:|"]
+            for ordinal in ordinals:
+                name,rva=items[ordinal]
+                out.append(f"| {ordinal} | {name} | 0x{rva:08x} |")
+            out.append("")
+        except Exception as exc:
+            out.append(f"- UDEB DLL parse failed: {exc}")
+    debuglib=debugroot/f"{dll}.lib"
+    if debuglib.exists():
+        kind=subprocess.run(["file",str(debuglib)],capture_output=True,text=True,check=False)
+        nm=subprocess.run(["nm","-A","-C",str(debuglib)],capture_output=True,text=True,check=False)
+        strs=subprocess.run(["strings","-a",str(debuglib)],capture_output=True,text=True,check=False)
+        matches=[x for x in (nm.stdout+ "\\n"+strs.stdout).splitlines()
+                 if any(t.lower() in x.lower() for t in symptoms)]
+        out += [f"### {dll.upper()}.LIB (WINS UDEB)","",
+                f"- file(1): {kind.stdout.strip()}",
+                f"- nm exit={nm.returncode}; nm lines={len(nm.stdout.splitlines())}; stderr={nm.stderr.strip()[:300]}",
+                f"- strings lines={len(strs.stdout.splitlines())}; relevant matches={len(matches)}",""]
+        out.extend(f"  - {x}" for x in matches[:160])
+        out.append("")
+
 # Inspect ARM import libraries for C++ symbol names that WINS DLLs omit.
 import subprocess
 libroot=root.parent.parent/"armi"/"urel"

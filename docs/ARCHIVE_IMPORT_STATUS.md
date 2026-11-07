@@ -2,51 +2,51 @@
 
 Updated: 2026-11-07
 
-## Repository state checked in this run
+## Repository
 
 - Repository: https://github.com/Shakalx3/Shadowkey
 - Visibility: private.
 - Default branch: `main`.
-- Connected GitHub permissions: admin, maintain, pull, push, triage.
-- Current `main` HEAD at inspection: `fe7c0768f7935e80f2b786e73150ece15cb8fd3d`.
+- Current `main` HEAD after archive import: `67b1ab33602e2e699b6bd0d1cde7eadfd45600e9`.
 
-## Source archive
+## Source archive — imported and verified
 
-The complete ZIP is present at the repository root:
+The original ZIP remains at the repository root:
 
 `shadowkey_recomp_bundle_v8_4_step35_direct_binary_patch_path.zip`
 
-Git tree metadata reports:
-- Size: 23,492,696 bytes.
-- Git blob SHA-1: `5e6863df8eca94643636f31ca273489c145514b2`.
+- ZIP size: 23,492,696 bytes.
+- ZIP SHA-256: `6b263d86210eff452f2c00cd099ed9cac475bbca6bff9f60782b41c61263384d`.
+- ZIP Git blob SHA-1: `5e6863df8eca94643636f31ca273489c145514b2`.
+- ZIP entries: 2,191.
+- Uncompressed size: 112,885,393 bytes.
 
-The previously recorded source SHA-256 is:
-`6b263d86210eff452f2c00cd099ed9cac475bbca6bff9f60782b41c61263384d`.
+The archive has now been extracted on a GitHub Actions runner and committed as ordinary Git files under:
 
-A prior session reported that this SHA-256 matched the original attached archive and that the Git blob SHA-1 matched the uploaded bytes. In the current execution, GitHub metadata confirms the file and blob identity, but the connector does not return the content of this 23.5 MB binary blob (the file-content response is empty). The current run therefore has **not independently recomputed** the SHA-256 or extracted/tested the ZIP.
+`source_bundle/shadowkey_step35_work/`
 
-## Existing verified technical baseline
+The extraction was verified on the runner against the expected SHA-256, entry count, and total uncompressed byte count. The Git tree was then queried independently:
+- extracted file blobs: 2,191;
+- summed Git tree file sizes: 112,885,393 bytes;
+- recursive tree response: not truncated.
 
-The preceding step35–37 reports remain the last executed test evidence:
-- old-E32 structural patch test: PASS (format rewrite only);
-- host test suite: PASS (explicit assertions only; several HLE imports remain unimplemented);
-- ARM11 core build: PASS (ELF32 ARM EABI relocatable object);
-- ARM11 link checks: PASS after the recorded shell invocation portability correction (static ELF, not Symbian E32).
+Import commit: `67b1ab33602e2e699b6bd0d1cde7eadfd45600e9`.
 
-These results are not repeated as fresh tests in this run because the archive bytes are not currently accessible to the execution environment.
+Workflow run: https://github.com/Shakalx3/Shadowkey/actions/runs/42401957672
+Result: success. Both extraction and commit/push steps completed successfully.
 
-## Immediate execution blocker
+## Import workflow
 
-The GitHub connector can read/write repository text and inspect Git trees and blob metadata, but it does not expose a binary download path for this 23.5 MB repository blob. The current container has no mounted copy of the ZIP. Consequently the source archive cannot be extracted or its scripts rerun in this execution.
+`.github/workflows/import-source-archive.yml` contains the verified extraction workflow. It refuses to overwrite an existing `source_bundle/` directory and checks the archive digest and inventory before extraction. The workflow is triggered by a dedicated marker-file push or manually through GitHub Actions.
 
-To resume source-level experiments, provide the ZIP as a conversation attachment in the active run or make a binary-download-capable GitHub/working-directory path available. Do not infer source contents from the ZIP filename, Git blob SHA, or prior reports.
+## Important distinction
 
-## Technical next gate once the archive is available
+The ZIP is preserved unchanged at the repository root. The extracted working copy is stored separately under `source_bundle/`, so the original archive and the previously committed `docs/`, `tools/`, and `patches/` files were not overwritten.
 
-1. Inspect the archive's actual file inventory and read the step35 patch-path report, README, and native-port status from the archive itself.
-2. Re-run the structural patch and host tests against the exact archive; record command lines and fresh output.
-3. Continue the EKA2 ARMv6 toolchain experiment only after obtaining the SDK and validating its release digest.
-4. Obtain exact N95 RM-320 / S60 3rd FP1 exports or matching firmware/SDK DEF data. Resolve EUSER, EFSRV, CONE, FBSCLI, GDI, WS32, EIKCORE and AVKON imports against the target rather than assuming newer firmware ordinal compatibility.
-5. Do not treat a generated ELF or generic E32 as N95-compatible without inspecting E32 metadata, imports, capabilities and loader acceptance.
+The archive is now available for subsequent analysis directly from the GitHub repository tree. This import operation does not itself imply that the extracted binaries are N95-compatible or that the game has launched on physical hardware.
+
+## Technical next gate
+
+Resume from the archive's own latest reports and scripts, with the immediate investigation focused on the EUSER ordinal 1407 descriptor contract observed in Step 38. Keep GDI ordinal 151 fail-closed until the exact S60 3rd FP1 ABI and descriptor semantics are established.
 
 No physical N95 launch is claimed.

@@ -14,7 +14,7 @@ mapping = [line.strip() for line in dispatch.splitlines() if THUNK in line]
 if len(mapping) != 1 or "1407u" not in mapping[0] or "EUSER" not in mapping[0]:
     raise SystemExit(f"Unexpected import-thunk mapping: {mapping}")
 lines = LIFTED.read_text(errors="replace").splitlines()
-rx = re.compile(r"(?:ngage_call|simkin_call)\\s*\\(\\s*c\\s*,\\s*" + re.escape(THUNK), re.I)
+rx = re.compile(r"(?:ngage_call|simkin_call)\s*\(\s*c\s*,\s*" + re.escape(THUNK), re.I)
 hits = [i for i, line in enumerate(lines) if rx.search(line)]
 if not hits:
     hits = [i for i, line in enumerate(lines) if THUNK in line]
@@ -33,7 +33,7 @@ for number, hit in enumerate(hits, 1):
     start, end = max(0, hit - 28), min(len(lines), hit + 11)
     fn = "unknown"
     for j in range(hit, max(-1, hit - 160), -1):
-        m = re.search(r"(?:static\\s+)?(?:void|int|uint32_t|int32_t)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\(", lines[j])
+        m = re.search(r"(?:static\s+)?(?:void|int|uint32_t|int32_t)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", lines[j])
         if m:
             fn = m.group(1)
             break

@@ -4,6 +4,7 @@
 #include <string.h>
 #include "shadowkey_fbs_hle.h"
 #include "shadowkey_bitgdi_hle.h"
+#include "shadowkey_symbian61_hle.h"
 extern uint32_t ngage_r32(ngage_cpu_t *, uint32_t);
 extern void ngage_w32(ngage_cpu_t *, uint32_t, uint32_t);
 static uint32_t heap_next=0, heap_end=0, heap2_next=0x10230000u, heap2_end=0x10300000u, heap3_next=0x10400000u, heap3_end=0x12000000u;
@@ -15,57 +16,8 @@ static uint8_t *guest_ptr(ngage_cpu_t*c,uint32_t a,uint32_t n){
     return c->mem+(a-0x10000000u);
 }
 uint32_t shadowkey_heap_alloc(ngage_cpu_t*c,uint32_t size){if(!size)return 0;uint32_t p=0;if(heap_next&&heap_next<=heap_end&&size<=heap_end-heap_next){p=(heap_next+7u)&~7u;if(p<=heap_end&&size<=heap_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap_next=p+((size+7u)&~7u);return p;}}}if(heap2_next&&heap2_next<=heap2_end&&size<=heap2_end-heap2_next){p=(heap2_next+7u)&~7u;if(p<=heap2_end&&size<=heap2_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap2_next=p+((size+7u)&~7u);return p;}}}if(heap3_next&&heap3_next<=heap3_end&&size<=heap3_end-heap3_next){p=(heap3_next+7u)&~7u;if(p<=heap3_end&&size<=heap3_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap3_next=p+((size+7u)&~7u);return p;}}}return 0;}
-static int shadowkey_euser1407_font_literal(ngage_cpu_t*c){
-    static const uint32_t sites[]={0x10022b80u,0x10022dacu,0x10022fe8u,0x10023230u,0x1002366cu};
-    int matched=0;
-    for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++) if(c->r[14]==sites[i]) matched=1;
-    if(!matched || c->r[1]!=0x100ac718u) return 0;
-    uint32_t dst=c->r[0],src=c->r[1];
-    if(dst<0x10000000u || (uint64_t)dst+20u>0x12000000ull ||
-       src<0x10000000u || (uint64_t)src+12u>0x12000000ull) return 0;
-    uint8_t *d=guest_ptr(c,dst,20u),*s=guest_ptr(c,src,12u);
-    if(!d || !s) return 0;
-    static const uint16_t expected[6]={'S','w','i','s','s',0};
-    for(unsigned i=0;i<6;i++){
-        uint16_t ch=(uint16_t)(s[i*2u]|((uint16_t)s[i*2u+1u]<<8));
-        if(ch!=expected[i]) return 0;
-    }
-    /* The five callsites copy exactly 20 bytes immediately afterwards.
-       This callsite-specific no-directive Format result is a TBuf16<6>:
-       8-byte descriptor header plus six inline UTF-16 code units. */
-    ngage_w32(c,dst,0x30000005u);
-    ngage_w32(c,dst+4u,6u);
-    memset(d+8u,0,12u);
-    for(unsigned i=0;i<5;i++){d[8u+i*2u]=(uint8_t)expected[i];d[9u+i*2u]=(uint8_t)(expected[i]>>8);}
-    return 1;
-}
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u && shadowkey_euser1407_font_literal(c)) return;
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1282u){
-        /* Observed three-argument byte-copy ABI at 20-, 32-, and 256-byte sites; exact export name remains unverified. */
-        uint32_t dst=c->r[0],src=c->r[1],n=c->r[2];
-        if(dst<0x10000000u || src<0x10000000u || n>0x00400000u ||
-           (uint64_t)dst+n>0x10400000ull || (uint64_t)src+n>0x10400000ull){c->r[0]=(uint32_t)-6;return;}
-        uint8_t *d=guest_ptr(c,dst,n),*q=guest_ptr(c,src,n);
-        if(n && (!d||!q)){c->r[0]=(uint32_t)-6;return;}
-        if(n) memmove(d,q,n);
-        c->r[0]=dst;return;
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==248u){
-        /* Observed text-path ABI: r0=TBuf16, r1=zero-terminated UTF-16. */
-        uint32_t dst=c->r[0],src=c->r[1];
-        if(dst<0x10000000u || dst>=0x12000000u || src<0x10000000u || src>=0x12000000u){c->r[0]=(uint32_t)-6;return;}
-        uint32_t hdr=ngage_r32(c,dst),max=ngage_r32(c,dst+4u),n=0;
-        if((hdr>>28)!=3u || max>0x10000u || (uint64_t)dst+8u+(uint64_t)max*2u>0x12000000ull ||
-           (uint64_t)src+((uint64_t)max+1u)*2u>0x12000000ull){c->r[0]=(uint32_t)-6;return;}
-        for(;n<max;n++){
-            uint8_t*q=guest_ptr(c,src+n*2u,2u),*d=guest_ptr(c,dst+8u+n*2u,2u);
-            if(!q||!d){c->r[0]=(uint32_t)-6;return;}
-            uint16_t ch=(uint16_t)(q[0]|((uint16_t)q[1]<<8));if(!ch)break;d[0]=q[0];d[1]=q[1];
-        }
-        if(n==max){uint8_t*q=guest_ptr(c,src+n*2u,2u);if(q&&(q[0]||q[1])){c->r[0]=(uint32_t)-9;return;}}
-        ngage_w32(c,dst,(hdr&0xf0000000u)|n);c->r[0]=dst;return;
-    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u && shadowkey_hle_euser1407_setoffset(c)) return;
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==711u){
         /* TPoint construction: this, x, y. r3 and [sp] are caller leftovers. */
         uint32_t out=c->r[0];
@@ -112,7 +64,6 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         while(n<0x10000u){uint8_t *p=guest_ptr(c,a+n*2u,2u);if(!p)break;if(p[0]==0 && p[1]==0)break;n++;}
         c->r[0]=n;return;
     }
-    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==121u){ c->r[0]=(uint32_t)-1; return; }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && (ordinal==51u || ordinal==64u || ordinal==180u)){
         /* String-helper exports used with a live destination buffer. Exact
            EKA1 ordinal names are not available yet; preserve the non-null

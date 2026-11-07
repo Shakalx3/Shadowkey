@@ -7,3 +7,4 @@ trace-bitmap-writes
 capture-nonzero-stores
 trace-host-writes
 inspect-pixel-writer
+track-active-guest-function

@@ -1,0 +1,85 @@
+name: EUSER1407 implementation validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - "source_bundle/shadowkey_step35_work/shadowkey_hle_bootstrap_v2.c"
+      - "source_bundle/shadowkey_step35_work/shadowkey_hle_vfs_trace.c"
+      - "source_bundle/shadowkey_step35_work/shadowkey_step39_euser1407_test.c"
+      - "source_bundle/shadowkey_step35_work/build_and_test.sh"
+      - ".github/step39-euser1407-validation.trigger"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run host regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd source_bundle/shadowkey_step35_work
+          bash build_and_test.sh > /tmp/step40_build.log 2>&1
+          tail -n 45 /tmp/step40_build.log
+      - name: Run live VFS trace with downstream GDI probes only
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd source_bundle/shadowkey_step35_work
+          SHADOWKEY_HLE_FREE_RAM_BYTES=33554432 \
+          SHADOWKEY_EXPERIMENTAL_GDI151_TFONTSPEC=1 \
+          SHADOWKEY_EXPERIMENTAL_GDI108_TFONTSTYLE=1 \
+          SHADOWKEY_WATCH_GDI108_RECEIVER=1 \
+            bash trace_asset_loader_live_vfs.sh > /tmp/step40_trace_runner.log 2>&1
+          python3 shadowkey_step32_gdi108_forensics.py > /tmp/step40_gdi_audit.log 2>&1
+          grep -E "HLE EUSER1407|GDI FORENSIC ordinal=151|GDI151 descriptor|EXPERIMENT GDI151|EXPERIMENT GDI108|TFontSpec|DrawText|DiscardFont|UNIMPLEMENTED Shadowkey import" .build/live_hal_vfs_trace.log | tail -n 100 > /tmp/step40_trace_excerpt.log || true
+      - name: Write validation report
+        shell: bash
+        run: |
+          {
+            echo "# Step 40 — EUSER1407 literal-only implementation validation"
+            echo
+            echo "The host regression suite and a fresh VFS trace were run from the extracted archive."
+            echo
+            echo "## Host suite"
+            echo
+            echo "---"
+            tail -n 45 /tmp/step40_build.log
+            echo "---"
+            echo
+            echo "## Live trace runner"
+            echo
+            echo "---"
+            cat /tmp/step40_trace_runner.log
+            echo "---"
+            echo
+            echo "## GDI forensic audit"
+            echo
+            echo "---"
+            cat /tmp/step40_gdi_audit.log
+            echo "---"
+            echo
+            echo "## Selected live trace lines"
+            echo
+            echo "---"
+            cat /tmp/step40_trace_excerpt.log
+            echo "---"
+            echo
+            echo "## Scope and limitations"
+            echo
+            echo "- EUSER1407 is implemented only for the five statically identified Swiss font-name callsites with no format directives."
+            echo "- Other EUSER1407 callsites remain unresolved; the generic variadic formatter is not implemented."
+            echo "- GDI151 and GDI108 are still enabled only through their existing experimental downstream probes."
+            echo "- This is host diagnostic execution, not a Symbian OS 9.2 runtime or physical N95 launch."
+          } > docs/STEP40_EUSER1407_LITERAL_FORMAT_VALIDATION.md
+      - name: Commit validation report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/STEP40_EUSER1407_LITERAL_FORMAT_VALIDATION.md
+          git commit -m "Record EUSER1407 literal subset validation"
+          git push origin HEAD:main

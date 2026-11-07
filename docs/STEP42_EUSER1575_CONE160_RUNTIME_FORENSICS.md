@@ -125,31 +125,31 @@ UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal 1575 (r0=102feee4 r1
   CONE160 FORENSIC hidden-result=102feeec this=101102c8 sp=102feeb0 lr=10022ad8\n  TRACE CONE160 hidden-result PRE @102feeec: 00 00 00 00 00 00 00 00
   TRACE CONE160 control object prefix @101102c8: 68 cf 0f 10 74 bb 0f 10 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 88 12 11 10 00 00 00 00 01 80 ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 UNIMPLEMENTED Shadowkey import: CONE[10003a41].DLL ordinal 160 (r0=102feeec r1=101102c8 r2=10111288 r3=00000000)
-BITMAP CPU WRITE WATCH result: guest_store_ops=36608 samples=24
-BITMAP CPU WRITE sample[0] width=2 addr=10311000 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[1] width=2 addr=10311002 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[2] width=2 addr=10311004 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[3] width=2 addr=10311006 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[4] width=2 addr=10311008 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[5] width=2 addr=1031100a value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[6] width=2 addr=1031100c value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[7] width=2 addr=1031100e value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[8] width=2 addr=10311010 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[9] width=2 addr=10311012 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[10] width=2 addr=10311014 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[11] width=2 addr=10311016 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[12] width=2 addr=10311018 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[13] width=2 addr=1031101a value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[14] width=2 addr=1031101c value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[15] width=2 addr=1031101e value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[16] width=2 addr=10311020 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[17] width=2 addr=10311022 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[18] width=2 addr=10311024 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[19] width=2 addr=10311026 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[20] width=2 addr=10311028 value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[21] width=2 addr=1031102a value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[22] width=2 addr=1031102c value=00000000 lr=00000000 sp=102feba8
-BITMAP CPU WRITE sample[23] width=2 addr=1031102e value=00000000 lr=00000000 sp=102feba8
+BITMAP CPU WRITE WATCH result: guest_store_ops=36608 nonzero_store_ops=3491 nonzero_samples=24
+BITMAP CPU WRITE sample[0] width=2 addr=103150be value=00000600 pc=100677d0 lr=00000600 sp=102feba8
+BITMAP CPU WRITE sample[1] width=2 addr=103150c0 value=00000c01 pc=100677d0 lr=00000c01 sp=102feba8
+BITMAP CPU WRITE sample[2] width=2 addr=103150c2 value=00000d11 pc=100677d0 lr=00000d11 sp=102feba8
+BITMAP CPU WRITE sample[3] width=2 addr=103150c4 value=00000901 pc=100677d0 lr=00000901 sp=102feba8
+BITMAP CPU WRITE sample[4] width=2 addr=103150c6 value=00000400 pc=100677d0 lr=00000400 sp=102feba8
+BITMAP CPU WRITE sample[5] width=2 addr=103150e4 value=00000800 pc=100677d0 lr=00000800 sp=102feba8
+BITMAP CPU WRITE sample[6] width=2 addr=103150e6 value=00000a01 pc=100677d0 lr=00000a01 sp=102feba8
+BITMAP CPU WRITE sample[7] width=2 addr=103150e8 value=00000a01 pc=100677d0 lr=00000a01 sp=102feba8
+BITMAP CPU WRITE sample[8] width=2 addr=103150ea value=00000a01 pc=100677d0 lr=00000a01 sp=102feba8
+BITMAP CPU WRITE sample[9] width=2 addr=103150ec value=00000901 pc=100677d0 lr=00000901 sp=102feba8
+BITMAP CPU WRITE sample[10] width=2 addr=10315108 value=00000555 pc=100677d0 lr=00000555 sp=102feba8
+BITMAP CPU WRITE sample[11] width=2 addr=1031510a value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[12] width=2 addr=1031510c value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[13] width=2 addr=1031510e value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[14] width=2 addr=10315110 value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[15] width=2 addr=10315112 value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[16] width=2 addr=10315114 value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[17] width=2 addr=10315116 value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[18] width=2 addr=10315118 value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[19] width=2 addr=1031511a value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[20] width=2 addr=1031511c value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[21] width=2 addr=1031511e value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[22] width=2 addr=10315120 value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
+BITMAP CPU WRITE sample[23] width=2 addr=10315122 value=00000aaa pc=100677d0 lr=00000aaa sp=102feba8
 ---
 
 ## Interpretation limits

@@ -1,0 +1,49 @@
+name: Step 46 — ARM UREL ordinal cross-check
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/step46_arm_importlib_ordinal_map.py"
+      - ".github/step46-arm-ordinal-map.trigger"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: shadowkey-step46-arm-ordinal-map
+  cancel-in-progress: true
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Prepare sparse SDK paths
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          src=Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c").read_text()
+          dlls=sorted(set(x.lower() for x in re.findall(r'"([A-Z0-9]+)\[',src)))
+          base="6.1/Series60/Epoc32/Release/armi/urel/"
+          Path("/tmp/arm_sdk_paths").write_text("\n".join(base+d+".lib" for d in dlls)+"\n")
+          PY
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/ngagesdk/sdk.git /tmp/ngagesdk-sdk
+          cd /tmp/ngagesdk-sdk
+          xargs git sparse-checkout set --skip-checks < /tmp/arm_sdk_paths
+      - name: Parse ARM import members
+        run: python3 tools/step46_arm_importlib_ordinal_map.py
+      - name: Commit report
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            python3 tools/step46_arm_importlib_ordinal_map.py
+            git add docs/STEP46_ARM_IMPORTLIB_ORDINAL_MAP.md
+            git commit -m "Record ARM UREL import ordinal cross-check"
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 2
+          done
+          exit 1

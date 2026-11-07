@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include "shadowkey_cone_gc_hle.h"
+#include "shadowkey_symbian61_hle.h"
 #include "shadowkey_fbs_hle.h"
 #include "shadowkey_bitgdi_hle.h"
 typedef struct { uint32_t object; FILE *fp; char path[1024]; } vfile_t;
@@ -65,61 +66,13 @@ static uint32_t pathish_utf16_len(ngage_cpu_t*c,uint32_t data,uint32_t limit){
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     fprintf(stderr,"IMPORT dll=%s ord=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x cpsr=%08x\n",dll,ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14],c->cpsr);
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u) {
-        /* Optional watch: record writes to the 24-byte GDI108 receiver from
-           the font-name producer onward. This determines whether its leading
-           word is actually initialized in this call path or merely inherited
-           from reused stack memory. */
-        const char *watch=getenv("SHADOWKEY_WATCH_GDI108_RECEIVER");
-        if(watch && *watch && strcmp(watch,"0") && ngage_runtime_watch_range) {
-            uint32_t off=0;
-            switch(c->r[14]) {
-                case 0x10022b80u: case 0x10022dacu: case 0x10022fe8u: off=0x268u; break;
-                case 0x10023230u: off=0x680u; break;
-                case 0x1002366cu: off=0x678u; break;
-                default: break;
-            }
-            if(off) { uint32_t base=c->r[13]+off; ngage_runtime_watch_range(base,24u); fprintf(stderr,"  WATCH GDI108 receiver armed base=%08x size=24 lr=%08x\n",base,c->r[14]); }
+        uint32_t self=c->r[0],offset=c->r[1];
+        if(!shadowkey_hle_euser1407_setoffset(c)){
+            fprintf(stderr,"HALT invalid TDblQueBase::SetOffset this=%08x offset=%08x\\n",self,offset);
+            exit(95);
         }
-        fprintf(stderr,"  EUSER1407 FORENSIC r0=%08x r1=%08x r2=%08x r3=%08x\n",c->r[0],c->r[1],c->r[2],c->r[3]);
-        trace_guest_bytes(c,"EUSER1407 destination pre8",c->r[0]-8u,8u);
-        trace_guest_bytes(c,"EUSER1407 destination before",c->r[0],24u);
-        if(c->r[1]>=0x10000000u && c->r[1]<0x12000000u) trace_guest_bytes(c,"EUSER1407 source candidate",c->r[1],40u);
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u) {
-        static const uint32_t sites[]={0x10022b80u,0x10022dacu,0x10022fe8u,0x10023230u,0x1002366cu};
-        int matched=0;
-        for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++) if(c->r[14]==sites[i]) matched=1;
-        if(matched && c->r[1]==0x100ac718u) {
-            uint32_t dst=c->r[0],src=c->r[1];
-            static const uint16_t expected[6]={'S','w','i','s','s',0};
-            int valid=dst>=0x10000000u&&(uint64_t)dst+20u<=0x12000000ull&&
-                      src>=0x10000000u&&(uint64_t)src+12u<=0x12000000ull;
-            uint8_t *p=valid?guest_ptr(c,dst,20u):0,*q=valid?guest_ptr(c,src,12u):0;
-            valid=valid&&p&&q;
-            for(unsigned i=0;i<6&&valid;i++){
-                uint16_t ch=(uint16_t)(q[i*2u]|((uint16_t)q[i*2u+1u]<<8));
-                if(ch!=expected[i]) valid=0;
-            }
-            if(!valid){fprintf(stderr,"  HLE EUSER1407 rejected Swiss literal callsite lr=%08x dst=%08x src=%08x\n",c->r[14],dst,src);return;}
-            /* Five callsites copy exactly 20 bytes immediately afterwards.
-               Implement only the no-directive Swiss Format case, not the
-               generic variadic formatter used by other EUSER1407 callers. */
-            wr32(c,dst,0x30000005u); wr32(c,dst+4u,6u);
-            memset(p+8u,0,12u);
-            for(unsigned i=0;i<5;i++){p[8u+i*2u]=(uint8_t)expected[i];p[9u+i*2u]=(uint8_t)(expected[i]>>8);}
-            fprintf(stderr,"  HLE EUSER1407 Format literal-only: TBuf16<6> length=5 text=Swiss lr=%08x\n",c->r[14]);
-            trace_guest_bytes(c,"EUSER1407 formatted descriptor",dst,20u);
-            return;
-        }
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==1373u || ordinal==530u)) {
-        fprintf(stderr,"  EUSER%u object forensic @%08x\n",ordinal,c->r[0]);
-        trace_guest_bytes(c,"EUSER font/spec object",c->r[0],60u);
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1282u) {
-        fprintf(stderr,"  EUSER1282 FORENSIC r0=%08x r1=%08x bytes=%u\n",c->r[0],c->r[1],c->r[2]);
-        trace_guest_bytes(c,"EUSER1282 destination before",c->r[0],c->r[2]);
-        trace_guest_bytes(c,"EUSER1282 source before",c->r[1],c->r[2]);
+        fprintf(stderr,"  HLE SDK EUSER1407 TDblQueBase::SetOffset this=%08x iOffset=%08x\\n",self,offset);
+        return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1575u) {
         fprintf(stderr,"  EUSER1575 FORENSIC r0(out)=%08x r1(obj+310)=%08x r2=%08x r3=%08x sp=%08x lr=%08x\\n",
@@ -139,144 +92,13 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
             trace_guest_bytes(c,"EUSER1575 caller stack args",c->r[13],0x30u);
     }
     if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==160u) {
-        fprintf(stderr,"  CONE160 FORENSIC hidden-result=%08x this=%08x sp=%08x lr=%08x\\n",
-                c->r[0],c->r[1],c->r[13],c->r[14]);
-        trace_guest_bytes(c,"CONE160 hidden-result PRE",c->r[0],8u);
-        if(c->r[1]>=0x10000000u && c->r[1]<0x12000000u)
-            trace_guest_bytes(c,"CONE160 control object prefix",c->r[1],0x80u);
-    }
-    if(!strcmp(dll,"GDI[10003b15].DLL") && (ordinal==151u || ordinal==108u || ordinal==101u)) {
-        fprintf(stderr,"  GDI FORENSIC ordinal=%u args=(%08x,%08x,%08x,%08x) stack=%08x\n",ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13]);
-        if(ordinal==151u){
-            trace_guest_bytes(c,"GDI151 TFontSpec before",c->r[0],60u);
-            trace_guest_bytes(c,"GDI151 descriptor",c->r[1],20u);
-            uint32_t dh=rd32(c,c->r[1]),dtype=dh>>28,dlen=dh&0x0fffffffu;
-            if(dtype==3u){
-                uint32_t dmax=rd32(c,c->r[1]+4u);
-                fprintf(stderr,"  GDI151 TBuf16 decode: type=%u length=%u max=%u\n",dtype,dlen,dmax);
-                trace_guest_bytes(c,"GDI151 TBuf16 inline data",c->r[1]+8u,dlen*2u);
-            } else {
-                fprintf(stderr,"  GDI151 descriptor decode: type=%u length=%u (not inline TBuf)\n",dtype,dlen);
-                trace_guest_bytes(c,"GDI151 descriptor data candidate",rd32(c,c->r[1]+4u),48u);
-            }
-        } else {
-            if(ordinal==108u) trace_guest_bytes(c,"GDI108 TFontStyle candidate PRE-CALL",c->r[0],12u);
-            trace_guest_bytes(c,ordinal==108u?"GDI108 receiver context PRE-CALL":"GDI101 receiver PRE-CALL",c->r[0],24u);
-            if(c->r[1]>=0x10000000u && c->r[1]<0x12000000u)
-                trace_guest_bytes(c,"GDI helper arg1",c->r[1],20u);
+        uint32_t result=c->r[0],self=c->r[1];
+        if(!shadowkey_hle_cone160_position(c)){
+            fprintf(stderr,"HALT invalid CCoeControl::Position result=%08x this=%08x\\n",result,self);
+            exit(95);
         }
-    }
-    if(!strcmp(dll,"GDI[10003b15].DLL") && ordinal==108u) {
-        const char *probe=getenv("SHADOWKEY_EXPERIMENTAL_GDI108_TFONTSTYLE");
-        if(probe && *probe && strcmp(probe,"0") &&
-           c->r[14]==0x10023290u && c->r[1]==0u) {
-            uint8_t *dst=guest_ptr(c,c->r[0],12u);
-            if(!dst) { c->r[0]=(uint32_t)-6; return; }
-            /* Candidate TFontSpec layout: iFontStyle is the 12-byte member
-               at +0x3C. The observed call has r0 exactly at TFontSpec+0x3C
-               and r1=0, so test only the documented default style values:
-               upright / normal weight / normal print position. The exact
-               ordinal identity remains unverified; nonzero r1 stays unhandled. */
-            memset(dst,0,12u);
-            fprintf(stderr,"  EXPERIMENT GDI108 TFontStyle default: dst=%08x spec=%08x+0x3c fields={0,0,0} size=12\n",c->r[0],c->r[0]-0x3cu);
-            trace_guest_bytes(c,"GDI108 experimental TFontStyle AFTER",c->r[0],12u);
-            c->r[0]=0;
-            return;
-        }
-    }
-    if(!strcmp(dll,"GDI[10003b15].DLL") && ordinal==151u) {
-        const char *probe=getenv("SHADOWKEY_EXPERIMENTAL_GDI151_TFONTSPEC");
-        if(probe && *probe && strcmp(probe,"0") && c->r[14]==0x1002325cu) {
-            uint32_t len=0,max=0,data=0;
-            if(!descriptor_info(c,c->r[1],&len,&max,&data) || len>24u || max<len || !guest_ptr(c,c->r[0],60u)) {
-                c->r[0]=(uint32_t)-6;
-                fprintf(stderr,"  EXPERIMENT GDI151 rejected descriptor/spec bounds\n");
-                return;
-            }
-            uint8_t *dst=guest_ptr(c,c->r[0],60u);
-            uint8_t *src=guest_ptr(c,data,len*2u);
-            if(!src){c->r[0]=(uint32_t)-6;return;}
-            memset(dst,0,60u);
-            /* Candidate 72-byte TFontSpec: 56-byte iTypeface, 4-byte iHeight
-               at +0x38, and 12-byte iFontStyle at +0x3C. The typeface name
-               is modelled as inline TBufC<24> (type 4); the trailing style
-               is deliberately left for the separate GDI108 call. */
-            wr32(c,c->r[0],0x40000000u|len); /* TBufC<24>: inline const */
-            wr32(c,c->r[0]+4u,24u);          /* maximum UTF-16 characters */
-            if(len)memcpy(dst+8u,src,len*2u);
-            wr32(c,c->r[0]+56u,c->r[2]);     /* iHeight in twips */
-            fprintf(stderr,"  EXPERIMENT GDI151 TFontSpec prefix: name-length=%u height=%u twips prefix=60 total=72; TBufC<24> candidate\n",len,c->r[2]);
-            trace_guest_bytes(c,"GDI151 experimental TFontSpec prefix",c->r[0],60u);
-            if(getenv("SHADOWKEY_WATCH_TFONTSPEC") && ngage_runtime_watch_range) ngage_runtime_watch_range(c->r[0],60u);
-            c->r[0]=0;
-            return;
-        }
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1373u) {
-        static const uint32_t sites[]={0x10022c60u,0x10022e98u,0x100230c8u,0x10023314u,0x10023728u};
-        for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++) if(c->r[14]==sites[i]) {
-            uint32_t out=c->r[0];
-            if(out<0x10000000u || (uint64_t)out+8u>0x12000000ull){c->r[0]=(uint32_t)-6;return;}
-            wr32(c,out,c->r[1]); wr32(c,out+4u,c->r[2]);
-            fprintf(stderr,"  HLE EUSER1373 TPoint set site=%08x point=%08x (%d,%d)\n",c->r[14],out,(int32_t)c->r[1],(int32_t)c->r[2]);
-            return;
-        }
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==530u) {
-        static const uint32_t sites[]={0x10022c68u,0x10022ea0u,0x100230d0u,0x1002331cu};
-        for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++) if(c->r[14]==sites[i]) {
-            uint32_t out=c->r[0];
-            if(out<0x10000000u || (uint64_t)out+8u>0x12000000ull){c->r[0]=(uint32_t)-6;return;}
-            c->r[0]=rd32(c,out+4u);
-            fprintf(stderr,"  HLE EUSER530 TPoint::Y site=%08x point=%08x -> %d\n",sites[i],out,(int32_t)c->r[0]);
-            return;
-        }
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1282u){
-        /* Observed three-argument byte-copy ABI (20/32/256-byte sites); export name unverified. */
-        uint32_t dst=c->r[0],src=c->r[1],n=c->r[2];
-        if(dst<0x10000000u || src<0x10000000u || n>0x00400000u ||
-           (uint64_t)dst+n>0x10400000ull || (uint64_t)src+n>0x10400000ull){c->r[0]=(uint32_t)-6;fprintf(stderr,"  HLE EUSER1282 Mem::Copy rejected dst=%08x src=%08x size=%u\n",dst,src,n);return;}
-        uint8_t *d=guest_ptr(c,dst,n),*q=guest_ptr(c,src,n);
-        if(n && (!d||!q)){c->r[0]=(uint32_t)-6;return;}
-        if(n)memmove(d,q,n);
-        c->r[0]=dst;
-        fprintf(stderr,"  HLE EUSER1282 Mem::Copy dst=%08x src=%08x size=%u\n",dst,src,n);
-        return;
-    }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==248u){
-        /* The recovered callers pass a writable TBuf16 in r0 and a raw
-           zero-terminated UTF-16 pointer in r1 (not a descriptor pointer).
-           This matches TDes16::Copy(const TUint16*) call shape. */
-        uint32_t dst=c->r[0], src=c->r[1];
-        uint32_t hdr=rd32(c,dst), type=hdr>>28, max=rd32(c,dst+4u);
-        if(type!=3u || dst<0x10000000u || dst>=0x12000000u ||
-           src<0x10000000u || src>=0x12000000u || max>0x10000u ||
-           (uint64_t)dst+8u+(uint64_t)max*2u>0x12000000ull ||
-           (uint64_t)src+((uint64_t)max+1u)*2u>0x12000000ull){
-            c->r[0]=(uint32_t)-6;
-            fprintf(stderr,"  HLE EUSER248 rejected TBuf16=%08x source=%08x type=%u max=%u\n",dst,src,type,max);
-            return;
-        }
-        uint32_t n=0;
-        for(;n<max;n++){
-            uint8_t *q=guest_ptr(c,src+n*2u,2u);
-            if(!q){c->r[0]=(uint32_t)-6;return;}
-            uint16_t ch=(uint16_t)q[0]|((uint16_t)q[1]<<8);
-            if(!ch) break;
-            uint8_t *d=guest_ptr(c,dst+8u+n*2u,2u);
-            if(!d){c->r[0]=(uint32_t)-6;return;}
-            d[0]=q[0]; d[1]=q[1];
-        }
-        if(n==max){
-            uint8_t *q=guest_ptr(c,src+n*2u,2u);
-            if(q && (q[0]||q[1])){c->r[0]=(uint32_t)-9;fprintf(stderr,"  HLE EUSER248 overflow max=%u\n",max);return;}
-        }
-        wr32(c,dst,(hdr&0xf0000000u)|n);
-        c->r[0]=dst;
-        char preview[128]; uint32_t pn=n<sizeof(preview)-1u?n:(uint32_t)sizeof(preview)-1u;
-        for(uint32_t i=0;i<pn;i++){uint8_t*q=guest_ptr(c,dst+8u+i*2u,2u);uint16_t ch=q?(uint16_t)(q[0]|((uint16_t)q[1]<<8)):0;preview[i]=(ch>=32u&&ch<127u)?(char)ch:'?';} preview[pn]=0;
-        fprintf(stderr,"  HLE EUSER248 TDes16::Copy(TUint16*) dst=%08x src=%08x length=%u/max=%u text=\"%s\"\n",dst,src,n,max,preview);
+        fprintf(stderr,"  HLE SDK CONE160 CCoeControl::Position this=%08x -> (%d,%d)\\n",
+                self,(int32_t)ngage_r32(c,result),(int32_t)ngage_r32(c,result+4u));
         return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==711u){
@@ -533,43 +355,6 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(!p) fprintf(stderr,"  HLE Alloc FAILED size=%u primary_next=%08x primary_end=%08x secondary_next=%08x\n",size,heap_next,heap_end,heap2_next);
         else fprintf(stderr,"  HLE Alloc size=%u -> %08x\n",size,p);
         return;
-    }
-    if(!strcmp(dll,"GDI[10003b15].DLL") && ordinal==151u) {
-        /* A previous generic experiment encoded a conflicting 60-byte
-           TBufC<20> layout. Keep it quarantined behind a distinct opt-in;
-           the active step32 experiment is the call-site-gated 72-byte
-           candidate above. Unknown GDI151 sites must remain unresolved. */
-        const char *probe=getenv("SHADOWKEY_EXPERIMENTAL_GDI151_LEGACY_LAYOUT");
-        if(probe && *probe && strcmp(probe,"0")) {
-            uint32_t dst=c->r[0], src=c->r[1], len=0, max=0, data=0;
-            if(!descriptor_info(c,src,&len,&max,&data) || len>20u || !guest_ptr(c,dst,60u)) {
-                fprintf(stderr,"  EXPERIMENT GDI151 rejected descriptor src=%08x len=%u max=%u\n",src,len,max);
-                c->r[0]=(uint32_t)-6; return;
-            }
-            uint8_t *out=guest_ptr(c,dst,60u);
-            memset(out,0,60u);
-            /* TFontSpec = TTypeface(TBufC<20>) + TInt iHeight + TFontStyle(12 bytes).
-               TBufC is immutable inline descriptor type 0: length at +0, data at +4. */
-            wr32(c,dst,len);
-            uint8_t *q=guest_ptr(c,data,len*2u);
-            if(len && !q){c->r[0]=(uint32_t)-6;return;}
-            if(len) memcpy(out+4u,q,len*2u);
-            wr32(c,dst+44u,c->r[2]);
-            /* Default TFontStyle: normal weight, normal posture, normal print position. */
-            wr32(c,dst+48u,0u); wr32(c,dst+52u,0u); wr32(c,dst+56u,0u);
-            fprintf(stderr,"  EXPERIMENT GDI151 TFontSpec: name length=%u height=%u twips style=(0,0,0)\n",len,c->r[2]);
-            trace_guest_bytes(c,"GDI151 experimental TFontSpec",dst,60u);
-            c->r[0]=dst; return;
-        }
-    }
-    if(!strcmp(dll,"GDI[10003b15].DLL") && (ordinal==108u || ordinal==151u)) {
-        /* Never let an unobserved font-construction path fall through to the
-           generic zero-return shim: that would turn an unknown ABI into a
-           false successful font. The one measured GDI151/GDI108 pair has
-           already returned above; all other sites stop the diagnostic run. */
-        fprintf(stderr,"HALT unresolved GDI import dll=%s ordinal=%u lr=%08x r0=%08x r1=%08x r2=%08x r3=%08x\n",
-                dll,ordinal,c->r[14],c->r[0],c->r[1],c->r[2],c->r[3]);
-        exit(95);
     }
     if(shadowkey_bitgdi_import(c,dll,ordinal)) return;
     if(!strcmp(dll,"FBSCLI[10003a15].DLL") && shadowkey_fbs_import(c->r,c->mem,ordinal)) return;

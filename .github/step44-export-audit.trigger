@@ -6,3 +6,4 @@ fix-debug-symbol-scan-order
 import-subprocess-fix
 parse-coff-import-ordinals
 fix-coff-byte-escapes
+map-all-game-imports

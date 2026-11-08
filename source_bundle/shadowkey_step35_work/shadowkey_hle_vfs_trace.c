@@ -468,6 +468,25 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         fprintf(stderr,"  HLE ARM GDI101 TFontStyle::SetPosture this=%08x value=%u flags=%08x\n",self,posture,rd32(c,self));
         return;
     }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==858u){
+        uint32_t ptr=c->r[0];
+        if(!shadowkey_hle_euser858_cleanup_pushl(c)){
+            fprintf(stderr,"  HALT EUSER858 CleanupStack::PushL invalid/overflow ptr=%08x\n",ptr);
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM EUSER858 CleanupStack::PushL ptr=%08x depth=%u\n",
+                ptr,shadowkey_symbian61_cleanup_depth);
+        return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==828u){
+        if(!shadowkey_hle_euser828_cleanup_pop(c)){
+            fprintf(stderr,"  HALT EUSER828 CleanupStack::Pop underflow\n");
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM EUSER828 CleanupStack::Pop depth=%u\n",
+                shadowkey_symbian61_cleanup_depth);
+        return;
+    }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==3u){
         uint32_t size=c->r[0],ptr=shadowkey_heap_alloc(c,size);
         if(!ptr){

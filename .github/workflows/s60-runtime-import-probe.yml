@@ -1,4 +1,4 @@
-name: S60 3.1 FP1 runtime import probe
+name: S60 3.1 FP1 runtime import probe (verified symbol parser)
 
 on:
   push:

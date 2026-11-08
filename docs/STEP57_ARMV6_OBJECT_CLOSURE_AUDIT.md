@@ -38,22 +38,25 @@ This closes an important gap: the recovered game-function object set is internal
 
 ## Remaining undefined symbols
 
-The combined object has 10 undefined symbols:
+The combined object has 10 undefined symbols, but their ELF binding matters:
 
-| Symbol | Classification | Next treatment |
-|---|---|---|
-| `__stderr` | C/OpenC runtime | Verify availability and ABI in the exact S60 3.1 FP1 SDK |
-| `exit` | C/OpenC runtime | Verify target availability; native fatal-error policy still needed |
-| `fprintf` | C/OpenC runtime | Verify target availability; diagnostics may need Symbian-native logging |
-| `memmove` | C runtime | Verify target import or provide a tested local implementation |
-| `memset` | C runtime | Verify target import or provide a tested local implementation |
-| `strcmp` | C runtime | Verify target import or provide a tested local implementation |
-| `strncmp` | C runtime | Verify target import or provide a tested local implementation |
-| `ngage_runtime_guest_function_enter` | Project instrumentation hook | Separate host tracing from target runtime |
-| `ngage_runtime_guest_function_exit` | Project instrumentation hook | Separate host tracing from target runtime |
-| `ngage_runtime_watch_bitmap_range` | Project instrumentation hook | Separate host bitmap watcher from target runtime |
+- **7 strong undefined symbols** remain as actual link requirements.
+- **3 weak undefined symbols** are optional instrumentation hooks. Their source callsites check the weak function pointer before calling it, so the references can resolve to null when the hooks are omitted.
 
-No unresolved game function symbol was found. This does **not** mean that all Symbian imports are implemented: the dispatch/HLE layer still contains explicit fail-closed imports, and the UI constructor gate at EIKCORE 224 remains unresolved.
+| Symbol | ELF binding | Classification | Next treatment |
+|---|---|---|---|
+| `__stderr` | GLOBAL | C/OpenC runtime | Verify availability and ABI in the exact S60 3.1 FP1 SDK |
+| `exit` | GLOBAL | C/OpenC runtime | Verify target availability; native fatal-error policy still needed |
+| `fprintf` | GLOBAL | C/OpenC runtime | Verify target availability; diagnostics may need Symbian-native logging |
+| `memmove` | GLOBAL | C runtime | Verify target import or provide a tested local implementation |
+| `memset` | GLOBAL | C runtime | Verify target import or provide a tested local implementation |
+| `strcmp` | GLOBAL | C runtime | Verify target import or provide a tested local implementation |
+| `strncmp` | GLOBAL | C runtime | Verify target import or provide a tested local implementation |
+| `ngage_runtime_guest_function_enter` | WEAK | Project instrumentation hook | Optional; callsite checks pointer before invocation |
+| `ngage_runtime_guest_function_exit` | WEAK | Project instrumentation hook | Optional; callsite checks pointer before invocation |
+| `ngage_runtime_watch_bitmap_range` | WEAK | Project instrumentation hook | Optional; callsite checks pointer before invocation |
+
+The three weak instrumentation references are not hard link blockers. The seven GLOBAL C runtime references are the actual remaining undefined-symbol set in this combined object. This still does **not** mean that all Symbian imports are implemented: the dispatch/HLE layer contains many explicit fail-closed imports, and the UI constructor gate at EIKCORE 224 remains unresolved.
 
 ## Reproducible audit tool
 

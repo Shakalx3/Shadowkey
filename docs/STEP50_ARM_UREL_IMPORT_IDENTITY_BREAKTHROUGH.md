@@ -134,26 +134,46 @@ Relevant original N-Gage SDK headers:
 
 ## Current HLE state and next work
 
-EUSER 1407 and CONE 160 were disabled in both dispatchers while their
-identity was unresolved. They should now be replaced with the correct ARM
-implementations, not re-enabled with the old WINS helpers.
+The following ARM-identity handlers have now been implemented and exercised
+by the passing host regression suite:
 
-Priority order:
+- EUSER 1407: bounded TPtrC16 constructor (type-1 descriptor header + source pointer).
+- EUSER 1575: TInt64 inequality comparison.
+- EUSER 1373/530/711: TRect constructor (fourth argument from stack), Height and Move.
+- CONE 160: CCoeControl::Rect hidden-result TRect using position + size.
+- GDI 151: 64-byte TFontSpec constructor with TBufC<24> typeface name.
+- GDI 108/101: TFontStyle stroke-weight/posture setters updating one flags word.
+- EUSER 1582: CBase::operator new guest-heap allocation.
 
-1. Implement EUSER 1407 as a bounded `TPtrC16(const TUint16*)`
-   constructor: write the descriptor type/length and source pointer; do not
-   copy or format the string.
-2. Implement CONE 160 as a 16-byte `CCoeControl::Rect()` hidden-result
-   operation using verified member offsets.
-3. Correct EUSER 1373, 530 and 711 as TRect constructor, Height and Move;
-   add stack-argument coverage for the constructor.
-4. Implement EUSER 1575 as a 64-bit inequality comparison.
-5. Implement EUSER 1582 as a guest-heap `CBase::operator new(TUint)`
-   allocation, preserving allocation semantics and recording the 556-byte
-   request at the current trace stop.
-6. Rebuild the GDI font HLE: 64-byte TFontSpec constructor, one-word
-   TFontStyle setters, and then revisit GetNearestFont/DrawText.
-7. Continue the live VFS trace beyond EUSER 1582.
+The old WINS-derived SetOffset and Position helpers have been removed.
+The VFS trace and bootstrap dispatchers now route the corrected ARM identities.
+The host regression suite and Step48 static identity audit both pass.
+
+The live VFS trace now progresses through those imports and stops at:
+
+- EIKCORE UID 10004892, ordinal 222;
+- thunk 0x1009FA00, return address 0x10028438;
+- r0 = 0x10110000, other argument registers zero.
+
+The ARM UREL map identifies EIKCORE 222 as the CEikApplication constructor
+(symbol `__15CEikApplication`). EIKCORE 219 is the CEikDocument constructor
+(`__12CEikDocumentR15CEikApplication`), and EIKCORE 224 is the CEikAppUi
+constructor (`__9CEikAppUi`). Their current no-op bootstrap handlers are
+not yet accepted as correct constructors.
+
+Next work:
+
+1. Inspect the generated lifted callsite context for EIKCORE 222 and the
+   following uses of the CEikApplication object.
+2. Establish the required base-class and vtable initialization for
+   CEikApplication without inventing vtable addresses.
+3. Inspect the EIKCORE 219/224 constructor callsites and class layouts.
+4. Implement only the constructor behavior supported by ARM callsite and
+   SDK evidence; keep unresolved virtual calls fail-closed.
+5. Continue the live VFS trace beyond EIKCORE 222.
+6. Revisit the GDI font path after application construction; the font
+   object layout and setters are now grounded, but GetNearestFont/provider
+   behavior and glyph rasterization remain unimplemented.
 
 ## Scope limits
 

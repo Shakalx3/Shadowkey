@@ -9,8 +9,6 @@
 ## Host regression suite
 
 BEGIN HOST LOG
-26
-27
 '
 PASS: CONE ordinal 226 has four this-only call sites
 PASS: ordinal 55 has two matching this-only call sites
@@ -58,7 +56,9 @@ IMPORT dll=EUSER[100039e5].DLL ord=1575 r0=10006000 r1=10006010 r2=000000d5 r3=0
   HLE ARM EUSER1575 TInt64::operator!= lhs=10006000 rhs=10006010 -> 1
 IMPORT dll=EUSER[100039e5].DLL ord=1582 r0=0000022c r1=10006010 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
   HLE ARM EUSER1582 CBase::operator new size=556 -> 10120000
-PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64 and CBase::operator new
+IMPORT dll=EIKCORE[10004892].DLL ord=222 r0=10008000 r1=10006010 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
+  HLE ARM EIKCORE222 CEikApplication this=10008000 caption=TBuf<256> size=556
+PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase::operator new and CEikApplication constructor
 END HOST LOG
 
 ## Live trace runner
@@ -69,7 +69,7 @@ Live trace exit code: 95. Exit 95 is an intentional fail-closed stop.
 ## Selected trace evidence
 
   HLE ARM EUSER1582 CBase::operator new size=556 -> 10110000
-HALT UNIMPLEMENTED Shadowkey import: EIKCORE[10004892].DLL ordinal=222 r0=10110000 r1=00000000 r2=00000000 r3=00000000 sp=102feff8 lr=10028438
+HALT UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal=3 r0=00000028 r1=00000000 r2=00000000 r3=100fd9bc sp=102fefec lr=100283cc
 
 ## ARM callsite context
 

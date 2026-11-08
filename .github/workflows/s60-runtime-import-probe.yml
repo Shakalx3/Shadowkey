@@ -114,9 +114,12 @@ jobs:
           Path('/tmp/probe/target-export-ordinals.txt').write_text('\n'.join(out)+'\n')
           print(Path('/tmp/probe/target-export-ordinals.txt').read_text())
           PY
-          find /tmp/s60-devkit -type f \(
-            -iname 'eikapp.h' -o -iname 'coecntrl.h' -o -iname 'gdi.h' -o -iname 'e32std.h'
-          \) -print | sort > /tmp/probe/framework-headers.txt
+          : > /tmp/probe/framework-headers.txt
+          find /tmp/s60-devkit -type f -iname 'eikapp.h' -print >> /tmp/probe/framework-headers.txt
+          find /tmp/s60-devkit -type f -iname 'coecntrl.h' -print >> /tmp/probe/framework-headers.txt
+          find /tmp/s60-devkit -type f -iname 'gdi.h' -print >> /tmp/probe/framework-headers.txt
+          find /tmp/s60-devkit -type f -iname 'e32std.h' -print >> /tmp/probe/framework-headers.txt
+          sort -o /tmp/probe/framework-headers.txt /tmp/probe/framework-headers.txt
           while IFS= read -r header; do
             echo "===== $header =====" >> /tmp/probe/framework-header-layout.txt
             grep -n -E -A28 -B4 'class CEikAppUi|class CCoeAppUi|MCoeMessageObserver|class CCoeControl' "$header" >> /tmp/probe/framework-header-layout.txt || true

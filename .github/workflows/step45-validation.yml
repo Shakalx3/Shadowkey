@@ -64,7 +64,7 @@ jobs:
             echo "## Ground truth"
             echo
             echo "- Step46 recovered the original game's ARM UREL archive-index symbols; WINS UDEB ordinal names are a separate configuration."
-            echo "- EUSER1407 is TPtrC16 construction; EUSER1575 is TInt64 inequality; EUSER1582 is CBase::operator new."
+            echo "- EUSER3 is CBase::newL; EUSER1407 is TPtrC16 construction; EUSER1575 is TInt64 inequality; EUSER1582 is CBase::operator new."
             echo "- EUSER1373/530/711 are TRect constructor/Height/Move; CONE160 is CCoeControl::Rect."
             echo "- GDI151 constructs a 64-byte TFontSpec; GDI108 and GDI101 set TFontStyle stroke weight and posture."
             echo "- Corrected ARM-identity HLE handlers are active in the host diagnostic harness; N95 OS 9.2 ROM exports remain unverified."
@@ -108,7 +108,7 @@ jobs:
               echo "# Step 45 — SDK-mapped import correction and validation"
               echo
               echo "- Step46 recovered the original game's ARM UREL archive-index identities; WINS UDEB names are reference data only."
-              echo "- EUSER1407=TPtrC16 constructor; EUSER1575=TInt64 inequality; EUSER1582=CBase::operator new."
+              echo "- EUSER3=CBase::newL; EUSER1407=TPtrC16 constructor; EUSER1575=TInt64 inequality; EUSER1582=CBase::operator new."
               echo "- EUSER1373/530/711=TRect constructor/Height/Move; CONE160=CCoeControl::Rect."
               echo "- GDI151=TFontSpec constructor; GDI108/101=TFontStyle stroke-weight/posture setters."
               echo "- Corrected HLE routes are exercised by the passing host regression suite; target N95 ROM exports are not yet cross-checked."

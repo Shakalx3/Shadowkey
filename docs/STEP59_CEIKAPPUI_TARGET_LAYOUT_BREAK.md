@@ -74,10 +74,12 @@ The target CEikAppUi base occupies 0x3c bytes.
 
 ## 4. Why direct EIKCORE 224 → EIKCORE 178 remapping is unsafe
 
-The game constructor caller writes its N-Gage layout:
-- game MEikMenuObserver vptr at +0x14;
-- game MObjectProvider vptr at +0x1c;
-- it leaves +0x18 for the missing MCoeMessageObserver vptr.
+The complete game constructor caller `sub_10021138` has now been extracted in Step60. After calling EIKCORE ordinal 224 through thunk `0x1009f700`, it explicitly writes all three N-Gage secondary interface vptrs:
+- MEikMenuObserver vptr at +0x14 = `0x100fff00`;
+- MCoeMessageObserver vptr at +0x18 = `0x100fff64`;
+- MObjectProvider vptr at +0x1c = `0x100fff54`.
+
+It also writes the final primary vptr at +0x00 = `0x100fc4d8`. Earlier values written to +0x00, +0x48 and +0x4c are overwritten later in the same constructor. The old Step53 claim that the caller leaves +0x18 untouched is incorrect and is superseded by the Step60 trace.
 
 The target S60 C2 constructor expects:
 - +0x14 to be the reserved CCoeAppUi word;
@@ -85,13 +87,9 @@ The target S60 C2 constructor expects:
 - MCoeMessageObserver vptr at +0x1c;
 - MObjectProvider vptr at +0x20.
 
-Therefore a direct call to target C2/178 would:
-- have its MEikMenuObserver vptr at the wrong offset for the game;
-- have its MCoeMessageObserver vptr overwritten by the game's MObjectProvider vptr write at +0x1c;
-- leave the game's expected MCoeMessageObserver slot at +0x18 holding the wrong interface vptr;
-- place the target MObjectProvider vptr at +0x20, where the game expects `iDocument`;
-- shift all target data members by four bytes relative to the game layout;
-- provide `iAppUiExtra` where the old game layout expects `iEventMonitor`, while the old `iKeySounds`, `iEventMonitor`, `iFactory` and spare slots do not exist with the same meanings in the target header.
+The game subsequently overwrites the target secondary vptrs at +0x18 and +0x1c with its own MCoeMessageObserver and MObjectProvider vptrs, and overwrites the reserved word at +0x14 with its MEikMenuObserver vptr. However, the target MObjectProvider vptr at +0x20 remains unless explicitly translated, and the game expects `iDocument` at +0x20. The target constructor also places `iDocument` at +0x24 and shifts all following fields by four bytes.
+
+The direct C2/178 remap is therefore still unsafe, but the exact reason is now more precise: the game rewrites all of its vptrs after the constructor; the unresolved compatibility work is translation of the target constructor's base data/side effects into the old N-Gage field layout. The target `iAppUiExtra` at +0x38 also does not have the same declared role as the old `iEventMonitor`, and the old `iFactory`/spare slots are absent from the target header.
 
 This is a confirmed class-layout ABI break, not merely an unresolved ordinal. Do not patch EIKCORE 224 directly to 178.
 

@@ -79,41 +79,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
-          import re, subprocess
-          from pathlib import Path
-          root = Path('/tmp/s60-devkit/Epoc32/release/armv5/lib')
-          wanted = {
-              'euser': {'memmove','memset','_ZN7TPtrC16C1EPKt'},
-              'estlib': {'exit','fprintf','__stderr','strcmp','strncmp'},
-              'cone': {'_ZNK11CCoeControl4RectEv'},
-              'gdi': {'_ZN10TFontStyle10SetPostureE12TFontPosture','_ZN10TFontStyle15SetStrokeWeightE17TFontStrokeWeight','_ZN9TFontSpecC1ERK7TDesC16i'},
-              'eikcore': {'_ZN9CEikAppUiC1Ev','_ZN9CEikAppUiC2Ev'},
-          }
-          out = []
-          for dll, names in wanted.items():
-              dso = root / f'{dll}.dso'
-              if not dso.exists():
-                  out.append(f'{dll}: DSO MISSING: {dso}')
-                  continue
-              lines = subprocess.check_output(['readelf','-Ws',str(dso)], text=True, errors='replace').splitlines()
-              found = {}
-              for line in lines:
-                  m = re.match(r'\s*\d+:\s+([0-9a-fA-F]+)\s+\d+\s+\S+\s+GLOBAL\s+DEFAULT\s+(\S+)\s+(.+)$', line)
-                  if not m or m.group(2) == 'UND':
-                      continue
-                  value = int(m.group(1),16)
-                  if value % 4:
-                      continue
-                  symbol = m.group(3).strip().split('@@',1)[0]
-                  if symbol in names:
-                      found[symbol] = value//4+1
-              out.append(f'[{dll}]')
-              for symbol in sorted(names):
-                  out.append(f'{found.get(symbol, "NOT EXPORTED")}  {symbol}')
-          Path('/tmp/probe/target-export-ordinals.txt').write_text('\n'.join(out)+'\n')
-          print(Path('/tmp/probe/target-export-ordinals.txt').read_text())
-          PY
+          python3 tools/step58_s60_target_export_map.py --sdk-root /tmp/s60-devkit --output-dir /tmp/probe
           : > /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikapp.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'coecntrl.h' -print >> /tmp/probe/framework-headers.txt
@@ -122,7 +88,7 @@ jobs:
           sort -o /tmp/probe/framework-headers.txt /tmp/probe/framework-headers.txt
           while IFS= read -r header; do
             echo "===== $header =====" >> /tmp/probe/framework-header-layout.txt
-            grep -n -E -A28 -B4 'class CEikAppUi|class CCoeAppUi|MCoeMessageObserver|class CCoeControl' "$header" >> /tmp/probe/framework-header-layout.txt || true
+            grep -n -E -A80 -B10 'CEikAppUi|CCoeAppUi|MCoeMessageObserver' "$header" >> /tmp/probe/framework-header-layout.txt || true
           done < /tmp/probe/framework-headers.txt
           echo 'Target S60 SDK headers and export ordinal table captured.'
 

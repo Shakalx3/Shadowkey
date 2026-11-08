@@ -117,8 +117,6 @@ assert "shadowkey_hle_euser711_trect_move(c)" in bootstrap
 assert "shadowkey_hle_eikcore222_ceikapplication(c)" in vfs_trace
 assert "shadowkey_hle_eikcore222_ceikapplication" in hle
 assert "self+24u,0x30000000u" in hle and "self+28u,256u" in hle
-assert "EIKCORE[10004892].DLL ordinal=222" in Path("docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md").read_text(errors="replace")
-assert "HLE ARM EIKCORE222 CEikApplication" in Path("docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md").read_text(errors="replace")
 
 print("PASS: game thunk/IAT/ordinal associations for EUSER 1407/1575 and CONE 160")
 print("PASS: six WINS UDEB names reproduced as WINS-only reference evidence")

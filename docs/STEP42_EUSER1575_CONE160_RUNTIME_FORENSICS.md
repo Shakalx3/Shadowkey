@@ -4138,3 +4138,8 @@ BITMAP CPU WRITE sample[23] width=2 addr=10315122 value=00000aaa pc=100677d0 fun
 - CONE160 remains unimplemented; its hidden-result ABI is observed, but the returned TPoint/TSize semantics are not assumed.
 - GDI151/GDI108 remain opt-in experimental probes; DrawText remains diagnostic-only.
 - Host trace calls RunL directly and does not instantiate CActiveScheduler or represent a physical N95 launch.
+
+
+## Display-color caveat (user-verified)
+
+The captured `live_run_bitmap.png` is a raw diagnostic decode of the framebuffer, not a color-correct visual reference. The user inspected the image and confirmed that its colors are inverted. Do not treat the current cyan/black appearance as a successful color result, and do not tune rendering against this PNG alone. Preserve the original RGB565 bytes and metadata; every visual validation must compare at least (1) the raw channel interpretation, (2) the inverted-color interpretation, and (3) the candidate RGB/BGR channel-order interpretation. Record which transform is being evaluated and keep geometry, glyph coverage, and pixel-buffer correctness separate from color correctness. The expected final color appearance must be verified against the original N-Gage splash or a known-good capture, not inferred from the diagnostic PNG.

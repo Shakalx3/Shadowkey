@@ -27,7 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           SDK=third_party/ngage-sdk
-          test -d "$SDK/.git"
+          test -e "$SDK/.git"
           EXPECTED=0a94b7655117f325a1729f5600093e4ad12c8d60
           ACTUAL=$(git -C "$SDK" rev-parse HEAD)
           echo "N-Gage SDK commit: $ACTUAL"

@@ -1,1 +1,1 @@
-Run full SDK extraction and compact developer-toolchain inventory.
+Regenerate compact SDK toolchain inventory after fixing packaging.

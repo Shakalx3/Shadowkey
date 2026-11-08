@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Map ARM UREL import-library archive members to game import ordinals."""
 from pathlib import Path
-import os, re, subprocess, tempfile, shutil
+import os, re, subprocess, tempfile, shutil, struct
 
 ROOT=Path("source_bundle/shadowkey_step35_work")
 DISPATCH=ROOT/"shadowkey_import_dispatch.c"
@@ -49,6 +49,69 @@ def strings(data):
         p=run(["strings","-a",f.name])
         return p.stdout.decode("utf-8","replace").splitlines()
 
+def archive_symbol_index(path):
+    """Decode GNU/SysV ar linker-member symbol index: symbol -> member header."""
+    data=Path(path).read_bytes()
+    if not data.startswith(b"!<arch>\\n"):
+        return {}
+    pos=8
+    longnames=b""
+    members={}
+    indexes=[]
+    while pos+60<=len(data):
+        header=data[pos:pos+60]
+        try:
+            size=int(header[48:58].decode("ascii").strip())
+        except Exception:
+            break
+        rawname=header[:16].decode("ascii","replace").strip()
+        payload=data[pos+60:pos+60+size]
+        if len(payload)!=size:
+            break
+        if rawname=="//":
+            longnames=payload
+        elif rawname in ("/","/SYM64/"):
+            indexes.append((rawname,payload))
+        else:
+            name=rawname
+            if name.startswith("/") and name[1:].isdigit() and longnames:
+                off=int(name[1:])
+                end=longnames.find(b"/\\n",off)
+                if end<0: end=longnames.find(b"\\0",off)
+                if end<0: end=len(longnames)
+                name=longnames[off:end].decode("utf-8","replace")
+            elif name.endswith("/"):
+                name=name[:-1]
+            members[pos]=name
+        pos += 60+size+(size&1)
+    result={}
+    for kind,payload in indexes:
+        width=8 if kind=="/SYM64/" else 4
+        if len(payload)<width:
+            continue
+        for endian in (">","<"):
+            try:
+                count=struct.unpack_from(endian+("Q" if width==8 else "I"),payload,0)[0]
+                if count>200000 or width+count*width>len(payload):
+                    continue
+                offsets=[struct.unpack_from(endian+("Q" if width==8 else "I"),payload,width+i*width)[0] for i in range(count)]
+                names_blob=payload[width+count*width:]
+                names=names_blob.split(b"\\0")
+                if len(names)<count:
+                    continue
+                mapped=0
+                for off,sym in zip(offsets,names):
+                    member=members.get(off)
+                    symbol=sym.decode("utf-8","replace")
+                    if member and symbol:
+                        result.setdefault(member,[]).append(symbol)
+                        mapped+=1
+                if mapped:
+                    break
+            except (struct.error,OverflowError):
+                continue
+    return result
+
 out=[
  "# Step 46 — ARM UREL import-library ordinal cross-check","",
  "This report inspects ARM UREL import-library members and compares their extracted symbol evidence with the WINS UDEB COFF import-library names recorded in Step 44. A dsNNNNN.o member name alone is only an ordinal candidate, not proof of symbol identity.","",
@@ -67,6 +130,7 @@ for dll in sorted(set(e[2] for e in entries)):
         out += [f"- ar t failed: {listing.stderr.decode('utf-8','replace')[:500]}",""]
         continue
     members=listing.stdout.decode("utf-8","replace").splitlines()
+    indexed_symbols=archive_symbol_index(lib)
     # ARM import archives contain two non-ordinal members (dt.o/dh.o).
     # Their symbol/string tables may hold the name-to-ordinal association
     # even when each dsNNNNN.o thunk member is ordinal-only.
@@ -139,7 +203,10 @@ for dll in sorted(set(e[2] for e in entries)):
                 if ro_lines:
                     symbol_lines.extend(ro_lines[:12])
                 tool_notes.append(f"llvm-readobj:rc={ro.returncode}")
-        evidence_items=symbol_lines[:12] + candidates[:6]
+        # The archive linker index can preserve the decorated C++ name even
+        # when the ordinal stub object itself contains only generic sections.
+        index_names=indexed_symbols.get(member,[])
+        evidence_items=[f"AR_INDEX:{x}" for x in index_names[:12]] + symbol_lines[:12] + candidates[:6]
         if not evidence_items:
             evidence_items=["<no decoded symbols>", "header="+blob.stdout[:24].hex(), *tool_notes]
         evidence="; ".join(evidence_items).replace("|","/") or "<no symbol strings>"

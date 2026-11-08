@@ -52,7 +52,7 @@ def strings(data):
 def archive_symbol_index(path):
     """Decode GNU/SysV ar linker-member symbol index: symbol -> member header."""
     data=Path(path).read_bytes()
-    if not data.startswith(b"!<arch>\\n"):
+    if not data.startswith(b"!<arch>\n"):
         return {}
     pos=8
     longnames=b""
@@ -76,8 +76,8 @@ def archive_symbol_index(path):
             name=rawname
             if name.startswith("/") and name[1:].isdigit() and longnames:
                 off=int(name[1:])
-                end=longnames.find(b"/\\n",off)
-                if end<0: end=longnames.find(b"\\0",off)
+                end=longnames.find(b"/\n",off)
+                if end<0: end=longnames.find(b"\0",off)
                 if end<0: end=len(longnames)
                 name=longnames[off:end].decode("utf-8","replace")
             elif name.endswith("/"):
@@ -96,7 +96,7 @@ def archive_symbol_index(path):
                     continue
                 offsets=[struct.unpack_from(endian+("Q" if width==8 else "I"),payload,width+i*width)[0] for i in range(count)]
                 names_blob=payload[width+count*width:]
-                names=names_blob.split(b"\\0")
+                names=names_blob.split(b"\0")
                 if len(names)<count:
                     continue
                 mapped=0

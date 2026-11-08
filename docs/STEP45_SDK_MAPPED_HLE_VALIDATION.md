@@ -1,7 +1,9 @@
 # Step 45 — SDK-mapped import correction and validation
 
 - Original Symbian 6.1 SDK import libraries were parsed into docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md.
-- The current HLE uses verified identities for EUSER1407, CONE160, EFSRV162 and EFSRV185; false Swiss/font mappings were removed.
+- Step44 names are WINS UDEB reference identities only; they do not prove ARM game import identities.
+- EUSER1407 and CONE160 dispatch are deliberately disabled pending ARM UREL verification.
+- EFSRV path/read behavior is supported by the current guest trace, but is not proof of N95 firmware export identity.
 
 ## Host regression suite
 

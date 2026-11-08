@@ -13,9 +13,9 @@ runtime = Path("docs/STEP42_EUSER1575_CONE160_RUNTIME_FORENSICS.md").read_text(e
 
 def import_row(dll_uid, ordinal):
     pattern = re.compile(
-        r'\\{\\s*(0x[0-9a-fA-F]+)u?,\\s*(0x[0-9a-fA-F]+)u?,\\s*"'
+        r'\{\s*(0x[0-9a-fA-F]+)u?,\s*(0x[0-9a-fA-F]+)u?,\s*"'
         + re.escape(dll_uid)
-        + r'\\.DLL",\\s*' + str(ordinal) + r'u\\s*\\}'
+        + r'\.DLL",\s*' + str(ordinal) + r'u\s*\}'
     )
     rows = pattern.findall(dispatch)
     assert len(rows) == 1, (dll_uid, ordinal, rows)
@@ -31,12 +31,12 @@ for key, value in expected.items():
 
 def wins_symbol(dll, ordinal):
     section = re.search(
-        r"^### " + re.escape(dll.upper()) + r"\\.LIB\\s*$([\\s\\S]*?)(?=^### |\\Z)",
+        r"^### " + re.escape(dll.upper()) + r"\.LIB\s*$([\s\S]*?)(?=^### |\Z)",
         sdk, re.M
     )
     assert section, dll
     rows = re.findall(
-        r"^- Ordinal " + str(ordinal) + r": (.*?); NameType=\\[0\\]",
+        r"^- Ordinal " + str(ordinal) + r": (.*?); NameType=\[0\]",
         section.group(1), re.M
     )
     assert len(rows) == 1, (dll, ordinal, rows)
@@ -59,9 +59,9 @@ for key, expected_symbol in wins_expected.items():
 # before the same EUSER 1407 thunk. This contradicts blindly applying the
 # WINS-only SetOffset identity to the game's ARM import.
 assert re.search(
-    r"L_10022b74:.*?c->r\\[1\\] = 0x100ac718u.*?"
-    r"L_10022b78:.*?c->r\\[0\\] = c->r\\[4\\].*?"
-    r"L_10022b7c:.*?ngage_call\\(c, 0x1009f0f0u\\)",
+    r"L_10022b74:.*?c->r\[1\] = 0x100ac718u.*?"
+    r"L_10022b78:.*?c->r\[0\] = c->r\[4\].*?"
+    r"L_10022b7c:.*?ngage_call\(c, 0x1009f0f0u\)",
     callsite, re.S
 ), "Expected Swiss-format literal callsite for EUSER 1407 not found"
 assert "HLE EUSER1407 Format literal-only" in runtime

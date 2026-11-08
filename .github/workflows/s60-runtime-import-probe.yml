@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/s60-runtime-import-probe.yml"
+      - ".github/s60-runtime-import-probe.trigger"
   workflow_dispatch:
 
 permissions:

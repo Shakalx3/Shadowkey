@@ -28,6 +28,13 @@ This invalidates the earlier interpretation of GDI 101/108/151 as a text/font co
 
 See [Step 47 import ordinal semantics correction](docs/STEP47_IMPORT_ORDINAL_SEMANTICS_CORRECTION.md).
 
+### Step 48 — HLE and historical font-trace audit
+
+The committed HLE source already routes EUSER 1407 to `TDblQueBase::SetOffset(TInt)` (receiver in r0, integer in r1, write at object +8). CONE 160 is implemented as a hidden-result `TPoint` return. The bundled Step32/33 README's old EUSER1407-to-font trace is now explicitly marked historical and semantically superseded; it must not be used as proof of a descriptor/font API. See [Step 48 HLE/font trace audit](docs/STEP48_EUSER1407_HLE_AND_FONT_TRACE_AUDIT.md).
+
+A static consistency test was added at `tools/step48_import_hle_consistency_test.py`. It checks game thunk/IAT/ordinal associations, the six WINS SDK symbol names, and current HLE routing. The test is committed but has not yet been executed in a project runner. The Step46 ARM UREL report is still absent; no workflow run was returned for the trigger-file commit.
+
+
 ### Remaining compatibility gates
 
 - The WINS UDEB import-library mappings are evidence for the original N-Gage SDK, not proof of same-numbered N95 OS 9.2 exports.

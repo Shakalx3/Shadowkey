@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "tools/step46_arm_importlib_ordinal_map.py"
+      - "tools/step52_eikcore_wins_probe.py"
       - ".github/step46-arm-ordinal-map.trigger"
       - ".github/workflows/step46-arm-ordinal-map.yml"
   workflow_dispatch:
@@ -27,7 +28,9 @@ jobs:
           src=Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c").read_text()
           dlls=sorted(set(x.lower() for x in re.findall(r'"([A-Z0-9]+)\[',src)))
           base="6.1/Series60/Epoc32/Release/armi/urel/"
-          Path("/tmp/arm_sdk_paths").write_text("\n".join(base+d+".lib" for d in dlls)+"\n")
+          paths=[base+d+".lib" for d in dlls]
+          paths.append("6.1/Series60/Epoc32/Release/wins/udeb/eikcore.dll")
+          Path("/tmp/arm_sdk_paths").write_text("\n".join(paths)+"\n")
           PY
           git clone --depth 1 --filter=blob:none --sparse https://github.com/ngagesdk/sdk.git /tmp/ngagesdk-sdk
           cd /tmp/ngagesdk-sdk
@@ -38,6 +41,8 @@ jobs:
           sudo apt-get install -y llvm
       - name: Parse ARM import members
         run: python3 tools/step46_arm_importlib_ordinal_map.py
+      - name: Probe WINS UDEB EIKCORE reference DLL
+        run: python3 tools/step52_eikcore_wins_probe.py
       - name: Commit report
         shell: bash
         run: |
@@ -48,7 +53,8 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             python3 tools/step46_arm_importlib_ordinal_map.py
-            git add docs/STEP46_ARM_IMPORTLIB_ORDINAL_MAP.md
+            python3 tools/step52_eikcore_wins_probe.py
+            git add docs/STEP46_ARM_IMPORTLIB_ORDINAL_MAP.md docs/STEP52_EIKCORE_WINS_PROBE.md
             if git diff --cached --quiet; then
               echo "ARM UREL report is unchanged; nothing to commit."
               exit 0

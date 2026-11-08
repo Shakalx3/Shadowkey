@@ -16,13 +16,13 @@ for thunk,slot,dll,ordtext in entry_re.findall(DISPATCH.read_text(errors="replac
 wins={}
 current_dll=None
 for line in WINS_REPORT.read_text(errors="replace").splitlines():
-    section=re.match(r"^### ([A-Z0-9]+)\\.LIB$", line)
+    section=re.match(r"^### ([A-Z0-9]+)\.LIB$", line)
     if section:
         current_dll=section.group(1).lower()
         continue
     # Step 44 records ordinal-backed WINS short-import names as:
     # - Ordinal 1407: ?Symbol@@...; NameType=[0]
-    m=re.match(r"^- Ordinal (\\d+): (.*?); NameType=\\[0\\]$", line)
+    m=re.match(r"^- Ordinal (\d+): (.*?); NameType=\[0\]$", line)
     if current_dll and m:
         wins[(current_dll,int(m.group(1)))]=m.group(2)
 

@@ -47,6 +47,8 @@ The archive is now available for subsequent analysis directly from the GitHub re
 
 ## Technical next gate
 
-Resume from the archive's own latest reports and scripts, with the immediate investigation focused on the EUSER ordinal 1407 descriptor contract observed in Step 38. Keep GDI ordinal 151 fail-closed until the exact S60 3rd FP1 ABI and descriptor semantics are established.
+Step 47 supersedes the earlier Step 38 focus. The original N-Gage SDK WINS UDEB import-library map identifies EUSER 1407 as `TDblQueBase::SetOffset(TInt)`, EUSER 1575 as `TLex8::Val(TInt64&, const TInt64&)`, CONE 160 as `CCoeControl::Position() const -> TPoint`, GDI 101 as `CGraphicsContext::JustificationInPixels`, GDI 108 as `CPalette::NewL`, and GDI 151 as `CPicture::StoreL`. See [Step 47 import ordinal semantics correction](STEP47_IMPORT_ORDINAL_SEMANTICS_CORRECTION.md).
+
+The Step 46 ARM UREL parser was corrected to read the actual Step 44 WINS report format and now has explicit self-checks for those six mappings. The corrected workflow has been triggered, but its generated ARM UREL report has not yet been confirmed in the repository. Do not claim ARM/WINS equivalence until that report exists and its symbol evidence is reviewed.
 
 No physical N95 launch is claimed.

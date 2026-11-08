@@ -75,7 +75,6 @@ jobs:
             echo "See the uploaded text report for archive members and symbol matches."
           } >> "$GITHUB_STEP_SUMMARY"
 
-
       - name: Resolve target export ordinals and inspect framework headers
         shell: bash
         run: |
@@ -100,13 +99,7 @@ jobs:
               lines = subprocess.check_output(['readelf','-Ws',str(dso)], text=True, errors='replace').splitlines()
               found = {}
               for line in lines:
-                  m = re.match(r'\\s*\\d+:\\s+([0-9a-fA-F]+)\\s+\\d+\\s+\\S+\\s+GLOBAL\\s+DEFAULT\\s+(\\S+)\\s+(.+)
-        uses: actions/upload-artifact@v4
-        with:
-          name: s60-3.1-fp1-runtime-import-probe
-          path: /tmp/probe/
-          if-no-files-found: error
-, line)
+                  m = re.match(r'\s*\d+:\s+([0-9a-fA-F]+)\s+\d+\s+\S+\s+GLOBAL\s+DEFAULT\s+(\S+)\s+(.+)$', line)
                   if not m or m.group(2) == 'UND':
                       continue
                   value = int(m.group(1),16)
@@ -118,24 +111,17 @@ jobs:
               out.append(f'[{dll}]')
               for symbol in sorted(names):
                   out.append(f'{found.get(symbol, "NOT EXPORTED")}  {symbol}')
-          Path('/tmp/probe/target-export-ordinals.txt').write_text('\\n'.join(out)+'\\n')
+          Path('/tmp/probe/target-export-ordinals.txt').write_text('\n'.join(out)+'\n')
           print(Path('/tmp/probe/target-export-ordinals.txt').read_text())
           PY
-          find /tmp/s60-devkit -type f \\(
+          find /tmp/s60-devkit -type f \(
             -iname 'eikapp.h' -o -iname 'coecntrl.h' -o -iname 'gdi.h' -o -iname 'e32std.h'
-          \\) -print | sort > /tmp/probe/framework-headers.txt
+          \) -print | sort > /tmp/probe/framework-headers.txt
           while IFS= read -r header; do
             echo "===== $header =====" >> /tmp/probe/framework-header-layout.txt
             grep -n -E -A28 -B4 'class CEikAppUi|class CCoeAppUi|MCoeMessageObserver|class CCoeControl' "$header" >> /tmp/probe/framework-header-layout.txt || true
           done < /tmp/probe/framework-headers.txt
           echo 'Target S60 SDK headers and export ordinal table captured.'
-
-      - name: Publish complete target export/header probe
-        uses: actions/upload-artifact@v4
-        with:
-          name: s60-3.1-fp1-target-export-map
-          path: /tmp/probe/
-          if-no-files-found: error
 
       - name: Publish target SDK probe report
         uses: actions/upload-artifact@v4

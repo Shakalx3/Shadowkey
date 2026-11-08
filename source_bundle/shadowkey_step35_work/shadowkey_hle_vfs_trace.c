@@ -468,6 +468,16 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         fprintf(stderr,"  HLE ARM GDI101 TFontStyle::SetPosture this=%08x value=%u flags=%08x\n",self,posture,rd32(c,self));
         return;
     }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==3u){
+        uint32_t size=c->r[0],ptr=shadowkey_heap_alloc(c,size);
+        if(!ptr){
+            fprintf(stderr,"  HALT EUSER3 CBase::newL allocation failed size=%u\n",size);
+            exit(95);
+        }
+        c->r[0]=ptr;
+        fprintf(stderr,"  HLE ARM EUSER3 CBase::newL size=%u -> %08x\n",size,ptr);
+        return;
+    }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1582u){
         uint32_t size=c->r[0],ptr=shadowkey_heap_alloc(c,size);
         c->r[0]=ptr;

@@ -484,6 +484,16 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         fprintf(stderr,"  HLE ARM EUSER1582 CBase::operator new size=%u -> %08x\n",size,ptr);
         return;
     }
+    if(!strcmp(dll,"EIKCORE[10004892].DLL") && ordinal==219u){
+        uint32_t self=c->r[0],app=c->r[1];
+        if(!shadowkey_hle_eikcore219_ceikdocument(c)){
+            fprintf(stderr,"  HALT invalid EIKCORE219 CEikDocument this=%08x app=%08x\n",self,app);
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM EIKCORE219 CEikDocument this=%08x app=%08x process=%08x\n",
+                self,app,rd32(c,self+12u));
+        return;
+    }
     if(!strcmp(dll,"EIKCORE[10004892].DLL") && ordinal==222u){
         uint32_t self=c->r[0];
         if(!shadowkey_hle_eikcore222_ceikapplication(c)){

@@ -104,12 +104,22 @@ jobs:
           unzip -q s60v3.1_SDK.zip -d sdk-installer
           CAB="$(find sdk-installer -iname data2.cab -print -quit)"
           test -n "$CAB"
-          unshield l "$CAB" > sdk-extracted/INSTALLSHIELD_FILE_LIST.txt
+          unshield l "$CAB" > sdk-extracted/OUTER_INSTALLSHIELD_FILE_LIST.txt
           unshield x -d sdk-extracted "$CAB"
-          find sdk-extracted -type f -printf '%P\t%s bytes\n' | sort > sdk-extracted/EXTRACTED_FILE_INVENTORY.txt
-          test "$(find sdk-extracted -type f | wc -l)" -gt 100
-          echo "Extracted files: $(find sdk-extracted -type f | wc -l)"
-          du -sh sdk-extracted
+          INNER_CAB="$(find sdk-extracted -path '*/SelfRegFiles2/data2.cab' -print -quit)"
+          test -n "$INNER_CAB"
+          mkdir -p sdk-payload
+          unshield l "$INNER_CAB" > sdk-payload/INSTALLSHIELD_FILE_LIST.txt
+          unshield x -d sdk-payload "$INNER_CAB"
+          INNER_DATA1="$(find sdk-extracted -path '*/SelfRegFiles2/data1.cab' -print -quit)"
+          if [ -n "$INNER_DATA1" ]; then
+            unshield l "$INNER_DATA1" > sdk-payload/DATA1_FILE_LIST.txt
+            unshield x -d sdk-payload "$INNER_DATA1"
+          fi
+          find sdk-extracted sdk-payload -type f -printf '%p\t%s bytes\n' | sort > SDK_EXTRACTED_FILE_INVENTORY.txt
+          test "$(find sdk-payload -type f | wc -l)" -gt 100
+          echo "Payload files: $(find sdk-payload -type f | wc -l)"
+          du -sh sdk-extracted sdk-payload
 
       - name: Publish verified SDK as a workflow artifact
         uses: actions/upload-artifact@v4
@@ -118,5 +128,8 @@ jobs:
           path: |
             s60v3.1_SDK.zip
             SDK_DOWNLOAD_REPORT.txt
+            SDK_EXTRACTED_FILE_INVENTORY.txt
+            sdk-extracted/**
+            sdk-payload/**
           if-no-files-found: error
           retention-days: 90

@@ -70,6 +70,9 @@ int main(void){
     c.r[0]=0x22cu;
     shadowkey_hle_import(&c,"EUSER[100039e5].DLL",1582u);
     if(c.r[0]!=0x10120000u)return 10;
+    c.r[0]=0x28u;
+    shadowkey_hle_import(&c,"EUSER[100039e5].DLL",3u);
+    if(c.r[0]!=0x10120230u)return 11;
 
     /* EIKCORE222: CEikApplication layout is 556 bytes; caption is TBuf<256>.
        The caller writes the derived vtable immediately after this constructor. */
@@ -82,8 +85,8 @@ int main(void){
        ngage_r32(&c,app+12u)!=0u||ngage_r32(&c,app+16u)!=0u||
        ngage_r32(&c,app+20u)!=0u||ngage_r32(&c,app+24u)!=0x30000000u||
        ngage_r32(&c,app+28u)!=256u||ngage_r32(&c,app+544u)!=0u||
-       ngage_r32(&c,app+548u)!=0u||ngage_r32(&c,app+552u)!=0u)return 11;
-    if(c.mem[(app-0x10000000u)+32u]!=0xa5)return 12;
+       ngage_r32(&c,app+548u)!=0u||ngage_r32(&c,app+552u)!=0u)return 12;
+    if(c.mem[(app-0x10000000u)+32u]!=0xa5)return 13;
 
     puts("PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase::operator new and CEikApplication constructor");
     free(c.mem);return 0;

@@ -24,20 +24,27 @@ def parse_symbols(text: str):
         rows.append({"ordinal": value // 4 + 1, "raw": raw, "demangled": demangled})
     return rows
 
-def class_block(text: str, name: str):
-    marker = "class " + name
-    start = text.find(marker)
-    if start < 0:
-        return None
-    brace = text.find("{", start)
-    depth = 0
-    for i in range(brace, len(text)):
-        if text[i] == "{":
-            depth += 1
-        elif text[i] == "}":
-            depth -= 1
-            if depth == 0:
-                return text[start:i + 2]
+def class_definition(include: Path, name: str):
+    pattern = re.compile(r"\bclass\s+" + re.escape(name) + r"\s*:")
+    for path in include.rglob("*.h"):
+        try:
+            text = path.read_text(errors="replace")
+        except OSError:
+            continue
+        match = pattern.search(text)
+        if not match:
+            continue
+        brace = text.find("{", match.start())
+        if brace < 0:
+            continue
+        depth = 0
+        for i in range(brace, len(text)):
+            if text[i] == "{":
+                depth += 1
+            elif text[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    return {"path": str(path), "declaration": text[match.start():i + 2]}
     return None
 
 def main():
@@ -70,14 +77,16 @@ def main():
     akn_header = (include / "aknappui.h").read_text(errors="replace")
     eik_header = (include / "eikappui.h").read_text(errors="replace")
     coe_header = (include / "coeaui.h").read_text(errors="replace")
-    akn_class = class_block(akn_header, "CAknAppUi")
-    eik_class = class_block(eik_header, "CEikAppUi")
-    coe_class = class_block(coe_header, "CCoeAppUi")
+    akn_class = class_definition(include, "CAknAppUi")
+    akn_base_class = class_definition(include, "CAknAppUiBase")
+    eik_class = class_definition(include, "CEikAppUi")
+    coe_class = class_definition(include, "CCoeAppUi")
     report = {
         "target_sdk": "S60 3.1 FP1 / Symbian OS 9.2 ARMv5",
         "avkon_dso": {"path": str(avkon), "sha256": hashlib.sha256(avkon.read_bytes()).hexdigest(), "abi": "ELF32 ARM EABI4"},
         "methods": methods,
         "target_caknappui_header": akn_class,
+        "target_caknappuibase_header": akn_base_class,
         "target_ceikappui_header": eik_class,
         "target_ccoeappui_header": coe_class,
         "target_header_files": {
@@ -101,7 +110,7 @@ def main():
         same = row["target_symbol_at_old_ordinal"]
         collision = f"{same['ordinal']} {same['demangled']}" if same else "NOT FOUND"
         lines.append(f"| {row['method']} | {row['original_ngage_ordinal']} | {target} | {collision} |")
-    lines += ["", "## Target CAknAppUi declaration", "", akn_class or "NOT FOUND", "", "## Target CEikAppUi declaration", "", eik_class or "NOT FOUND", "", "## Target CCoeAppUi declaration", "", coe_class or "NOT FOUND", ""]
+    lines += ["", "## Target CAknAppUi declaration", "", (akn_class or {}).get("declaration", "NOT FOUND"), "", "## Target CAknAppUiBase declaration", "", (akn_base_class or {}).get("declaration", "NOT FOUND"), "", "## Target CEikAppUi declaration", "", (eik_class or {}).get("declaration", "NOT FOUND"), "", "## Target CCoeAppUi declaration", "", (coe_class or {}).get("declaration", "NOT FOUND"), ""]
     (out / "STEP61_TARGET_CAKNAPPUI_LAYOUT.md").write_text("\n".join(lines))
     print(json.dumps({"avkon_dso": str(avkon), "method_matches": {m["method"]: [x["ordinal"] for x in m["target_matches"]] for m in methods}}, indent=2))
 

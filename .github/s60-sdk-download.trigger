@@ -1,1 +1,1 @@
-Trigger download-s60-sdk.yml; retry after correcting ZIP signature escaping.
+Run SDK download, verification and InstallShield extraction. Artifact retention: 90 days.

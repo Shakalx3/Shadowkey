@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static consistency checks for Step 47/48 import identity and HLE routing."""
+"""Fail-closed audit of game imports against WINS evidence and ARM callsites."""
 from pathlib import Path
 import re
 
@@ -8,12 +8,14 @@ dispatch = (ROOT / "shadowkey_import_dispatch.c").read_text(errors="replace")
 hle = (ROOT / "shadowkey_symbian61_hle.h").read_text(errors="replace")
 bootstrap = (ROOT / "shadowkey_hle_bootstrap_v2.c").read_text(errors="replace")
 sdk = Path("docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md").read_text(errors="replace")
+callsite = Path("docs/STEP39_EUSER1407_STATIC_CALLSITE_AUDIT.md").read_text(errors="replace")
+runtime = Path("docs/STEP42_EUSER1575_CONE160_RUNTIME_FORENSICS.md").read_text(errors="replace")
 
 def import_row(dll_uid, ordinal):
     pattern = re.compile(
-        r'\{\s*(0x[0-9a-fA-F]+)u,\s*(0x[0-9a-fA-F]+)u,\s*"'
+        r'\\{\\s*(0x[0-9a-fA-F]+)u?,\\s*(0x[0-9a-fA-F]+)u?,\\s*"'
         + re.escape(dll_uid)
-        + r'\.DLL",\s*' + str(ordinal) + r'u\s*\}'
+        + r'\\.DLL",\\s*' + str(ordinal) + r'u\\s*\\}'
     )
     rows = pattern.findall(dispatch)
     assert len(rows) == 1, (dll_uid, ordinal, rows)
@@ -27,20 +29,21 @@ expected = {
 for key, value in expected.items():
     assert import_row(*key) == value, (key, import_row(*key))
 
-def sdk_symbol(dll, ordinal):
+def wins_symbol(dll, ordinal):
     section = re.search(
-        r"^### " + re.escape(dll.upper()) + r"\.LIB\s*$([\s\S]*?)(?=^### |\Z)",
+        r"^### " + re.escape(dll.upper()) + r"\\.LIB\\s*$([\\s\\S]*?)(?=^### |\\Z)",
         sdk, re.M
     )
     assert section, dll
     rows = re.findall(
-        r"^- Ordinal " + str(ordinal) + r": (.*?); NameType=\[0\]",
+        r"^- Ordinal " + str(ordinal) + r": (.*?); NameType=\\[0\\]",
         section.group(1), re.M
     )
     assert len(rows) == 1, (dll, ordinal, rows)
     return rows[0]
 
-symbols = {
+# These are explicitly WINS UDEB identities, not ARM game identities.
+wins_expected = {
     ("EUSER", 1407): "?SetOffset@TDblQueBase@@QAEXH@Z",
     ("EUSER", 1575): "?Val@TLex8@@QAEHAAVTInt64@@ABV2@@Z",
     ("CONE", 160): "?Position@CCoeControl@@QBE?AVTPoint@@XZ",
@@ -48,18 +51,37 @@ symbols = {
     ("GDI", 108): "?NewL@CPalette@@SAPAV1@H@Z",
     ("GDI", 151): "?StoreL@CPicture@@UBE?AVTStreamId@@AAVCStreamStore@@@Z",
 }
-for key, expected_symbol in symbols.items():
-    actual = sdk_symbol(*key)
+for key, expected_symbol in wins_expected.items():
+    actual = wins_symbol(*key)
     assert actual == expected_symbol, (key, actual, expected_symbol)
 
-assert "ordinal==1407u && shadowkey_hle_euser1407_setoffset(c)" in bootstrap
+# The ARM game has callsites where r1 is loaded with a format-string literal
+# before the same EUSER 1407 thunk. This contradicts blindly applying the
+# WINS-only SetOffset identity to the game's ARM import.
+assert re.search(
+    r"L_10022b74:.*?c->r\\[1\\] = 0x100ac718u.*?"
+    r"L_10022b78:.*?c->r\\[0\\] = c->r\\[4\\].*?"
+    r"L_10022b7c:.*?ngage_call\\(c, 0x1009f0f0u\\)",
+    callsite, re.S
+), "Expected Swiss-format literal callsite for EUSER 1407 not found"
+assert "HLE EUSER1407 Format literal-only" in runtime
+assert "Swiss literal-only subset" in runtime
+
+# The WINS SetOffset helper is retained only as reference. It must not mutate
+# live game objects until the ARM UREL ds01407.o member has been resolved.
 assert "TDblQueBase::SetOffset(TInt)" in hle
 assert "shadowkey_symbian61_w32(c,self+8u,c->r[1])" in hle
+assert "ordinal==1407u && shadowkey_hle_euser1407_setoffset(c)" not in bootstrap
+
+# Likewise, the CONE helper is not active dispatch; no claim of complete
+# target implementation is made from the helper's existence alone.
 assert "CCoeControl::Position() const" in hle
-assert "shadowkey_symbian61_w32(c,result+4u,y)" in hle
+assert "shadowkey_hle_cone160_position(c)" not in bootstrap
 
 print("PASS: game thunk/IAT/ordinal associations for EUSER 1407/1575 and CONE 160")
-print("PASS: six Step 44 WINS UDEB SDK symbol names")
-print("PASS: EUSER 1407 dispatch reaches SetOffset HLE, not a descriptor/font handler")
-print("PASS: CONE 160 HLE is explicitly a TPoint hidden-result implementation")
-print("LIMIT: WINS UDEB identity does not prove ARM UREL or N95 OS 9.2 export equivalence")
+print("PASS: six WINS UDEB names reproduced as WINS-only reference evidence")
+print("PASS: ARM game callsite passes Swiss format literal through EUSER 1407 thunk")
+print("PASS: historical diagnostic log records the separate format-specific experiment")
+print("PASS: unverified EUSER 1407 SetOffset helper is no longer dispatched")
+print("PASS: CONE 160 helper is not misreported as an active import handler")
+print("LIMIT: ARM UREL ordinal/member identity is unresolved; do not assign WINS names to ARM imports")

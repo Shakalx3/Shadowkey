@@ -18,6 +18,7 @@ committed the generated map:
 
 | DLL | Ordinal | ARM UREL archive-index symbol | C++ interpretation |
 |---|---:|---|---|
+| EUSER | 3 | `newL__5CBaseUi` | `CBase::newL(TUint)` |
 | EUSER | 1407 | `__7TPtrC16PCUs` | `TPtrC16::TPtrC16(const TUint16*)` |
 | EUSER | 1575 | `__ne__C6TInt64RC6TInt64` | `TInt64::operator!=(const TInt64&) const` |
 | EUSER | 1582 | `__nw__5CBaseUi` | `CBase::operator new(TUint)` |
@@ -144,12 +145,13 @@ by the passing host regression suite:
 - GDI 151: 64-byte TFontSpec constructor with TBufC<24> typeface name.
 - GDI 108/101: TFontStyle stroke-weight/posture setters updating one flags word.
 - EUSER 1582: CBase::operator new guest-heap allocation.
+- EUSER 3: CBase::newL guest-heap allocation; allocation failure stops the trace (leave unwinding is not emulated).
 
 The old WINS-derived SetOffset and Position helpers have been removed.
 The VFS trace and bootstrap dispatchers now route the corrected ARM identities.
 The host regression suite and Step48 static identity audit both pass.
 
-The live VFS trace now progresses through those imports and stops at:
+The live VFS trace now progresses through those imports and stops at EUSER ordinal 3 (CBase::newL), with r0 = 0x28. This allocation handler has now been added; the next trace run will establish the following stop.\n\nBefore that EUSER3 stop, the trace had reached:
 
 - EIKCORE UID 10004892, ordinal 222;
 - thunk 0x1009FA00, return address 0x10028438;

@@ -34,6 +34,14 @@ The upstream toolchain project states that its own MIT license does not cover th
 
 Together they let us compare the old binary's imports and object assumptions against the N95 platform rather than infer them from WINS debug symbols or modern API documentation alone.
 
+## Follow-up build validation (same day)
+
+After wiring the N-Gage submodule into the ARMv6 CI checkout, all 14 recovered C translation units compiled successfully with the EKA2 ARMv6 compiler. This is an object-compilation milestone only: the units have not yet been linked into a complete E32 application, and no phone/emulator launch is claimed.
+
+- Successful run: https://github.com/Shakalx3/Shadowkey/actions/runs/42485190637
+- Artifact: `shadowkey-armv6-eka2-objects` (includes ARM object files and compiler report)
+- The first attempt exposed a missing GCCE soft-float compatibility macro in the Clang build environment; adding the explicit empty `__SOFTFP` marker fixed that header-level issue. The target remains `armv6-none-eabi` with `-mfloat-abi=soft`.
+
 ## Expected development impact
 
 The greatest acceleration should be in repeatable research and validation:

@@ -71,3 +71,8 @@ The import-library symbol `CCoeControl::Position() const -> TPoint` fits the hid
 - Real-device behavior: **not tested**.
 
 This correction intentionally invalidates earlier speculative GDI 101/108/151 font semantics. It does not establish a working N95 binary.
+
+
+## Step 49 follow-up — WINS names are not yet ARM game identities
+
+This report's symbol names are confirmed for the WINS UDEB import-library records only. They must not be treated as the names of the corresponding imports in the ARM game binary until the ARM UREL member-level comparison is complete. In particular, the Step39 ARM callsites pass the `Swiss` format literal in r1 through EUSER 1407 thunk 0x1009F0F0, which conflicts with the WINS-only `TDblQueBase::SetOffset(TInt)` signature. See [Step 49](STEP49_WINS_ARM_ORDINAL_CONFLICT.md).

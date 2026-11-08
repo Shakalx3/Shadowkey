@@ -20,7 +20,9 @@ out = [
     "",
 ]
 for label, thunk in targets.items():
-    hits = [i for i, line in enumerate(lines) if f"ngage_call(c, {thunk})" in line]
+    thunk_pattern = re.compile(r"ngage_call\\s*\\(\\s*c\\s*,\\s*" +
+                               re.escape(thunk.rstrip("u")) + r"u?\\s*\\)", re.I)
+    hits = [i for i, line in enumerate(lines) if thunk_pattern.search(line)]
     out += [f"## {label}", "", f"- Thunk: {thunk}", f"- Call sites: {len(hits)}", ""]
     for hit in hits:
         function = "<enclosing function not identified>"

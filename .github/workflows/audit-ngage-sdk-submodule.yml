@@ -1,0 +1,78 @@
+name: Verify pinned N-Gage SDK submodule
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".gitmodules"
+      - "third_party/README.md"
+      - ".github/ngage-sdk-audit.trigger"
+      - ".github/workflows/audit-ngage-sdk-submodule.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-ngage-sdk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Verify exact upstream revision and required SDK inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK=third_party/ngage-sdk
+          test -d "$SDK/.git"
+          EXPECTED=0a94b7655117f325a1729f5600093e4ad12c8d60
+          ACTUAL=$(git -C "$SDK" rev-parse HEAD)
+          echo "N-Gage SDK commit: $ACTUAL"
+          test "$ACTUAL" = "$EXPECTED"
+
+          BASE="$SDK/6.1/Series60/Epoc32"
+          for f in \
+            "$BASE/Include/eikapp.h" \
+            "$BASE/Include/coecntrl.h" \
+            "$BASE/Include/gdi.h" \
+            "$BASE/Include/fbs.h" \
+            "$BASE/Include/bitmap.h" \
+            "$BASE/Release/armi/urel/euser.lib" \
+            "$BASE/Release/armi/urel/cone.lib" \
+            "$BASE/Release/armi/urel/gdi.lib" \
+            "$BASE/Release/armi/urel/eikcore.lib" \
+            "$BASE/Release/armi/urel/bitgdi.lib"; do
+              test -s "$f"
+          done
+
+          mkdir -p reports
+          {
+            echo "N-Gage SDK revision: $ACTUAL"
+            echo "Required headers and ARM UREL import libraries:"
+            sha256sum \
+              "$BASE/Include/eikapp.h" \
+              "$BASE/Include/coecntrl.h" \
+              "$BASE/Include/gdi.h" \
+              "$BASE/Include/fbs.h" \
+              "$BASE/Include/bitmap.h" \
+              "$BASE/Release/armi/urel/euser.lib" \
+              "$BASE/Release/armi/urel/cone.lib" \
+              "$BASE/Release/armi/urel/gdi.lib" \
+              "$BASE/Release/armi/urel/eikcore.lib" \
+              "$BASE/Release/armi/urel/bitgdi.lib"
+            echo
+            echo "Header declarations relevant to framework/graphics:"
+            grep -nE "class CEikApplication|class CCoeControl|class TFontSpec|class CFbsBitmap|class CFbsBitGc|TFontStyle" \
+              "$BASE/Include/eikapp.h" "$BASE/Include/coecntrl.h" "$BASE/Include/gdi.h" "$BASE/Include/fbs.h" "$BASE/Include/bitmap.h" || true
+          } | tee reports/ngage-sdk-inputs.txt
+
+      - name: Upload N-Gage SDK inventory
+        uses: actions/upload-artifact@v4
+        with:
+          name: ngage-sdk-pinned-inputs
+          path: reports/**
+          if-no-files-found: error
+          retention-days: 90

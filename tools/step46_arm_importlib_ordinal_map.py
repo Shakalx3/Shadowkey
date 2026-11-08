@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Map ARM UREL import-library archive members to game import ordinals."""
 from pathlib import Path
-import os, re, subprocess, tempfile
+import os, re, subprocess, tempfile, shutil
 
 ROOT=Path("source_bundle/shadowkey_step35_work")
 DISPATCH=ROOT/"shadowkey_import_dispatch.c"
@@ -87,11 +87,31 @@ for dll in sorted(set(e[2] for e in entries)):
         found=strings(blob.stdout)
         candidates=[x for x in found if len(x)>2 and (('@' in x) or ('_' in x) or re.search(r'[A-Za-z]{4,}',x))]
         candidates=candidates[:6]
+        symbol_lines=[]
+        tool_notes=[]
         with tempfile.NamedTemporaryFile() as obj:
             obj.write(blob.stdout);obj.flush()
-            nm=run(["nm","-C",obj.name])
-            nm_lines=[x.strip() for x in nm.stdout.decode("utf-8","replace").splitlines() if x.strip()]
-        evidence_items=nm_lines[:6] + candidates
+            # The SDK's ARM import objects are not recognized by the host GNU nm.
+            # Try LLVM and ARM-aware tools before falling back to GNU nm.
+            for tool in ("llvm-nm","arm-none-eabi-nm","nm"):
+                if not shutil.which(tool):
+                    continue
+                nm=run([tool,"-C",obj.name])
+                got=[x.strip() for x in nm.stdout.decode("utf-8","replace").splitlines() if x.strip()]
+                tool_notes.append(f"{tool}:rc={nm.returncode}")
+                if got:
+                    symbol_lines.extend(got[:12])
+                    break
+            if shutil.which("llvm-readobj"):
+                ro=run(["llvm-readobj","--file-headers","--sections","--symbols",obj.name])
+                ro_lines=[x.strip() for x in ro.stdout.decode("utf-8","replace").splitlines()
+                          if "Name:" in x or "Symbol:" in x]
+                if ro_lines:
+                    symbol_lines.extend(ro_lines[:12])
+                tool_notes.append(f"llvm-readobj:rc={ro.returncode}")
+        evidence_items=symbol_lines[:12] + candidates[:6]
+        if not evidence_items:
+            evidence_items=["<no decoded symbols>", "header="+blob.stdout[:24].hex(), *tool_notes]
         evidence="; ".join(evidence_items).replace("|","/") or "<no symbol strings>"
         out.append(f"| {ordinal} | {wins.get((dll,ordinal),'<no WINS map>')} | {member} | {len(blob.stdout)} | {evidence} |")
     out.append("")

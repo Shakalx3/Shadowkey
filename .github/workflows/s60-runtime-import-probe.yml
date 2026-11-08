@@ -13,6 +13,8 @@ jobs:
   inspect-target-runtime:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download pinned S60 3.1 FP1 devkit asset
         env:
           GH_TOKEN: ${{ github.token }}

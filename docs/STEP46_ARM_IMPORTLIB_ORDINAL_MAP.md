@@ -8,6 +8,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## APPARC.LIB
 
+- dt.o: 400 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_APPARC_LIB_iname
+- dh.o: 540 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_APPARC_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_APPARC_LIB_iname
 - Archive members: 112; dsNNNNN ordinal-like members: 110
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -18,6 +27,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## AVKON.LIB
 
+- dt.o: 395 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_AVKON_LIB_iname
+- dh.o: 538 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_AVKON_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_AVKON_LIB_iname
 - Archive members: 2276; dsNNNNN ordinal-like members: 2274
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -44,6 +62,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## BITGDI.LIB
 
+- dt.o: 400 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_BITGDI_LIB_iname
+- dh.o: 540 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_BITGDI_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_BITGDI_LIB_iname
 - Archive members: 163; dsNNNNN ordinal-like members: 161
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -55,6 +82,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## CONE.LIB
 
+- dt.o: 394 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_CONE_LIB_iname
+- dh.o: 536 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_CONE_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_CONE_LIB_iname
 - Archive members: 319; dsNNNNN ordinal-like members: 317
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -104,6 +140,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## EFSRV.LIB
 
+- dt.o: 395 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_EFSRV_LIB_iname
+- dh.o: 538 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_EFSRV_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_EFSRV_LIB_iname
 - Archive members: 233; dsNNNNN ordinal-like members: 231
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -129,6 +174,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## EIKCORE.LIB
 
+- dt.o: 401 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_EIKCORE_LIB_iname
+- dh.o: 542 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_EIKCORE_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_EIKCORE_LIB_iname
 - Archive members: 292; dsNNNNN ordinal-like members: 290
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -195,6 +249,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## ESOCK.LIB
 
+- dt.o: 395 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_ESOCK_LIB_iname
+- dh.o: 538 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_ESOCK_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_ESOCK_LIB_iname
 - Archive members: 242; dsNNNNN ordinal-like members: 240
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -208,6 +271,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## ESTLIB.LIB
 
+- dt.o: 400 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_ESTLIB_LIB_iname
+- dh.o: 540 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_ESTLIB_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_ESTLIB_LIB_iname
 - Archive members: 349; dsNNNNN ordinal-like members: 347
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -243,6 +315,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## ETEL.LIB
 
+- dt.o: 394 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_ETEL_LIB_iname
+- dh.o: 536 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_ETEL_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_ETEL_LIB_iname
 - Archive members: 230; dsNNNNN ordinal-like members: 228
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -265,6 +346,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## EUSER.LIB
 
+- dt.o: 392 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - _____EPOC32_RELEASE_ARMI_UREL_EUSER_LIB_iname
+- dh.o: 532 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head____EPOC32_RELEASE_ARMI_UREL_EUSER_LIB
+  - _____EPOC32_RELEASE_ARMI_UREL_EUSER_LIB_iname
 - Archive members: 1681; dsNNNNN ordinal-like members: 1679
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -372,6 +462,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## EZLIB.LIB
 
+- dt.o: 395 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_EZLIB_LIB_iname
+- dh.o: 538 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_EZLIB_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_EZLIB_LIB_iname
 - Archive members: 69; dsNNNNN ordinal-like members: 67
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -379,6 +478,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## FBSCLI.LIB
 
+- dt.o: 400 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_FBSCLI_LIB_iname
+- dh.o: 540 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_FBSCLI_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_FBSCLI_LIB_iname
 - Archive members: 157; dsNNNNN ordinal-like members: 155
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -395,6 +503,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## GDI.LIB
 
+- dt.o: 393 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_GDI_LIB_iname
+- dh.o: 534 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_GDI_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_GDI_LIB_iname
 - Archive members: 197; dsNNNNN ordinal-like members: 195
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -404,6 +521,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## HAL.LIB
 
+- dt.o: 390 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - _____EPOC32_RELEASE_ARMI_UREL_HAL_LIB_iname
+- dh.o: 528 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head____EPOC32_RELEASE_ARMI_UREL_HAL_LIB
+  - _____EPOC32_RELEASE_ARMI_UREL_HAL_LIB_iname
 - Archive members: 5; dsNNNNN ordinal-like members: 3
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -411,6 +537,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## MEDIACLIENTAUDIOSTREAM.LIB
 
+- dt.o: 432 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_MEDIACLIENTAUDIOSTREAM_LIB_iname
+- dh.o: 572 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_MEDIACLIENTAUDIOSTREAM_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_MEDIACLIENTAUDIOSTREAM_LIB_iname
 - Archive members: 3; dsNNNNN ordinal-like members: 1
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -418,6 +553,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## MSGS.LIB
 
+- dt.o: 394 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_MSGS_LIB_iname
+- dh.o: 536 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_MSGS_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_MSGS_LIB_iname
 - Archive members: 375; dsNNNNN ordinal-like members: 373
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|
@@ -431,6 +575,15 @@ This report inspects ARM UREL import-library members and compares their extracte
 
 ## WS32.LIB
 
+- dt.o: 394 bytes; strings=10; named strings=3
+  - @.idata$5
+  - @.idata$7
+  - ________EPOC32_RELEASE_ARMI_UREL_WS32_LIB_iname
+- dh.o: 536 bytes; strings=12; named strings=4
+  - @.idata$5
+  - @.idata$4
+  - _head_______EPOC32_RELEASE_ARMI_UREL_WS32_LIB
+  - ________EPOC32_RELEASE_ARMI_UREL_WS32_LIB_iname
 - Archive members: 359; dsNNNNN ordinal-like members: 357
 | Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |
 |---:|---|---|---:|---|

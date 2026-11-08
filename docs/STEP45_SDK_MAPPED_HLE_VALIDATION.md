@@ -1,10 +1,10 @@
 # Step 45 — SDK-mapped import correction and validation
 
 - Step46 recovered the original game's ARM UREL archive-index identities; WINS UDEB names are reference data only.
-- EUSER3=CBase::newL; EUSER1407=TPtrC16 constructor; EUSER1575=TInt64 inequality; EUSER1582=CBase::operator new.
+- EUSER3=CBase::newL; EUSER1582=CBase::operator new; EUSER858/828=CleanupStack PushL/Pop; EUSER1407=TPtrC16; EUSER1575=TInt64 inequality.
 - EUSER1373/530/711=TRect constructor/Height/Move; CONE160=CCoeControl::Rect.
 - GDI151=TFontSpec constructor; GDI108/101=TFontStyle stroke-weight/posture setters.
-- Corrected HLE routes are exercised by the passing host regression suite; target N95 ROM exports are not yet cross-checked.
+- EIKCORE222/219 constructor field-layout HLEs are tested; EIKCORE224 remains fail-closed pending secondary-vtable evidence.n echo - Corrected HLE routes are exercised by the passing host regression suite; target N95 ROM exports are not yet cross-checked.
 
 ## Host regression suite
 

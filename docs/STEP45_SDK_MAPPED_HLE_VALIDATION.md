@@ -1,7 +1,7 @@
 # Step 45 — SDK-mapped import correction and validation
 
 - Step46 recovered the original game's ARM UREL archive-index identities; WINS UDEB names are reference data only.
-- EUSER1407=TPtrC16 constructor; EUSER1575=TInt64 inequality; EUSER1582=CBase::operator new.
+- EUSER3=CBase::newL; EUSER1407=TPtrC16 constructor; EUSER1575=TInt64 inequality; EUSER1582=CBase::operator new.
 - EUSER1373/530/711=TRect constructor/Height/Move; CONE160=CCoeControl::Rect.
 - GDI151=TFontSpec constructor; GDI108/101=TFontStyle stroke-weight/posture setters.
 - Corrected HLE routes are exercised by the passing host regression suite; target N95 ROM exports are not yet cross-checked.
@@ -9,8 +9,6 @@
 ## Host regression suite
 
 BEGIN HOST LOG
-'
-PASS: CONE ordinal 226 has four this-only call sites
 PASS: ordinal 55 has two matching this-only call sites
 PASS: both paired sites call returned object's vtable slot +0xD8 with ordinal-55 result
 PASS: remaining ordinal-226 sites use returned object's graphics-context slots +0x48 / +0xB8
@@ -56,6 +54,8 @@ IMPORT dll=EUSER[100039e5].DLL ord=1575 r0=10006000 r1=10006010 r2=000000d5 r3=0
   HLE ARM EUSER1575 TInt64::operator!= lhs=10006000 rhs=10006010 -> 1
 IMPORT dll=EUSER[100039e5].DLL ord=1582 r0=0000022c r1=10006010 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
   HLE ARM EUSER1582 CBase::operator new size=556 -> 10120000
+IMPORT dll=EUSER[100039e5].DLL ord=3 r0=00000028 r1=10006010 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
+  HLE ARM EUSER3 CBase::newL size=40 -> 10120230
 IMPORT dll=EIKCORE[10004892].DLL ord=222 r0=10008000 r1=10006010 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
   HLE ARM EIKCORE222 CEikApplication this=10008000 caption=TBuf<256> size=556
 PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase::operator new and CEikApplication constructor
@@ -70,7 +70,8 @@ Live trace exit code: 95. Exit 95 is an intentional fail-closed stop.
 
   HLE ARM EUSER1582 CBase::operator new size=556 -> 10110000
   HLE ARM EIKCORE222 CEikApplication this=10110000 caption=TBuf<256> size=556
-HALT UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal=3 r0=00000028 r1=00000000 r2=00000000 r3=100fd9bc sp=102fefec lr=100283cc
+  HLE ARM EUSER3 CBase::newL size=40 -> 10110230
+HALT UNIMPLEMENTED Shadowkey import: EIKCORE[10004892].DLL ordinal=219 r0=10110230 r1=10110000 r2=00000000 r3=100fd9bc sp=102fefe4 lr=1002839c
 
 ## ARM callsite context
 

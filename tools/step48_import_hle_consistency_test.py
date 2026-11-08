@@ -72,6 +72,8 @@ def arm_symbol(dll, ordinal):
 
 arm_expected = {
     ("EUSER", 3): "newL__5CBaseUi",
+    ("EUSER", 828): "Pop__12CleanupStack",
+    ("EUSER", 858): "PushL__12CleanupStackP5CBase",
     ("EUSER", 1407): "__7TPtrC16PCUs",
     ("EUSER", 1575): "__ne__C6TInt64RC6TInt64",
     ("EUSER", 1582): "__nw__5CBaseUi",
@@ -107,6 +109,8 @@ assert "shadowkey_hle_cone160_position" not in hle
 assert "shadowkey_hle_euser1407_tptrc16(c)" in bootstrap
 assert "shadowkey_hle_euser1407_tptrc16(c)" in vfs_trace
 assert "ordinal==3u" in vfs_trace and "CBase::newL" in vfs_trace
+assert "shadowkey_hle_euser858_cleanup_pushl(c)" in vfs_trace
+assert "shadowkey_hle_euser828_cleanup_pop(c)" in vfs_trace
 assert "shadowkey_hle_cone160_rect(c)" in bootstrap
 assert "shadowkey_hle_cone160_rect(c)" in vfs_trace
 assert "shadowkey_hle_euser1575_int64_ne(c)" in bootstrap
@@ -125,8 +129,8 @@ assert "self+24u,0x30000000u" in hle and "self+28u,256u" in hle
 
 print("PASS: game thunk/IAT/ordinal associations for EUSER 1407/1575 and CONE 160")
 print("PASS: six WINS UDEB names reproduced as WINS-only reference evidence")
-print("PASS: thirteen ARM UREL archive-index identities verified against Step46")
+print("PASS: fifteen ARM UREL archive-index identities verified against Step46")
 print("PASS: Swiss literal callsite matches the ARM TPtrC16 constructor signature")
 print("PASS: historical Format-only diagnostic log is retained but not dispatched")
-print("PASS: EUSER1407, CONE160, EUSER1575, TRect, GDI font and EIKCORE222 HLE routes use ARM identities")
+print("PASS: EUSER1407, CleanupStack, CONE160, EUSER1575, TRect, GDI font and EIKCORE constructor HLE routes use ARM identities")
 print("LIMIT: these are N-Gage SDK ARM UREL identities; N95 OS9.2 ROM exports remain unverified")

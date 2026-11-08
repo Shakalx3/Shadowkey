@@ -69,6 +69,7 @@ Live trace exit code: 95. Exit 95 is an intentional fail-closed stop.
 ## Selected trace evidence
 
   HLE ARM EUSER1582 CBase::operator new size=556 -> 10110000
+  HLE ARM EIKCORE222 CEikApplication this=10110000 caption=TBuf<256> size=556
 HALT UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal=3 r0=00000028 r1=00000000 r2=00000000 r3=100fd9bc sp=102fefec lr=100283cc
 
 ## ARM callsite context

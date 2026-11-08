@@ -9,13 +9,13 @@ Technical project to run **The Elder Scrolls Travels: Shadowkey** on Nokia N95 8
 - A SIS installer is not required.
 - No successful launch on a physical N95 has been demonstrated.
 
-## Current verified state — step 49 (ARM ordinal conflict unresolved)
+## Current verified state — step 50 (ARM UREL import identities recovered)
 
 The step35 archive is preserved at the repository root and its extracted 2,191-file working tree is committed under `source_bundle/shadowkey_step35_work/`. The import workflow verified the archive SHA-256, ZIP entry count, and total uncompressed byte count before extraction.
 
 ### Step 47 — import ordinal semantics correction
 
-The original N-Gage / Symbian 6.1 SDK WINS UDEB import-library records provide names for the WINS configuration only. They do not yet establish the names of the corresponding imports in the game's ARM binary:
+The Step44 WINS UDEB names below are retained as historical reference data for the WINS configuration only. They are not the game's ARM import identities:
 
 - EUSER 1407: `TDblQueBase::SetOffset(TInt)`.
 - EUSER 1575: `TLex8::Val(TInt64&, const TInt64&)`.
@@ -24,21 +24,21 @@ The original N-Gage / Symbian 6.1 SDK WINS UDEB import-library records provide n
 - GDI 108: `CPalette::NewL(TInt)`.
 - GDI 151: `CPicture::StoreL(CStreamStore&) const -> TStreamId`.
 
-These names must not be assigned to the game's ARM import table until the ARM UREL member-level check is complete. The WINS identities conflict with at least one strong ARM callsite observation for EUSER 1407; consequently, neither the WINS-derived GDI meanings nor the old font-chain interpretation is accepted as the game's ARM ABI at this stage.
+The ARM UREL archive-index map recovered in Step50 provides the actual original-game ARM identities. It confirms that several WINS ordinal names differ from ARM, including EUSER 1407, CONE 160 and GDI 101/108/151. See the ARM table below and the full [Step50 report](docs/STEP50_ARM_UREL_IMPORT_IDENTITY_BREAKTHROUGH.md).
 
 See [Step 47 import ordinal semantics correction](docs/STEP47_IMPORT_ORDINAL_SEMANTICS_CORRECTION.md).
 
 ### Step 48 — HLE and historical font-trace audit
 
-The EUSER 1407 SetOffset helper is now retained only as a WINS-UDEB reference and is no longer dispatched, because the ARM game callsites pass a format-string literal through the same thunk. CONE 160's TPoint helper is also not active dispatch. The old font trace is diagnostic evidence, not a native API identity. See [Step 49 WINS/ARM ordinal conflict](docs/STEP49_WINS_ARM_ORDINAL_CONFLICT.md).
+The WINS-derived EUSER 1407 SetOffset and CONE 160 Position helpers remain disabled. ARM UREL now identifies EUSER 1407 as a TPtrC16 constructor and CONE 160 as CCoeControl::Rect. The font path is again supported at the import level: GDI151 constructs TFontSpec, GDI108 sets stroke weight, and GDI101 sets posture. The old HLE implementations still need correction before being re-enabled.
 
-The static audit at `tools/step48_import_hle_consistency_test.py` now checks the WINS/ARM conflict and fail-closed dispatch. An executable GitHub Actions workflow has been added. The Step46 ARM UREL workflow previously parsed all required libraries successfully but failed only when committing its generated report because the runner had no Git author identity; that commit step has now been corrected and rerun.
+The static audit at `tools/step48_import_hle_consistency_test.py` checks the WINS/ARM mapping distinction and fail-closed dispatch. The Step46 workflow now extracts ARM archive-index symbols for the game imports and self-checks the key identities. The generated report is committed in the repository.
 
 
 ### Remaining compatibility gates
 
 - The WINS UDEB import-library mappings are evidence for the original N-Gage SDK, not proof of same-numbered N95 OS 9.2 exports.
-- ARM UREL import-member cross-check is still pending; the Step 46 parser exists, but its generated report was not present at the time of Step 47.
+- Original N-Gage SDK ARM UREL import identities are now mapped in Step46/50. The N95 RM-320 / S60 3rd FP1 ROM export table remains a separate, unresolved compatibility gate.
 - Exact RM-320 / S60 3rd FP1 exports and ABI must be verified before implementing N95-side replacements.
 - No N95-compatible EKA2 executable or successful physical-device launch has been demonstrated.
 
@@ -56,6 +56,6 @@ This repository is private. The supplied step35 ZIP is present at the repository
 5. Never claim a real-device launch until it has been observed on the handset.
 
 
-### Step 49 — WINS/ARM ordinal conflict
+### Step 50 — ARM UREL import identity breakthrough
 
-The earlier Step47/48 assignment of EUSER 1407 to SetOffset was too strong for the ARM game. Step39 static callsites load the UTF-16 literal `Swiss` into r1 before calling thunk `0x1009F0F0`; Step42 preserves the old format-specific diagnostic trace. The WINS UDEB mapping expects an integer argument. The active SetOffset route has therefore been disabled pending inspection of ARM UREL member `ds01407.o`. See [Step 49 report](docs/STEP49_WINS_ARM_ORDINAL_CONFLICT.md).
+The ARM UREL archive index maps the game's EUSER 1407 to `TPtrC16(const TUint16*)`, EUSER 1575 to `TInt64::operator!=`, EUSER 1582 to `CBase::operator new`, EUSER 1373/530/711 to TRect constructor/Height/Move, CONE 160 to `CCoeControl::Rect`, and GDI 101/108/151 to TFontStyle/TFontSpec functions. This restores the font path as a valid ARM import-level chain while invalidating the earlier WINS-derived HLE identities. See [Step50](docs/STEP50_ARM_UREL_IMPORT_IDENTITY_BREAKTHROUGH.md).

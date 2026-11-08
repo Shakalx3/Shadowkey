@@ -99,6 +99,31 @@ static inline int shadowkey_hle_cone160_rect(ngage_cpu_t*c){
     return 1;
 }
 
+/* ARM UREL EUSER 858/828: CleanupStack::PushL(CBase*) / Pop().
+   The host harness models the thread cleanup stack as a bounded LIFO of
+   guest object pointers. PopAndDestroy remains separate because it must run
+   the object's virtual destructor. */
+#define SHADOWKEY_CLEANUP_STACK_MAX 1024u
+static uint32_t shadowkey_symbian61_cleanup_items[SHADOWKEY_CLEANUP_STACK_MAX];
+static uint32_t shadowkey_symbian61_cleanup_depth;
+static inline void shadowkey_hle_cleanup_reset(void){
+    shadowkey_symbian61_cleanup_depth=0u;
+}
+static inline int shadowkey_hle_euser858_cleanup_pushl(ngage_cpu_t*c){
+    if(!c)return 0;
+    uint32_t ptr=c->r[0];
+    if(ptr<0x10000000u||ptr>=0x12000000u||
+       shadowkey_symbian61_cleanup_depth>=SHADOWKEY_CLEANUP_STACK_MAX)return 0;
+    shadowkey_symbian61_cleanup_items[shadowkey_symbian61_cleanup_depth++]=ptr;
+    return 1;
+}
+static inline int shadowkey_hle_euser828_cleanup_pop(ngage_cpu_t*c){
+    (void)c;
+    if(!shadowkey_symbian61_cleanup_depth)return 0;
+    shadowkey_symbian61_cleanup_depth--;
+    return 1;
+}
+
 /* ARM UREL EIKCORE 222: CEikApplication::CEikApplication().
    SDK layout: CBase (vptr), CApaApplication fields, then CEikApplication
    fields. TApaAppCaption is TBuf<256> (520 bytes) at +24; its descriptor

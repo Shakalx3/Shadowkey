@@ -5,6 +5,7 @@ on:
     paths:
       - "source_bundle/shadowkey_step35_work/shadowkey_hle_vfs_trace.c"
       - "source_bundle/shadowkey_step35_work/shadowkey_hle_bootstrap_v2.c"
+      - "source_bundle/shadowkey_step35_work/shadowkey_hle_bootstrap_v2.c"
       - "source_bundle/shadowkey_step35_work/shadowkey_symbian61_hle.h"
       - "source_bundle/shadowkey_step35_work/shadowkey_step45_sdk_identity_test.c"
       - "source_bundle/shadowkey_step35_work/shadowkey_efsrv_size_test.c"
@@ -49,7 +50,7 @@ jobs:
           echo "$rc" > /tmp/step45_trace_exit_code.txt
           echo "trace exit code: $rc"
           if [ -f .build/live_hal_vfs_trace.log ]; then
-            grep -E "HLE SDK EFSRV|HALT SDK EFSRV|HLE ESTLIB|HALT ESTLIB|HALT UNIMPLEMENTED|HLE ARM EUSER|HLE ARM CONE|HLE ARM GDI|IMGDEC|resource index|DrawText|DiscardFont|UNIMPLEMENTED" .build/live_hal_vfs_trace.log | tail -n 160 > /tmp/step45_trace_excerpt.log || true
+            grep -E "HLE SDK EFSRV|HALT SDK EFSRV|HLE ESTLIB|HALT ESTLIB|HALT UNIMPLEMENTED|HLE ARM EUSER|HLE ARM CONE|HLE ARM GDI|HLE ARM EIKCORE|IMGDEC|resource index|DrawText|DiscardFont|UNIMPLEMENTED" .build/live_hal_vfs_trace.log | tail -n 160 > /tmp/step45_trace_excerpt.log || true
           else
             echo "live trace log not produced" > /tmp/step45_trace_excerpt.log
           fi

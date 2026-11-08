@@ -38,7 +38,7 @@ See [Step 47 import ordinal semantics correction](docs/STEP47_IMPORT_ORDINAL_SEM
 
 ## Private repository and archive status
 
-This repository is private. The supplied step35 ZIP has been verified in the current working session but has not yet been uploaded to GitHub: the connected GitHub interface can commit text and Git objects, but does not expose a binary-file upload action from the working container. The archive remains the authoritative local source input until it is uploaded through GitHub's web interface. See [archive import status](docs/ARCHIVE_IMPORT_STATUS.md).
+This repository is private. The supplied step35 ZIP is present at the repository root and its verified extraction is committed under `source_bundle/shadowkey_step35_work/`. The archive intake report records the SHA-256, ZIP inventory, extraction workflow, and commit. See [archive import status](docs/ARCHIVE_IMPORT_STATUS.md).
 
 ## Working rules
 

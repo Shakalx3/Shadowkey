@@ -1,0 +1,84 @@
+name: Probe native S60 SDK E32 tools
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/s60-e32-probe.trigger"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and unpack curated S60 3.1 SDK
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
+          tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
+          $tools = @(
+            "sdk/Epoc32/tools/elf2e32.exe",
+            "sdk/Epoc32/tools/petran.exe",
+            "sdk/Epoc32/tools/makesis.exe"
+          )
+          foreach ($p in $tools) {
+            if (Test-Path $p) {
+              $f = Get-Item $p
+              "FOUND $($f.FullName) SIZE=$($f.Length) VERSION=$($f.VersionInfo.FileVersion)"
+            } else {
+              "MISSING $p"
+            }
+          }
+
+      - name: Probe executable command lines and PE metadata
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force reports | Out-Null
+          $names = @("elf2e32","petran","makesis")
+          foreach ($name in $names) {
+            $path = Join-Path (Get-Location) "sdk/Epoc32/tools/$name.exe"
+            if (!(Test-Path $path)) { continue }
+            $file = Get-Item $path
+            $meta = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($path)
+            @(
+              "TOOL=$name"
+              "PATH=$path"
+              "SIZE=$($file.Length)"
+              "FILE_VERSION=$($meta.FileVersion)"
+              "PRODUCT_VERSION=$($meta.ProductVersion)"
+              "DESCRIPTION=$($meta.FileDescription)"
+              "COMPANY=$($meta.CompanyName)"
+            ) | Out-File "reports/$name.txt" -Encoding utf8
+            foreach ($arg in @("", "-?", "-help", "/?")) {
+              "===== ARG [$arg] =====" | Out-File "reports/$name.txt" -Append -Encoding utf8
+              try {
+                $output = & $path $arg 2>&1 | Out-String
+                "EXIT=$LASTEXITCODE" | Out-File "reports/$name.txt" -Append -Encoding utf8
+                $output | Out-File "reports/$name.txt" -Append -Encoding utf8
+              } catch {
+                "LAUNCH_ERROR=$($_.Exception.Message)" | Out-File "reports/$name.txt" -Append -Encoding utf8
+              }
+            }
+          }
+          Get-ChildItem sdk/Epoc32/release/armv5/lib -File |
+            Where-Object { $_.Name -match '^(euser|cone|gdi|eikcore)\.(lib|dso)$' } |
+            Select-Object Name,Length |
+            Format-Table -AutoSize | Out-String |
+            Out-File reports/armv5-import-libraries.txt -Encoding utf8
+          Get-Content reports/*.txt
+
+      - name: Upload probe report
+        uses: actions/upload-artifact@v4
+        with:
+          name: s60-e32-tool-probe
+          path: reports/**
+          if-no-files-found: error
+          retention-days: 90

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: s60-sdk-download
@@ -128,13 +128,27 @@ jobs:
           cp sdk-payload/Series60Doc/gcce_readme.txt sdk-analysis/ 2>/dev/null || true
           python3 - <<'PY'
           import os, tarfile
-          roots = ["Epoc32/include", "Epoc32/tools", "Epoc32/release/armv5/urel", "Epoc32/release/armi/urel", "Series60Doc"]
+          roots = ["Epoc32/include", "Epoc32/tools", "Epoc32/release/armv5/lib", "Epoc32/release/armv5/urel", "Series60Doc"]
           with tarfile.open("s60-sdk-devkit-core.tar.gz", "w:gz") as tar:
               for rel in roots:
                   if os.path.exists(os.path.join("sdk-payload", rel)):
                       tar.add(os.path.join("sdk-payload", rel), arcname=rel)
           print("Curated devkit bundle:", os.path.getsize("s60-sdk-devkit-core.tar.gz"), "bytes")
           PY
+
+      - name: Preserve SDK in a permanent private-repository release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="s60-sdk-3.1-fp1-20261108"
+          NOTES="Nokia S60 3rd Edition FP1 SDK for Symbian OS 9.2. Original InstallShield archive and extracted ARMv5 devkit subset. Original ZIP SHA-256: cd3950edb7b86abff6cd84421bcb1cb3e99ae7b1a63d02a2ce1aa2ed6e11ff24"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" s60v3.1_SDK.zip s60-sdk-devkit-core.tar.gz --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" s60v3.1_SDK.zip s60-sdk-devkit-core.tar.gz --repo "$GITHUB_REPOSITORY" --title "S60 3.1 FP1 SDK (Symbian OS 9.2)" --notes "$NOTES"
+          fi
 
       - name: Publish compact SDK analysis bundle
         uses: actions/upload-artifact@v4

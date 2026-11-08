@@ -112,3 +112,14 @@ separate point-import test because their WINS/ARM identities are unresolved.
 
 The Step45 report-generation workflow also needed an explicit Git author
 identity, just as Step46 did. That commit configuration has now been added.
+
+
+## Step 50 resolution
+
+The conflict is now resolved by the ARM UREL archive index. The ARM game import
+EUSER 1407 maps to `TPtrC16::TPtrC16(const TUint16*)`, not the WINS-only
+SetOffset identity. CONE 160 maps to `CCoeControl::Rect() const`, and GDI
+101/108/151 map to TFontStyle/TFontSpec methods. See
+[Step50](STEP50_ARM_UREL_IMPORT_IDENTITY_BREAKTHROUGH.md). This Step49 report
+is retained as the intermediate discovery that prevented an unsafe WINS-based
+HLE dispatch.

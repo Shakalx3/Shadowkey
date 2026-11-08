@@ -15,9 +15,12 @@ targets = {
     "EUSER 1582 CBase::operator new": {
         "thunk": "0x1009eef0", "iat": "0x101007ec", "lr": "0x10028428"
     },
+    "EUSER 3 CBase::newL": {
+        "thunk": "0x1009f020", "iat": "0x10100674", "lr": "0x100283cc"
+    },
 }
 out = [
-    "# Step 50 — lifted ARM callsite context for EIKCORE constructors",
+    "# Step 50 — lifted ARM callsite context for EIKCORE constructors and allocators",
     "",
     f"- Source file bytes: {len(raw.encode('utf-8'))}",
     f"- Source lines: {len(lines)}",

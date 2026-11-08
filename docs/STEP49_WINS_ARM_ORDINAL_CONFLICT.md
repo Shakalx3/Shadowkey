@@ -104,9 +104,11 @@ checks both dispatchers, not just the bootstrap path.
 The host regression suite subsequently completed successfully after the
 Step30 test was narrowed to EUSER 711 only. Its previous EUSER 1373 and 530
 assumptions are now explicitly left unresolved rather than invoked as
-verified APIs. The separate live VFS trace still stops at an unresolved
-EUSER 1373 import; this is a fail-closed diagnostic stop, not a successful
-full initialization.
+verified APIs. The live VFS trace now passes the earlier EUSER 1373 callsite and reaches a
+new unresolved import: EUSER ordinal 1582 at return address 0x10028428.
+The trace exits 95 deliberately at that unresolved import; it is not a
+successful full initialization. EUSER 1373 and 530 remain unassigned in the
+separate point-import test because their WINS/ARM identities are unresolved.
 
 The Step45 report-generation workflow also needed an explicit Git author
 identity, just as Step46 did. That commit configuration has now been added.

@@ -1,0 +1,83 @@
+name: S60 3.1 FP1 runtime import probe
+
+on:
+  push:
+    paths:
+      - ".github/workflows/s60-runtime-import-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-target-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download pinned S60 3.1 FP1 devkit asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -fL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/octet-stream" \
+            "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/723972349" \
+            -o /tmp/s60-sdk-devkit-core.tar.gz
+          echo "7ed8b62b15f191ca47d2f6ca97ee5ce74cd02ce3e42b74bc7b1f9513d7df87b5  /tmp/s60-sdk-devkit-core.tar.gz" | sha256sum -c -
+
+      - name: Inventory target import libraries and runtime exports
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/s60-devkit /tmp/probe
+          tar -xzf /tmp/s60-sdk-devkit-core.tar.gz -C /tmp/s60-devkit
+          find /tmp/s60-devkit -type f \
+            \( -iname 'libc.lib' -o -iname 'libc.dso' -o -iname 'estlib.lib' \
+               -o -iname 'estlib.dso' -o -iname 'euser.lib' -o -iname 'euser.dso' \
+               -o -iname 'libm.lib' -o -iname 'libpthread.lib' \) \
+            -print | sort | tee /tmp/probe/runtime-libraries.txt
+          if [ ! -s /tmp/probe/runtime-libraries.txt ]; then
+            echo "No expected runtime import-library filenames found in the curated devkit." | tee /tmp/probe/result.txt
+            find /tmp/s60-devkit -type f | grep -Ei '/(armv5|armi)/(urel|udeb)/|/(libc|estlib|euser)' | head -300 >> /tmp/probe/result.txt || true
+          else
+            while IFS= read -r lib; do
+              {
+                echo "===== $lib ====="
+                file "$lib"
+                if llvm-ar t "$lib" >/tmp/probe/members.txt 2>/dev/null; then
+                  echo "archive members:"
+                  cat /tmp/probe/members.txt
+                elif ar t "$lib" >/tmp/probe/members.txt 2>/dev/null; then
+                  echo "archive members:"
+                  cat /tmp/probe/members.txt
+                else
+                  echo "not recognized as a standard ar archive"
+                fi
+                if llvm-nm -A -C "$lib" >/tmp/probe/symbols.txt 2>/dev/null || nm -A -C "$lib" >/tmp/probe/symbols.txt 2>/dev/null; then
+                  echo "matching runtime symbols:"
+                  grep -Ei '(^|[[:space:]_])(fprintf|stderr|exit|memmove|memset|strcmp|strncmp)(@|$|[[:space:]])' /tmp/probe/symbols.txt || true
+                fi
+                echo
+              } | tee -a /tmp/probe/result.txt
+            done < /tmp/probe/runtime-libraries.txt
+          fi
+          {
+            echo "## S60 3.1 FP1 runtime import probe"
+            echo
+            echo "Pinned devkit asset SHA-256 verified before extraction."
+            echo
+            echo "### Candidate libraries"
+            if [ -s /tmp/probe/runtime-libraries.txt ]; then
+              while IFS= read -r lib; do echo "- $lib"; done < /tmp/probe/runtime-libraries.txt
+            else
+              echo "No expected library filenames found; see the full inventory artifact."
+            fi
+            echo
+            echo "See the uploaded text report for archive members and symbol matches."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish target SDK probe report
+        uses: actions/upload-artifact@v4
+        with:
+          name: s60-3.1-fp1-runtime-import-probe
+          path: /tmp/probe/
+          if-no-files-found: error

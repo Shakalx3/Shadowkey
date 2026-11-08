@@ -1,3 +1,9 @@
+# Latest milestone — Step 52 (2026-11-08)
+
+A real EKA2/ARMv6 E32 build pipeline is now validated. The upstream Symbian Platform 0.3.0 SDK successfully built its own control GUI application and generated a native-inspected E32 EXE (kernel=eka2, architecture=armv6, UID3 0xE0000830, code base 0x8000, 7 import DLLs / 170 import slots). This is the first verified EKA2 image generation path in this project; it is a control application, not Shadowkey and not yet tested on the N95. Exact FP1 firmware import/ordinal compatibility and the Shadowkey C-source build remain open. Details and CI artifact: [Step 52](../../docs/STEP52_EKA2_ARMV6_E32_TOOLCHAIN_VALIDATED.md).
+
+---
+
 # Shadowkey → Nokia N95: native-port status (v8.4)
 
 ## Latest milestone (2026-11-01)

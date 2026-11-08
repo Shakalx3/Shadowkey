@@ -98,25 +98,26 @@ assert re.search(
 assert "HLE EUSER1407 Format literal-only" in runtime
 assert "Swiss literal-only subset" in runtime
 
-# The WINS SetOffset helper is retained only as reference. It must not mutate
-# live game objects until the ARM UREL ds01407.o member has been resolved.
-assert "TDblQueBase::SetOffset(TInt)" in hle
-assert "shadowkey_symbian61_w32(c,self+8u,c->r[1])" in hle
-assert "ordinal==1407u && shadowkey_hle_euser1407_setoffset(c)" not in bootstrap
-assert "ordinal==1407u)" not in vfs_trace
-
-# Likewise, the CONE helper is not active dispatch; no claim of complete
-# target implementation is made from the helper's existence alone.
-assert "CCoeControl::Position() const" in hle
-assert "shadowkey_hle_cone160_position(c)" not in bootstrap
-assert "shadowkey_hle_cone160_position(c)" not in vfs_trace
-assert "ordinal==160u)" not in vfs_trace
+# WINS-only helpers must not be used for the ARM game's imports.
+assert "shadowkey_hle_euser1407_setoffset" not in hle
+assert "shadowkey_hle_cone160_position" not in hle
+assert "shadowkey_hle_euser1407_tptrc16(c)" in bootstrap
+assert "shadowkey_hle_euser1407_tptrc16(c)" in vfs_trace
+assert "shadowkey_hle_cone160_rect(c)" in bootstrap
+assert "shadowkey_hle_cone160_rect(c)" in vfs_trace
+assert "shadowkey_hle_euser1575_int64_ne(c)" in bootstrap
+assert "shadowkey_hle_euser1575_int64_ne(c)" in vfs_trace
+assert "gdi151_tfont_spec_construct(c,self,desc,height)" in vfs_trace
+assert "shadowkey_hle_gdi108_set_stroke_weight(c)" in vfs_trace
+assert "shadowkey_hle_gdi101_set_posture(c)" in vfs_trace
+assert "shadowkey_hle_euser1373_trect_ctor(c)" in bootstrap
+assert "shadowkey_hle_euser530_trect_height(c)" in bootstrap
+assert "shadowkey_hle_euser711_trect_move(c)" in bootstrap
 
 print("PASS: game thunk/IAT/ordinal associations for EUSER 1407/1575 and CONE 160")
 print("PASS: six WINS UDEB names reproduced as WINS-only reference evidence")
 print("PASS: ten ARM UREL archive-index identities verified against Step46")
-print("PASS: ARM game callsite passes Swiss format literal through EUSER 1407 thunk")
-print("PASS: historical diagnostic log records the separate format-specific experiment")
-print("PASS: unverified EUSER 1407 SetOffset helper is not dispatched by either HLE path")
-print("PASS: unverified CONE 160 helper is not dispatched by either HLE path")
-print("LIMIT: ARM UREL ordinal/member identity is unresolved; do not assign WINS names to ARM imports")
+print("PASS: Swiss literal callsite matches the ARM TPtrC16 constructor signature")
+print("PASS: historical Format-only diagnostic log is retained but not dispatched")
+print("PASS: EUSER1407, CONE160, EUSER1575, TRect and GDI font HLE routes use ARM identities")
+print("LIMIT: these are N-Gage SDK ARM UREL identities; N95 OS9.2 ROM exports remain unverified")

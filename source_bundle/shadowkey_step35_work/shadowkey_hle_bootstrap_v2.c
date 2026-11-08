@@ -17,25 +17,35 @@ static uint8_t *guest_ptr(ngage_cpu_t*c,uint32_t a,uint32_t n){
 }
 uint32_t shadowkey_heap_alloc(ngage_cpu_t*c,uint32_t size){if(!size)return 0;uint32_t p=0;if(heap_next&&heap_next<=heap_end&&size<=heap_end-heap_next){p=(heap_next+7u)&~7u;if(p<=heap_end&&size<=heap_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap_next=p+((size+7u)&~7u);return p;}}}if(heap2_next&&heap2_next<=heap2_end&&size<=heap2_end-heap2_next){p=(heap2_next+7u)&~7u;if(p<=heap2_end&&size<=heap2_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap2_next=p+((size+7u)&~7u);return p;}}}if(heap3_next&&heap3_next<=heap3_end&&size<=heap3_end-heap3_next){p=(heap3_next+7u)&~7u;if(p<=heap3_end&&size<=heap3_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap3_next=p+((size+7u)&~7u);return p;}}}return 0;}
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
-    /* EUSER 1407 is deliberately unresolved: WINS UDEB says SetOffset,
-       but ARM game callsites pass descriptor-like format literals in r1.
-       Do not mutate the receiver until ARM UREL ordinal identity is proven. */
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u){
+        if(!shadowkey_hle_euser1407_tptrc16(c)){c->r[0]=(uint32_t)-6;return;}
+        return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1575u){
+        if(!shadowkey_hle_euser1575_int64_ne(c)){c->r[0]=(uint32_t)-6;return;}
+        return;
+    }
+    if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==160u){
+        if(!shadowkey_hle_cone160_rect(c)){c->r[0]=(uint32_t)-6;return;}
+        return;
+    }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==711u){
-        /* TPoint construction: this, x, y. r3 and [sp] are caller leftovers. */
-        uint32_t out=c->r[0];
-        if(out<0x10000000u || (uint64_t)out+8u>0x12000000ull){c->r[0]=(uint32_t)-6;return;}
-        ngage_w32(c,out,c->r[1]);ngage_w32(c,out+4u,c->r[2]);return;
+        if(!shadowkey_hle_euser711_trect_move(c)){c->r[0]=(uint32_t)-6;return;}
+        return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1373u){
         static const uint32_t sites[]={0x10022c60u,0x10022e98u,0x100230c8u,0x10023314u,0x10023728u};
         for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++)if(c->r[14]==sites[i]){
-            uint32_t out=c->r[0];if(out<0x10000000u||(uint64_t)out+8u>0x12000000ull){c->r[0]=(uint32_t)-6;return;}
-            ngage_w32(c,out,c->r[1]);ngage_w32(c,out+4u,c->r[2]);return;
+            if(!shadowkey_hle_euser1373_trect_ctor(c)){c->r[0]=(uint32_t)-6;return;}
+            return;
         }
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==530u){
         static const uint32_t sites[]={0x10022c68u,0x10022ea0u,0x100230d0u,0x1002331cu};
-        for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++)if(c->r[14]==sites[i]){c->r[0]=ngage_r32(c,c->r[0]+4u);return;}
+        for(unsigned i=0;i<sizeof(sites)/sizeof(sites[0]);i++)if(c->r[14]==sites[i]){
+            if(!shadowkey_hle_euser530_trect_height(c)){c->r[0]=(uint32_t)-6;return;}
+            return;
+        }
     }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && (ordinal==315u || ordinal==317u)){
         /* Live call-site semantics: 317 replaces a UTF-16 C string;

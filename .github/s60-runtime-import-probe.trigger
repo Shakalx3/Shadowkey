@@ -7,3 +7,5 @@ Capture full header declarations for CEikAppUi and TInt64.
 Capture full CEikAppUi and CCoeAppUi class definitions.
 
 Re-run Step61 after correcting target CAknAppUi header extraction.
+
+Run Step63 target AVKON/EIKCORE/CONE lifecycle export mapping.

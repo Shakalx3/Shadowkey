@@ -64,7 +64,7 @@ def main() -> int:
     registry = REGISTRY.read_text(errors="replace")
     dispatch = DISPATCH.read_text(errors="replace")
     function_names_to_extract = [
-        "sub_10021138", "sub_10028374",
+        "sub_10021138", "sub_10028374", "sub_10028340",
         "sub_10021080", "sub_10020b04", "sub_100211c0", "sub_100209c8",
     ]
     function_bodies = {}

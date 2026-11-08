@@ -93,7 +93,7 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         memmove(c->mem+(dst-0x10000000u),c->mem+(src-0x10000000u),n);
         c->r[0]=dst; return;
     }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==828u || ordinal==1359u || ordinal==1262u || ordinal==856u || ordinal==857u)){
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==1359u || ordinal==1262u || ordinal==856u || ordinal==857u)){
         /* These call sites pass a live object in r0 and continue to use that
            object after the call. Until their exact EUSER bodies are mapped,
            preserve the receiver rather than fabricating a null pointer. */
@@ -134,8 +134,12 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         fprintf(stderr,"DIAGNOSTIC NO-OP EIKCORE224 CEikAppUi constructor (not full initialization)\n");
         return;
     }
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==828u || ordinal==858u)){
-        /* Call-site bootstrap no-ops: their broader Symbian semantics are not resolved yet. */
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==858u){
+        if(!shadowkey_hle_euser858_cleanup_pushl(c)){c->r[0]=(uint32_t)-6;return;}
+        return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==828u){
+        if(!shadowkey_hle_euser828_cleanup_pop(c)){c->r[0]=(uint32_t)-6;return;}
         return;
     }
     fprintf(stderr,"UNIMPLEMENTED Shadowkey import: %s ordinal %u (r0=%08x r1=%08x r2=%08x r3=%08x)\n",

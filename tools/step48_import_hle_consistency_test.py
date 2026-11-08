@@ -114,13 +114,16 @@ assert "shadowkey_hle_gdi101_set_posture(c)" in vfs_trace
 assert "shadowkey_hle_euser1373_trect_ctor(c)" in bootstrap
 assert "shadowkey_hle_euser530_trect_height(c)" in bootstrap
 assert "shadowkey_hle_euser711_trect_move(c)" in bootstrap
+assert "shadowkey_hle_eikcore222_ceikapplication(c)" in vfs_trace
+assert "shadowkey_hle_eikcore222_ceikapplication" in hle
+assert "self+24u,0x30000000u" in hle and "self+28u,256u" in hle
 assert "EIKCORE[10004892].DLL ordinal=222" in Path("docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md").read_text(errors="replace")
-assert "HALT UNIMPLEMENTED Shadowkey import: EIKCORE[10004892].DLL ordinal=222" in Path("docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md").read_text(errors="replace")
+assert "HLE ARM EIKCORE222 CEikApplication" in Path("docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md").read_text(errors="replace")
 
 print("PASS: game thunk/IAT/ordinal associations for EUSER 1407/1575 and CONE 160")
 print("PASS: six WINS UDEB names reproduced as WINS-only reference evidence")
 print("PASS: eleven ARM UREL archive-index identities verified against Step46")
 print("PASS: Swiss literal callsite matches the ARM TPtrC16 constructor signature")
 print("PASS: historical Format-only diagnostic log is retained but not dispatched")
-print("PASS: EUSER1407, CONE160, EUSER1575, TRect and GDI font HLE routes use ARM identities")
+print("PASS: EUSER1407, CONE160, EUSER1575, TRect, GDI font and EIKCORE222 HLE routes use ARM identities")
 print("LIMIT: these are N-Gage SDK ARM UREL identities; N95 OS9.2 ROM exports remain unverified")

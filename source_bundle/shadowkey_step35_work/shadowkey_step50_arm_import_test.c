@@ -100,6 +100,12 @@ int main(void){
        ngage_r32(&c,doc+24u)!=0u||c.mem[(doc-0x10000000u)+28u]!=0u||
        ngage_r32(&c,doc+32u)!=0u)return 14;
 
-    puts("PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase allocation, CEikApplication and CEikDocument constructors");
+    /* EUSER858/828: CleanupStack PushL(CBase*) and Pop maintain LIFO depth. */
+    c.r[0]=doc;
+    shadowkey_hle_import(&c,"EUSER[100039e5].DLL",858u);
+    c.r[0]=0u;
+    shadowkey_hle_import(&c,"EUSER[100039e5].DLL",828u);
+
+    puts("PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase allocation, CEikApplication, CEikDocument and CleanupStack constructors/operations");
     free(c.mem);return 0;
 }

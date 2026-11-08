@@ -165,6 +165,25 @@ def main() -> int:
                         if value == 0:
                             break
                 vtable_tables.append(row)
+            thunk_addresses = [
+                0x100a417c, 0x100a4174, 0x100a4184, 0x100a418c,
+                0x100a419c, 0x100a4194, 0x100a4368, 0x100a4370,
+            ]
+            thunk_code = []
+            for thunk_va in thunk_addresses:
+                rel_thunk = thunk_va - base
+                if rel_thunk < 0 or rel_thunk + 32 > code_size:
+                    continue
+                thunk_off = code_off + rel_thunk
+                raw = image[thunk_off:thunk_off + 32]
+                name = f"thunk_{thunk_va:08x}.bin"
+                (Path("step60-appui-audit") / name).write_bytes(raw)
+                thunk_code.append({
+                    "va": f"0x{thunk_va:08x}",
+                    "file_offset": thunk_off,
+                    "bytes": raw.hex(),
+                    "artifact_file": name,
+                })
             Path("step60-appui-audit").mkdir(exist_ok=True)
             lines = [f"E32 image: {e32_image}", f"base={base:#010x} code_size={code_size:#x} text_size={text_size:#x} code_off={code_off:#x}"]
             for row in vtable_tables:
@@ -185,6 +204,7 @@ def main() -> int:
         "binary_first_hits": binary_hits,
         "e32_image_header": e32_header,
         "vtable_tables": vtable_tables,
+        "thunk_code": thunk_code,
         "scope_note": "A raw byte hit is a locator only; it is not yet an E32 VA-to-file-offset proof or a decoded vtable.",
     }
     (out / "appui-object-field-audit.json").write_text(json.dumps(report, indent=2) + "\n")

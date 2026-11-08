@@ -73,8 +73,28 @@ jobs:
           assert info["kernel"] == "eka2", info["kernel"]
           assert info["architecture"] == "armv6", info["architecture"]
           assert info["uid3"] == 0xE0000830, hex(info["uid3"])
-          assert info["entry_offset"] != 0, info["entry_offset"]
+          assert info["code_size"] > 0, info["code_size"]
+          assert info["code_base"] == 0x8000, hex(info["code_base"])
+          assert info["entry_offset"] == 0, info["entry_offset"]
           assert info["imports"], "E32 image has no imported DLL blocks"
+          summary = {
+              "kernel": info["kernel"],
+              "architecture": info["architecture"],
+              "uid3": hex(info["uid3"]),
+              "code_base": hex(info["code_base"]),
+              "code_size": info["code_size"],
+              "entry_offset": info["entry_offset"],
+              "capabilities": info["capabilities"],
+              "import_dlls": sorted(block["dll"] for block in info["imports"]),
+              "import_slots": sum(len(block["slots"]) for block in info["imports"]),
+              "exports": info["exports"],
+          }
+          Path("reports/hello_time_e32_summary.json").write_text(
+              json.dumps(summary, indent=2, sort_keys=True) + "\\n",
+              encoding="utf-8",
+          )
+          print("E32 assertions: PASS")
+          print(json.dumps(summary, indent=2, sort_keys=True))
           PY
           } 2>&1 | tee reports/armv6-eka2-build.log
 

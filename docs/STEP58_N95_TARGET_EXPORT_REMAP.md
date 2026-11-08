@@ -27,7 +27,7 @@ The DSO also exports the alternate C++ constructor variants:
 - GDI TFontSpec C2: ordinal 171 (C1: 169).
 - EIKCORE CEikAppUi C1: ordinal 177; C2: ordinal 178.
 
-For the game callsites, TPtrC16 and TFontSpec are standalone objects, so their C1 entries are the direct candidates. CEikAppUi is a base subobject of the game's derived application UI class; C2/178 is the likely target constructor variant, but must remain a candidate until the S60 target class layout and constructor side effects are checked.
+For the game callsites, TPtrC16 and TFontSpec are standalone objects, so their C1 entries are the direct candidates. CEikAppUi is a base subobject, making C2/178 the semantically corresponding constructor variant. However, Step59's target-header audit proves that the S60 CCoeAppUi base grew by one 32-bit reserved field, shifting all CEikAppUi secondary vptrs and data members by four bytes. Therefore C2/178 is **not a safe direct replacement** for EIKCORE 224; it can only be used behind an old-layout compatibility wrapper.
 
 ## Target E32/OpenC runtime imports
 
@@ -60,7 +60,7 @@ The script validates the seven remap/collision rows and the seven runtime import
 
 1. Any direct patch of the game's import table must remap the old ordinals to the target exports; leaving the original ordinal values unchanged is unsafe.
 2. EUSER 1575 needs a local implementation or a carefully verified callsite patch. Do not redirect it to the target EUSER ordinal 1575.
-3. EIKCORE 224 must not be dispatched as target EIKCORE 224. Target EIKCORE 224 is a different API.
+3. EIKCORE 224 must not be dispatched as target EIKCORE 224. Target EIKCORE 224 is a different API. Directly remapping it to target CEikAppUi C2/178 is also unsafe because the target class layout is shifted by four bytes; see [Step59](STEP59_CEIKAPPUI_TARGET_LAYOUT_BREAK.md).
 4. A compatibility DLL preserving the old import UID/ordinal surface remains a possible strategy, but it must provide correct ABI-compatible wrappers and preserve Symbian leave/cleanup behavior.
 5. No import table or DLL binary has been patched in this step.
 

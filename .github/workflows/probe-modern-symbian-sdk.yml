@@ -1,0 +1,73 @@
+name: Validate modern EKA2 ARMv6 toolchain
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/symbian-sdk-probe.trigger"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-sdk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and verify hpnkv Symbian SDK 0.3.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://github.com/hpnkv/symbian-platform/releases/download/v0.3.0/symbian-sdk-0.3.0-linux-x86_64.tar.gz"
+          curl -fL --retry 3 "$URL" -o symbian-sdk.tar.gz
+          echo "9be830884a5fd1b9315ea1c11571810f7a50fa673851fa392bb397c6759fec3d  symbian-sdk.tar.gz" | sha256sum -c -
+          mkdir sdk
+          tar -xzf symbian-sdk.tar.gz -C sdk
+          echo "glibc: $(ldd --version | head -1)"
+          echo "SDK top-level:"
+          find sdk -maxdepth 2 -type f | sort | head -100
+          test -x sdk/bin/cmake
+          test -x sdk/bin/ninja
+          test -x sdk/bin/symbian-native
+
+      - name: Build official ARMv6 EKA2 GUI example
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          {
+            echo "=== SDK native tools ==="
+            sdk/bin/cmake --version
+            sdk/bin/ninja --version
+            sdk/bin/symbian-native --help || true
+            echo "=== Configure hello_time ==="
+            sdk/bin/cmake -S sdk/examples/hello_time -B build/hello_time -G Ninja \
+              -DCMAKE_TOOLCHAIN_FILE="$PWD/sdk/cmake/symbian-arm.cmake" \
+              -DSYMBIAN_SDK_PREFIX="$PWD/sdk" \
+              -DCMAKE_MAKE_PROGRAM="$PWD/sdk/bin/ninja"
+            echo "=== Build hello_time ==="
+            sdk/bin/cmake --build build/hello_time --verbose
+            echo "=== ELF ==="
+            file build/hello_time/hello_time.elf
+            readelf -h build/hello_time/hello_time.elf
+            echo "=== E32 output ==="
+            find build/hello_time/e32 -maxdepth 1 -type f -printf '%f %s bytes\\n'
+            file build/hello_time/e32/hello_time.exe
+            xxd -l 128 build/hello_time/e32/hello_time.exe
+            echo "=== E32 converter help ==="
+            sdk/bin/symbian-native convert-exe --help || true
+          } 2>&1 | tee reports/armv6-eka2-build.log
+
+      - name: Publish native E32 proof and logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: symbian-platform-0.3.0-armv6-eka2-proof
+          path: |
+            reports/**
+            build/hello_time/hello_time.elf
+            build/hello_time/e32/hello_time.exe
+          if-no-files-found: error
+          retention-days: 90

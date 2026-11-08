@@ -99,6 +99,29 @@ static inline int shadowkey_hle_cone160_rect(ngage_cpu_t*c){
     return 1;
 }
 
+/* ARM UREL EIKCORE 222: CEikApplication::CEikApplication().
+   SDK layout: CBase (vptr), CApaApplication fields, then CEikApplication
+   fields. TApaAppCaption is TBuf<256> (520 bytes) at +24; its descriptor
+   header/max words are +24/+28. The derived constructor writes its vptr
+   after this base constructor returns (verified at 0x1002843c). */
+static inline int shadowkey_hle_eikcore222_ceikapplication(ngage_cpu_t*c){
+    if(!c||!c->mem)return 0;
+    uint32_t self=c->r[0];
+    if(self<0x10000000u||(uint64_t)self+556u>0x12000000ull)return 0;
+    /* CApaApplication + CEikApplication pointer/integer members. */
+    shadowkey_symbian61_w32(c,self+4u,0u);   /* CApaApplication::iApaDll */
+    shadowkey_symbian61_w32(c,self+8u,0u);   /* CApaApplication::iSpare */
+    shadowkey_symbian61_w32(c,self+12u,0u);  /* CEikApplication::iCoeEnv */
+    shadowkey_symbian61_w32(c,self+16u,0u);  /* iResourceFileOffset */
+    shadowkey_symbian61_w32(c,self+20u,0u);  /* iProcess */
+    shadowkey_symbian61_w32(c,self+24u,0x30000000u); /* TBuf<256>: type 3, len 0 */
+    shadowkey_symbian61_w32(c,self+28u,256u); /* TBuf<256> max length */
+    shadowkey_symbian61_w32(c,self+544u,0u); /* iCapabilityBuf */
+    shadowkey_symbian61_w32(c,self+548u,0u); /* iAppFlags */
+    shadowkey_symbian61_w32(c,self+552u,0u); /* iSpare */
+    return 1;
+}
+
 /* ARM UREL GDI 101: TFontStyle::SetPosture(TFontPosture).
    TFontStyle is one 32-bit iFlags word; EItalic is bit 0. */
 static inline int shadowkey_hle_gdi101_set_posture(ngage_cpu_t*c){

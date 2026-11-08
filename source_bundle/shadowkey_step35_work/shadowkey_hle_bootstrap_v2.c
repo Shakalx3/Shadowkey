@@ -17,7 +17,9 @@ static uint8_t *guest_ptr(ngage_cpu_t*c,uint32_t a,uint32_t n){
 }
 uint32_t shadowkey_heap_alloc(ngage_cpu_t*c,uint32_t size){if(!size)return 0;uint32_t p=0;if(heap_next&&heap_next<=heap_end&&size<=heap_end-heap_next){p=(heap_next+7u)&~7u;if(p<=heap_end&&size<=heap_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap_next=p+((size+7u)&~7u);return p;}}}if(heap2_next&&heap2_next<=heap2_end&&size<=heap2_end-heap2_next){p=(heap2_next+7u)&~7u;if(p<=heap2_end&&size<=heap2_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap2_next=p+((size+7u)&~7u);return p;}}}if(heap3_next&&heap3_next<=heap3_end&&size<=heap3_end-heap3_next){p=(heap3_next+7u)&~7u;if(p<=heap3_end&&size<=heap3_end-p){uint8_t*m=guest_ptr(c,p,size);if(m){memset(m,0,size);heap3_next=p+((size+7u)&~7u);return p;}}}return 0;}
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u && shadowkey_hle_euser1407_setoffset(c)) return;
+    /* EUSER 1407 is deliberately unresolved: WINS UDEB says SetOffset,
+       but ARM game callsites pass descriptor-like format literals in r1.
+       Do not mutate the receiver until ARM UREL ordinal identity is proven. */
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==711u){
         /* TPoint construction: this, x, y. r3 and [sp] are caller leftovers. */
         uint32_t out=c->r[0];

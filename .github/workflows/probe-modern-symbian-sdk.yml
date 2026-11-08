@@ -57,8 +57,25 @@ jobs:
             find build/hello_time/e32 -maxdepth 1 -type f -printf '%f %s bytes\\n'
             file build/hello_time/e32/hello_time.exe
             xxd -l 128 build/hello_time/e32/hello_time.exe
-            echo "=== E32 converter help ==="
-            sdk/bin/symbian-native convert-exe --help || true
+            echo "=== E32 native inspection ==="
+            python3 -m pip install --disable-pip-version-check symbian-platform==0.3.0
+            python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from symbian.e32.images import inspect_image
+          path = Path("build/hello_time/e32/hello_time.exe")
+          info = inspect_image(path)
+          print(json.dumps(info, indent=2, sort_keys=True))
+          Path("reports/hello_time_e32_inspection.json").write_text(
+              json.dumps(info, indent=2, sort_keys=True) + "\\n",
+              encoding="utf-8",
+          )
+          assert info["kernel"] == "eka2", info["kernel"]
+          assert info["architecture"] == "armv6", info["architecture"]
+          assert info["uid3"] == 0xE0000830, hex(info["uid3"])
+          assert info["entry_offset"] != 0, info["entry_offset"]
+          assert info["imports"], "E32 image has no imported DLL blocks"
+          PY
           } 2>&1 | tee reports/armv6-eka2-build.log
 
       - name: Publish native E32 proof and logs

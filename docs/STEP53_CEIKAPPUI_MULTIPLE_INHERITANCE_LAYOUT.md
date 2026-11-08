@@ -102,3 +102,23 @@ The host regression suite passes the implemented ARM-identity HLEs through EIKCO
 The Step53 N-Gage SDK layout above remains the correct layout expected by the game. The later S60 3.1 FP1 header audit (see [Step59](STEP59_CEIKAPPUI_TARGET_LAYOUT_BREAK.md)) found that target `CCoeAppUi` adds `iCCoeAppUi_Reserved1` at +0x14. This expands the target base from 0x14 to 0x18 bytes and shifts the target CEikAppUi secondary vptrs to +0x18/+0x1c/+0x20 and data members to +0x24 onward. The game still expects +0x14/+0x18/+0x1c and data from +0x20.
 
 Therefore the S60 EIKCORE CEikAppUi C2 constructor at target ordinal 178 is **not** a safe direct replacement for the missing N-Gage EIKCORE 224 constructor. The original Step53 requirement for the old-layout +0x18 MCoeMessageObserver vptr remains unresolved until an old-layout compatibility shim or equivalent vtable/this-adjustment layer is designed and validated. Keep EIKCORE 224 fail-closed.
+
+
+## Step60 callsite correction — the game writes +0x18 itself
+
+A full extraction of `sub_10021138` from `shadowkey_lifted_v6.c` corrected the earlier Step53 observation that the caller leaves +0x18 untouched. The function calls EIKCORE ordinal 224 through thunk `0x1009f700` (return address `0x10021144`), then writes the following values to the object:
+
+| Offset | Final value written by game | Meaning/status |
+|---:|---:|---|
+| +0x00 | `0x100fc4d8` | final primary vtable; earlier `0x100ffe88` is overwritten |
+| +0x14 | `0x100fff00` | MEikMenuObserver secondary vtable |
+| +0x18 | `0x100fff64` | MCoeMessageObserver secondary vtable |
+| +0x1c | `0x100fff54` | MObjectProvider secondary vtable |
+| +0x48 | `0x100fff34` | final pointer/table value; earlier `0x100fdc90` is overwritten; exact base/interface identity still pending |
+| +0x4c | `0x100fff40` | final pointer/table value; earlier `0x100fe050` is overwritten; exact base/interface identity still pending |
+
+Thus **the game itself installs all three secondary interface vptrs, including +0x18**. The earlier statement that +0x18 is missing was incorrect and is superseded by this callsite trace. The EIKCORE 224 constructor is still important for its base-object field initialization and side effects, but it is not needed to supply the final game vptr at +0x18.
+
+The target-layout problem from Step59 remains: target C2/178 writes its MObjectProvider vptr at +0x20, where the N-Gage object expects `iDocument`, and shifts data fields by four bytes. The new callsite trace makes the required compatibility boundary more precise: all game vptrs are rewritten after the constructor, but the base data written by the constructor still needs translation/validation.
+
+Reproducible extraction: GitHub Actions run `42500106008`, artifact `step60-appui-object-field-audit`, SHA-256 `913a02a46e4deba12b6d935a983d485125c8783c8670b28b3b3541e9b2b7b5b4`. The extracted function body is 2,699 bytes. The import dispatch table confirms thunk `0x1009f700` is `EIKCORE[10004892].DLL` ordinal 224.

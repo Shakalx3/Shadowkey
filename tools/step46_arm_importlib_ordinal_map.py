@@ -44,10 +44,8 @@ def run(args):
     return subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False)
 
 def strings(data):
-    with tempfile.NamedTemporaryFile() as f:
-        f.write(data);f.flush()
-        p=run(["strings","-a",f.name])
-        return p.stdout.decode("utf-8","replace").splitlines()
+    # Equivalent printable-ASCII extraction without spawning one process per member.
+    return [x.decode("ascii","replace") for x in re.findall(rb"[\\x20-\\x7e]{4,}",data)]
 
 def archive_symbol_index(path):
     """Decode GNU/SysV ar linker-member symbol index: symbol -> member header."""
@@ -183,26 +181,27 @@ for dll in sorted(set(e[2] for e in entries)):
         candidates=candidates[:6]
         symbol_lines=[]
         tool_notes=[]
-        with tempfile.NamedTemporaryFile() as obj:
-            obj.write(blob.stdout);obj.flush()
-            # The SDK's ARM import objects are not recognized by the host GNU nm.
-            # Try LLVM and ARM-aware tools before falling back to GNU nm.
-            for tool in ("llvm-nm","arm-none-eabi-nm","nm"):
-                if not shutil.which(tool):
-                    continue
-                nm=run([tool,"-C",obj.name])
-                got=[x.strip() for x in nm.stdout.decode("utf-8","replace").splitlines() if x.strip()]
-                tool_notes.append(f"{tool}:rc={nm.returncode}")
-                if got:
-                    symbol_lines.extend(got[:12])
-                    break
-            if shutil.which("llvm-readobj"):
-                ro=run(["llvm-readobj","--file-headers","--sections","--symbols",obj.name])
-                ro_lines=[x.strip() for x in ro.stdout.decode("utf-8","replace").splitlines()
-                          if "Name:" in x or "Symbol:" in x]
-                if ro_lines:
-                    symbol_lines.extend(ro_lines[:12])
-                tool_notes.append(f"llvm-readobj:rc={ro.returncode}")
+        # Deep object decoding is limited to the six imports currently under
+        # semantic dispute; archive-index extraction covers all imported ordinals.
+        if ordinal in (1407,1575,160,101,108,151):
+            with tempfile.NamedTemporaryFile() as obj:
+                obj.write(blob.stdout);obj.flush()
+                for tool in ("llvm-nm","arm-none-eabi-nm","nm"):
+                    if not shutil.which(tool):
+                        continue
+                    nm=run([tool,"-C",obj.name])
+                    got=[x.strip() for x in nm.stdout.decode("utf-8","replace").splitlines() if x.strip()]
+                    tool_notes.append(f"{tool}:rc={nm.returncode}")
+                    if got:
+                        symbol_lines.extend(got[:12])
+                        break
+                if shutil.which("llvm-readobj"):
+                    ro=run(["llvm-readobj","--file-headers","--sections","--symbols",obj.name])
+                    ro_lines=[x.strip() for x in ro.stdout.decode("utf-8","replace").splitlines()
+                              if "Name:" in x or "Symbol:" in x]
+                    if ro_lines:
+                        symbol_lines.extend(ro_lines[:12])
+                    tool_notes.append(f"llvm-readobj:rc={ro.returncode}")
         # The archive linker index can preserve the decorated C++ name even
         # when the ordinal stub object itself contains only generic sections.
         index_names=indexed_symbols.get(member,[])

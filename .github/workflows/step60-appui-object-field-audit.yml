@@ -1,0 +1,25 @@
+name: Step60 CEikAppUi object field audit
+
+on:
+  push:
+    paths:
+      - "tools/step60_appui_object_field_audit.py"
+      - ".github/workflows/step60-appui-object-field-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  extract-appui-callsite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract constructor callsite and locate object references
+        run: python3 tools/step60_appui_object_field_audit.py
+      - name: Publish callsite and binary reference report
+        uses: actions/upload-artifact@v4
+        with:
+          name: step60-appui-object-field-audit
+          path: step60-appui-audit/
+          if-no-files-found: error

@@ -113,3 +113,7 @@ Mapped the game's AVKON vtable calls to the S60 3.1 FP1 target exports: HandleSt
 ### Step 62 — game-side CAknAppUi derived fields
 
 Recovered the game construction/cleanup sequence. The old game object stores a CCoeControl pointer at +0x60, a CAknKeySoundSystem pointer at +0x64, and a byte flag at +0x68. The target S60 3.1 CAknAppUi instead uses +0x60 for iBlockMode and +0x64 for iExtension. The conflict is now confirmed by actual lifted instructions and call signatures. The leading compatibility architecture is to preserve the old game object and map it to a separate valid target CAknAppUi object, with wrappers for object-sensitive AVKON/EIKCORE/CONE calls. See [Step62](docs/STEP62_CAKNAPPUI_GAME_DERIVED_FIELDS_AND_SHADOW_OBJECT.md).
+
+### Step 63 — target lifecycle API remapping
+
+Mapped the nine imports used by the CAknAppUi construction/cleanup path to target S60 3.1 DSOs: BaseConstructL 63→2924, ApplicationRect 233→318, AddToStackL 12→202, SetKeyBlockMode 1529→2927, KeySounds 874→3002, PushContextL 1272→1141, PopContext 1213→1139, RemoveFromStack 167→211, and CAknAppUi destructor 2048→2937/2938/2939 (variant unresolved). Every unchanged old ordinal collides with an unrelated target method. The key-sound object is returned by target KeySounds and can potentially use target methods directly; the app-UI and control pointers still require layout-aware wrappers. See [Step63](docs/STEP63_TARGET_LIFECYCLE_EXPORT_REMAP.md).

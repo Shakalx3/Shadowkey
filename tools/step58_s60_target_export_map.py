@@ -24,7 +24,7 @@ RUNTIME = {
 
 
 def run(*args: str) -> str:
-    return subprocess.check_output(args, text=True, stderr=subprocess.STDOUT)
+    return subprocess.check_output(args, text=True)
 
 
 def parse_symbols(text: str) -> dict[int, str]:

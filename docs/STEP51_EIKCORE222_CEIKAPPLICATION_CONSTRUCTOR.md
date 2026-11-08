@@ -35,37 +35,63 @@ This confirms the semantic identity and inheritance chain, but header
 declarations do not provide the constructor's executable initialization
 sequence or the exact vtable address to install in the guest object.
 
-## Why no HLE constructor is added yet
+## Reconstructed CEikApplication base layout
 
-The receiver is a 556-byte allocation in the current trace. It is likely a
-concrete game application object whose constructor is invoking the imported
-`CEikApplication` base constructor. A correct base-constructor model must
-respect the ARM EABI object/vtable setup and all state initialized by the
-N-Gage EIKCORE implementation. Zero-filling the object or writing a guessed
-vtable would be a diagnostic bypass, not a faithful constructor.
+The SDK headers and the lifted caller provide enough evidence for a bounded
+constructor HLE. The class layout is:
 
-The public SDK repository includes the ARM UREL import library
-`6.1/Series60/Epoc32/Release/armi/urel/eikcore.lib`, but the corresponding
-ARM UREL `eikcore.dll` body is not present in that SDK tree. The SDK does
-contain WINS DLLs, which are not interchangeable with the ARM target binary.
+| Offset | Field | Initialization |
+|---:|---|---|
+| +0 | CBase/CEikApplication vptr | left for the caller; it writes the derived vtable immediately after the import returns |
+| +4 | CApaApplication::iApaDll | null |
+| +8 | CApaApplication::iSpare | 0 |
+| +12 | CEikApplication::iCoeEnv | null |
+| +16 | iResourceFileOffset | 0 |
+| +20 | iProcess | null |
+| +24 | iCaption | TBuf<256> descriptor header |
+| +28 | iCaption maximum length | 256 |
+| +32..+543 | iCaption inline storage | not written by the empty descriptor constructor |
+| +544 | iCapabilityBuf | null |
+| +548 | iAppFlags | 0 |
+| +552 | iSpare | 0 |
 
-## Next verification route
+The SDK defines TApaAppCaption as TBuf<KApaMaxAppCaption>, with
+KApaMaxAppCaption = 0x100. A TBuf<256> occupies 520 bytes (8-byte descriptor
+header plus 512-byte UTF-16 storage). The complete CEikApplication layout is
+556 bytes (0x22c), exactly matching the allocation size passed to
+CBase::operator new at the observed callsite.
 
-1. Inspect the lifted callsite around the BL whose return address is
-   `0x10028438`, including the constructor's caller and object allocation.
-2. Determine whether the game's own derived constructor immediately writes
-   its vtable after the imported base constructor returns.
-3. If the body remains necessary, obtain the matching N-Gage ROM's ARM
-   `eikcore.dll` (or a ROM dump from the user's N-Gage QD) and disassemble
-   ordinal 222's implementation. Do not substitute the WINS DLL.
-4. Compare the resulting object writes against the declared
-   `CEikApplication`/ `CApaApplication` member layout before implementing
-   the HLE.
+The lifted function sub_1002841c performs this sequence:
 
-## Validation status
+1. Allocate 0x22c bytes through EUSER 1582.
+2. Call EIKCORE 222 with r0=this and no constructor arguments.
+3. Immediately write the game-derived vtable pointer 0x100fd9bc at object+0.
 
-- ARM UREL ordinal 222 identity: mapped to `CEikApplication()`.
-- Header declaration and base-class chain: verified from original N-Gage SDK.
-- Exact constructor body / vtable initialization: unresolved.
-- Live trace: advances to this import and stops with exit code 95 by design.
-- Real N-Gage or N95 hardware launch: not demonstrated.
+Thus the EIKCORE constructor's base vptr is not required after return; the
+caller installs the derived vtable. The HLE helper
+shadowkey_hle_eikcore222_ceikapplication initializes the documented pointer
+and integer fields, sets the TBuf<256> descriptor header to type 3 / length 0
+(0x30000000), and sets its maximum length to 256. It deliberately does not
+invent or write a vtable address.
+
+The Step50 integration test verifies the 556-byte layout, initialized fields,
+and that the caller-owned vptr and caption storage are left untouched. The
+VFS trace now passes EIKCORE 222 and proceeds through EUSER 3, EIKCORE 219
+and CleanupStack PushL/Pop before reaching EIKCORE 224.
+
+## Current conclusion
+
+EIKCORE 222 is no longer the active blocker: a constrained constructor HLE is
+implemented from the SDK class layout and lifted callsite evidence. This is
+not a claim that the original EIKCORE ARM function body has been recovered.
+EIKCORE 219 (CEikDocument) also has a constructor HLE based on its SDK fields.
+
+The current unresolved constructor is EIKCORE ordinal 224,
+CEikAppUi::CEikAppUi(). Its multiple-inheritance layout includes a secondary
+vtable slot not overwritten by the lifted caller. That slot must not be
+filled with a guessed pointer. See
+[Step 50 ARM UREL report](STEP50_ARM_UREL_IMPORT_IDENTITY_BREAKTHROUGH.md)
+and [Step 50 callsite context](STEP50_EIKCORE_CALLSITE_CONTEXT.md).
+
+No physical Nokia N95 launch is claimed. The original N-Gage ARM UREL map
+also remains distinct from the N95 RM-320 / Symbian OS 9.2 ROM export table.

@@ -32,6 +32,10 @@ jobs:
           git clone --depth 1 --filter=blob:none --sparse https://github.com/ngagesdk/sdk.git /tmp/ngagesdk-sdk
           cd /tmp/ngagesdk-sdk
           xargs git sparse-checkout set --skip-checks < /tmp/arm_sdk_paths
+      - name: Install ARM object inspection tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y llvm
       - name: Parse ARM import members
         run: python3 tools/step46_arm_importlib_ordinal_map.py
       - name: Commit report

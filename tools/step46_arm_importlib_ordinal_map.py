@@ -14,9 +14,17 @@ entries=[]
 for thunk,slot,dll,ordtext in entry_re.findall(DISPATCH.read_text(errors="replace")):
     entries.append((int(thunk,16),int(slot,16),dll.lower(),int(ordtext)))
 wins={}
+current_dll=None
 for line in WINS_REPORT.read_text(errors="replace").splitlines():
-    m=re.match(r'^\|\s*0x[0-9a-f]+\s*\|\s*0x[0-9a-f]+\s*\|\s*([A-Z0-9]+)\s*\|\s*(\d+)\s*\|\s*(.*?)\s*\|$',line)
-    if m:wins[(m.group(1).lower(),int(m.group(2)))]=m.group(3)
+    section=re.match(r"^### ([A-Z0-9]+)\\.LIB$", line)
+    if section:
+        current_dll=section.group(1).lower()
+        continue
+    # Step 44 records ordinal-backed WINS short-import names as:
+    # - Ordinal 1407: ?Symbol@@...; NameType=[0]
+    m=re.match(r"^- Ordinal (\\d+): (.*?); NameType=\\[0\\]$", line)
+    if current_dll and m:
+        wins[(current_dll,int(m.group(1)))]=m.group(2)
 
 def run(args):
     return subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False)
@@ -29,7 +37,7 @@ def strings(data):
 
 out=[
  "# Step 46 — ARM UREL import-library ordinal cross-check","",
- "This report inspects the actual ARM UREL import-library members, not only the WINS UDEB COFF import libraries used in Step 44.","",
+ "This report inspects ARM UREL import-library members and compares their extracted symbol evidence with the WINS UDEB COFF import-library names recorded in Step 44. A dsNNNNN.o member name alone is only an ordinal candidate, not proof of symbol identity.","",
  f"- Game import slots: {len(entries)}",
  f"- Distinct DLLs: {len(set(e[2] for e in entries))}",
  "- ARM member naming convention is checked against archive tables; a member named dsNNNNN.o is treated as candidate ordinal NNNNN, not assumed to be correct until its contents are inspected.",""
@@ -64,8 +72,13 @@ for dll in sorted(set(e[2] for e in entries)):
             continue
         found=strings(blob.stdout)
         candidates=[x for x in found if len(x)>2 and (('@' in x) or ('_' in x) or re.search(r'[A-Za-z]{4,}',x))]
-        candidates=candidates[:8]
-        evidence="; ".join(candidates).replace("|","/") or "<no printable symbol strings>"
+        candidates=candidates[:6]
+        with tempfile.NamedTemporaryFile() as obj:
+            obj.write(blob.stdout);obj.flush()
+            nm=run(["nm","-C",obj.name])
+            nm_lines=[x.strip() for x in nm.stdout.decode("utf-8","replace").splitlines() if x.strip()]
+        evidence_items=nm_lines[:6] + candidates
+        evidence="; ".join(evidence_items).replace("|","/") or "<no symbol strings>"
         out.append(f"| {ordinal} | {wins.get((dll,ordinal),'<no WINS map>')} | {member} | {len(blob.stdout)} | {evidence} |")
     out.append("")
 OUT.write_text("\n".join(out))

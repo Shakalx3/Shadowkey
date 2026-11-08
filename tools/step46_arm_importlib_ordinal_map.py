@@ -67,6 +67,36 @@ for dll in sorted(set(e[2] for e in entries)):
         out += [f"- ar t failed: {listing.stderr.decode('utf-8','replace')[:500]}",""]
         continue
     members=listing.stdout.decode("utf-8","replace").splitlines()
+    # ARM import archives contain two non-ordinal members (dt.o/dh.o).
+    # Their symbol/string tables may hold the name-to-ordinal association
+    # even when each dsNNNNN.o thunk member is ordinal-only.
+    for metadata_member in ("dt.o","dh.o"):
+        if metadata_member not in members:
+            continue
+        meta=run(["ar","p",str(lib),metadata_member])
+        if meta.returncode:
+            out.append(f"- {metadata_member}: extraction failed")
+            continue
+        meta_strings=strings(meta.stdout)
+        named=[x for x in meta_strings if len(x)>3 and ("@" in x or x.startswith("_"))]
+        meta_symbols=[]
+        with tempfile.NamedTemporaryFile() as obj:
+            obj.write(meta.stdout);obj.flush()
+            for tool in ("llvm-nm","arm-none-eabi-nm","nm"):
+                if not shutil.which(tool):
+                    continue
+                p=run([tool,"-C",obj.name])
+                got=[x.strip() for x in p.stdout.decode("utf-8","replace").splitlines() if x.strip()]
+                if got:
+                    meta_symbols.extend(got[:100])
+                    break
+            if shutil.which("llvm-readobj"):
+                p=run(["llvm-readobj","--symbols",obj.name])
+                got=[x.strip() for x in p.stdout.decode("utf-8","replace").splitlines()
+                     if "Name:" in x or "Symbol:" in x]
+                meta_symbols.extend(got[:100])
+        out += [f"- {metadata_member}: {len(meta.stdout)} bytes; strings={len(meta_strings)}; named strings={len(named)}"]
+        out.extend(f"  - {x}" for x in (meta_symbols[:100] or named[:100]))
     byord={}
     for member in members:
         m=re.fullmatch(r"ds0*(\d+)\.o",member,re.I)

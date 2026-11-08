@@ -1,0 +1,104 @@
+name: Download S60 3rd Edition FP1 SDK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/s60-sdk-download.trigger"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: s60-sdk-download
+  cancel-in-progress: false
+
+jobs:
+  download-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Download SDK from MediaFire
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import html.parser
+          import pathlib
+          import re
+          import urllib.request
+          import zipfile
+
+          file_id = "9uc7fjb2ynmxlud"
+          landing = f"https://www.mediafire.com/file/{file_id}/s60v3.1_SDK.zip/file"
+          headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36"}
+
+          def get(url):
+              req = urllib.request.Request(url, headers=headers)
+              with urllib.request.urlopen(req, timeout=90) as response:
+                  return response.geturl(), response.read()
+
+          final_url, body = get(f"https://www.mediafire.com/download/{file_id}")
+          if not body.startswith(b"PK\\x03\\x04"):
+              page_url, page = get(landing)
+              class Links(html.parser.HTMLParser):
+                  def __init__(self):
+                      super().__init__()
+                      self.href = None
+                  def handle_starttag(self, tag, attrs):
+                      attrs = dict(attrs)
+                      if tag == "a" and attrs.get("id") == "downloadButton":
+                          self.href = attrs.get("href")
+              parser = Links()
+              parser.feed(page.decode("utf-8", "ignore"))
+              candidates = [parser.href] if parser.href else []
+              candidates += re.findall(r'https?://download\\d+\\.mediafire\\.com/[^"\\s<>]+', page.decode("utf-8", "ignore"))
+              candidates = [u for u in candidates if u]
+              if not candidates:
+                  raise SystemExit("Could not resolve MediaFire's actual download URL; page did not expose downloadButton.")
+              last_error = None
+              for candidate in candidates:
+                  try:
+                      final_url, body = get(candidate)
+                      if body.startswith(b"PK\\x03\\x04"):
+                          break
+                  except Exception as exc:
+                      last_error = exc
+              else:
+                  raise SystemExit(f"MediaFire did not return a ZIP archive. Last error: {last_error}; final URL: {final_url}")
+
+          archive = pathlib.Path("s60v3.1_SDK.zip")
+          archive.write_bytes(body)
+          size = archive.stat().st_size
+          if size < 300_000_000:
+              raise SystemExit(f"Downloaded file is unexpectedly small ({size} bytes); refusing to publish.")
+          try:
+              with zipfile.ZipFile(archive) as zf:
+                  bad = zf.testzip()
+                  if bad:
+                      raise SystemExit(f"ZIP CRC check failed at: {bad}")
+                  names = zf.namelist()
+          except zipfile.BadZipFile as exc:
+              raise SystemExit(f"Downloaded content is not a valid ZIP: {exc}")
+          import hashlib
+          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+          pathlib.Path("SDK_DOWNLOAD_REPORT.txt").write_text(
+              "S60 3rd Edition SDK v3.1 (Symbian OS 9.2, Nokia Edition)\\n"
+              f"Source: {landing}\\nFinal URL: {final_url}\\n"
+              f"Size: {size} bytes\\nZIP entries: {len(names)}\\n"
+              f"SHA-256: {digest}\\nZIP CRC test: PASS\\n",
+              encoding="utf-8"
+          )
+          print(pathlib.Path("SDK_DOWNLOAD_REPORT.txt").read_text())
+          PY
+
+      - name: Publish verified SDK as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: s60v3.1-sdk-verified
+          path: |
+            s60v3.1_SDK.zip
+            SDK_DOWNLOAD_REPORT.txt
+          if-no-files-found: error
+          retention-days: 30

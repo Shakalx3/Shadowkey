@@ -9,3 +9,5 @@ Capture full CEikAppUi and CCoeAppUi class definitions.
 Re-run Step61 after correcting target CAknAppUi header extraction.
 
 Run Step63 target AVKON/EIKCORE/CONE lifecycle export mapping.
+
+Run Step64 old versus target CCoeControl layout comparison.

@@ -88,6 +88,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           for attempt in 1 2 3; do
             git fetch origin main
             git reset --hard origin/main
@@ -119,6 +121,10 @@ jobs:
               echo "- This report does not claim a Symbian OS 9.2 runtime or physical N95 launch."
             } > docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md
             git add docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md
+            if git diff --cached --quiet; then
+              echo "Step45 report is unchanged; nothing to commit."
+              exit 0
+            fi
             git commit -m "Record SDK-mapped HLE validation"
             if git push origin HEAD:main; then exit 0; fi
             sleep 2

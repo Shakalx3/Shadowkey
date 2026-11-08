@@ -82,6 +82,8 @@ def main() -> int:
     game_missing = [n for n in names if re.fullmatch(r"sub_[0-9a-fA-F]+", n)]
     custom_runtime = [n for n in names if n.startswith("ngage_runtime_")]
     c_runtime = [n for n in names if n not in custom_runtime and n not in game_missing]
+    combined_header = run(args.readelf, "-h", str(args.output))
+    soft_float = "soft-float ABI" in combined_header
     report = {
         "object_count": len(objects),
         "objects": object_checks,
@@ -89,7 +91,7 @@ def main() -> int:
         "link_command": command,
         "combined_object": str(args.output),
         "combined_size": args.output.stat().st_size,
-        "combined_target": "ELF32 ARM EABI5, soft-float ABI",
+        "combined_target": "ELF32 ARM EABI5" + (", soft-float ABI" if soft_float else ""),
         "registry_import_thunk_count": len(registry_imports),
         "lifted_import_thunk_definition_count": len(lifted_import_defs),
         "missing_import_thunks": missing_import_thunks,

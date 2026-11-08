@@ -18,6 +18,18 @@ targets = {
     "EUSER 3 CBase::newL": {
         "thunk": "0x1009f020", "iat": "0x10100674", "lr": "0x100283cc"
     },
+    "EUSER 858 CleanupStack::PushL": {
+        "thunk": "0x1009ef10", "iat": "0x10100720", "lr": "0x100283ec"
+    },
+    "EUSER 828 CleanupStack::Pop": {
+        "thunk": "0x1009f050", "iat": "0x10100714"
+    },
+    "EUSER 824 CleanupStack::PopAndDestroy": {
+        "thunk": "0x1009f060", "iat": "0x1010070c"
+    },
+    "EUSER 825 CleanupStack::PopAndDestroy(TInt)": {
+        "thunk": "0x1009ef80", "iat": "0x10100710"
+    },
 }
 out = [
     "# Step 50 — lifted ARM callsite context for EIKCORE constructors and allocators",

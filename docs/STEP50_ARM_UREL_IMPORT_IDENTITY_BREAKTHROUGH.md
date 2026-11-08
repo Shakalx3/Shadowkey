@@ -135,47 +135,58 @@ Relevant original N-Gage SDK headers:
 
 ## Current HLE state and next work
 
-The following ARM-identity handlers have now been implemented and exercised
-by the passing host regression suite:
+The following ARM-identity handlers are implemented and exercised by the
+passing host regression suite:
 
-- EUSER 1407: bounded TPtrC16 constructor (type-1 descriptor header + source pointer).
+- EUSER 3: CBase::newL(TUint); allocation failure halts the harness because
+  Symbian leave unwinding is not emulated.
+- EUSER 1582: CBase::operator new(TUint).
+- EUSER 1407: bounded TPtrC16 constructor (type-1 descriptor + source pointer).
 - EUSER 1575: TInt64 inequality comparison.
-- EUSER 1373/530/711: TRect constructor (fourth argument from stack), Height and Move.
+- EUSER 1373/530/711: TRect constructor (fourth argument on stack), Height and Move.
+- EUSER 858/828: CleanupStack::PushL(CBase*) and Pop using a bounded LIFO
+  model. EUSER 824/825 PopAndDestroy remain unresolved because virtual
+  destructor dispatch has not been reconstructed.
 - CONE 160: CCoeControl::Rect hidden-result TRect using position + size.
 - GDI 151: 64-byte TFontSpec constructor with TBufC<24> typeface name.
 - GDI 108/101: TFontStyle stroke-weight/posture setters updating one flags word.
-- EUSER 1582: CBase::operator new guest-heap allocation.
-- EUSER 3: CBase::newL guest-heap allocation; allocation failure stops the trace (leave unwinding is not emulated).
+- EIKCORE 222: CEikApplication constructor field initialization, including
+  TApaAppCaption as TBuf<256>. The caller writes the derived vtable at +0
+  immediately after the constructor returns.
+- EIKCORE 219: CEikDocument constructor initializes iApplication,
+  iApaProcess, iContainer, iAppUi, iEditStore, iChanged and iAppFileMode.
+  The caller writes the derived vtable at +0 after the constructor.
 
 The old WINS-derived SetOffset and Position helpers have been removed.
 The VFS trace and bootstrap dispatchers now route the corrected ARM identities.
 The host regression suite and Step48 static identity audit both pass.
 
-The live VFS trace now progresses through those imports and stops at EUSER ordinal 3 (CBase::newL), with r0 = 0x28. This allocation handler has now been added; the next trace run will establish the following stop.\n\nBefore that EUSER3 stop, the trace had reached:
+The live VFS trace now reaches EIKCORE ordinal 224:
 
-- EIKCORE UID 10004892, ordinal 222;
-- thunk 0x1009FA00, return address 0x10028438;
-- r0 = 0x10110000, other argument registers zero.
-
-The ARM UREL map identifies EIKCORE 222 as the CEikApplication constructor
-(symbol `__15CEikApplication`). EIKCORE 219 is the CEikDocument constructor
-(`__12CEikDocumentR15CEikApplication`), and EIKCORE 224 is the CEikAppUi
-constructor (`__9CEikAppUi`). Their current no-op bootstrap handlers are
-not yet accepted as correct constructors.
+- ARM UREL symbol: `__9CEikAppUi` (CEikAppUi default constructor).
+- Return address: `0x10021144`.
+- r0 (this): `0x10110258`; r1: `0x10110000`; r2: 0; r3: `0x100fd828`.
+- The object allocation size is 108 bytes.
+- The lifted caller writes derived pointers/vtable entries at offsets
+  +0x00, +0x14, +0x1c, +0x48 and +0x4c after the constructor.
+- CEikAppUi inherits CCoeAppUi, MEikMenuObserver, MCoeMessageObserver and
+  MObjectProvider. At least one secondary base/vtable slot is not overwritten
+  by the caller. Its correct constructor value is not available in the ARM
+  import library.
 
 Next work:
 
-1. Inspect the generated lifted callsite context for EIKCORE 222 and the
-   following uses of the CEikApplication object.
-2. Establish the required base-class and vtable initialization for
-   CEikApplication without inventing vtable addresses.
-3. Inspect the EIKCORE 219/224 constructor callsites and class layouts.
-4. Implement only the constructor behavior supported by ARM callsite and
-   SDK evidence; keep unresolved virtual calls fail-closed.
-5. Continue the live VFS trace beyond EIKCORE 222.
-6. Revisit the GDI font path after application construction; the font
-   object layout and setters are now grounded, but GetNearestFont/provider
-   behavior and glyph rasterization remain unimplemented.
+1. Probe the SDK's WINS UDEB EIKCORE DLL for constructor symbols and field
+   initialization (Step52). Treat it as semantic reference only.
+2. Reconcile the CEikAppUi multiple-inheritance layout with the lifted
+   callsite and SDK headers; do not guess the remaining secondary vtable.
+3. If the WINS DLL does not expose sufficient symbols, obtain the matching
+   N-Gage QD ARM EIKCORE.DLL/ROM image to inspect the actual constructor.
+4. Implement EIKCORE224 only when its required base/vtable state is grounded.
+5. Continue the live VFS trace after EIKCORE224, then address PopAndDestroy
+   and any remaining FBS/GDI calls.
+6. Cross-check the original N-Gage ARM import identities against the N95
+   RM-320 / Symbian OS 9.2 ROM exports; these are still separate tables.
 
 ## Scope limits
 

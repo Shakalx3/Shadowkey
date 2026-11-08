@@ -141,8 +141,13 @@ def main() -> int:
                     off = code_off + rel
                     row["file_offset"] = off
                     row["status"] = "mapped_into_code_payload"
-                    for slot in range(20):
-                        pos = off + slot * 4
+                    header_word = struct.unpack_from("<I", image, off)[0]
+                    typeinfo = struct.unpack_from("<I", image, off + 4)[0]
+                    signed_offset = header_word if header_word < 0x80000000 else header_word - 0x100000000
+                    row["offset_to_top"] = signed_offset
+                    row["typeinfo_pointer"] = f"0x{typeinfo:08x}"
+                    for slot in range(24):
+                        pos = off + 8 + slot * 4
                         if pos + 4 > len(image):
                             break
                         value = struct.unpack_from("<I", image, pos)[0]

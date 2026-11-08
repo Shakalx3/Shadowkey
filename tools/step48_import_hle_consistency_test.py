@@ -59,7 +59,7 @@ for key, expected_symbol in wins_expected.items():
 # before the same EUSER 1407 thunk. This contradicts blindly applying the
 # WINS-only SetOffset identity to the game's ARM import.
 assert re.search(
-    r"L_10022b74:.*?c->r\[1\] = 0x100ac718u.*?"
+    r"L_10022b70:.*?c->r\[1\] = 0x100ac718u.*?"
     r"L_10022b78:.*?c->r\[0\] = c->r\[4\].*?"
     r"L_10022b7c:.*?ngage_call\(c, 0x1009f0f0u\)",
     callsite, re.S

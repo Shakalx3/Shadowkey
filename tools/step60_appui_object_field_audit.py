@@ -160,7 +160,7 @@ def main() -> int:
                 lines.append(f"[{row['label']}] VA={row['va']} status={row['status']} file_off={row.get('file_offset')}")
                 for slot in row["slots"]:
                     lines.append(f"  [{slot['slot']:02d}] {slot['value']} function={slot['function']} in_code={slot['points_into_code']}")
-            (Path("step60-appui-audit") / "vtable-tables.txt").write_text("\\n".join(lines) + "\\n")
+            (Path("step60-appui-audit") / "vtable-tables.txt").write_text("\n".join(lines) + "\n")
     out = Path("step60-appui-audit")
     out.mkdir(exist_ok=True)
     (out / "sub_10021138.txt").write_text(function + "\n")

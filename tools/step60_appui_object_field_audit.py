@@ -154,6 +154,7 @@ def main() -> int:
                         if value == 0:
                             break
                 vtable_tables.append(row)
+            Path("step60-appui-audit").mkdir(exist_ok=True)
             lines = [f"E32 image: {e32_image}", f"base={base:#010x} code_size={code_size:#x} text_size={text_size:#x} code_off={code_off:#x}"]
             for row in vtable_tables:
                 lines.append(f"[{row['label']}] VA={row['va']} status={row['status']} file_off={row.get('file_offset')}")

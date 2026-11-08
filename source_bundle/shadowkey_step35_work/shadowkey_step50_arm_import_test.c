@@ -88,6 +88,18 @@ int main(void){
        ngage_r32(&c,app+548u)!=0u||ngage_r32(&c,app+552u)!=0u)return 12;
     if(c.mem[(app-0x10000000u)+32u]!=0xa5)return 13;
 
-    puts("PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase::operator new and CEikApplication constructor");
+    /* EIKCORE219: CEikDocument stores its CEikApplication and Process refs. */
+    const uint32_t doc=0x10009000u,process=0x1000b000u;
+    ngage_w32(&c,app+20u,process);
+    memset(c.mem+(doc-0x10000000u),0xa5,36u);
+    c.r[0]=doc;c.r[1]=app;
+    shadowkey_hle_import(&c,"EIKCORE[10004892].DLL",219u);
+    if(ngage_r32(&c,doc)!=0xa5a5a5a5u||ngage_r32(&c,doc+4u)!=0u||
+       ngage_r32(&c,doc+8u)!=app||ngage_r32(&c,doc+12u)!=process||
+       ngage_r32(&c,doc+16u)!=0u||ngage_r32(&c,doc+20u)!=0u||
+       ngage_r32(&c,doc+24u)!=0u||c.mem[(doc-0x10000000u)+28u]!=0u||
+       ngage_r32(&c,doc+32u)!=0u)return 14;
+
+    puts("PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase allocation, CEikApplication and CEikDocument constructors");
     free(c.mem);return 0;
 }

@@ -122,6 +122,28 @@ static inline int shadowkey_hle_eikcore222_ceikapplication(ngage_cpu_t*c){
     return 1;
 }
 
+/* ARM UREL EIKCORE 219: CEikDocument::CEikDocument(CEikApplication&).
+   CApaDocument fields follow the CBase vptr at +4/+8/+12/+16; CEikDocument
+   adds iAppUi/+20, iEditStore/+24, iChanged/+28 and iAppFileMode/+32.
+   The caller writes its derived vptr at +0 after the base constructor. */
+static inline int shadowkey_hle_eikcore219_ceikdocument(ngage_cpu_t*c){
+    if(!c||!c->mem)return 0;
+    uint32_t self=c->r[0],app=c->r[1];
+    if(self<0x10000000u||(uint64_t)self+36u>0x12000000ull||
+       app<0x10000000u||(uint64_t)app+24u>0x12000000ull)return 0;
+    uint32_t process=ngage_r32(c,app+20u); /* CEikApplication::Process() */
+    shadowkey_symbian61_w32(c,self+4u,0u);       /* iContainer */
+    shadowkey_symbian61_w32(c,self+8u,app);      /* iApplication */
+    shadowkey_symbian61_w32(c,self+12u,process); /* iApaProcess */
+    shadowkey_symbian61_w32(c,self+16u,0u);      /* iSpare */
+    shadowkey_symbian61_w32(c,self+20u,0u);      /* iAppUi */
+    shadowkey_symbian61_w32(c,self+24u,0u);      /* iEditStore */
+    uint8_t*p=c->mem+(self-0x10000000u);
+    p[28]=0u;                                    /* iChanged */
+    shadowkey_symbian61_w32(c,self+32u,0u);      /* iAppFileMode */
+    return 1;
+}
+
 /* ARM UREL GDI 101: TFontStyle::SetPosture(TFontPosture).
    TFontStyle is one 32-bit iFlags word; EItalic is bit 0. */
 static inline int shadowkey_hle_gdi101_set_posture(ngage_cpu_t*c){

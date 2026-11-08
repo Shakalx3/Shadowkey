@@ -92,3 +92,21 @@ configurable through `SHADOWKEY_ARM_SDK_ROOT`.
 - ARM UREL member-level cross-check: pending.
 - N95 OS 9.2 / S60 FP1 ordinal mapping: pending separately.
 - Real-device launch: not demonstrated.
+
+
+## Step 49 follow-up — all active routes checked
+
+A second dispatcher was found in `shadowkey_hle_vfs_trace.c`, separate from
+`shadowkey_hle_bootstrap_v2.c`. It also had live routes for EUSER 1407 and
+CONE 160. Both have now been disabled there as well. The Step48 static audit
+checks both dispatchers, not just the bootstrap path.
+
+The host regression suite subsequently completed successfully after the
+Step30 test was narrowed to EUSER 711 only. Its previous EUSER 1373 and 530
+assumptions are now explicitly left unresolved rather than invoked as
+verified APIs. The separate live VFS trace still stops at an unresolved
+EUSER 1373 import; this is a fail-closed diagnostic stop, not a successful
+full initialization.
+
+The Step45 report-generation workflow also needed an explicit Git author
+identity, just as Step46 did. That commit configuration has now been added.

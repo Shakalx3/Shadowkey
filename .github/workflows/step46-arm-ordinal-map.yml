@@ -30,6 +30,7 @@ jobs:
           base="6.1/Series60/Epoc32/Release/armi/urel/"
           paths=[base+d+".lib" for d in dlls]
           paths.append("6.1/Series60/Epoc32/Release/wins/udeb/eikcore.dll")
+          paths.append("6.1/Series60/Epoc32/Release/wins/udeb/eikcore.lib")
           Path("/tmp/arm_sdk_paths").write_text("\n".join(paths)+"\n")
           PY
           git clone --depth 1 --filter=blob:none --sparse https://github.com/ngagesdk/sdk.git /tmp/ngagesdk-sdk

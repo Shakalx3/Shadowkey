@@ -119,7 +119,7 @@ def main() -> int:
                 "code_file_offset": code_off,
             }
             registry_map = {}
-            for m in re.finditer(r"\\{\\s*(0x[0-9a-fA-F]+)u,\\s*(sub_[0-9a-fA-F]+)\\s*\\}", registry):
+            for m in re.finditer(r"\{\s*(0x[0-9a-fA-F]+)u,\s*(sub_[0-9a-fA-F]+)\s*\}", registry):
                 registry_map[int(m.group(1), 16)] = m.group(2)
             vtable_addresses = {
                 "primary_final": 0x100fc4d8,

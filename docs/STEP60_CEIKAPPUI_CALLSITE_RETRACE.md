@@ -103,3 +103,26 @@ This proves that the final +0x48 and +0x4c values are secondary vtable pointers,
 CONE 292/293 are the N-Gage ARM imports `MCoeViewDeactivationObserver_Reserved_1/2`, so additional interface B is identified as `MCoeViewDeactivationObserver`. Additional interface A has one game override and is likely `MCoeViewActivationObserver`; that identity remains an inference pending direct header/vtable-thunk confirmation.
 
 The six non-registry game thunk addresses (0x100a417c, 0x100a4174, 0x100a4184, 0x100a418c, 0x100a419c, 0x100a4194, 0x100a4368, 0x100a4370) need a short ARM disassembly pass to identify their this-adjustments and target methods. The vtable import map was produced by joining the actual E32 vtable entries to the game's import-thunk table and Step46 ARM UREL ordinal map.
+
+
+## Step61 follow-up — the two additional interfaces are identified
+
+The vtable thunks were disassembled from the original E32 code payload with ARM binutils. The two final secondary bases are now identified by the imports they forward to:
+
+- +0x48 thunk `0x100a4368`: `SUB r0,r0,#0x48`; branch to AVKON ordinal 802, `CAknAppUi::HandleStatusPaneSizeChange()`. This is `MEikStatusPaneObserver`.
+- +0x4c thunk `0x100a4370`: `SUB r0,r0,#0x4c`; branch to AVKON ordinal 805, `CAknAppUi::HandleViewDeactivation(const TVwsViewId&,const TVwsViewId&)`. This is `MCoeViewDeactivationObserver`; the following vtable entries are CONE 292/293, the interface's reserved methods.
+
+The original N-Gage SDK `aknappui.h` independently declares:
+
+`CAknAppUi : public CEikAppUi, MEikStatusPaneObserver, public MCoeViewDeactivationObserver`
+
+The game object is therefore a `CAknAppUi`-layout object (or a class derived from it), not merely a CEikAppUi object. This explains the additional secondary vptrs at +0x48 and +0x4c. The earlier “Additional A/B” labels are now resolved as MEikStatusPaneObserver and MCoeViewDeactivationObserver.
+
+The other secondary thunks also prove their this-adjustments:
+- +0x14 MEikMenuObserver: subtract 0x14 before forwarding to EIKCORE methods;
+- +0x18 MCoeMessageObserver: subtract 0x18 before forwarding to EIKCORE 80;
+- +0x1c MObjectProvider: subtract 0x1c before forwarding to EIKCORE 290/264;
+- +0x48 MEikStatusPaneObserver: subtract 0x48 before AVKON 802;
+- +0x4c MCoeViewDeactivationObserver: subtract 0x4c before AVKON 805.
+
+This provides direct binary evidence of the multiple-inheritance adjustment model. The N95 S60 3.1 `CAknAppUi` declaration and AVKON target ordinals are the next comparison point; do not assume that the old AVKON ordinals or the old +0x48/+0x4c offsets remain valid on the target.

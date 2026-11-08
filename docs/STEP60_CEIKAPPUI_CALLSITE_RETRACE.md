@@ -65,3 +65,41 @@ The Step60 workflow found the 6R51.APP copies in the source bundle and located r
 5. Keep EIKCORE 224 fail-closed; no target C2 direct remap or synthetic field initialization is justified yet.
 
 No binary patch or physical-device launch is claimed.
+
+
+## Step60 vtable-group decoding
+
+The E32 header and code payload were used to map each vtable VA to its actual file offset. For the original `6R51.APP` image:
+- image base: `0x10000000`;
+- code size: `0x1009c4`;
+- text size: `0x100340`;
+- code file offset: `0x7c`;
+- code VA to file offset: `0x7c + (VA - 0x10000000)`.
+
+The first two words at each vtable pointer are the offset-to-top and null typeinfo pointer; function entries follow them. The signed offset-to-top values independently confirm the subobject offsets:
+
+| Stored vptr offset in game object | Vtable VA | Offset-to-top in vtable | Result |
+|---:|---:|---:|---|
+| +0x00 | 0x100fc4d8 | 0 | primary vtable |
+| +0x14 | 0x100fff00 | -0x14 | MEikMenuObserver |
+| +0x18 | 0x100fff64 | -0x18 | MCoeMessageObserver |
+| +0x1c | 0x100fff54 | -0x1c | MObjectProvider |
+| +0x48 | 0x100fff34 | -0x48 | additional secondary interface A |
+| +0x4c | 0x100fff40 | -0x4c | additional secondary interface B |
+
+This proves that the final +0x48 and +0x4c values are secondary vtable pointers, not ordinary function pointers. The vtable group also confirms the game-derived class has two further interface bases after the old 0x48-byte CEikAppUi base.
+
+### Vtable method imports
+
+| Vtable | Game/OS method entries observed |
+|---|---|
+| Primary | game: `sub_10021080`, `sub_10020b04`, `sub_100211c0`, `sub_100209c8`; AVKON 808, 1254, 803; EIKCORE 144, 147, 74, 81, 133, 198, 134, 124, 51, 82, 206; CONE 101, 82, 90 |
+| MEikMenuObserver (+0x14) | EIKCORE 48, 75, 31, 157, 65, 64, 121, 226; game thunks at 0x100a417c, 0x100a4174, 0x100a4184 |
+| MCoeMessageObserver (+0x18) | CONE 255, 256; game thunk at 0x100a418c |
+| MObjectProvider (+0x1c) | game thunks at 0x100a419c, 0x100a4194 |
+| Additional A (+0x48) | game thunk at 0x100a4368 |
+| Additional B (+0x4c) | game thunk at 0x100a4370; CONE 292, 293 |
+
+CONE 292/293 are the N-Gage ARM imports `MCoeViewDeactivationObserver_Reserved_1/2`, so additional interface B is identified as `MCoeViewDeactivationObserver`. Additional interface A has one game override and is likely `MCoeViewActivationObserver`; that identity remains an inference pending direct header/vtable-thunk confirmation.
+
+The six non-registry game thunk addresses (0x100a417c, 0x100a4174, 0x100a4184, 0x100a418c, 0x100a419c, 0x100a4194, 0x100a4368, 0x100a4370) need a short ARM disassembly pass to identify their this-adjustments and target methods. The vtable import map was produced by joining the actual E32 vtable entries to the game's import-thunk table and Step46 ARM UREL ordinal map.

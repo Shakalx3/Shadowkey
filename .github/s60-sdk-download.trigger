@@ -1,1 +1,1 @@
-Trigger download-s60-sdk.yml; the SDK ZIP is published only as a private repository Actions artifact after ZIP integrity verification.\n
+Trigger download-s60-sdk.yml; retry after correcting ZIP signature escaping.

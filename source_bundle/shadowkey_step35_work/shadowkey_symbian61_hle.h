@@ -9,8 +9,10 @@ static inline void shadowkey_symbian61_w32(ngage_cpu_t*c,uint32_t a,uint32_t v){
     uint8_t*p=c->mem+(a-0x10000000u);p[0]=(uint8_t)v;p[1]=(uint8_t)(v>>8);p[2]=(uint8_t)(v>>16);p[3]=(uint8_t)(v>>24);
 }
 
-/* Symbian 6.1 SDK: EUSER ordinal 1407 = TDblQueBase::SetOffset(TInt).
-   TDblQueBase layout: TDblQueLink iHead at +0, TInt iOffset at +8. */
+/* WINS UDEB reference only: EUSER ordinal 1407 is named
+   TDblQueBase::SetOffset(TInt) in that import library. ARM game callsites
+   conflict with this identity; keep this helper un-dispatched until ARM UREL
+   member ds01407.o is inspected. Object layout is not target-verified. */
 static inline int shadowkey_hle_euser1407_setoffset(ngage_cpu_t *c){
     uint32_t self=c->r[0];
     if(!c || self<0x10000000u || (uint64_t)self+12u>0x12000000ull) return 0;
@@ -18,9 +20,10 @@ static inline int shadowkey_hle_euser1407_setoffset(ngage_cpu_t *c){
     return 1;
 }
 
-/* Symbian 6.1 SDK: CONE ordinal 160 = CCoeControl::Position() const.
-   CCoeControl::iPosition is the TPoint at object offset +0x0c.
-   ARM callsite uses r0 as the hidden TPoint result buffer and r1 as this. */
+/* WINS UDEB reference only: CONE ordinal 160 is named
+   CCoeControl::Position() const there. The hidden-result call shape is
+   observed in the game, but the target ARM ordinal and object offsets remain
+   unverified. This helper is intentionally not dispatched. */
 static inline int shadowkey_hle_cone160_position(ngage_cpu_t *c){
     uint32_t result=c->r[0],self=c->r[1];
     if(!c || result<0x10000000u || (uint64_t)result+8u>0x12000000ull ||

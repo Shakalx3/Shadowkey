@@ -1,1 +1,1 @@
-Run SDK download, verification and InstallShield extraction. Artifact retention: 90 days.
+Run recursive InstallShield cabinet extraction and retain SDK payload for 90 days.

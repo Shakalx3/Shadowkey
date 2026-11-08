@@ -9,8 +9,6 @@
 ## Host regression suite
 
 BEGIN HOST LOG
-PASS: ordinal 55 has two matching this-only call sites
-PASS: both paired sites call returned object's vtable slot +0xD8 with ordinal-55 result
 PASS: remaining ordinal-226 sites use returned object's graphics-context slots +0x48 / +0xB8
 INFERENCE: ordinal 226 = CCoeControl::SystemGc() (high confidence, not export-table proven)
 INFERENCE: ordinal 55 = CCoeControl::DrawableWindow() (high confidence, not export-table proven)
@@ -58,7 +56,9 @@ IMPORT dll=EUSER[100039e5].DLL ord=3 r0=00000028 r1=10006010 r2=000000d5 r3=0000
   HLE ARM EUSER3 CBase::newL size=40 -> 10120230
 IMPORT dll=EIKCORE[10004892].DLL ord=222 r0=10008000 r1=10006010 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
   HLE ARM EIKCORE222 CEikApplication this=10008000 caption=TBuf<256> size=556
-PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase::operator new and CEikApplication constructor
+IMPORT dll=EIKCORE[10004892].DLL ord=219 r0=10009000 r1=10008000 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
+  HLE ARM EIKCORE219 CEikDocument this=10009000 app=10008000 process=1000b000
+PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase allocation, CEikApplication and CEikDocument constructors
 END HOST LOG
 
 ## Live trace runner
@@ -71,7 +71,8 @@ Live trace exit code: 95. Exit 95 is an intentional fail-closed stop.
   HLE ARM EUSER1582 CBase::operator new size=556 -> 10110000
   HLE ARM EIKCORE222 CEikApplication this=10110000 caption=TBuf<256> size=556
   HLE ARM EUSER3 CBase::newL size=40 -> 10110230
-HALT UNIMPLEMENTED Shadowkey import: EIKCORE[10004892].DLL ordinal=219 r0=10110230 r1=10110000 r2=00000000 r3=100fd9bc sp=102fefe4 lr=1002839c
+  HLE ARM EIKCORE219 CEikDocument this=10110230 app=10110000 process=00000000
+HALT UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal=858 r0=10110230 r1=10110000 r2=00000000 r3=100fd828 sp=102fefec lr=100283ec
 
 ## ARM callsite context
 

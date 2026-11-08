@@ -174,19 +174,28 @@ The live VFS trace now reaches EIKCORE ordinal 224:
   by the caller. Its correct constructor value is not available in the ARM
   import library.
 
+Step52 WINS probe result:
+
+- The SDK WINS UDEB eikcore.dll is PE32/i386, 110,648 bytes, with 290
+  unnamed exports and a stripped COFF symbol table.
+- Its WINS import library has 293 archive members but no matching
+  CEikAppUi/CEikApplication/CEikDocument constructor symbol strings.
+- This cannot supply the ARM UREL secondary vtable or constructor body.
+
+The Step53 layout analysis identifies the exact unresolved field:
+CEikAppUi's MCoeMessageObserver secondary-base vptr at object+0x18. The
+caller writes the other derived/base vtable entries at +0x00, +0x14 and
++0x1c, but leaves +0x18 to EIKCORE 224.
+
 Next work:
 
-1. Probe the SDK's WINS UDEB EIKCORE DLL for constructor symbols and field
-   initialization (Step52). Treat it as semantic reference only.
-2. Reconcile the CEikAppUi multiple-inheritance layout with the lifted
-   callsite and SDK headers; do not guess the remaining secondary vtable.
-3. If the WINS DLL does not expose sufficient symbols, obtain the matching
-   N-Gage QD ARM EIKCORE.DLL/ROM image to inspect the actual constructor.
-4. Implement EIKCORE224 only when its required base/vtable state is grounded.
-5. Continue the live VFS trace after EIKCORE224, then address PopAndDestroy
+1. Obtain the matching N-Gage QD ARM EIKCORE.DLL (or ROM dump) and recover
+   the constructor's +0x18 vtable and any field initialization.
+2. Obtain the N95 RM-320 EIKCORE.DLL separately to map target Symbian OS 9.2
+   exports; do not substitute it for the N-Gage ARM library.
+3. Implement EIKCORE224 only when its required base/vtable state is grounded.
+4. Continue the live VFS trace after EIKCORE224, then address PopAndDestroy
    and any remaining FBS/GDI calls.
-6. Cross-check the original N-Gage ARM import identities against the N95
-   RM-320 / Symbian OS 9.2 ROM exports; these are still separate tables.
 
 ## Scope limits
 

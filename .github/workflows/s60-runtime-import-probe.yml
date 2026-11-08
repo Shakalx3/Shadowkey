@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Download pinned S60 3.1 FP1 devkit asset
         env:
@@ -85,6 +87,7 @@ jobs:
           python3 tools/step58_s60_target_export_map.py --sdk-root /tmp/s60-devkit --output-dir /tmp/probe
           python3 tools/step61_avkon_target_export_map.py
           python3 tools/step63_target_lifecycle_export_map.py
+          python3 tools/step64_coecontrol_layout_compare.py
           : > /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikapp.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikappui.h' -print >> /tmp/probe/framework-headers.txt

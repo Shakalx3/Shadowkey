@@ -48,3 +48,4 @@ $CC -o "$BUILD/step45_sdk_identity_test" "$BUILD/step45_sdk_identity_test.o"
 bash shadowkey_arm_shift_test.sh
 python3 shadowkey_step29_shift_operand_audit.py
 bash shadowkey_step30_point_import_test.sh
+bash shadowkey_step50_arm_import_test.sh

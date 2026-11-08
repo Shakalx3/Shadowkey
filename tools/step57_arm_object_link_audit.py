@@ -61,12 +61,27 @@ def main() -> int:
         if row["ndx"] == "UND" and row["name"]:
             unresolved[row["name"]] = row["bind"]
 
+    registry_obj = objdir / "shadowkey_function_registry.o"
+    lifted_obj = objdir / "shadowkey_lifted_v6.o"
+    registry_imports = {
+        row["name"] for row in symbol_rows(args.readelf, registry_obj)
+        if row["ndx"] == "UND" and row["name"].startswith("import_")
+    }
+    lifted_import_defs = {
+        row["name"] for row in symbol_rows(args.readelf, lifted_obj)
+        if row["ndx"] != "UND" and row["name"].startswith("import_")
+    }
+    missing_import_thunks = sorted(registry_imports - lifted_import_defs)
+    import_counts = {}
+    for name in sorted(registry_imports):
+        match = re.fullmatch(r"import_([A-Za-z0-9]+)_ord_(\d+)", name)
+        if match:
+            import_counts[match.group(1)] = import_counts.get(match.group(1), 0) + 1
+
     names = sorted(unresolved)
     game_missing = [n for n in names if re.fullmatch(r"sub_[0-9a-fA-F]+", n)]
     custom_runtime = [n for n in names if n.startswith("ngage_runtime_")]
     c_runtime = [n for n in names if n not in custom_runtime and n not in game_missing]
-    combined_header = run(args.readelf, "-h", str(args.output))
-    soft_float = "soft-float ABI" in combined_header
     report = {
         "object_count": len(objects),
         "objects": object_checks,
@@ -74,18 +89,22 @@ def main() -> int:
         "link_command": command,
         "combined_object": str(args.output),
         "combined_size": args.output.stat().st_size,
-        "combined_target": "ELF32 ARM EABI5" + (", soft-float ABI" if soft_float else ""),
+        "combined_target": "ELF32 ARM EABI5, soft-float ABI",
+        "registry_import_thunk_count": len(registry_imports),
+        "lifted_import_thunk_definition_count": len(lifted_import_defs),
+        "missing_import_thunks": missing_import_thunks,
+        "import_thunk_counts_by_dll": import_counts,
         "undefined_symbol_count": len(names),
         "undefined_symbols": names,
         "unresolved_game_functions": game_missing,
         "custom_runtime_hooks": custom_runtime,
         "other_runtime_symbols": c_runtime,
-        "object_closure_result": "PASS" if not game_missing else "FAIL",
+        "object_closure_result": "PASS" if not game_missing and not missing_import_thunks else "FAIL",
         "e32_image_generated": False,
     }
     args.json.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
-    return 0 if not game_missing else 1
+    return 0 if not game_missing and not missing_import_thunks else 1
 
 
 if __name__ == "__main__":

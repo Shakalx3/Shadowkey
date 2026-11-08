@@ -99,7 +99,7 @@ def main() -> int:
 
     out = Path("step60-appui-audit")
     out.mkdir(exist_ok=True)
-    (out / "sub_10021138.txt").write_text(function + "\\n")
+    (out / "sub_10021138.txt").write_text(function + "\n")
     report = {
         "callsite_function": "sub_10021138",
         "callsite_function_bytes": len(function),
@@ -109,7 +109,7 @@ def main() -> int:
         "binary_first_hits": binary_hits,
         "scope_note": "A raw byte hit is a locator only; it is not yet an E32 VA-to-file-offset proof or a decoded vtable.",
     }
-    (out / "appui-object-field-audit.json").write_text(json.dumps(report, indent=2) + "\\n")
+    (out / "appui-object-field-audit.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({
         "callsite_extracted": True,
         "callsite_bytes": len(function),

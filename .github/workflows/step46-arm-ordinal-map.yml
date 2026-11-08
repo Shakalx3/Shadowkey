@@ -5,6 +5,7 @@ on:
     paths:
       - "tools/step46_arm_importlib_ordinal_map.py"
       - ".github/step46-arm-ordinal-map.trigger"
+      - ".github/workflows/step46-arm-ordinal-map.yml"
   workflow_dispatch:
 permissions:
   contents: write

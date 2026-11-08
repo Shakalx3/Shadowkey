@@ -1,0 +1,3 @@
+[submodule "third_party/ngage-sdk"]
+	path = third_party/ngage-sdk
+	url = https://github.com/ngagesdk/sdk.git

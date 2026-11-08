@@ -85,14 +85,13 @@ jobs:
           python3 tools/step58_s60_target_export_map.py --sdk-root /tmp/s60-devkit --output-dir /tmp/probe
           : > /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikapp.h' -print >> /tmp/probe/framework-headers.txt
+          find /tmp/s60-devkit -type f -iname 'eikappui.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'coecntrl.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'gdi.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'e32std.h' -print >> /tmp/probe/framework-headers.txt
           sort -o /tmp/probe/framework-headers.txt /tmp/probe/framework-headers.txt
-          while IFS= read -r header; do
-            echo "===== $header =====" >> /tmp/probe/framework-header-layout.txt
-            grep -n -E -A80 -B10 'CEikAppUi|CCoeAppUi|MCoeMessageObserver' "$header" >> /tmp/probe/framework-header-layout.txt || true
-          done < /tmp/probe/framework-headers.txt
+          grep -R -n -E -A80 -B10 'CEikAppUi|CCoeAppUi|MCoeMessageObserver' /tmp/s60-devkit/Epoc32/include --include='*.h' > /tmp/probe/framework-header-layout.txt || true
+          grep -n -E -A80 -B10 'TInt64|operator!=' /tmp/s60-devkit/Epoc32/include/e32std.h > /tmp/probe/tint64-header.txt || true
           echo 'Target S60 SDK headers and export ordinal table captured.'
 
       - name: Publish target SDK probe report

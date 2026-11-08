@@ -120,6 +120,23 @@ jobs:
           test "$(find sdk-payload -type f | wc -l)" -gt 100
           echo "Payload files: $(find sdk-payload -type f | wc -l)"
           du -sh sdk-extracted sdk-payload
+          du -sh sdk-payload/Epoc32/* 2>/dev/null | sort -h > SDK_TOPLEVEL_SIZES.txt
+          find sdk-payload/Epoc32 -maxdepth 3 -type d | sort > SDK_DIRECTORY_MAP.txt
+          find sdk-payload/Epoc32 -type f \\( -iname '*elf2e32*' -o -iname '*petran*' -o -iname '*makesis*' -o -iname '*abld*' -o -iname '*arm-none-eabi*' -o -iname '*armcc*' -o -iname '*gcce*' -o -iname '*e32image*' \\) -printf '%p\\t%s bytes\\n' | sort > SDK_BUILD_TOOL_CANDIDATES.txt
+          mkdir -p sdk-analysis
+          cp SDK_DOWNLOAD_REPORT.txt SDK_EXTRACTED_FILE_INVENTORY.txt SDK_TOPLEVEL_SIZES.txt SDK_DIRECTORY_MAP.txt SDK_BUILD_TOOL_CANDIDATES.txt sdk-analysis/
+          cp sdk-payload/Series60Doc/gcce_readme.txt sdk-analysis/ 2>/dev/null || true
+          tar -czf s60-sdk-devkit-core.tar.gz -C sdk-payload Epoc32/include Epoc32/tools Epoc32/release/armv5/urel Epoc32/release/armi/urel Series60Doc
+
+      - name: Publish compact SDK analysis bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: s60v3.1-sdk-devkit-core
+          path: |
+            s60-sdk-devkit-core.tar.gz
+            sdk-analysis/**
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Publish verified SDK as a workflow artifact
         uses: actions/upload-artifact@v4

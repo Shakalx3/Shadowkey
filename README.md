@@ -9,7 +9,17 @@ Technical project to run **The Elder Scrolls Travels: Shadowkey** on Nokia N95 8
 - A SIS installer is not required.
 - No successful launch on a physical N95 has been demonstrated.
 
-## Current verified state — step 51 (ARM import handlers validated; EIKCORE constructor next)
+## SDKs and reproducible build environment
+
+Both platform generations are now pinned and available to the project:
+
+- **Original N-Gage / Symbian 6.1 SDK** — linked at `third_party/ngage-sdk` as a submodule pinned to upstream commit `0a94b7655117f325a1729f5600093e4ad12c8d60`. Initialize with `git submodule update --init --recursive`.
+- **Nokia S60 3.1 FP1 / Symbian OS 9.2 SDK** — curated and full extracted packages are preserved as permanent assets in the [private SDK release](https://github.com/Shakalx3/Shadowkey/releases/tag/s60-sdk-3.1-fp1-20261108).
+- **EKA2 ARMv6 toolchain** — native E32 generation validated in [Step52](docs/STEP52_EKA2_ARMV6_E32_TOOLCHAIN_VALIDATED.md).
+
+See [Step54: both SDKs pinned and expected development impact](docs/STEP54_BOTH_SDKS_PINNED_AND_IMPACT.md). The N-Gage SDK components are not covered by the upstream toolchain's MIT license, so we reference the original repository rather than duplicating its proprietary SDK payload. SDK availability does not itself prove a successful N95 launch.
+
+## Current verified state — SDK/toolchain milestones through step 54; native app port remains incomplete
 
 The step35 archive is preserved at the repository root and its extracted 2,191-file working tree is committed under `source_bundle/shadowkey_step35_work/`. The import workflow verified the archive SHA-256, ZIP entry count, and total uncompressed byte count before extraction.
 

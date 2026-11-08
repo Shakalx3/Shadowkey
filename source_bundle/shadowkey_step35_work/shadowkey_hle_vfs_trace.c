@@ -93,6 +93,24 @@ static int guest_utf16_desc_to_ascii(ngage_cpu_t*c,uint32_t desc,char*out,size_t
     }
     out[clean]=0;if(chars)*chars=clean;return 1;
 }
+/* ARM UREL GDI 151: TFontSpec::TFontSpec(const TDesC16&,TInt).
+   SDK layout: TTypeface is 56 bytes (TBufC<24> name + flags), height at
+   +56, TFontStyle's single flags word at +60; total object size is 64. */
+static int gdi151_tfont_spec_construct(ngage_cpu_t*c,uint32_t self,uint32_t desc,uint32_t height){
+    uint32_t len=0,max=0,data=0;
+    if(!descriptor_info(c,desc,&len,&max,&data)||len>max)return 0;
+    if(len>24u)len=24u;
+    uint8_t*dst=guest_ptr(c,self,64u);
+    uint8_t*src=guest_ptr(c,data,len*2u);
+    if(!dst||(len&&!src))return 0;
+    wr32(c,self,0x40000000u|len);
+    if(len)memcpy(dst+4u,src,len*2u);
+    wr32(c,self+52u,0u);
+    wr32(c,self+56u,height);
+    wr32(c,self+60u,0u);
+    return 1;
+}
+
 static void tparse_write_field(ngage_cpu_t*c,uint32_t self,unsigned field,uint8_t pos,uint8_t len,uint8_t present){
     uint32_t a=self+8u+field*4u;uint8_t*p=guest_ptr(c,a,4u);if(!p)return;
     p[0]=pos;p[1]=len;p[2]=present;p[3]=0;
@@ -151,41 +169,42 @@ static int vfs_host_path(ngage_cpu_t*c,uint32_t path_desc,char*out,size_t cap,ch
 
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     fprintf(stderr,"IMPORT dll=%s ord=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x cpsr=%08x\n",dll,ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14],c->cpsr);
-    /* EUSER 1407 intentionally unresolved: WINS UDEB says SetOffset, but
-       ARM game callsites pass a format literal through this thunk. Fail closed. */
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1575u) {
-        fprintf(stderr,"  EUSER1575 FORENSIC r0(out)=%08x r1(obj+310)=%08x r2=%08x r3=%08x sp=%08x lr=%08x\n",
-                c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
-        trace_guest_bytes(c,"EUSER1575 arg0/out-candidate PRE",c->r[0],16u);
-        if(c->r[1]>=0x10000010u && c->r[1]<0x12000000u) {
-            trace_guest_bytes(c,"EUSER1575 arg1 object fields around +310",c->r[1]-16u,0x70u);
-            uint32_t p=ngage_r32(c,c->r[1]-16u);
-            if(p>=0x10000000u && p<0x12000000u)
-                trace_guest_bytes(c,"EUSER1575 object[-0x10] buffer pointer",p,0x80u);
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u){
+        if(!shadowkey_hle_euser1407_tptrc16(c)){
+            fprintf(stderr,"  HALT invalid EUSER1407 TPtrC16 this=%08x source=%08x\n",c->r[0],c->r[1]);
+            exit(95);
         }
-        if(c->r[2]>=0x10000000u && c->r[2]<0x12000000u)
-            trace_guest_bytes(c,"EUSER1575 arg2 pointee",c->r[2],0x30u);
-        if(c->r[3]>=0x10000000u && c->r[3]<0x12000000u)
-            trace_guest_bytes(c,"EUSER1575 arg3 object",c->r[3],0x30u);
-        if(c->r[13]>=0x10000000u && c->r[13]<0x12000000u)
-            trace_guest_bytes(c,"EUSER1575 caller stack args",c->r[13],0x30u);
+        fprintf(stderr,"  HLE ARM EUSER1407 TPtrC16 this=%08x source=%08x length=%u\n",
+                c->r[0],c->r[1],rd32(c,c->r[0])&0x0fffffffu);
+        return;
     }
-    /* CONE 160 intentionally unresolved until ARM UREL ordinal identity and
-       the CCoeControl field layout are verified. Do not apply the WINS helper. */
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==711u){
-        /* Four call sites establish this as a two-coordinate constructor:
-           r0=this, r1=x, r2=y. r3 and [sp] are live leftovers from callers,
-           not arguments. The resulting 8-byte TPoint is passed to the
-           CGraphicsContext::DrawText point overload at vslot +0xA8. */
-        uint32_t out=c->r[0];
-        int32_t x=(int32_t)c->r[1], y=(int32_t)c->r[2];
-        if(out<0x10000000u || (uint64_t)out+8u>0x12000000ull){
-            c->r[0]=(uint32_t)-6;
-            fprintf(stderr,"  HLE EUSER711 rejected TPoint=%08x\n",out);
-            return;
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1575u){
+        uint32_t a=c->r[0],b=c->r[1];
+        if(!shadowkey_hle_euser1575_int64_ne(c)){
+            fprintf(stderr,"  HALT invalid EUSER1575 TInt64::operator!= lhs=%08x rhs=%08x\n",a,b);
+            exit(95);
         }
-        wr32(c,out,(uint32_t)x); wr32(c,out+4u,(uint32_t)y);
-        fprintf(stderr,"  HLE EUSER711 TPoint init point=%08x (%d,%d)\n",out,x,y);
+        fprintf(stderr,"  HLE ARM EUSER1575 TInt64::operator!= lhs=%08x rhs=%08x -> %u\n",a,b,c->r[0]);
+        return;
+    }
+    if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==160u){
+        uint32_t result=c->r[0],self=c->r[1];
+        if(!shadowkey_hle_cone160_rect(c)){
+            fprintf(stderr,"  HALT invalid CONE160 CCoeControl::Rect result=%08x this=%08x\n",result,self);
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM CONE160 CCoeControl::Rect this=%08x -> (%d,%d)-(%d,%d)\n",
+                self,(int32_t)rd32(c,result),(int32_t)rd32(c,result+4u),
+                (int32_t)rd32(c,result+8u),(int32_t)rd32(c,result+12u));
+        return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==711u){
+        uint32_t self=c->r[0],dx=c->r[1],dy=c->r[2];
+        if(!shadowkey_hle_euser711_trect_move(c)){
+            fprintf(stderr,"  HALT invalid EUSER711 TRect::Move this=%08x dx=%d dy=%d\n",self,(int32_t)dx,(int32_t)dy);
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM EUSER711 TRect::Move this=%08x dx=%d dy=%d\n",self,(int32_t)dx,(int32_t)dy);
         return;
     }
     if(!strcmp(dll,"HAL[100039e8].DLL") && ordinal==1u){
@@ -401,6 +420,59 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         uint8_t*sp=guest_ptr(c,src,(n+1u)*2u),*dp=guest_ptr(c,dst,(n+1u)*2u);
         if(!sp||!dp){c->r[0]=0;return;}
         memcpy(dp,sp,(n+1u)*2u);c->r[0]=dst;return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1373u){
+        uint32_t self=c->r[0],sp=c->r[13];
+        if(!shadowkey_hle_euser1373_trect_ctor(c)){
+            fprintf(stderr,"  HALT invalid EUSER1373 TRect ctor this=%08x sp=%08x\n",self,sp);
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM EUSER1373 TRect ctor this=%08x (%d,%d)-(%d,%d)\n",
+                self,(int32_t)rd32(c,self),(int32_t)rd32(c,self+4u),
+                (int32_t)rd32(c,self+8u),(int32_t)rd32(c,self+12u));
+        return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==530u){
+        uint32_t self=c->r[0];
+        if(!shadowkey_hle_euser530_trect_height(c)){
+            fprintf(stderr,"  HALT invalid EUSER530 TRect::Height this=%08x\n",self);
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM EUSER530 TRect::Height this=%08x -> %d\n",self,(int32_t)c->r[0]);
+        return;
+    }
+    if(!strcmp(dll,"GDI[10003b15].DLL") && ordinal==151u){
+        uint32_t self=c->r[0],desc=c->r[1],height=c->r[2];
+        if(!gdi151_tfont_spec_construct(c,self,desc,height)){
+            fprintf(stderr,"  HALT invalid GDI151 TFontSpec this=%08x name=%08x height=%u\n",self,desc,height);
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM GDI151 TFontSpec this=%08x nameDesc=%08x heightTwips=%u size=64\n",self,desc,height);
+        return;
+    }
+    if(!strcmp(dll,"GDI[10003b15].DLL") && ordinal==108u){
+        uint32_t self=c->r[0],weight=c->r[1];
+        if(!shadowkey_hle_gdi108_set_stroke_weight(c)){
+            fprintf(stderr,"  HALT invalid GDI108 TFontStyle::SetStrokeWeight this=%08x value=%u\n",self,weight);
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM GDI108 TFontStyle::SetStrokeWeight this=%08x value=%u flags=%08x\n",self,weight,rd32(c,self));
+        return;
+    }
+    if(!strcmp(dll,"GDI[10003b15].DLL") && ordinal==101u){
+        uint32_t self=c->r[0],posture=c->r[1];
+        if(!shadowkey_hle_gdi101_set_posture(c)){
+            fprintf(stderr,"  HALT invalid GDI101 TFontStyle::SetPosture this=%08x value=%u\n",self,posture);
+            exit(95);
+        }
+        fprintf(stderr,"  HLE ARM GDI101 TFontStyle::SetPosture this=%08x value=%u flags=%08x\n",self,posture,rd32(c,self));
+        return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1582u){
+        uint32_t size=c->r[0],ptr=shadowkey_heap_alloc(c,size);
+        c->r[0]=ptr;
+        fprintf(stderr,"  HLE ARM EUSER1582 CBase::operator new size=%u -> %08x\n",size,ptr);
+        return;
     }
     if(shadowkey_bitgdi_import(c,dll,ordinal)) return;
     if(!strcmp(dll,"FBSCLI[10003a15].DLL") && shadowkey_fbs_import(c->r,c->mem,ordinal)) return;

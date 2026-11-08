@@ -60,3 +60,8 @@ The old trace remains useful as a record of what the diagnostic harness did, but
 - Current EUSER 1407 and CONE 160 HLE code: inspected.
 - Prior EUSER1407 font interpretation: withdrawn/quarantined.
 - ARM UREL and N95 firmware verification: pending.
+
+
+## Step 49 correction — prior quarantine conclusion is withdrawn as an ARM identity claim
+
+The WINS UDEB mapping is valid for that library configuration, but it does not establish the ARM game's import identity. Step39 contains ARM callsites where the `Swiss` format literal is passed in r1 to thunk 0x1009F0F0; Step42 also preserves the old format-specific diagnostic experiment. These facts conflict with applying the WINS-only SetOffset signature to the ARM game. The active SetOffset dispatch has been disabled. The old font trace is not accepted as a complete native implementation either; the correct ARM API remains unresolved until Step46 member-level evidence is inspected. See [Step 49](STEP49_WINS_ARM_ORDINAL_CONFLICT.md).

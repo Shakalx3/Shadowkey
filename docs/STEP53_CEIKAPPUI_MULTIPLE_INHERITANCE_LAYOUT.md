@@ -95,3 +95,10 @@ The N-Gage ARM library is needed to resolve the old constructor and its +0x18 vt
 ## Validation boundary
 
 The host regression suite passes the implemented ARM-identity HLEs through EIKCORE 219. The live trace currently stops at EIKCORE 224. No full UI initialization, N95 launch, or real-device test is claimed.
+
+
+## Step59 follow-up — target S60 layout is not binary-identical
+
+The Step53 N-Gage SDK layout above remains the correct layout expected by the game. The later S60 3.1 FP1 header audit (see [Step59](STEP59_CEIKAPPUI_TARGET_LAYOUT_BREAK.md)) found that target `CCoeAppUi` adds `iCCoeAppUi_Reserved1` at +0x14. This expands the target base from 0x14 to 0x18 bytes and shifts the target CEikAppUi secondary vptrs to +0x18/+0x1c/+0x20 and data members to +0x24 onward. The game still expects +0x14/+0x18/+0x1c and data from +0x20.
+
+Therefore the S60 EIKCORE CEikAppUi C2 constructor at target ordinal 178 is **not** a safe direct replacement for the missing N-Gage EIKCORE 224 constructor. The original Step53 requirement for the old-layout +0x18 MCoeMessageObserver vptr remains unresolved until an old-layout compatibility shim or equivalent vtable/this-adjustment layer is designed and validated. Keep EIKCORE 224 fail-closed.

@@ -40,7 +40,7 @@ The static audit at `tools/step48_import_hle_consistency_test.py` checks the WIN
 - The WINS UDEB import-library mappings are evidence for the original N-Gage SDK, not proof of same-numbered N95 OS 9.2 exports.
 - Original N-Gage SDK ARM UREL import identities are now mapped in Step46/50. The N95 RM-320 / S60 3rd FP1 ROM export table remains a separate, unresolved compatibility gate.
 - Exact RM-320 / S60 3rd FP1 exports and ABI must be verified before implementing N95-side replacements.
-- The Step45 host regression and live VFS trace now pass through the corrected ARM UREL HLE handlers; the next deliberate stop is EIKCORE 222 (`CEikApplication()`), documented in [Step51](docs/STEP51_EIKCORE222_CEIKAPPLICATION_CONSTRUCTOR.md).
+- The Step45 host regression and live VFS trace pass through the corrected ARM UREL HLE handlers, CEikApplication/CEikDocument constructors and CleanupStack PushL/Pop; the current deliberate stop is EIKCORE 224 (`CEikAppUi()`), documented in [Step53](docs/STEP53_CEIKAPPUI_MULTIPLE_INHERITANCE_LAYOUT.md).
 - No N95-compatible EKA2 executable or successful physical-device launch has been demonstrated.
 
 
@@ -62,6 +62,8 @@ This repository is private. The supplied step35 ZIP is present at the repository
 The ARM UREL archive index maps the game's EUSER 1407 to `TPtrC16(const TUint16*)`, EUSER 1575 to `TInt64::operator!=`, EUSER 1582 to `CBase::operator new`, EUSER 1373/530/711 to TRect constructor/Height/Move, CONE 160 to `CCoeControl::Rect`, and GDI 101/108/151 to TFontStyle/TFontSpec functions. This restores the font path as a valid ARM import-level chain while invalidating the earlier WINS-derived HLE identities. See [Step50](docs/STEP50_ARM_UREL_IMPORT_IDENTITY_BREAKTHROUGH.md).
 
 
-### Step 51 — validated ARM import handlers and next stop
+### Step 53 — CEikAppUi secondary vtable blocker
 
-The corrected EUSER, CONE and GDI handlers are now exercised by the Step45 host regression and live VFS trace. The trace proceeds beyond EUSER 1582 and stops at EIKCORE ordinal 222, mapped by ARM UREL to the `CEikApplication()` constructor. Its class and base layout are documented in the SDK headers, but the ARM constructor body/vtable initialization is not present in the SDK repository's ARM binaries. We will not fake that initialization. See [Step51](docs/STEP51_EIKCORE222_CEIKAPPLICATION_CONSTRUCTOR.md).
+The live trace passes the ARM-identified CEikApplication and CEikDocument constructors and CleanupStack PushL/Pop, then stops at EIKCORE 224 (CEikAppUi). The lifted caller writes derived vtables at +0x00, +0x14 and +0x1c but leaves +0x18, the MCoeMessageObserver base vptr, to the EIKCORE constructor. The WINS UDEB DLL is stripped and cannot supply this ARM address. See [Step53](docs/STEP53_CEIKAPPUI_MULTIPLE_INHERITANCE_LAYOUT.md).
+
+The next required artifact is the matching N-Gage QD ARM library `Z:\system\libs\EIKCORE.DLL`. The N95 `Z:\sys\bin\EIKCORE.DLL` is separately needed to cross-check the target firmware exports. Do not substitute one for the other.

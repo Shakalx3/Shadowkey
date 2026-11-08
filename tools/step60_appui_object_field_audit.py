@@ -19,6 +19,8 @@ ADDRESSES = {
     "game_method_pointer_2": 0x100FE050,
     "ceikappui_constructor_callsite": 0x10021138,
     "runtime_object_address": 0x10110258,
+    "control_primary_vtable": 0x100fff80,
+    "control_mobjectprovider_vtable": 0x100fff74,
 }
 
 
@@ -149,6 +151,8 @@ def main() -> int:
                 "primary_initial_overwritten": 0x100ffe88,
                 "temporary_a_overwritten": 0x100fdc90,
                 "temporary_b_overwritten": 0x100fe050,
+                "control_primary": 0x100fff80,
+                "control_mobjectprovider": 0x100fff74,
             }
             for label, va in vtable_addresses.items():
                 row = {"label": label, "va": f"0x{va:08x}", "slots": []}

@@ -124,11 +124,14 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(!shadowkey_hle_eikcore222_ceikapplication(c)){c->r[0]=(uint32_t)-6;return;}
         return;
     }
-    if(!strcmp(dll,"EIKCORE[10004892].DLL") && (ordinal==219u || ordinal==224u)){
-        /* Diagnostic-only constructor placeholders. Their field initialization
-           and vtable/base behavior are not yet reconstructed; live VFS trace
-           remains fail-closed for these imports. */
-        fprintf(stderr,"DIAGNOSTIC NO-OP EIKCORE constructor ordinal %u (not full initialization)\n",ordinal);
+    if(!strcmp(dll,"EIKCORE[10004892].DLL") && ordinal==219u){
+        if(!shadowkey_hle_eikcore219_ceikdocument(c)){c->r[0]=(uint32_t)-6;return;}
+        return;
+    }
+    if(!strcmp(dll,"EIKCORE[10004892].DLL") && ordinal==224u){
+        /* Diagnostic-only placeholder; CEikAppUi multiple-inheritance
+           base/vtable initialization is not yet reconstructed. */
+        fprintf(stderr,"DIAGNOSTIC NO-OP EIKCORE224 CEikAppUi constructor (not full initialization)\n");
         return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==828u || ordinal==858u)){

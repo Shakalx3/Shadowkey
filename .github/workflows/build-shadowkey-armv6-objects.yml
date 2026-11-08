@@ -16,6 +16,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Download and verify native EKA2 SDK
         shell: bash
@@ -42,6 +44,7 @@ jobs:
             -std=c11 -O0 -w -g
             -D__SYMBIAN32__ -D__EPOC32__ -D__EABI__ -D__GCC32__
             -D__GCCV3__ -D__MARM__ -D__MARM_ARMV5__ -D_UNICODE
+            -D__SOFTFP=
             -I"$SRC"
             -isystem sdk/include/platform
             -isystem sdk/include

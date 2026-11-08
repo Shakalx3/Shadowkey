@@ -65,3 +65,7 @@ The old trace remains useful as a record of what the diagnostic harness did, but
 ## Step 49 correction — prior quarantine conclusion is withdrawn as an ARM identity claim
 
 The WINS UDEB mapping is valid for that library configuration, but it does not establish the ARM game's import identity. Step39 contains ARM callsites where the `Swiss` format literal is passed in r1 to thunk 0x1009F0F0; Step42 also preserves the old format-specific diagnostic experiment. These facts conflict with applying the WINS-only SetOffset signature to the ARM game. The active SetOffset dispatch has been disabled. The old font trace is not accepted as a complete native implementation either; the correct ARM API remains unresolved until Step46 member-level evidence is inspected. See [Step 49](STEP49_WINS_ARM_ORDINAL_CONFLICT.md).
+
+## Step 50 superseding result
+
+The ARM UREL archive-index map now resolves the game imports. The old conclusion that EUSER 1407 is SetOffset and GDI 101/108/151 are non-font APIs was based on WINS UDEB names and is invalid for the ARM game. The previous format-only EUSER1407 HLE is still wrong: implement the actual TPtrC16 constructor. The font path is supported by ARM symbols, but the old TFontSpec72 and 12-byte TFontStyle writes must be corrected to the SDK layout (TFontSpec 64 bytes, TFontStyle flags 4 bytes). See [Step50](STEP50_ARM_UREL_IMPORT_IDENTITY_BREAKTHROUGH.md).

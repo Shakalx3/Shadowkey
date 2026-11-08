@@ -64,6 +64,64 @@ jobs:
             \( -iname 'euser.*' -o -iname 'gdi.*' -o -iname 'ws32.*' -o -iname 'cone.*' -o -iname 'eikcore.*' -o -iname 'bitgdi.*' \) \
             -printf '%f %s bytes\\n' | sort >> reports/import-audit.txt
           cat reports/import-audit.txt
+          python3 - <<'PY'
+          import json, re
+          from pathlib import Path
+
+          def symbols(path):
+              result = {}
+              for line in Path(path).read_text(errors="replace").splitlines():
+                  m = re.match(r"\\s*\\d+:\\s+([0-9a-fA-F]+)\\s+\\d+\\s+\\S+\\s+GLOBAL\\s+DEFAULT\\s+(\\S+)\\s+(.+)$", line)
+                  if not m or m.group(2) == "UND":
+                      continue
+                  value = int(m.group(1), 16)
+                  raw = m.group(3).strip()
+                  name = raw.split("@@", 1)[0].split("@", 1)[0]
+                  if not name or value % 4:
+                      continue
+                  result[name] = value // 4 + 1
+              return result
+
+          report = {}
+          for lib in ("euser", "gdi", "ws32", "cone", "eikcore", "bitgdi"):
+              old_path = Path(f"reports/s60-{lib}-symbols.txt")
+              new_path = Path(f"reports/modern-{lib}-symbols.txt")
+              if not old_path.exists() or not new_path.exists():
+                  report[lib] = {"status": "missing DSO"}
+                  continue
+              old, new = symbols(old_path), symbols(new_path)
+              common = sorted(set(old) & set(new))
+              mismatches = [
+                  {"symbol": name, "s60_ordinal": old[name], "modern_ordinal": new[name]}
+                  for name in common if old[name] != new[name]
+              ]
+              old_by_ord = {v: k for k, v in old.items()}
+              new_by_ord = {v: k for k, v in new.items()}
+              conflicts = [
+                  {"ordinal": ordinal, "s60_symbol": old_by_ord[ordinal], "modern_symbol": new_by_ord[ordinal]}
+                  for ordinal in sorted(set(old_by_ord) & set(new_by_ord))
+                  if old_by_ord[ordinal] != new_by_ord[ordinal]
+              ]
+              report[lib] = {
+                  "s60_export_symbols": len(old),
+                  "modern_proxy_symbols": len(new),
+                  "common_symbols": len(common),
+                  "same_ordinal": len(common) - len(mismatches),
+                  "ordinal_mismatches": mismatches[:100],
+                  "same_ordinal_name_conflicts": conflicts[:100],
+              }
+          Path("reports/ordinal-comparison.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\\n",
+              encoding="utf-8",
+          )
+          print("===== ordinal comparison =====")
+          for lib, row in report.items():
+              print(lib, json.dumps({k:v for k,v in row.items() if k not in ("ordinal_mismatches","same_ordinal_name_conflicts")}))
+              if row.get("ordinal_mismatches"):
+                  print("  ordinal mismatches:", row["ordinal_mismatches"][:8])
+              if row.get("same_ordinal_name_conflicts"):
+                  print("  same-ordinal conflicts:", row["same_ordinal_name_conflicts"][:8])
+          PY
 
       - name: Upload ordinal audit evidence
         uses: actions/upload-artifact@v4

@@ -1,0 +1,93 @@
+name: Build recovered Shadowkey code with EKA2 ARMv6 compiler
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/shadowkey-armv6-build.trigger"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  armv6-objects:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and verify native EKA2 SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 "https://github.com/hpnkv/symbian-platform/releases/download/v0.3.0/symbian-sdk-0.3.0-linux-x86_64.tar.gz" -o symbian-sdk.tar.gz
+          echo "9be830884a5fd1b9315ea1c11571810f7a50fa673851fa392bb397c6759fec3d  symbian-sdk.tar.gz" | sha256sum -c -
+          mkdir sdk
+          tar -xzf symbian-sdk.tar.gz -C sdk
+          test -x sdk/bin/clang
+          test -x sdk/bin/ld.lld
+
+      - name: Compile all recovered C translation units for ARMv6 EKA2
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC="source_bundle/shadowkey_step35_work"
+          OUT="build/shadowkey-armv6"
+          mkdir -p "$OUT" reports
+          FLAGS=(
+            --target=armv6-none-eabi
+            -marm -march=armv6 -mfpu=none -mfloat-abi=soft -mabi=aapcs
+            -ffreestanding -fno-builtin -nostdinc
+            -std=c11 -O0 -w -g
+            -D__SYMBIAN32__ -D__EPOC32__ -D__EABI__ -D__GCC32__
+            -D__GCCV3__ -D__MARM__ -D__MARM_ARMV5__ -D_UNICODE
+            -I"$SRC"
+            -isystem sdk/include/platform
+            -isystem sdk/include
+            -isystem sdk/include/config
+            -isystem sdk/include/compiler
+            -isystem sdk/include/openc
+            -isystem sdk/include/libm
+            -isystem sdk/include/libc
+            -isystem sdk/include/pthread
+            -isystem sdk/include/posix4
+          )
+          SOURCES=(
+            shadowkey_lifted_v6.c
+            simkin_lifted_runtime_v4.c
+            shadowkey_function_registry.c
+            shadowkey_import_dispatch.c
+            shadowkey_dispatch_trace.c
+            shadowkey_hle_bootstrap_v2.c
+            shadowkey_cone_gc_hle.c
+            shadowkey_fbs_hle.c
+            shadowkey_bitgdi_hle.c
+            simkin_function_registry.c
+            simkin_export_registry.c
+            simkin_import_dispatch.c
+            arm_fallback.c
+            shadowkey_runtime_core.c
+          )
+          {
+            sdk/bin/clang --version
+            for src in "${SOURCES[@]}"; do
+              echo "=== ARMv6 compile: $src ==="
+              sdk/bin/clang "${FLAGS[@]}" -c "$SRC/$src" -o "$OUT/${src%.c}.o"
+              file "$OUT/${src%.c}.o"
+              stat -c '%n %s bytes' "$OUT/${src%.c}.o"
+            done
+            echo "=== Object summary ==="
+            find "$OUT" -name '*.o' -printf '%f %s bytes\\n' | sort
+            echo "PASS: all recovered C translation units compile with the EKA2 ARMv6 SDK compiler."
+          } 2>&1 | tee reports/shadowkey-armv6-object-build.log
+
+      - name: Upload ARMv6 objects and diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadowkey-armv6-eka2-objects
+          path: |
+            build/shadowkey-armv6/*.o
+            reports/**
+          if-no-files-found: error
+          retention-days: 90

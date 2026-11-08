@@ -40,6 +40,20 @@ for key,symbol in expected_wins.items():
     if actual != symbol:
         raise SystemExit(f"WINS ordinal parser self-check failed for {key}: {actual!r} != {symbol!r}")
 
+# ARM UREL archive-index names are distinct from the WINS UDEB names above.
+expected_arm={
+    ("euser",1407): "__7TPtrC16PCUs",
+    ("euser",1575): "__ne__C6TInt64RC6TInt64",
+    ("euser",1582): "__nw__5CBaseUi",
+    ("euser",1373): "__5TRectiiii",
+    ("euser",530): "Height__C5TRect",
+    ("euser",711): "Move__5TRectii",
+    ("cone",160): "Rect__C11CCoeControl",
+    ("gdi",101): "SetPosture__10TFontStyle12TFontPosture",
+    ("gdi",108): "SetStrokeWeight__10TFontStyle17TFontStrokeWeight",
+    ("gdi",151): "__9TFontSpecRC7TDesC16i",
+}
+
 def run(args):
     return subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False)
 
@@ -112,7 +126,7 @@ def archive_symbol_index(path):
 
 out=[
  "# Step 46 — ARM UREL import-library ordinal cross-check","",
- "This report inspects ARM UREL import-library members and compares their extracted symbol evidence with the WINS UDEB COFF import-library names recorded in Step 44. A dsNNNNN.o member name alone is only an ordinal candidate, not proof of symbol identity.","",
+ "The ARM UREL archive linker index maps decorated symbol names to dsNNNNN.o members; this is the primary ARM import identity evidence. WINS UDEB names are shown separately for comparison only.","",
  f"- Game import slots: {len(entries)}",
  f"- Distinct DLLs: {len(set(e[2] for e in entries))}",
  "- ARM member naming convention is checked against archive tables; a member named dsNNNNN.o is treated as candidate ordinal NNNNN, not assumed to be correct until its contents are inspected.",""
@@ -164,9 +178,15 @@ for dll in sorted(set(e[2] for e in entries)):
         m=re.fullmatch(r"ds0*(\d+)\.o",member,re.I)
         if m:byord[int(m.group(1))]=member
     wanted=sorted(set(e[3] for e in entries if e[2]==dll))
+    for (target_dll,target_ord),expected_symbol in expected_arm.items():
+        if target_dll==dll:
+            target_member=byord.get(target_ord)
+            names=indexed_symbols.get(target_member,[]) if target_member else []
+            if expected_symbol not in names:
+                raise SystemExit(f"ARM UREL archive-index self-check failed for {(dll,target_ord)}: {names!r} does not contain {expected_symbol!r}")
     out += [f"- Archive members: {len(members)}; dsNNNNN ordinal-like members: {len(byord)}",
-            "| Ordinal | WINS UDEB symbol | ARM member | Member size | Extracted strings / symbol evidence |",
-            "|---:|---|---|---:|---|"]
+            "| Ordinal | ARM UREL symbol | WINS UDEB reference | ARM member | Size | Additional evidence |",
+            "|---:|---|---|---:|---:|---|"]
     for ordinal in wanted:
         member=byord.get(ordinal)
         if not member:
@@ -205,11 +225,12 @@ for dll in sorted(set(e[2] for e in entries)):
         # The archive linker index can preserve the decorated C++ name even
         # when the ordinal stub object itself contains only generic sections.
         index_names=indexed_symbols.get(member,[])
-        evidence_items=[f"AR_INDEX:{x}" for x in index_names[:12]] + symbol_lines[:12] + candidates[:6]
+        arm_symbol=next((x for x in index_names if not x.startswith("__imp_") and not x.startswith("_imp_")),"<no archive-index symbol>")
+        evidence_items=symbol_lines[:12] + candidates[:6]
         if not evidence_items:
-            evidence_items=["<no decoded symbols>", "header="+blob.stdout[:24].hex(), *tool_notes]
-        evidence="; ".join(evidence_items).replace("|","/") or "<no symbol strings>"
-        out.append(f"| {ordinal} | {wins.get((dll,ordinal),'<no WINS map>')} | {member} | {len(blob.stdout)} | {evidence} |")
+            evidence_items=["header="+blob.stdout[:24].hex(), *tool_notes]
+        evidence="; ".join(evidence_items).replace("|","/") or "—"
+        out.append(f"| {ordinal} | {arm_symbol} | {wins.get((dll,ordinal),'<no WINS map>')} | {member} | {len(blob.stdout)} | {evidence} |")
     out.append("")
 OUT.write_text("\n".join(out))
 print(f"Wrote {OUT} ({OUT.stat().st_size} bytes)")

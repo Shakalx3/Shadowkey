@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path("source_bundle/shadowkey_step35_work")
 SOURCE = ROOT / "shadowkey_lifted_v6.c"
 REGISTRY = ROOT / "shadowkey_function_registry.c"
+DISPATCH = ROOT / "shadowkey_import_dispatch.c"
 ADDRESSES = {
     "game_primary_vtable": 0x100FFE88,
     "game_menu_observer_vtable": 0x100FFF00,
@@ -58,6 +59,7 @@ def main() -> int:
         raise SystemExit("required lifted source or function registry is missing")
     source = SOURCE.read_text(errors="replace")
     registry = REGISTRY.read_text(errors="replace")
+    dispatch = DISPATCH.read_text(errors="replace")
     function = extract_function(source, "sub_10021138")
     if function is None:
         raise SystemExit("could not extract sub_10021138 from lifted source")
@@ -121,6 +123,9 @@ def main() -> int:
             registry_map = {}
             for m in re.finditer(r"\{\s*(0x[0-9a-fA-F]+)u,\s*(sub_[0-9a-fA-F]+)\s*\}", registry):
                 registry_map[int(m.group(1), 16)] = m.group(2)
+            import_map = {}
+            for m in re.finditer(r"\{\s*(0x[0-9a-fA-F]+)u,\s*(0x[0-9a-fA-F]+)u,\s*\"([^\"]+)\",\s*(\d+)u\s*\}", dispatch):
+                import_map[int(m.group(1), 16)] = f"{m.group(3)} ordinal {m.group(4)}"
             vtable_addresses = {
                 "primary_final": 0x100fc4d8,
                 "menu_observer": 0x100fff00,
@@ -154,6 +159,7 @@ def main() -> int:
                         row["slots"].append({
                             "slot": slot, "value": f"0x{value:08x}",
                             "function": registry_map.get(value),
+                            "import": import_map.get(value),
                             "points_into_code": base <= value < base + code_size,
                         })
                         if value == 0:
@@ -175,6 +181,7 @@ def main() -> int:
         "function_body": function,
         "address_text_hits": text_hits,
         "method_pointer_registry_matches": function_names,
+        "import_dispatch_thunk_count": len(import_map) if e32_header else None,
         "binary_first_hits": binary_hits,
         "e32_image_header": e32_header,
         "vtable_tables": vtable_tables,

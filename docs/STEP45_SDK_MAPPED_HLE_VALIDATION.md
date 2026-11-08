@@ -9,10 +9,6 @@
 ## Host regression suite
 
 BEGIN HOST LOG
-PASS: remaining ordinal-226 sites use returned object's graphics-context slots +0x48 / +0xB8
-INFERENCE: ordinal 226 = CCoeControl::SystemGc() (high confidence, not export-table proven)
-INFERENCE: ordinal 55 = CCoeControl::DrawableWindow() (high confidence, not export-table proven)
-PASS: FBSCLI ordinal 17 maps to thunk 0x1009FD40 and has exactly three guest call sites
 PASS: all three sites pass the engine bitmap-object field at +0x2E4
 PASS: two sites store the return as a pixel-buffer pointer at engine-child +0x480
 PASS: first consumer zero-fills 0x11E00 bytes through that return pointer
@@ -58,7 +54,11 @@ IMPORT dll=EIKCORE[10004892].DLL ord=222 r0=10008000 r1=10006010 r2=000000d5 r3=
   HLE ARM EIKCORE222 CEikApplication this=10008000 caption=TBuf<256> size=556
 IMPORT dll=EIKCORE[10004892].DLL ord=219 r0=10009000 r1=10008000 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
   HLE ARM EIKCORE219 CEikDocument this=10009000 app=10008000 process=1000b000
-PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase allocation, CEikApplication and CEikDocument constructors
+IMPORT dll=EUSER[100039e5].DLL ord=858 r0=10009000 r1=10008000 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
+  HLE ARM EUSER858 CleanupStack::PushL ptr=10009000 depth=1
+IMPORT dll=EUSER[100039e5].DLL ord=828 r0=00000000 r1=10008000 r2=000000d5 r3=00000000 sp=00000000 lr=00000000 cpsr=00000000
+  HLE ARM EUSER828 CleanupStack::Pop depth=0
+PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase allocation, CEikApplication, CEikDocument and CleanupStack constructors/operations
 END HOST LOG
 
 ## Live trace runner
@@ -72,7 +72,10 @@ Live trace exit code: 95. Exit 95 is an intentional fail-closed stop.
   HLE ARM EIKCORE222 CEikApplication this=10110000 caption=TBuf<256> size=556
   HLE ARM EUSER3 CBase::newL size=40 -> 10110230
   HLE ARM EIKCORE219 CEikDocument this=10110230 app=10110000 process=00000000
-HALT UNIMPLEMENTED Shadowkey import: EUSER[100039e5].DLL ordinal=858 r0=10110230 r1=10110000 r2=00000000 r3=100fd828 sp=102fefec lr=100283ec
+  HLE ARM EUSER858 CleanupStack::PushL ptr=10110230 depth=1
+  HLE ARM EUSER828 CleanupStack::Pop depth=0
+  HLE ARM EUSER3 CBase::newL size=108 -> 10110258
+HALT UNIMPLEMENTED Shadowkey import: EIKCORE[10004892].DLL ordinal=224 r0=10110258 r1=10110000 r2=00000000 r3=100fd828 sp=102feff0 lr=10021144
 
 ## ARM callsite context
 

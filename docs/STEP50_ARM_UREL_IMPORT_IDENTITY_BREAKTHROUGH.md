@@ -162,3 +162,31 @@ and matching the game's ARM import slots. They are not proof that the same
 ordinals have the same meanings in the Nokia N95 RM-320 Symbian OS 9.2 ROM.
 The target firmware export table still needs a separate comparison.
 No physical Nokia N95 launch is claimed.
+
+
+## Step 51 follow-up — ARM handlers are implemented and regression-tested
+
+The priority corrections listed above have since been implemented in the live
+VFS dispatcher and the bootstrap path:
+
+- EUSER 1407 now constructs an 8-byte non-owning `TPtrC16` descriptor
+  (descriptor type/length plus source pointer); it does not copy the source
+  string or treat it as a formatting operation.
+- EUSER 1575 compares two 64-bit `TInt64` values and returns the boolean in
+  r0.
+- CONE 160 now returns a 16-byte `TRect` using the `CCoeControl` position
+  and size members at +0x10 and +0x18.
+- EUSER 1373/530/711 implement `TRect` construction, height and movement.
+- GDI 151 constructs the SDK-sized 64-byte `TFontSpec`; GDI 108 and 101
+  update the single `TFontStyle::iFlags` word while preserving unrelated bits.
+
+The Step45 GitHub Actions host regression and live VFS trace completed
+successfully as a workflow. The regression output exercises these handlers
+with synthetic guest-memory fixtures. The live VFS trace advances past the
+previous EUSER 1582 allocation stop and now halts deliberately at
+`EIKCORE[10004892].DLL` ordinal 222, with LR `0x10028438`.
+
+This is a substantial diagnostic milestone, not proof of a real Symbian
+application launch. The host regression verifies our modeled behavior; the
+live trace is still a partial emulation and stops at the next unresolved
+import.

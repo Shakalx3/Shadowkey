@@ -84,3 +84,36 @@ This was a relocatable ELF link, not a final EKA2 executable link. The local LLD
 2. Identify all callsites and compile-time guards for the three `ngage_runtime_*` hooks; design a native diagnostics boundary without fake no-op behavior.
 3. Use the pinned EKA2 SDK toolchain to link the combined game objects with explicit import libraries and fail-closed unresolved-import checks.
 4. Keep EIKCORE 224 blocked until the original N-Gage ARM EIKCORE binary or equivalent verified constructor/vtable evidence is supplied.
+
+## Import-thunk inventory recovered from the object symbols
+
+The same audit was extended to compare the undefined import thunk references in `shadowkey_function_registry.o` against definitions in `shadowkey_lifted_v6.o`:
+
+- 414 unique imported ordinal thunks are referenced by the function registry.
+- All 414 have corresponding definitions in the lifted object.
+- No missing import thunk wrapper was found.
+- The import surface spans 19 DLL identities:
+
+| DLL | Ordinals |
+|---|---:|
+| APPARC | 4 |
+| AVKON | 20 |
+| BITGDI | 5 |
+| CONE | 43 |
+| EFSRV | 19 |
+| EIKCORE | 60 |
+| ESOCK | 7 |
+| ESTLIB | 29 |
+| ETEL | 16 |
+| EUSER | 101 |
+| EZLIB | 1 |
+| FBSCLI | 6 |
+| GAMECOMMS | 27 |
+| GDI | 3 |
+| HAL | 1 |
+| MEDIACLIENTAUDIOSTREAM | 1 |
+| MSGS | 3 |
+| SIMKIN | 64 |
+| WS32 | 4 |
+
+This proves that the import *wrapper functions* are present in the recovered lifted object. It does not prove that the 414 imported OS/game APIs have compatible target-side implementations. Their HLE/native dispatch coverage remains a separate audit.

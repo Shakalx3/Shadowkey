@@ -77,3 +77,16 @@ The ARM UREL archive index maps the game's EUSER 1407 to `TPtrC16(const TUint16*
 The live trace passes the ARM-identified CEikApplication and CEikDocument constructors and CleanupStack PushL/Pop, then stops at EIKCORE 224 (CEikAppUi). The lifted caller writes derived vtables at +0x00, +0x14 and +0x1c but leaves +0x18, the MCoeMessageObserver base vptr, to the EIKCORE constructor. The WINS UDEB DLL is stripped and cannot supply this ARM address. See [Step53](docs/STEP53_CEIKAPPUI_MULTIPLE_INHERITANCE_LAYOUT.md).
 
 The next required artifact is the matching N-Gage QD ARM library `Z:\system\libs\EIKCORE.DLL`. The N95 `Z:\sys\bin\EIKCORE.DLL` is separately needed to cross-check the target firmware exports. Do not substitute one for the other.
+
+
+### Step 55 — current-state and Step48 audit
+
+The repository was re-audited against the ARM UREL identity correction. The independent read-only assertion pass reproduced 14/14 grouped checks. The original Step48 Python checker was inspected but was not run during that audit; see [Step55](docs/STEP55_CURRENT_STATE_AND_STEP48_AUDIT.md).
+
+### Step 56 — executable Step48 CI gate
+
+Added [the Step48 consistency workflow](.github/workflows/step48-consistency.yml), which runs the original Python checker when its evidence/source inputs change or when manually dispatched. The workflow definition is committed; its first Actions result was not available at the time of the Step56 report. See [Step56](docs/STEP56_STEP48_CI_GATE.md).
+
+### Step 57 — ARMv6 object closure
+
+Downloaded and independently inspected the 14-object ARMv6 artifact from run 42485190637. All objects are ELF32 ARM EABI5 with ARMv6 attributes. A relocatable LLD link resolved all recovered game functions and all 414 import-thunk wrappers across 19 DLL identities. Ten runtime symbols remain undefined (seven C/OpenC runtime symbols and three project instrumentation hooks). This is not a final E32 image and does not validate target DLL exports or device launch. See [Step57](docs/STEP57_ARMV6_OBJECT_CLOSURE_AUDIT.md) and the reusable [object audit tool](tools/step57_arm_object_link_audit.py).

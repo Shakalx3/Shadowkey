@@ -107,6 +107,7 @@ def main() -> int:
     e32_image = ROOT / "6R51.APP"
     e32_header = None
     vtable_tables = []
+    thunk_code = []
     if e32_image.is_file():
         image = e32_image.read_bytes()
         if len(image) >= 0x80 and image[0x10:0x14] == b"EPOC":
@@ -165,6 +166,7 @@ def main() -> int:
                         if value == 0:
                             break
                 vtable_tables.append(row)
+            Path("step60-appui-audit").mkdir(exist_ok=True)
             thunk_addresses = [
                 0x100a417c, 0x100a4174, 0x100a4184, 0x100a418c,
                 0x100a419c, 0x100a4194, 0x100a4368, 0x100a4370,

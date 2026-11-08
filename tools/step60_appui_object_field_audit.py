@@ -23,8 +23,11 @@ ADDRESSES = {
 
 
 def extract_function(text: str, name: str) -> str | None:
-    marker = name + "("
+    marker = "void " + name + "("
     start = text.find(marker)
+    if start < 0:
+        marker = name + "("
+        start = text.find(marker)
     if start < 0:
         return None
     brace = text.find("{", start)
@@ -60,8 +63,16 @@ def main() -> int:
     source = SOURCE.read_text(errors="replace")
     registry = REGISTRY.read_text(errors="replace")
     dispatch = DISPATCH.read_text(errors="replace")
-    function = extract_function(source, "sub_10021138")
-    if function is None:
+    function_names_to_extract = [
+        "sub_10021138", "sub_10028374",
+        "sub_10021080", "sub_10020b04", "sub_100211c0", "sub_100209c8",
+    ]
+    function_bodies = {}
+    for name in function_names_to_extract:
+        body = extract_function(source, name)
+        if body is not None:
+            function_bodies[name] = body
+    if "sub_10021138" not in function_bodies:
         raise SystemExit("could not extract sub_10021138 from lifted source")
 
     text_hits = {}
@@ -195,11 +206,12 @@ def main() -> int:
             (Path("step60-appui-audit") / "vtable-tables.txt").write_text("\n".join(lines) + "\n")
     out = Path("step60-appui-audit")
     out.mkdir(exist_ok=True)
-    (out / "sub_10021138.txt").write_text(function + "\n")
+    for name, body in function_bodies.items():
+        (out / f"{name}.txt").write_text(body + "\n")
     report = {
         "callsite_function": "sub_10021138",
-        "callsite_function_bytes": len(function),
-        "function_body": function,
+        "callsite_function_bytes": len(function_bodies["sub_10021138"]),
+        "extracted_functions": {name: {"bytes": len(body), "body": body} for name, body in function_bodies.items()},
         "address_text_hits": text_hits,
         "method_pointer_registry_matches": function_names,
         "import_dispatch_thunk_count": len(import_map) if e32_header else None,
@@ -212,7 +224,8 @@ def main() -> int:
     (out / "appui-object-field-audit.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({
         "callsite_extracted": True,
-        "callsite_bytes": len(function),
+        "callsite_bytes": len(function_bodies["sub_10021138"]),
+        "extracted_functions": {name: len(body) for name, body in function_bodies.items()},
         "binary_hits": len(binary_hits),
         "method_pointer_registry_matches": function_names,
     }, indent=2))

@@ -79,6 +79,8 @@ def main() -> int:
             import_counts[match.group(1)] = import_counts.get(match.group(1), 0) + 1
 
     names = sorted(unresolved)
+    weak_undefined = sorted(n for n, bind in unresolved.items() if bind == "WEAK")
+    strong_undefined = sorted(n for n, bind in unresolved.items() if bind != "WEAK")
     game_missing = [n for n in names if re.fullmatch(r"sub_[0-9a-fA-F]+", n)]
     custom_runtime = [n for n in names if n.startswith("ngage_runtime_")]
     c_runtime = [n for n in names if n not in custom_runtime and n not in game_missing]
@@ -98,6 +100,8 @@ def main() -> int:
         "import_thunk_counts_by_dll": import_counts,
         "undefined_symbol_count": len(names),
         "undefined_symbols": names,
+        "weak_undefined_symbols": weak_undefined,
+        "strong_undefined_symbols": strong_undefined,
         "unresolved_game_functions": game_missing,
         "custom_runtime_hooks": custom_runtime,
         "other_runtime_symbols": c_runtime,

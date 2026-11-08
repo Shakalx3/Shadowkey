@@ -45,7 +45,7 @@ def run(args):
 
 def strings(data):
     # Equivalent printable-ASCII extraction without spawning one process per member.
-    return [x.decode("ascii","replace") for x in re.findall(rb"[\\x20-\\x7e]{4,}",data)]
+    return [x.decode("ascii","replace") for x in re.findall(rb"[\x20-\x7e]{4,}",data)]
 
 def archive_symbol_index(path):
     """Decode GNU/SysV ar linker-member symbol index: symbol -> member header."""

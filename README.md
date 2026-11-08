@@ -90,3 +90,10 @@ Added [the Step48 consistency workflow](.github/workflows/step48-consistency.yml
 ### Step 57 — ARMv6 object closure
 
 Downloaded and independently inspected the 14-object ARMv6 artifact from run 42485190637. All objects are ELF32 ARM EABI5 with ARMv6 attributes. A relocatable LLD link resolved all recovered game functions and all 414 import-thunk wrappers across 19 DLL identities. Ten runtime symbols remain undefined (seven C/OpenC runtime symbols and three project instrumentation hooks). This is not a final E32 image and does not validate target DLL exports or device launch. See [Step57](docs/STEP57_ARMV6_OBJECT_CLOSURE_AUDIT.md) and the reusable [object audit tool](tools/step57_arm_object_link_audit.py).
+
+
+### Step 58 — S60 3.1 FP1 target export remapping
+
+The pinned S60 3.1 FP1 ARMv5 EABI4 DSOs were parsed directly. The original game's disputed N-Gage ordinals do not retain their meanings on the target: EUSER 1407 maps to E32Loader::ProcessLoaded at the unchanged target ordinal, while TPtrC16's target constructor is EUSER 1169; CONE 160 must map to CCoeControl::Rect at 276; GDI 101/108/151 map to TFontStyle/TFontSpec at 12/14/169; EIKCORE 224 is CEikonEnv::DestroyEnvironment, while CEikAppUi C2 is at 178. EUSER 1575 has no matching named TInt64 operator export and needs a local implementation/callsite treatment. See [Step58](docs/STEP58_N95_TARGET_EXPORT_REMAP.md) and [the parser](tools/step58_s60_target_export_map.py).
+
+The seven strong C/OpenC runtime imports left by Step57 are present in the target EUSER/ESTLIB import libraries and DSOs: EUSER memmove/memset (1954/1955), ESTLIB __stderr/exit/fprintf/strcmp/strncmp (18/130/141/247/257). The Step58 remap script has a successful GitHub Actions execution; the target SDK DSO ABI is EABI4, while the recovered ARMv6 objects are EABI5, so final link/loader compatibility remains an explicit open gate. No N95 ROM dump or physical-device launch is claimed.

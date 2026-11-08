@@ -1,0 +1,74 @@
+name: Audit S60 FP1 imports against EKA2 proxies
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/s60-import-audit.trigger"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  import-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and unpack both SDK distributions
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p modern old reports
+          curl -fL --retry 3 "https://github.com/hpnkv/symbian-platform/releases/download/v0.3.0/symbian-sdk-0.3.0-linux-x86_64.tar.gz" -o modern-sdk.tar.gz
+          echo "9be830884a5fd1b9315ea1c11571810f7a50fa673851fa392bb397c6759fec3d  modern-sdk.tar.gz" | sha256sum -c -
+          tar -xzf modern-sdk.tar.gz -C modern
+          gh release download s60-sdk-3.1-fp1-20261108 --repo "$GITHUB_REPOSITORY" --pattern s60-sdk-devkit-core.tar.gz --dir old
+          tar -xzf old/s60-sdk-devkit-core.tar.gz -C old
+          test -d modern/proxies
+          test -d old/Epoc32/release/armv5/lib
+
+      - name: Capture export and ordinal evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          for lib in euser gdi ws32 cone eikcore bitgdi; do
+            echo "===== $lib =====" | tee -a reports/import-audit.txt
+            old_dso="old/Epoc32/release/armv5/lib/$lib.dso"
+            new_dso="modern/proxies/$lib/$lib.dso"
+            if [ -f "$old_dso" ]; then
+              echo "--- S60 3.1 FP1 ARMv5 DSO ---" | tee -a reports/import-audit.txt
+              file "$old_dso" | tee -a reports/import-audit.txt
+              readelf -h "$old_dso" | grep -E 'Class:|Data:|Machine:|Type:|Flags:' | tee -a reports/import-audit.txt
+              readelf -Ws "$old_dso" > "reports/s60-$lib-symbols.txt"
+              sed -n '1,100p' "reports/s60-$lib-symbols.txt" >> reports/import-audit.txt
+            else
+              echo "S60 DSO MISSING: $old_dso" | tee -a reports/import-audit.txt
+            fi
+            if [ -f "$new_dso" ]; then
+              echo "--- hpnkv EKA2 import proxy ---" | tee -a reports/import-audit.txt
+              file "$new_dso" | tee -a reports/import-audit.txt
+              readelf -h "$new_dso" | grep -E 'Class:|Data:|Machine:|Type:|Flags:' | tee -a reports/import-audit.txt
+              readelf -Ws "$new_dso" > "reports/modern-$lib-symbols.txt"
+              sed -n '1,100p' "reports/modern-$lib-symbols.txt" >> reports/import-audit.txt
+            else
+              echo "MODERN PROXY MISSING: $new_dso" | tee -a reports/import-audit.txt
+            fi
+          done
+          echo "===== relevant SDK files =====" >> reports/import-audit.txt
+          find old/Epoc32/release/armv5/lib -maxdepth 1 -type f \
+            \( -iname 'euser.*' -o -iname 'gdi.*' -o -iname 'ws32.*' -o -iname 'cone.*' -o -iname 'eikcore.*' -o -iname 'bitgdi.*' \) \
+            -printf '%f %s bytes\\n' | sort >> reports/import-audit.txt
+          cat reports/import-audit.txt
+
+      - name: Upload ordinal audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: s60-fp1-vs-eka2-import-audit
+          path: reports/**
+          if-no-files-found: error
+          retention-days: 90

@@ -1,1 +1,1 @@
-Compare all common S60 FP1 and EKA2 proxy export names and ordinal slots.
+Compare S60 FP1 and modern EKA2 proxy symbols using corrected ordinal parser.

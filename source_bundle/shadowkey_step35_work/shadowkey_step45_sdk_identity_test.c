@@ -20,7 +20,6 @@ int main(void){
 
     /* ARM UREL EUSER1407: TPtrC16(const TUint16*) is an 8-byte pointer descriptor. */
     const uint32_t desc=0x10001000u,src=0x10002000u;
-    const char16_t_placeholder=0; (void)char16_t_placeholder;
     const uint16_t swiss[]={ 'S','w','i','s','s',0 };
     for(unsigned i=0;i<6;i++)w16(&c,src+i*2u,swiss[i]);
     memset(c.mem+(desc-0x10000000u),0xa5,16u);

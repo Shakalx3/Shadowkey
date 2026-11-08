@@ -48,7 +48,7 @@ def main() -> int:
         attrs = run(args.readelf, "-A", str(obj))
         ok = all(x in header for x in ("ELF32", "ARM", "Version5 EABI")) and "Tag_CPU_arch: v6" in attrs
         if not ok:
-            raise SystemExit(f"unexpected target attributes in {obj}\\n{header}\\n{attrs}")
+            raise SystemExit(f"unexpected target attributes in {obj}\n{header}\n{attrs}")
         object_checks.append({"file": obj.name, "size": obj.stat().st_size, "armv6_eabi5": True})
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -83,7 +83,7 @@ def main() -> int:
         "object_closure_result": "PASS" if not game_missing else "FAIL",
         "e32_image_generated": False,
     }
-    args.json.write_text(json.dumps(report, indent=2) + "\\n")
+    args.json.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
     return 0 if not game_missing else 1
 

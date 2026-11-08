@@ -76,3 +76,7 @@ This correction intentionally invalidates earlier speculative GDI 101/108/151 fo
 ## Step 49 follow-up — WINS names are not yet ARM game identities
 
 This report's symbol names are confirmed for the WINS UDEB import-library records only. They must not be treated as the names of the corresponding imports in the ARM game binary until the ARM UREL member-level comparison is complete. In particular, the Step39 ARM callsites pass the `Swiss` format literal in r1 through EUSER 1407 thunk 0x1009F0F0, which conflicts with the WINS-only `TDblQueBase::SetOffset(TInt)` signature. See [Step 49](STEP49_WINS_ARM_ORDINAL_CONFLICT.md).
+
+## Step 50 superseding result
+
+This report is a WINS UDEB-only mapping and must not be used as the ARM game's import map. Step50 recovered the ARM UREL archive-index identities: EUSER 1407 is TPtrC16 construction, EUSER 1575 is TInt64 inequality, CONE 160 is CCoeControl::Rect, and GDI 101/108/151 are TFontStyle/TFontSpec operations. See [Step50](STEP50_ARM_UREL_IMPORT_IDENTITY_BREAKTHROUGH.md).

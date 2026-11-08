@@ -5,3 +5,5 @@ Retry after excluding readelf warnings from the symbol parser.
 Capture full header declarations for CEikAppUi and TInt64.
 
 Capture full CEikAppUi and CCoeAppUi class definitions.
+
+Re-run Step61 after correcting target CAknAppUi header extraction.

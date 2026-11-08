@@ -71,6 +71,20 @@ int main(void){
     shadowkey_hle_import(&c,"EUSER[100039e5].DLL",1582u);
     if(c.r[0]!=0x10120000u)return 10;
 
-    puts("PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64 and CBase::operator new");
+    /* EIKCORE222: CEikApplication layout is 556 bytes; caption is TBuf<256>.
+       The caller writes the derived vtable immediately after this constructor. */
+    const uint32_t app=0x10008000u;
+    memset(c.mem+(app-0x10000000u),0xa5,556u);
+    c.r[0]=app;
+    shadowkey_hle_import(&c,"EIKCORE[10004892].DLL",222u);
+    if(ngage_r32(&c,app)!=0xa5a5a5a5u||
+       ngage_r32(&c,app+4u)!=0u||ngage_r32(&c,app+8u)!=0u||
+       ngage_r32(&c,app+12u)!=0u||ngage_r32(&c,app+16u)!=0u||
+       ngage_r32(&c,app+20u)!=0u||ngage_r32(&c,app+24u)!=0x30000000u||
+       ngage_r32(&c,app+28u)!=256u||ngage_r32(&c,app+544u)!=0u||
+       ngage_r32(&c,app+548u)!=0u||ngage_r32(&c,app+552u)!=0u)return 11;
+    if(c.mem[(app-0x10000000u)+32u]!=0xa5)return 12;
+
+    puts("PASS: ARM UREL TPtrC16, TFontSpec64, TFontStyle, CCoeControl::Rect, TInt64, CBase::operator new and CEikApplication constructor");
     free(c.mem);return 0;
 }

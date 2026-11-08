@@ -151,15 +151,8 @@ static int vfs_host_path(ngage_cpu_t*c,uint32_t path_desc,char*out,size_t cap,ch
 
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     fprintf(stderr,"IMPORT dll=%s ord=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x cpsr=%08x\n",dll,ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14],c->cpsr);
-    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u) {
-        uint32_t self=c->r[0],offset=c->r[1];
-        if(!shadowkey_hle_euser1407_setoffset(c)){
-            fprintf(stderr,"HALT invalid TDblQueBase::SetOffset this=%08x offset=%08x\n",self,offset);
-            exit(95);
-        }
-        fprintf(stderr,"  HLE SDK EUSER1407 TDblQueBase::SetOffset this=%08x iOffset=%08x\n",self,offset);
-        return;
-    }
+    /* EUSER 1407 intentionally unresolved: WINS UDEB says SetOffset, but
+       ARM game callsites pass a format literal through this thunk. Fail closed. */
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1575u) {
         fprintf(stderr,"  EUSER1575 FORENSIC r0(out)=%08x r1(obj+310)=%08x r2=%08x r3=%08x sp=%08x lr=%08x\n",
                 c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14]);
@@ -177,16 +170,8 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(c->r[13]>=0x10000000u && c->r[13]<0x12000000u)
             trace_guest_bytes(c,"EUSER1575 caller stack args",c->r[13],0x30u);
     }
-    if(!strcmp(dll,"CONE[10003a41].DLL") && ordinal==160u) {
-        uint32_t result=c->r[0],self=c->r[1];
-        if(!shadowkey_hle_cone160_position(c)){
-            fprintf(stderr,"HALT invalid CCoeControl::Position result=%08x this=%08x\n",result,self);
-            exit(95);
-        }
-        fprintf(stderr,"  HLE SDK CONE160 CCoeControl::Position this=%08x -> (%d,%d)\n",
-                self,(int32_t)ngage_r32(c,result),(int32_t)ngage_r32(c,result+4u));
-        return;
-    }
+    /* CONE 160 intentionally unresolved until ARM UREL ordinal identity and
+       the CCoeControl field layout are verified. Do not apply the WINS helper. */
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==711u){
         /* Four call sites establish this as a two-coordinate constructor:
            r0=this, r1=x, r2=y. r3 and [sp] are live leftovers from callers,

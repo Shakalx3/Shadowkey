@@ -135,6 +135,8 @@ jobs:
                       tar.add(os.path.join("sdk-payload", rel), arcname=rel)
           print("Curated devkit bundle:", os.path.getsize("s60-sdk-devkit-core.tar.gz"), "bytes")
           PY
+          tar -czf s60-sdk-full-extracted.tar.gz -C sdk-payload .
+          echo "Full extracted payload archive: $(du -h s60-sdk-full-extracted.tar.gz | cut -f1)"
 
       - name: Preserve SDK in a permanent private-repository release
         env:
@@ -145,9 +147,9 @@ jobs:
           TAG="s60-sdk-3.1-fp1-20261108"
           NOTES="Nokia S60 3rd Edition FP1 SDK for Symbian OS 9.2. Original InstallShield archive and extracted ARMv5 devkit subset. Original ZIP SHA-256: cd3950edb7b86abff6cd84421bcb1cb3e99ae7b1a63d02a2ce1aa2ed6e11ff24"
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$TAG" s60v3.1_SDK.zip s60-sdk-devkit-core.tar.gz --repo "$GITHUB_REPOSITORY" --clobber
+            gh release upload "$TAG" s60v3.1_SDK.zip s60-sdk-devkit-core.tar.gz s60-sdk-full-extracted.tar.gz --repo "$GITHUB_REPOSITORY" --clobber
           else
-            gh release create "$TAG" s60v3.1_SDK.zip s60-sdk-devkit-core.tar.gz --repo "$GITHUB_REPOSITORY" --title "S60 3.1 FP1 SDK (Symbian OS 9.2)" --notes "$NOTES"
+            gh release create "$TAG" s60v3.1_SDK.zip s60-sdk-devkit-core.tar.gz s60-sdk-full-extracted.tar.gz --repo "$GITHUB_REPOSITORY" --title "S60 3.1 FP1 SDK (Symbian OS 9.2)" --notes "$NOTES"
           fi
 
       - name: Publish compact SDK analysis bundle
@@ -156,6 +158,7 @@ jobs:
           name: s60v3.1-sdk-devkit-core
           path: |
             s60-sdk-devkit-core.tar.gz
+            s60-sdk-full-extracted.tar.gz
             sdk-analysis/**
           if-no-files-found: error
           retention-days: 90

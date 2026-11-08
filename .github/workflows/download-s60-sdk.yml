@@ -94,6 +94,23 @@ jobs:
           print(pathlib.Path("SDK_DOWNLOAD_REPORT.txt").read_text())
           PY
 
+      - name: Extract InstallShield SDK payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y unshield
+          mkdir -p sdk-installer sdk-extracted
+          unzip -q s60v3.1_SDK.zip -d sdk-installer
+          CAB="$(find sdk-installer -iname data2.cab -print -quit)"
+          test -n "$CAB"
+          unshield l "$CAB" > sdk-extracted/INSTALLSHIELD_FILE_LIST.txt
+          unshield x -d sdk-extracted "$CAB"
+          find sdk-extracted -type f -printf '%P\t%s bytes\n' | sort > sdk-extracted/EXTRACTED_FILE_INVENTORY.txt
+          test "$(find sdk-extracted -type f | wc -l)" -gt 100
+          echo "Extracted files: $(find sdk-extracted -type f | wc -l)"
+          du -sh sdk-extracted
+
       - name: Publish verified SDK as a workflow artifact
         uses: actions/upload-artifact@v4
         with:
@@ -102,4 +119,4 @@ jobs:
             s60v3.1_SDK.zip
             SDK_DOWNLOAD_REPORT.txt
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 90

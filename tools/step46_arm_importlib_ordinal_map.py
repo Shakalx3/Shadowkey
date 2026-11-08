@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Map ARM UREL import-library archive members to game import ordinals."""
 from pathlib import Path
-import re, subprocess, tempfile
+import os, re, subprocess, tempfile
 
 ROOT=Path("source_bundle/shadowkey_step35_work")
 DISPATCH=ROOT/"shadowkey_import_dispatch.c"
 WINS_REPORT=Path("docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md")
-ARM_ROOT=Path("/tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/armi/urel")
+ARM_ROOT=Path(os.environ.get("SHADOWKEY_ARM_SDK_ROOT", "/tmp/ngagesdk-sdk"))/"6.1/Series60/Epoc32/Release/armi/urel"
 OUT=Path("docs/STEP46_ARM_IMPORTLIB_ORDINAL_MAP.md")
 
 entry_re=re.compile(r'\{\s*(0x[0-9a-fA-F]+)u?,\s*(0x[0-9a-fA-F]+)u?,\s*"([A-Z0-9]+)\[[^]]+\]\.DLL",\s*(\d+)u\s*\}')

@@ -83,6 +83,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/step58_s60_target_export_map.py --sdk-root /tmp/s60-devkit --output-dir /tmp/probe
+          python3 tools/step61_avkon_target_export_map.py
           : > /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikapp.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikappui.h' -print >> /tmp/probe/framework-headers.txt

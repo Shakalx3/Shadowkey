@@ -90,8 +90,15 @@ jobs:
           find /tmp/s60-devkit -type f -iname 'gdi.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'e32std.h' -print >> /tmp/probe/framework-headers.txt
           sort -o /tmp/probe/framework-headers.txt /tmp/probe/framework-headers.txt
-          grep -R -n -E -A80 -B10 'CEikAppUi|CCoeAppUi|MCoeMessageObserver' /tmp/s60-devkit/Epoc32/include --include='*.h' > /tmp/probe/framework-header-layout.txt || true
-          grep -n -E -A80 -B10 'TInt64|operator!=' /tmp/s60-devkit/Epoc32/include/e32std.h > /tmp/probe/tint64-header.txt || true
+          {
+            echo '===== coeaui.h: CCoeAppUi layout ====='
+            grep -n -A260 -B8 'class CCoeAppUi' /tmp/s60-devkit/Epoc32/include/coeaui.h || true
+            echo '===== eikappui.h: CEikAppUi layout ====='
+            grep -n -A180 -B8 'class CEikAppUi' /tmp/s60-devkit/Epoc32/include/eikappui.h || true
+            echo '===== coemain.h: MCoeMessageObserver ====='
+            grep -n -A70 -B8 'class MCoeMessageObserver' /tmp/s60-devkit/Epoc32/include/coemain.h || true
+          } > /tmp/probe/framework-header-layout.txt
+          grep -R -n -E -A20 -B10 'typedef.*TInt64|TInt64.*operator|operator.*TInt64|TInt64' /tmp/s60-devkit/Epoc32/include --include='*.h' > /tmp/probe/tint64-header.txt || true
           echo 'Target S60 SDK headers and export ordinal table captured.'
 
       - name: Publish target SDK probe report

@@ -71,7 +71,7 @@ jobs:
           def symbols(path):
               result = {}
               for line in Path(path).read_text(errors="replace").splitlines():
-                  m = re.match(r"\\s*\\d+:\\s+([0-9a-fA-F]+)\\s+\\d+\\s+\\S+\\s+GLOBAL\\s+DEFAULT\\s+(\\S+)\\s+(.+)$", line)
+                  m = re.match(r"\s*\d+:\s+([0-9a-fA-F]+)\s+\d+\s+\S+\s+GLOBAL\s+DEFAULT\s+(\S+)\s+(.+)$", line)
                   if not m or m.group(2) == "UND":
                       continue
                   value = int(m.group(1), 16)

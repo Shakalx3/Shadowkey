@@ -26,6 +26,20 @@ for line in WINS_REPORT.read_text(errors="replace").splitlines():
     if current_dll and m:
         wins[(current_dll,int(m.group(1)))]=m.group(2)
 
+# Guard the parser against silently reverting to the old incompatible table format.
+expected_wins={
+    ("euser",1407): "?SetOffset@TDblQueBase@@QAEXH@Z",
+    ("euser",1575): "?Val@TLex8@@QAEHAAVTInt64@@ABV2@@Z",
+    ("cone",160): "?Position@CCoeControl@@QBE?AVTPoint@@XZ",
+    ("gdi",101): "?JustificationInPixels@CGraphicsContext@@SAHAAH0@Z",
+    ("gdi",108): "?NewL@CPalette@@SAPAV1@H@Z",
+    ("gdi",151): "?StoreL@CPicture@@UBE?AVTStreamId@@AAVCStreamStore@@@Z",
+}
+for key,symbol in expected_wins.items():
+    actual=wins.get(key)
+    if actual != symbol:
+        raise SystemExit(f"WINS ordinal parser self-check failed for {key}: {actual!r} != {symbol!r}")
+
 def run(args):
     return subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False)
 

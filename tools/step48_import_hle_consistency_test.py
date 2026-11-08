@@ -81,6 +81,7 @@ arm_expected = {
     ("GDI", 101): "SetPosture__10TFontStyle12TFontPosture",
     ("GDI", 108): "SetStrokeWeight__10TFontStyle17TFontStrokeWeight",
     ("GDI", 151): "__9TFontSpecRC7TDesC16i",
+    ("EIKCORE", 222): "__15CEikApplication",
 }
 for key, expected_symbol in arm_expected.items():
     actual = arm_symbol(*key)
@@ -113,10 +114,12 @@ assert "shadowkey_hle_gdi101_set_posture(c)" in vfs_trace
 assert "shadowkey_hle_euser1373_trect_ctor(c)" in bootstrap
 assert "shadowkey_hle_euser530_trect_height(c)" in bootstrap
 assert "shadowkey_hle_euser711_trect_move(c)" in bootstrap
+assert "EIKCORE[10004892].DLL ordinal=222" in Path("docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md").read_text(errors="replace")
+assert "HALT UNIMPLEMENTED Shadowkey import: EIKCORE[10004892].DLL ordinal=222" in Path("docs/STEP45_SDK_MAPPED_HLE_VALIDATION.md").read_text(errors="replace")
 
 print("PASS: game thunk/IAT/ordinal associations for EUSER 1407/1575 and CONE 160")
 print("PASS: six WINS UDEB names reproduced as WINS-only reference evidence")
-print("PASS: ten ARM UREL archive-index identities verified against Step46")
+print("PASS: eleven ARM UREL archive-index identities verified against Step46")
 print("PASS: Swiss literal callsite matches the ARM TPtrC16 constructor signature")
 print("PASS: historical Format-only diagnostic log is retained but not dispatched")
 print("PASS: EUSER1407, CONE160, EUSER1575, TRect and GDI font HLE routes use ARM identities")

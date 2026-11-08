@@ -1,0 +1,26 @@
+name: Shadowkey static audits
+
+on:
+  push:
+    paths:
+      - "tools/**"
+      - "docs/STEP39_EUSER1407_STATIC_CALLSITE_AUDIT.md"
+      - "docs/STEP42_EUSER1575_CONE160_RUNTIME_FORENSICS.md"
+      - "docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md"
+      - "source_bundle/shadowkey_step35_work/**"
+      - ".github/workflows/shadowkey-static-audits.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  import-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check WINS/ARM import conflict and fail-closed dispatch
+        run: python tools/step48_import_hle_consistency_test.py

@@ -17,6 +17,18 @@ jobs:
       - uses: actions/checkout@v4
       - name: Extract constructor callsite and locate object references
         run: python3 tools/step60_appui_object_field_audit.py
+      - name: Disassemble secondary-vtable thunks
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y binutils-arm-none-eabi
+          : > step60-appui-audit/thunk-disassembly.txt
+          for f in step60-appui-audit/thunk_*.bin; do
+            name=$(basename "$f" .bin)
+            address=0x${name#thunk_}
+            echo "===== $address =====" >> step60-appui-audit/thunk-disassembly.txt
+            arm-none-eabi-objdump -D -b binary -marm -EL --adjust-vma="$address" "$f" >> step60-appui-audit/thunk-disassembly.txt
+          done
       - name: Publish callsite and binary reference report
         uses: actions/upload-artifact@v4
         with:

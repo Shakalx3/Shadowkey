@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Extract the CEikAppUi construction callsite and locate related binary pointers."""
 from __future__ import annotations
+import hashlib
 import json
 import re
+import struct
 from pathlib import Path
 
 ROOT = Path("source_bundle/shadowkey_step35_work")
@@ -97,6 +99,67 @@ def main() -> int:
             if pos >= 0:
                 binary_hits.append({"file": str(path), "address_label": label, "first_file_offset": pos})
 
+
+    # Map the vtable VAs back into the legacy E32 code payload and decode
+    # their first function-pointer slots. This is separate from raw-byte hits.
+    e32_image = ROOT / "6R51.APP"
+    e32_header = None
+    vtable_tables = []
+    if e32_image.is_file():
+        image = e32_image.read_bytes()
+        if len(image) >= 0x80 and image[0x10:0x14] == b"EPOC":
+            u32 = lambda off: struct.unpack_from("<I", image, off)[0]
+            base, code_size, data_size = u32(0x4c), u32(0x30), u32(0x34)
+            text_size, code_off = u32(0x60), u32(0x64)
+            e32_header = {
+                "file": str(e32_image), "file_size": len(image),
+                "sha256": hashlib.sha256(image).hexdigest(),
+                "base": f"0x{base:08x}", "code_size": code_size,
+                "data_size": data_size, "text_size": text_size,
+                "code_file_offset": code_off,
+            }
+            registry_map = {}
+            for m in re.finditer(r"\\{\\s*(0x[0-9a-fA-F]+)u,\\s*(sub_[0-9a-fA-F]+)\\s*\\}", registry):
+                registry_map[int(m.group(1), 16)] = m.group(2)
+            vtable_addresses = {
+                "primary_final": 0x100fc4d8,
+                "menu_observer": 0x100fff00,
+                "message_observer": 0x100fff64,
+                "object_provider": 0x100fff54,
+                "derived_table_a": 0x100fff34,
+                "derived_table_b": 0x100fff40,
+                "primary_initial_overwritten": 0x100ffe88,
+                "temporary_a_overwritten": 0x100fdc90,
+                "temporary_b_overwritten": 0x100fe050,
+            }
+            for label, va in vtable_addresses.items():
+                row = {"label": label, "va": f"0x{va:08x}", "slots": []}
+                rel = va - base
+                if rel < 0 or rel + 4 > code_size:
+                    row["status"] = "outside_code_segment"
+                else:
+                    off = code_off + rel
+                    row["file_offset"] = off
+                    row["status"] = "mapped_into_code_payload"
+                    for slot in range(20):
+                        pos = off + slot * 4
+                        if pos + 4 > len(image):
+                            break
+                        value = struct.unpack_from("<I", image, pos)[0]
+                        row["slots"].append({
+                            "slot": slot, "value": f"0x{value:08x}",
+                            "function": registry_map.get(value),
+                            "points_into_code": base <= value < base + code_size,
+                        })
+                        if value == 0:
+                            break
+                vtable_tables.append(row)
+            lines = [f"E32 image: {e32_image}", f"base={base:#010x} code_size={code_size:#x} text_size={text_size:#x} code_off={code_off:#x}"]
+            for row in vtable_tables:
+                lines.append(f"[{row['label']}] VA={row['va']} status={row['status']} file_off={row.get('file_offset')}")
+                for slot in row["slots"]:
+                    lines.append(f"  [{slot['slot']:02d}] {slot['value']} function={slot['function']} in_code={slot['points_into_code']}")
+            (Path("step60-appui-audit") / "vtable-tables.txt").write_text("\\n".join(lines) + "\\n")
     out = Path("step60-appui-audit")
     out.mkdir(exist_ok=True)
     (out / "sub_10021138.txt").write_text(function + "\n")
@@ -107,6 +170,8 @@ def main() -> int:
         "address_text_hits": text_hits,
         "method_pointer_registry_matches": function_names,
         "binary_first_hits": binary_hits,
+        "e32_image_header": e32_header,
+        "vtable_tables": vtable_tables,
         "scope_note": "A raw byte hit is a locator only; it is not yet an E32 VA-to-file-offset proof or a decoded vtable.",
     }
     (out / "appui-object-field-audit.json").write_text(json.dumps(report, indent=2) + "\n")

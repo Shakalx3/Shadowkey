@@ -31,6 +31,6 @@ int main(void){
     if(ngage_r32(&c,result)!=17u||ngage_r32(&c,result+4u)!=(uint32_t)-23)return 8;
     if(c.r[0]!=result)return 9;
 
-    puts("PASS: original SDK EUSER1407 writes TDblQueBase::iOffset; CONE160 returns CCoeControl::iPosition");
+    puts("PASS: isolated WINS-UDEB reference helpers only; not active ARM game dispatch");
     free(c.mem);return 0;
 }

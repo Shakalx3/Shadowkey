@@ -1,1 +1,1 @@
-Compare S60 3.1 FP1 ARMv5 system DSO exports with modern EKA2 import proxies.
+Compare all common S60 FP1 and EKA2 proxy export names and ordinal slots.

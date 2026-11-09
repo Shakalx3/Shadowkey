@@ -119,6 +119,12 @@ def main():
         "target_api_symbol": "_ZN14CAknAppUiBase9KeySoundsEv",
         "status": "CLASS_HIERARCHY_ALIAS",
     }
+    overrides[("efsrv", 15)] = {
+        "target_api_dll": "euser",
+        "target_api_ordinal": 120,
+        "target_api_symbol": "_ZN11RHandleBase5CloseEv",
+        "status": "CROSS_CLASS_BASE_METHOD_CANDIDATE",
+    }
 
     game_arm = load_arm_map(args.game_arm_map)
     simkin_arm = load_arm_map(args.simkin_arm_map)
@@ -139,6 +145,7 @@ def main():
             arm_symbol = arm.get("arm_urel_symbol", "")
             old_sig = epoc_demangled.get(arm_symbol, "")
             target_ord = ""
+            target_dll = ""
             target_symbol = ""
             target_sig = ""
             target_address = ""
@@ -149,6 +156,7 @@ def main():
             if dll in private_dlls:
                 status = "BUNDLED_PRIVATE_DLL_UNCHANGED"
                 target_ord = old_ord
+                target_dll = dll
             elif arm.get("status") != "OK" or not arm_symbol or arm_symbol == "<no archive-index symbol>":
                 status = "NO_ARM_UREL_SYMBOL"
             else:
@@ -158,7 +166,8 @@ def main():
                     if api_ord is None:
                         status = "NO_TARGET_SIGNATURE"
                     else:
-                        row = target_by_dll_ord.get(dll, {}).get(int(api_ord))
+                        api_dll = override.get("target_api_dll", dll)
+                        row = target_by_dll_ord.get(api_dll, {}).get(int(api_ord))
                         if row is None:
                             status = "OVERRIDE_TARGET_ORDINAL_MISSING"
                         elif row["sdk_symbol"] != override.get("target_api_symbol"):
@@ -166,6 +175,7 @@ def main():
                             candidates = [row]
                         else:
                             candidates = [row]
+                            target_dll = api_dll
                             status = override.get("status", "MANUAL_OVERRIDE")
                 else:
                     sig = normalize(old_sig)
@@ -205,6 +215,7 @@ def main():
             if candidates and status in ("MANUAL_OVERRIDE", "PROVISIONAL_PLACEHOLDER_FORWARDER", "CLASS_HIERARCHY_ALIAS", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
                 chosen = candidates[0]
                 target_ord = int(chosen["ordinal"])
+                target_dll = chosen["module"].lower().removesuffix(".dll")
                 target_symbol = chosen["sdk_symbol"]
                 target_sig = target_demangled[target_symbol]
                 target_address = chosen["rom_address"]
@@ -223,6 +234,7 @@ def main():
                 "old_ordinal": old_ord,
                 "arm_urel_symbol": arm_symbol,
                 "original_demangled": old_sig,
+                "target_dll": target_dll,
                 "target_ordinal": target_ord,
                 "target_sdk_symbol": target_symbol,
                 "target_demangled": target_sig,
@@ -234,7 +246,7 @@ def main():
 
         out_path = args.rom_dir / output_name
         fields = ["thunk", "slot", "dll", "old_ordinal", "arm_urel_symbol",
-                  "original_demangled", "target_ordinal", "target_sdk_symbol",
+                  "original_demangled", "target_dll", "target_ordinal", "target_sdk_symbol",
                   "target_demangled", "target_rom_address", "target_location", "status"]
         with out_path.open("w", newline="", encoding="utf-8") as f:
             w = csv.DictWriter(f, fieldnames=fields, delimiter="\t")

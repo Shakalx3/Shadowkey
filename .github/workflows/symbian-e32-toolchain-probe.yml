@@ -18,7 +18,7 @@ jobs:
       - name: Run GCCE and elf2e32 probe
         shell: pwsh
         env:
-          GITHUB_TOKEN: \${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: ./tools/step71_windows_e32_toolchain_probe.ps1
       - name: Upload probe report
         if: always()

@@ -141,3 +141,7 @@ The pinned S60 3.1 FP1 devkit contains the Windows PE32 elf2e32 converter and AR
 ### Step 71 — first native E32Image generation probe
 
 A Windows GitHub Actions probe using the GCCE4Symbian 14.2 arm-none-symbianelf compiler and the pinned SDK elf2e32.exe successfully compiled a minimal E32Main, linked an ARM ELF and produced an E32 output (compile/link/converter exit codes all 0). A follow-up run now retains a compact artifact and dumps the E32 header so ABI flags and image metadata can be verified. This is a toolchain probe, not a Shadowkey build or device launch.
+
+### Step 69 — CWindowGc slot contract test
+
+Added a C mapping contract for the five proven old-to-target CWindowGc byte offsets and a host test that fails closed on unknown offsets. The static-audit workflow compiles and runs it with strict warnings; run 42573335365 passed. This is mapping metadata only, not a graphics adapter implementation. See [Step69](docs/STEP69_LEGACY_CWINDOWGC_SLOT_CONTRACT.md).

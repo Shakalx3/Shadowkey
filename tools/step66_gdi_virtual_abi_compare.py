@@ -70,12 +70,34 @@ def main():
         new_block = extract_class((NEW / filename).read_text(errors="replace"), name)
         old_v, new_v = virtual_declarations(old_block), virtual_declarations(new_block)
         diff = list(difflib.unified_diff(old_v, new_v, fromfile=f"old/{name}", tofile=f"target/{name}", lineterm=""))
+        legacy_slot_map = {}
+        if name == "CWindowGc":
+            expected = [
+                (18, 18, "SetPenSize"),
+                (46, 48, "CopyRect"),
+                (48, 50, "BitBlt"),
+                (54, 56, "DrawTextVertical"),
+                (55, 57, "DrawTextVertical"),
+            ]
+            target_at_old_slot = {46: "Clear", 48: "CopyRect", 54: "BitBltMasked", 55: "MapColors"}
+            for old_slot, target_slot, method in expected:
+                assert method in old_v[old_slot], (old_slot, old_v[old_slot], method)
+                assert method in new_v[target_slot], (target_slot, new_v[target_slot], method)
+                legacy_slot_map[str(old_slot)] = {
+                    "old_method": old_v[old_slot],
+                    "target_slot": target_slot,
+                    "target_method": new_v[target_slot],
+                    "target_method_at_unchanged_slot": new_v[old_slot],
+                }
+            for slot, method in target_at_old_slot.items():
+                assert method in new_v[slot], (slot, new_v[slot], method)
+                legacy_slot_map[str(slot)]["target_method_at_unchanged_slot"] = new_v[slot]
         report["classes"][name] = {
             "header": filename, "old_virtual_count": len(old_v),
             "target_virtual_count": len(new_v), "old_virtuals": old_v,
             "target_virtuals": new_v, "diff": diff,
             "exact_sequence_match": old_v == new_v,
-            "critical_vtable_slots": ({str(n): {"old": old_v[n], "target": new_v[n]} for n in (18, 46) if n < len(old_v) and n < len(new_v)} if name == "CWindowGc" else {}),
+            "critical_vtable_slots": legacy_slot_map,
         }
         md += [
             f"## {name}", "",

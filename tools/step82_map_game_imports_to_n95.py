@@ -148,11 +148,21 @@ def main():
                     if len(candidates) == 1:
                         status = "EXACT_SIGNATURE_MATCH"
                     elif len(candidates) > 1:
-                        status = "AMBIGUOUS_SIGNATURE"
+                        addresses = {x["rom_address"] for x in candidates}
+                        if len(addresses) == 1:
+                            candidates = [min(candidates, key=lambda x: int(x["ordinal"]))]
+                            status = "ALIAS_SAME_ADDRESS"
+                        else:
+                            d1 = [x for x in candidates if "D1Ev" in x["sdk_symbol"]]
+                            if d1 and all(any(tag in x["sdk_symbol"] for tag in ("D0Ev", "D1Ev", "D2Ev")) for x in candidates):
+                                candidates = d1[:1]
+                                status = "ABI_D1_DESTRUCTOR_CANDIDATE"
+                            else:
+                                status = "AMBIGUOUS_SIGNATURE"
                     else:
                         status = "NO_TARGET_SIGNATURE"
 
-            if candidates and status in ("MANUAL_OVERRIDE", "EXACT_SIGNATURE_MATCH"):
+            if candidates and status in ("MANUAL_OVERRIDE", "EXACT_SIGNATURE_MATCH", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
                 chosen = candidates[0]
                 target_ord = int(chosen["ordinal"])
                 target_symbol = chosen["sdk_symbol"]

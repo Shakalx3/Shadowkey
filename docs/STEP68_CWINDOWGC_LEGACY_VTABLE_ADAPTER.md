@@ -34,13 +34,13 @@ The corrected slot mapping below accounts for that prefix.
 
 Step66 parsed the N-Gage and target S60 3.1 FP1 declarations. The target inserts two `DrawBitmapMasked` overloads before DrawText, shifting the later declarations by two slots.
 
-| Game byte offset | Old declaration slot | N-Gage method | Target declaration slot | Target method at unchanged old slot |
-|---:|---:|---|---:|---|
-| `+0x48` | 16 | SetPenColor(const TRgb&) | 16 | SetPenColor(const TRgb&) |
-| `+0xB8` | 44 | Clear() | 46 | DrawText(const TDesC&, const TPoint&) |
-| `+0xC0` | 46 | CopyRect(const TPoint&, const TRect&) | 48 | Clear() |
-| `+0xD8` | 52 | BitBltMasked(TPoint, CWsBitmap, TRect, CWsBitmap, TBool) | 54 | BitBlt(TPoint, CWsBitmap) |
-| `+0xDC` | 53 | MapColors(TRect, TRgb*, ...) | 55 | BitBlt(TPoint, CWsBitmap, TRect) |
+| Game byte offset | Old declaration slot / method | Target declaration slot / method | Target byte offset for forwarding | Target method at unchanged old slot |
+|---:|---|---|---:|---|
+| `+0x48` | 16 — SetPenColor(const TRgb&) | 16 — SetPenColor(const TRgb&) | `+0x48` | SetPenColor(const TRgb&) |
+| `+0xB8` | 44 — Clear() | 46 — Clear() | `+0xC0` | DrawText(const TDesC&, const TPoint&) |
+| `+0xC0` | 46 — CopyRect(const TPoint&, const TRect&) | 48 — CopyRect(const TPoint&, const TRect&) | `+0xC8` | Clear() |
+| `+0xD8` | 52 — BitBltMasked(TPoint, CWsBitmap, TRect, CWsBitmap, TBool) | 54 — BitBltMasked(TPoint, CWsBitmap, TRect, CWsBitmap, TBool) | `+0xE0` | BitBlt(TPoint, CWsBitmap) |
+| `+0xDC` | 53 — MapColors(TRect, TRgb*, ...) | 55 — MapColors(TRect, TRgb*, ...) | `+0xE4` | BitBlt(TPoint, CWsBitmap, TRect) |
 
 The +0x48 call remains compatible. The other four calls would dispatch to unrelated target methods if the old game received the raw target CWindowGc pointer.
 

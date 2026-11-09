@@ -8,10 +8,12 @@ PAGE = 0x1000
 ROM = Path("firmware-parsed/carved/rom-sos-core.img")
 REPORT = Path("firmware-input/STEP79_ROM_PAGE_RECONSTRUCTION.txt")
 TARGETS = {
-    "apparc.dll", "avkon.dll", "bitgdi.dll", "cone.dll", "efsrv.dll",
-    "eikcore.dll", "esock.dll", "estlib.dll", "etel.dll", "euser.dll",
-    "ezlib.dll", "fbscli.dll", "gamecomms.dll", "gdi.dll", "hal.dll",
-    "mediaclientaudiostream.dll", "msgs.dll", "simkin.dll", "ws32.dll",
+    "apparc.dll", "avkon.dll", "bafl.dll", "bitgdi.dll", "bluetooth.dll",
+    "btdevice.dll", "bteng.dll", "btmanclient.dll", "cone.dll", "efsrv.dll",
+    "eikcoctl.dll", "eikcore.dll", "esock.dll", "estlib.dll", "etel.dll",
+    "euser.dll", "ezlib.dll", "fbscli.dll", "gamecomms.dll", "gdi.dll",
+    "hal.dll", "mediaclientaudiostream.dll", "msgs.dll", "sdpagent.dll",
+    "sdpdatabase.dll", "simkin.dll", "ws32.dll",
 }
 
 def u32(b, o):

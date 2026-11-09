@@ -3,6 +3,7 @@
 from pathlib import Path
 import hashlib
 import struct
+import zlib
 
 rom = Path("firmware-parsed/carved/rom-sos-core.img")
 out = Path("firmware-input/STEP78_CORE_ROM_E32_SCAN.txt")
@@ -24,7 +25,7 @@ if not rom.exists():
     report.append("SOS+CORE image missing")
 else:
     data = rom.read_bytes()
-    report.append(f"path={rom} size={len(data)} sha256={hashlib.sha256(data).hexdigest()}")
+    report.append(f"path={rom} size={len(rom_data)} sha256={hashlib.sha256(data).hexdigest()}")
     report.append("first256=" + data[:256].hex())
     report.append("payload+0x400=" + data[1024:1536].hex())
     base_word = struct.pack("<I", 0x80000000)
@@ -62,6 +63,55 @@ else:
         # all map to valid, aligned ROM addresses.
         h_off, rom_size, root_ptr, kern_data, primary, secondary, uncompressed = candidates[0]
         rom_base = 0x80000000
+        rom_data = data[h_off:]
+        rom_header_off = 0
+        header = rom_data[:0x200]
+        compression_type = u32(header, 0xEC)
+        compressed_size = u32(header, 0xF0)
+        uncompressed_size = u32(header, 0xF4)
+        pageable_start = u32(header, 0x148)
+        pageable_size = u32(header, 0x14C)
+        page_index = u32(header, 0x150)
+        compressed_unpaged_start = u32(header, 0x160)
+        unpaged_compressed_size = u32(header, 0x164)
+        unpaged_uncompressed_size = u32(header, 0x168)
+        report.append(
+            f"compression_type=0x{compression_type:08X} compressed_size=0x{compressed_size:X} "
+            f"uncompressed_size=0x{uncompressed_size:X} pageable_start=0x{pageable_start:X} "
+            f"pageable_size=0x{pageable_size:X} page_index=0x{page_index:X} "
+            f"compressed_unpaged_start=0x{compressed_unpaged_start:X} "
+            f"unpaged_compressed_size=0x{unpaged_compressed_size:X} "
+            f"unpaged_uncompressed_size=0x{unpaged_uncompressed_size:X}"
+        )
+        if compression_type == 0x101F7AFC and unpaged_compressed_size:
+            comp_off = compressed_unpaged_start
+            comp_end = comp_off + unpaged_compressed_size
+            if comp_off >= 0x200 and comp_end <= len(rom_data):
+                compressed = rom_data[comp_off:comp_end]
+                try:
+                    decoded = zlib.decompress(compressed, -15)
+                    report.append(
+                        f"raw_deflate=OK decoded={len(decoded)} expected={unpaged_uncompressed_size} "
+                        f"compressed={len(compressed)}"
+                    )
+                    prefix = rom_data[:comp_off]
+                    tail = rom_data[comp_end:]
+                    rom_data = prefix + decoded + tail
+                    Path("firmware-input/rom-unpaged-reconstructed.bin").write_bytes(rom_data)
+                    report.append(
+                        f"reconstructed_rom_bytes={len(rom_data)} "
+                        f"matches_iUncompressedSize={len(rom_data) == uncompressed_size} "
+                        f"tail_bytes={len(tail)}"
+                    )
+                except Exception as exc:
+                    report.append(f"raw_deflate=FAILED {type(exc).__name__}: {exc}")
+            else:
+                report.append(
+                    f"compressed_span_out_of_range start=0x{comp_off:X} end=0x{comp_end:X} "
+                    f"rom_bytes={len(rom_data)}"
+                )
+        else:
+            report.append("raw_deflate=not-attempted (compression UID or size does not match)")
         directory_rows = []
         target_rows = []
         export_rows = []
@@ -73,28 +123,28 @@ else:
                 errors.append(f"depth-limit {prefix} @0x{dir_va:08X}")
                 return
             try:
-                d_off = va_to_off(dir_va, rom_base, h_off)
+                d_off = va_to_off(dir_va, rom_base, rom_header_off)
                 if d_off in seen_dirs:
                     return
                 seen_dirs.add(d_off)
                 if d_off < 0 or d_off + 4 > len(data):
                     raise ValueError(f"directory address outside image: 0x{dir_va:08X}")
-                d_size = u32(data, d_off)
+                d_size = u32(rom_data, d_off)
                 start = d_off + 4
                 end = start + d_size
                 if d_size > len(data) or end > len(data):
                     raise ValueError(f"directory size outside image: {prefix} size=0x{d_size:X}")
                 pos = start
                 while pos + 10 <= end:
-                    file_size = u32(data, pos)
-                    address = u32(data, pos + 4)
-                    attr = data[pos + 8]
-                    name_len = data[pos + 9]
+                    file_size = u32(rom_data, pos)
+                    address = u32(rom_data, pos + 4)
+                    attr = rom_data[pos + 8]
+                    name_len = rom_data[pos + 9]
                     stride = (0xA + name_len * 2 + 3) & ~3
                     if name_len == 0 or name_len > 255 or pos + stride > end:
                         errors.append(f"bad entry {prefix} at file+0x{pos:X} len={name_len}")
                         break
-                    raw_name = data[pos + 10:pos + 10 + name_len * 2]
+                    raw_name = rom_data[pos + 10:pos + 10 + name_len * 2]
                     name = raw_name.decode("utf-16le", errors="replace")
                     full = f"{prefix}/{name}" if prefix else name
                     pos_next = pos + stride
@@ -106,8 +156,8 @@ else:
                         if name.lower() in targets:
                             if attr & 0x80:
                                 try:
-                                    image_off = va_to_off(address, rom_base, h_off)
-                                    hdr = data[image_off:image_off + 0x78]
+                                    image_off = va_to_off(address, rom_base, rom_header_off)
+                                    hdr = rom_data[image_off:image_off + 0x78]
                                     if len(hdr) < 0x78:
                                         raise ValueError("truncated TRomImageHeader")
                                     uid1, uid2, uid3 = struct.unpack_from("<III", hdr, 0)
@@ -122,12 +172,12 @@ else:
                                         raise ValueError(
                                             f"code VA mismatch 0x{code_address:08X} vs 0x{address+0x78:08X}"
                                         )
-                                    export_off = va_to_off(export_address, rom_base, h_off) if export_count else 0
+                                    export_off = va_to_off(export_address, rom_base, rom_header_off) if export_count else 0
                                     if export_count > 10000 or (export_count and export_off + export_count * 4 > len(data)):
                                         raise ValueError("export table outside ROM")
                                     module_file = Path("firmware-input/rom-modules") / name
                                     module_file.parent.mkdir(parents=True, exist_ok=True)
-                                    module_file.write_bytes(data[image_off:image_off + 0x78 + code_size])
+                                    module_file.write_bytes(rom_data[image_off:image_off + 0x78 + code_size])
                                     target_rows.append(
                                         f"{full}\tXIP\t{attr:02X}\t{file_size}\t{address:08X}\t"
                                         f"{uid1:08X}\t{uid2:08X}\t{uid3:08X}\t{entry_point:08X}\t"
@@ -135,7 +185,7 @@ else:
                                         f"{export_count}\t{export_address:08X}\t{module_file}"
                                     )
                                     for ordinal in range(1, export_count + 1):
-                                        export_va = u32(data, export_off + (ordinal - 1) * 4)
+                                        export_va = u32(rom_data, export_off + (ordinal - 1) * 4)
                                         export_rows.append(
                                             f"{name}\t{ordinal}\t{export_va:08X}\t{export_va & 1}"
                                         )
@@ -149,13 +199,13 @@ else:
 
         try:
             list_off = va_to_off(root_ptr, rom_base, h_off)
-            root_count = u32(data, list_off)
+            root_count = u32(rom_data, list_off)
             report.append(f"root_directory_count={root_count}")
             if root_count < 1 or root_count > 32 or list_off + 4 + root_count * 8 > len(data):
                 raise ValueError("invalid TRomRootDirectoryList")
             for i in range(root_count):
-                hardware = u32(data, list_off + 4 + i * 8)
-                root_dir = u32(data, list_off + 8 + i * 8)
+                hardware = u32(rom_data, list_off + 4 + i * 8)
+                root_dir = u32(rom_data, list_off + 8 + i * 8)
                 report.append(f"root[{i}] hardware=0x{hardware:08X} dir=0x{root_dir:08X}")
                 walk_dir(root_dir, "")
         except Exception as exc:
@@ -184,7 +234,7 @@ else:
     else:
         hits = []
         for pos in range(0, len(data) - 4, 4):
-            if data[pos:pos + 4] == base_word:
+            if rom_data[pos:pos + 4] == base_word:
                 hits.append(pos)
         report.append("rom_base_word_offsets=" + ",".join(f"0x{x:X}" for x in hits[:100]))
         report.append("No structurally valid TRomHeader found; EPOC scan follows.")

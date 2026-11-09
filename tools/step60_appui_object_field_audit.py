@@ -79,6 +79,14 @@ def main() -> int:
     if "sub_10021138" not in function_bodies:
         raise SystemExit("could not extract sub_10021138 from lifted source")
 
+    systemgc_callsites = []
+    for match in re.finditer(r"ngage_call\\(c,\\s*0x1009f540u\\)", source):
+        prefix = source[:match.start()]
+        functions = list(re.finditer(r"void\\s+(sub_[0-9a-fA-F]+)\\(ngage_cpu_t \\*c\\)", prefix))
+        function_name = functions[-1].group(1) if functions else None
+        line_number = source.count("\\n", 0, match.start()) + 1
+        systemgc_callsites.append({"function": function_name, "line": line_number, "call": match.group(0)})
+
     text_hits = {}
     for label, value in ADDRESSES.items():
         token = f"0x{value:08x}"
@@ -225,6 +233,7 @@ def main() -> int:
         "callsite_function_bytes": len(function_bodies["sub_10021138"]),
         "extracted_functions": {name: {"bytes": len(body), "body": body} for name, body in function_bodies.items()},
         "address_text_hits": text_hits,
+        "systemgc_callsites": systemgc_callsites,
         "method_pointer_registry_matches": function_names,
         "import_dispatch_thunk_count": len(import_map) if e32_header else None,
         "binary_first_hits": binary_hits,
@@ -239,6 +248,7 @@ def main() -> int:
         "callsite_bytes": len(function_bodies["sub_10021138"]),
         "extracted_functions": {name: len(body) for name, body in function_bodies.items()},
         "binary_hits": len(binary_hits),
+        "systemgc_callsites": systemgc_callsites,
         "method_pointer_registry_matches": function_names,
     }, indent=2))
     return 0

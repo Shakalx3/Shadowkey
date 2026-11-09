@@ -140,7 +140,7 @@ The pinned S60 3.1 FP1 devkit contains the Windows PE32 elf2e32 converter and AR
 
 ### Step 71 — first native E32Image generation probe
 
-A Windows GitHub Actions probe using GCCE4Symbian 14.2 and the pinned SDK elf2e32.exe successfully compiled, linked and converted a minimal E32Main. However, the ELF uses ARM EABI5 (flags 0x05000200), while the target SDK import libraries are EABI4. The E32 container was created, but target loader compatibility is not established. A -meabi=4 compiler probe is underway. See [Step71](docs/STEP71_GCCE_E32IMAGE_PROBE_AND_EABI_MISMATCH.md).
+A Windows GitHub Actions probe using GCCE4Symbian 14.2 and the pinned SDK elf2e32.exe successfully generated a minimal E32 container, but its ELF uses EABI5 (0x05000200). The target cone.dso/euser.dso are confirmed EABI4 (0x04000004), and GCCE 14.2 rejects -meabi=4. Step72 now tests the original CodeSourcery GCCE 2005Q1C toolchain, historically used by S60 3rd Edition SDKs. See [Step71](docs/STEP71_GCCE_E32IMAGE_PROBE_AND_EABI_MISMATCH.md).
 
 ### Step 69 — CWindowGc slot contract test
 

@@ -11,9 +11,9 @@ import hashlib
 import re
 import sys
 
-BLOCK_RE = re.compile(r"Block #(\\d+):\\s*(.*?)(?=\\nBlock #|\\Z)", re.S)
-DESC_RE = re.compile(r"Description: (SOS\\+ROFS|SOS\\+ROFX)")
-DATA_RE = re.compile(r"Data block: (\\d+):(\\d+)")
+BLOCK_RE = re.compile(r"Block #(\d+):\s*(.*?)(?=\nBlock #|\\Z)", re.S)
+DESC_RE = re.compile(r"Description: (SOS\+ROFS|SOS\+ROFX)")
+DATA_RE = re.compile(r"Data block: (\d+):(\d+)")
 
 
 def parse_blocks(log_path):
@@ -99,7 +99,7 @@ def main():
             f"magic0={wrapper[:4].hex()} magic400={wrapper[1024:1028]!r} "
             f"sha256={digest.hexdigest()} output={out}"
         )
-    text = "\\n".join(report) + "\\n"
+    text = "\n".join(report) + "\n"
     Path("firmware-input/STEP77_CARVED_PARTITIONS.txt").write_text(text, encoding="utf-8")
     print(text, end="")
 

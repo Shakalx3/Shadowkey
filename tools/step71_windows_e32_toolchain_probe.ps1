@@ -62,6 +62,7 @@ $args = @(
   "--elfinput=$probeElf",
   "--output=$e32Path",
   "--targettype=EXE",
+  "--uid1=0x1000007A",
   "--uid2=0x20000001",
   "--uid3=0x20000001",
   "--sid=0x20000001",

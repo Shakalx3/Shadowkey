@@ -73,6 +73,8 @@ def inspect_module(path, module):
         and count * 4 <= len(data) - exp_off
     )
     fields["export_table_file_offset"] = exp_off
+    fields["export_dir_ends_at_import_offset"] = exp_off + count * 4 == fields["import_offset"]
+    fields["code_segment_ends_at_import_offset"] = code_off + code_size == fields["import_offset"]
     fields["import_table_size"] = max(0, fields["code_reloc_offset"] - fields["import_offset"])
     fields["export_table_valid"] = bool(valid)
     fields["file_size"] = len(data)
@@ -112,10 +114,12 @@ def main():
     ]
     metadata = {}
     export_rows = []
+    export_values = {}
     for name, path in modules:
         fields, exports = inspect_module(path, name)
         metadata[name] = {"path": str(path), **fields}
         export_rows.extend(exports)
+        export_values[name] = {int(x["ordinal"]): int(x["raw_offset"], 16) for x in exports}
 
     game_imports = read_dispatch(args.game_dispatch)
     used = {}
@@ -136,6 +140,8 @@ def main():
                 "ordinal": imp["ordinal"],
                 "export_count": count,
                 "ordinal_in_range": imp["ordinal"] <= count,
+                "export_nonzero": bool(export_values.get(name, {}).get(imp["ordinal"], 0)),
+                "export_raw_offset": f"0x{export_values.get(name, {}).get(imp['ordinal'], 0):08X}",
                 "thunk": imp["thunk"],
                 "slot": imp["slot"],
             })
@@ -145,15 +151,15 @@ def main():
         w.writeheader()
         w.writerows(export_rows)
     with (args.out_dir / "STEP84_PRIVATE_IMPORT_VALIDATION.tsv").open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["module","ordinal","export_count","ordinal_in_range","thunk","slot"], delimiter="\t")
+        w = csv.DictWriter(f, fieldnames=["module","ordinal","export_count","ordinal_in_range","export_nonzero","export_raw_offset","thunk","slot"], delimiter="\t")
         w.writeheader()
         w.writerows(validation)
     (args.out_dir / "STEP84_PRIVATE_E32_MODULES.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({
         "modules": {k: {x: v for x, v in val.items() if x not in ("sha256",)} for k, val in metadata.items()},
         "game_private_imports": {k: len(v) for k, v in used.items()},
-        "import_ordinals_valid": sum(1 for x in validation if x["ordinal_in_range"]),
-        "import_ordinals_invalid": [x for x in validation if not x["ordinal_in_range"]],
+        "import_ordinals_valid": sum(1 for x in validation if x["ordinal_in_range"] and x["export_nonzero"]),
+        "import_ordinals_invalid": [x for x in validation if not (x["ordinal_in_range"] and x["export_nonzero"])],
     }, indent=2))
 
 if __name__ == "__main__":

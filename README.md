@@ -133,3 +133,11 @@ Mapped the original control imports to target CONE exports: SystemGc 226→287, 
 ### Step 68 — graphics-context adapter requirement
 
 Found four direct game SystemGc call sites and traced their subsequent CWindowGc virtual calls. Correcting for the 8-byte vtable prefix, the legacy-to-target slot map is 16→16, 44→46, 46→48, 52→54 and 53→55. The compatibility design requires two cooperating native adapters: an S60 CCoeControl proxy for stack registration and a legacy-order CWindowGc shim for the original game's virtual dispatch. See [Step68](docs/STEP68_CWINDOWGC_LEGACY_VTABLE_ADAPTER.md).
+
+### Step 70 — E32 toolchain inventory
+
+The pinned S60 3.1 FP1 devkit contains the Windows PE32 elf2e32 converter and ARMv5 import libraries, but no ARM compiler or Linux-native converter. Generic Clang output was EABI5 and did not provide the Symbian target triple. See [Step70](docs/STEP70_TARGET_SDK_TOOLCHAIN_INVENTORY.md).
+
+### Step 71 — first native E32Image generation probe
+
+A Windows GitHub Actions probe using the GCCE4Symbian 14.2 arm-none-symbianelf compiler and the pinned SDK elf2e32.exe successfully compiled a minimal E32Main, linked an ARM ELF and produced an E32 output (compile/link/converter exit codes all 0). A follow-up run now retains a compact artifact and dumps the E32 header so ABI flags and image metadata can be verified. This is a toolchain probe, not a Shadowkey build or device launch.

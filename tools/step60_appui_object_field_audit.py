@@ -151,8 +151,13 @@ def main() -> int:
                 "primary_initial_overwritten": 0x100ffe88,
                 "temporary_a_overwritten": 0x100fdc90,
                 "temporary_b_overwritten": 0x100fe050,
-                "control_primary": 0x100fff80,
-                "control_mobjectprovider": 0x100fff74,
+                # Actual vptrs written by the game control constructor sub_10021648.
+                "game_control_primary": 0x100fcf68,
+                "game_control_mobjectprovider": 0x100fbb74,
+                "game_control_embedded_subobject": 0x100fbaf4,
+                # Earlier guessed locations retained as negative controls.
+                "control_primary_candidate_old": 0x100fff80,
+                "control_mobjectprovider_candidate_old": 0x100fff74,
             }
             for label, va in vtable_addresses.items():
                 row = {"label": label, "va": f"0x{va:08x}", "slots": []}

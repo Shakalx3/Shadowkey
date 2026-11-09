@@ -179,10 +179,10 @@ jobs:
           mkdir -p firmware-input/s60-sdk
           python3 tools/step58_s60_target_export_map.py --sdk-root /tmp/s60-devkit --output-dir firmware-input/s60-sdk
           python3 -m py_compile tools/step80_compare_n95_rom_sdk_exports.py
-          echo "Cross-check all 17 present game DLLs and flag missing N-Gage-only dependencies"
+          echo "Cross-check all 25 game and GAMECOMMS system DLL dependencies"
           python3 tools/step80_compare_n95_rom_sdk_exports.py --sdk-root /tmp/s60-devkit --rom-dir firmware-input
           cat firmware-input/STEP80_ROM_SDK_EXPORT_CHECK.json
-      - name: Map all game and SIMKIN imports to N95 ROM exports
+      - name: Map game, SIMKIN and GAMECOMMS imports to N95 ROM exports
         run: |
           set -euo pipefail
           python3 -m py_compile tools/step82_map_game_imports_to_n95.py
@@ -193,7 +193,7 @@ jobs:
             --game-dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
             --simkin-dispatch source_bundle/shadowkey_step35_work/simkin_import_dispatch.c \
             --game-arm-map firmware-input/STEP46_GAME_ARM_IMPORTS.tsv \
-            --simkin-arm-map firmware-input/STEP46_SIMKIN_ARM_IMPORTS.tsv
+            --simkin-arm-map firmware-input/STEP46_SIMKIN_ARM_IMPORTS.tsv \
             --gamecomms-dispatch firmware-input/GAMECOMMS_DLL_import_dispatch.c \
             --gamecomms-arm-map firmware-input/STEP46_GAMECOMMS_ARM_IMPORTS.tsv
           cat firmware-input/STEP82_IMPORT_MAPPING_SUMMARY.json

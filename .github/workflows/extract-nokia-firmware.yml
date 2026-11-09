@@ -74,7 +74,7 @@ jobs:
             echo "### $candidate" >> firmware-input/rofs-candidate-unpack.log
             LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o "$outdir" "$candidate" >> firmware-input/rofs-candidate-unpack.log 2>&1
             echo "exit=$?" >> firmware-input/rofs-candidate-unpack.log
-          done < <(find firmware-input/rofs-candidates -type f -name '*.img' | sort)
+          done < <(find firmware-input/rofs-candidates -type f \\( -name '*.img' -o -name '*.rofs' \\) | sort)
           set -e
           python3 - <<'PY'
           from pathlib import Path

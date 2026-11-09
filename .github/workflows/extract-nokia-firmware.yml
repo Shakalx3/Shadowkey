@@ -116,7 +116,7 @@ jobs:
           wanted = {"euser.dll","cone.dll","gdi.dll","fbscli.dll","eikcore.dll","avkon.dll","ws32.dll","eikcoctl.dll","appcore.dll","efsrv.dll"}
           candidates = Path("firmware-input/e32-candidates")
           candidates.mkdir(parents=True, exist_ok=True)
-          with open("firmware-input/EXTRACTED_INVENTORY.tsv","w") as out, open("firmware-input/TARGET_MODULES.tsv","w") as targets, open("firmware-input/E32_CANDIDATES.tsv","w") as e32:
+          with open("firmware-input/EXTRACTED_INVENTORY.tsv","w",encoding="utf-8",errors="backslashreplace") as out, open("firmware-input/TARGET_MODULES.tsv","w",encoding="utf-8",errors="backslashreplace") as targets, open("firmware-input/E32_CANDIDATES.tsv","w",encoding="utf-8",errors="backslashreplace") as e32:
               out.write("tree\tbytes\tsha256\tpath\n")
               targets.write("tree\tbytes\tsha256\tpath\n")
               e32.write("tree\tuid1\tuid2\tuid3\te32_version\texport_count\tbytes\tsha256\tpath\tcopied_as\n")
@@ -149,7 +149,8 @@ jobs:
           PY
       - name: Remove large intermediate images and source packages
         run: |
-          rm -rf firmware-input/rofs-candidates\n          rm -f firmware-input/ngage/*.rar firmware-input/n95/*.exe firmware-input/*.fpsx firmware-input/*.rofs
+          rm -rf firmware-input/rofs-candidates
+          rm -f firmware-input/ngage/*.rar firmware-input/n95/*.exe firmware-input/*.fpsx firmware-input/*.rofs
           rm -rf firmware-parsed firmware-extracted
       - name: Upload compact diagnostic artifact
         uses: actions/upload-artifact@v4

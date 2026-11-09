@@ -108,6 +108,18 @@ def main():
     for case in remap_json.get("game_import_remaps", []):
         overrides[(case["dll"].lower(), int(case["original_ngage_ordinal"]))] = case
 
+    # Evidence-based compatibility aliases not present in the legacy seven-case report.
+    overrides[("estlib", 8)] = {
+        "target_api_ordinal": 58,
+        "target_api_symbol": "_placeholder_memset",
+        "status": "PROVISIONAL_PLACEHOLDER_FORWARDER",
+    }
+    overrides[("avkon", 874)] = {
+        "target_api_ordinal": 3002,
+        "target_api_symbol": "_ZN14CAknAppUiBase9KeySoundsEv",
+        "status": "CLASS_HIERARCHY_ALIAS",
+    }
+
     game_arm = load_arm_map(args.game_arm_map)
     simkin_arm = load_arm_map(args.simkin_arm_map)
     gamecomms_arm = load_arm_map(args.gamecomms_arm_map)
@@ -154,7 +166,7 @@ def main():
                             candidates = [row]
                         else:
                             candidates = [row]
-                            status = "MANUAL_OVERRIDE"
+                            status = override.get("status", "MANUAL_OVERRIDE")
                 else:
                     sig = normalize(old_sig)
                     candidates = target_by_dll_sig.get(dll, {}).get(sig, [])
@@ -190,7 +202,7 @@ def main():
                     else:
                         status = "NO_TARGET_SIGNATURE"
 
-            if candidates and status in ("MANUAL_OVERRIDE", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
+            if candidates and status in ("MANUAL_OVERRIDE", "PROVISIONAL_PLACEHOLDER_FORWARDER", "CLASS_HIERARCHY_ALIAS", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
                 chosen = candidates[0]
                 target_ord = int(chosen["ordinal"])
                 target_symbol = chosen["sdk_symbol"]

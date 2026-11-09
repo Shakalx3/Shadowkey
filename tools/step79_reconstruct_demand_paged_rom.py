@@ -286,7 +286,7 @@ def main():
     failures = []
     for i, (data_start, data_size, compression, attrs) in enumerate(entries):
         if i < first_pageable_index:
-            page_rows.append(f"{i}\\t{i*PAGE:08X}\\t{data_start:08X}\\t{data_size}\\t{compression}\\t{attrs:02X}\\t-\\tunpaged-skip")
+            page_rows.append(f"{i}\t{i*PAGE:08X}\t{data_start:08X}\t{data_size}\t{compression}\t{attrs:02X}\t-\tunpaged-skip")
             continue
         dst_off = i * PAGE
         raw_off = data_base + data_start

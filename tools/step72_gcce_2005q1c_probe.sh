@@ -71,7 +71,7 @@ LIB="$SDK_ROOT/Epoc32/release/armv5/lib"
 
 echo "Build portable elf2e32 replacement"
 git clone --depth 1 https://github.com/fedor4ever/elf2e32.git "$ELF2E32_SRC"
-cmake -S "$ELF2E32_SRC" -B "$ELF2E32_BUILD" -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_CXX_FLAGS=-D__LINUX__
+cmake -S "$ELF2E32_SRC" -B "$ELF2E32_BUILD" -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_CXX_FLAGS=-D__LINUX__\ -include\ string.h
 cmake --build "$ELF2E32_BUILD" --parallel 2
 ELF2E32="$ELF2E32_BUILD/elf2e32"
 if [ ! -x "$ELF2E32" ]; then ELF2E32=$(find "$ELF2E32_BUILD" -type f -name elf2e32 -perm -111 | head -n1); fi

@@ -26,7 +26,7 @@ def demangle(tool, names):
         raise RuntimeError(f"{tool} returned {len(lines)} lines for {len(unique)} symbols")
     return dict(zip(unique, lines))
 
-def normalize(s):
+def normalize(s, type_aliases=False):
     s = s.strip()
     s = re.sub(r"\b(class|struct|enum)\s+", "", s)
     s = s.replace("(void)", "()")
@@ -36,8 +36,26 @@ def normalize(s):
     s = re.sub(r"\s*\*\s*", "*", s)
     s = re.sub(r"\(\s*", "(", s)
     s = re.sub(r"\s*\)", ")", s)
-    s = re.sub(r"\s+", " ", s)
-    return s.strip()
+    s = re.sub(r"\s+", " ", s).strip()
+    if type_aliases:
+        aliases = [
+            (r"\bTInt64\b", "long long"),
+            (r"\bTUint64\b", "unsigned long long"),
+            (r"\bTInt32\b", "int"),
+            (r"\bTUint32\b", "unsigned int"),
+            (r"\bTInt16\b", "short"),
+            (r"\bTUint16\b", "unsigned short"),
+            (r"\bTInt8\b", "signed char"),
+            (r"\bTUint8\b", "unsigned char"),
+            (r"\bTInt\b", "int"),
+            (r"\bTUint\b", "unsigned int"),
+            (r"\bTBool\b", "bool"),
+            (r"\bTReal32\b", "float"),
+            (r"\bTReal\b", "double"),
+        ]
+        for pattern, replacement in aliases:
+            s = re.sub(pattern, replacement, s)
+    return s
 
 def read_dispatch(path):
     text = path.read_text(encoding="utf-8", errors="replace")
@@ -71,14 +89,18 @@ def main():
     target_names = [r["sdk_symbol"] for r in target_rows if r["sdk_symbol"]]
     target_demangled = demangle(args.target_demangler, target_names)
     target_by_dll_sig = {}
+    target_by_dll_alias_sig = {}
     target_by_dll_ord = {}
     for row in target_rows:
         dll = row["module"].lower().removesuffix(".dll")
         symbol = row["sdk_symbol"]
         if not symbol:
             continue
-        sig = normalize(target_demangled[symbol])
+        demangled = target_demangled[symbol]
+        sig = normalize(demangled)
+        alias_sig = normalize(demangled, type_aliases=True)
         target_by_dll_sig.setdefault(dll, {}).setdefault(sig, []).append(row)
+        target_by_dll_alias_sig.setdefault(dll, {}).setdefault(alias_sig, []).append(row)
         target_by_dll_ord.setdefault(dll, {})[int(row["ordinal"])] = row
 
     remap_json = json.loads((args.rom_dir / "s60-sdk/target-export-remap.json").read_text(encoding="utf-8"))
@@ -136,6 +158,12 @@ def main():
                 else:
                     sig = normalize(old_sig)
                     candidates = target_by_dll_sig.get(dll, {}).get(sig, [])
+                    match_kind = "EXACT_SIGNATURE_MATCH"
+                    if not candidates:
+                        alias_sig = normalize(old_sig, type_aliases=True)
+                        candidates = target_by_dll_alias_sig.get(dll, {}).get(alias_sig, [])
+                        if candidates:
+                            match_kind = "TYPE_ALIAS_SIGNATURE_MATCH"
                     if not candidates and "::" not in sig and "(" in sig:
                         # C runtime aliases may be exported by name without C++ parameter decoration.
                         base_name = sig.split("(", 1)[0]
@@ -146,7 +174,7 @@ def main():
                             and normalize(target_demangled[row["sdk_symbol"]]).split("(", 1)[0] == base_name
                         ]
                     if len(candidates) == 1:
-                        status = "EXACT_SIGNATURE_MATCH"
+                        status = match_kind
                     elif len(candidates) > 1:
                         addresses = {x["rom_address"] for x in candidates}
                         if len(addresses) == 1:

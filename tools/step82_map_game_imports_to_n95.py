@@ -61,8 +61,10 @@ def main():
     ap.add_argument("--rom-dir", type=Path, required=True)
     ap.add_argument("--game-dispatch", type=Path, required=True)
     ap.add_argument("--simkin-dispatch", type=Path, required=True)
+    ap.add_argument("--gamecomms-dispatch", type=Path, required=True)
     ap.add_argument("--game-arm-map", type=Path, required=True)
     ap.add_argument("--simkin-arm-map", type=Path, required=True)
+    ap.add_argument("--gamecomms-arm-map", type=Path, required=True)
     args = ap.parse_args()
 
     target_rows = read_tsv(args.rom_dir / "ROM_SDK_EXPORT_MAP.tsv")
@@ -86,7 +88,8 @@ def main():
 
     game_arm = load_arm_map(args.game_arm_map)
     simkin_arm = load_arm_map(args.simkin_arm_map)
-    all_arm_symbols = [r["arm_urel_symbol"] for r in list(game_arm.values()) + list(simkin_arm.values())
+    gamecomms_arm = load_arm_map(args.gamecomms_arm_map)
+    all_arm_symbols = [r["arm_urel_symbol"] for r in list(game_arm.values()) + list(simkin_arm.values()) + list(gamecomms_arm.values())
                        if r["arm_urel_symbol"] and r["arm_urel_symbol"] != "<no archive-index symbol>"]
     epoc_demangled = demangle(args.epoc_demangler, all_arm_symbols)
 
@@ -195,13 +198,19 @@ def main():
     simkin_path, simkin_counts, simkin_total = map_dispatch(
         args.simkin_dispatch, simkin_arm, "STEP82_SIMKIN_IMPORT_TARGET_MAP.tsv"
     )
+    gamecomms_path, gamecomms_counts, gamecomms_total = map_dispatch(
+        args.gamecomms_dispatch, gamecomms_arm, "STEP82_GAMECOMMS_IMPORT_TARGET_MAP.tsv"
+    )
     summary = {
         "game_import_slots": game_total,
         "game_status_counts": game_counts,
         "simkin_import_slots": simkin_total,
         "simkin_status_counts": simkin_counts,
+        "gamecomms_import_slots": gamecomms_total,
+        "gamecomms_status_counts": gamecomms_counts,
         "game_map": str(game_path),
         "simkin_map": str(simkin_path),
+        "gamecomms_map": str(gamecomms_path),
         "rom_target_modules": len({r["module"] for r in target_rows}),
         "rom_symbolized_exports": sum(1 for r in target_rows if r["sdk_symbol"]),
     }

@@ -122,8 +122,8 @@ else:
                                         raise ValueError(
                                             f"code VA mismatch 0x{code_address:08X} vs 0x{address+0x78:08X}"
                                         )
-                                    export_off = va_to_off(export_address, rom_base, h_off)
-                                    if export_count > 10000 or export_off + export_count * 4 > len(data):
+                                    export_off = va_to_off(export_address, rom_base, h_off) if export_count else 0
+                                    if export_count > 10000 or (export_count and export_off + export_count * 4 > len(data)):
                                         raise ValueError("export table outside ROM")
                                     module_file = Path("firmware-input/rom-modules") / name
                                     module_file.parent.mkdir(parents=True, exist_ok=True)

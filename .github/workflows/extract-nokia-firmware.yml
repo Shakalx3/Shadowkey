@@ -143,6 +143,7 @@ jobs:
           mkdir -p firmware-input/s60-sdk
           python3 tools/step58_s60_target_export_map.py --sdk-root /tmp/s60-devkit --output-dir firmware-input/s60-sdk
           python3 -m py_compile tools/step80_compare_n95_rom_sdk_exports.py
+          echo "Cross-check all 17 present game DLLs and flag missing N-Gage-only dependencies"
           python3 tools/step80_compare_n95_rom_sdk_exports.py --sdk-root /tmp/s60-devkit --rom-dir firmware-input
           cat firmware-input/STEP80_ROM_SDK_EXPORT_CHECK.json
       - name: Inventory E32 modules and export candidates

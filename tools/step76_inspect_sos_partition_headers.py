@@ -9,8 +9,8 @@ pairs = [
     (Path("firmware-input/core-unpack.log"), Path("firmware-parsed/core/rofs.img"), "CORE"),
     (Path("firmware-input/ppm-unpack.log"), Path("firmware-parsed/ppm/rofs.img"), "PPM"),
 ]
-pattern = re.compile(r"Description: (SOS\\+ROFS|SOS\\+ROFX)")
-data_pattern = re.compile(r"Data block: (\\d+):(\\d+)")
+pattern = re.compile(r"Description: (SOS\+ROFS|SOS\+ROFX)")
+data_pattern = re.compile(r"Data block: (\d+):(\d+)")
 lines_out = []
 
 def dump(label, offset, data):
@@ -63,5 +63,5 @@ for log, image, label in pairs:
                 dump(f"{label}/{index}/{label2}", offset + delta, data)
     lines_out.append("")
 out = Path("firmware-input/STEP76_SOS_PARTITION_HEADERS.txt")
-out.write_text("\\n".join(lines_out) + "\\n", encoding="utf-8")
+out.write_text("\n".join(lines_out) + "\n", encoding="utf-8")
 print(out.read_text(encoding="utf-8"))

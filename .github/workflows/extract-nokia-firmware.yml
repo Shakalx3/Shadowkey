@@ -128,6 +128,23 @@ jobs:
             echo "Parsed files:"
             cat firmware-input/PARSED_FILES.tsv
           } > firmware-input/PARSER_SUMMARY.txt
+      - name: Download pinned S60 3.1 FP1 devkit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/723972349" -o /tmp/s60-sdk-devkit-core.tar.gz
+          echo "7ed8b62b15f191ca47d2f6ca97ee5ce74cd02ce3e42b74bc7b1f9513d7df87b5  /tmp/s60-sdk-devkit-core.tar.gz" | sha256sum -c -
+          mkdir -p /tmp/s60-devkit
+          tar -xzf /tmp/s60-sdk-devkit-core.tar.gz -C /tmp/s60-devkit
+      - name: Symbolize actual N95 ROM exports against target SDK
+        run: |
+          set -euo pipefail
+          mkdir -p firmware-input/s60-sdk
+          python3 tools/step58_s60_target_export_map.py --sdk-root /tmp/s60-devkit --output-dir firmware-input/s60-sdk
+          python3 -m py_compile tools/step80_compare_n95_rom_sdk_exports.py
+          python3 tools/step80_compare_n95_rom_sdk_exports.py --sdk-root /tmp/s60-devkit --rom-dir firmware-input
+          cat firmware-input/STEP80_ROM_SDK_EXPORT_CHECK.json
       - name: Inventory E32 modules and export candidates
         run: |
           python3 - <<'PY'

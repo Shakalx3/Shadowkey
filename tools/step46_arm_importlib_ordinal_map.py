@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Map ARM UREL import-library archive members to game import ordinals."""
 from pathlib import Path
-import os, re, subprocess, tempfile, shutil, struct
+import os, re, subprocess, tempfile, shutil, struct, csv
 
 ROOT=Path("source_bundle/shadowkey_step35_work")
-DISPATCH=ROOT/"shadowkey_import_dispatch.c"
+DISPATCH=Path(os.environ.get("SHADOWKEY_IMPORT_DISPATCH", str(ROOT/"shadowkey_import_dispatch.c")))
 WINS_REPORT=Path("docs/STEP44_SYMBIAN61_EXPORT_ORDINAL_AUDIT.md")
 ARM_ROOT=Path(os.environ.get("SHADOWKEY_ARM_SDK_ROOT", "/tmp/ngagesdk-sdk"))/"6.1/Series60/Epoc32/Release/armi/urel"
-OUT=Path("docs/STEP46_ARM_IMPORTLIB_ORDINAL_MAP.md")
+OUT=Path(os.environ.get("SHADOWKEY_IMPORT_OUT", "docs/STEP46_ARM_IMPORTLIB_ORDINAL_MAP.md"))
 
 entry_re=re.compile(r'\{\s*(0x[0-9a-fA-F]+)u?,\s*(0x[0-9a-fA-F]+)u?,\s*"([A-Z0-9]+)\[[^]]+\]\.DLL",\s*(\d+)u\s*\}')
 entries=[]
@@ -124,6 +124,7 @@ def archive_symbol_index(path):
                 continue
     return result
 
+tsv_rows=[]
 out=[
  "# Step 46 — ARM UREL import-library ordinal cross-check","",
  "The ARM UREL archive linker index maps decorated symbol names to dsNNNNN.o members; this is the primary ARM import identity evidence. WINS UDEB names are shown separately for comparison only.","",
@@ -136,6 +137,8 @@ for dll in sorted(set(e[2] for e in entries)):
     out += [f"## {dll.upper()}.LIB",""]
     if not lib.exists():
         out += ["- ARM UREL import library absent from this SDK tree.",""]
+        for ordinal in sorted(set(e[3] for e in entries if e[2]==dll)):
+            tsv_rows.append((dll,ordinal,"","","","ARM_LIB_MISSING"))
         continue
     listing=run(["ar","t",str(lib)])
     if listing.returncode:
@@ -191,10 +194,12 @@ for dll in sorted(set(e[2] for e in entries)):
         member=byord.get(ordinal)
         if not member:
             out.append(f"| {ordinal} | {wins.get((dll,ordinal),'<no WINS map>')} | MISSING | 0 | — |")
+            tsv_rows.append((dll,ordinal,"",wins.get((dll,ordinal),""),"","ORDINAL_MEMBER_MISSING"))
             continue
         blob=run(["ar","p",str(lib),member])
         if blob.returncode:
             out.append(f"| {ordinal} | {wins.get((dll,ordinal),'<no WINS map>')} | {member} | 0 | ar p failed |")
+            tsv_rows.append((dll,ordinal,"",wins.get((dll,ordinal),""),member,"AR_EXTRACT_FAILED"))
             continue
         found=strings(blob.stdout)
         candidates=[x for x in found if len(x)>2 and (('@' in x) or ('_' in x) or re.search(r'[A-Za-z]{4,}',x))]
@@ -230,7 +235,16 @@ for dll in sorted(set(e[2] for e in entries)):
         if not evidence_items:
             evidence_items=["header="+blob.stdout[:24].hex(), *tool_notes]
         evidence="; ".join(evidence_items).replace("|","/") or "—"
-        out.append(f"| {ordinal} | {arm_symbol} | {wins.get((dll,ordinal),'<no WINS map>')} | {member} | {len(blob.stdout)} | {evidence} |")
+        wins_symbol=wins.get((dll,ordinal),'<no WINS map>')
+        out.append(f"| {ordinal} | {arm_symbol} | {wins_symbol} | {member} | {len(blob.stdout)} | {evidence} |")
+        tsv_rows.append((dll,ordinal,arm_symbol,wins_symbol,member,"OK" if arm_symbol!="<no archive-index symbol>" else "NO_SYMBOL"))
     out.append("")
+OUT.parent.mkdir(parents=True,exist_ok=True)
 OUT.write_text("\n".join(out))
+tsv_path=OUT.with_suffix(".tsv")
+with tsv_path.open("w",newline="",encoding="utf-8") as f:
+    w=csv.writer(f,delimiter="\t")
+    w.writerow(["dll","ordinal","arm_urel_symbol","wins_udev_reference","archive_member","status"])
+    w.writerows(tsv_rows)
 print(f"Wrote {OUT} ({OUT.stat().st_size} bytes)")
+print(f"Wrote {tsv_path} ({tsv_path.stat().st_size} bytes)")

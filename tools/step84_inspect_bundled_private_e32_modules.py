@@ -32,14 +32,22 @@ def inspect_module(path, module):
         "uid2": f"0x{uid2:08X}",
         "uid3": f"0x{uid3:08X}",
         "signature": signature.decode("ascii", "replace"),
-        "header_version": f"0x{u32(data,0x18):08X}",
-        "flags": f"0x{u32(data,0x1C):08X}",
-        "module_version": f"0x{u32(data,0x20):08X}",
-        "compression_type": f"0x{u32(data,0x24):08X}",
+        "header_crc": f"0x{u32(data,0x14):08X}",
+        "module_version": f"0x{u32(data,0x18):08X}",
+        "compression_type": f"0x{u32(data,0x1C):08X}",
+        "tools_version": f"0x{u32(data,0x20):08X}",
+        "time_lo": f"0x{u32(data,0x24):08X}",
+        "time_hi": f"0x{u32(data,0x28):08X}",
+        "flags": f"0x{u32(data,0x2C):08X}",
         "code_size": u32(data,0x30),
         "data_size": u32(data,0x34),
-        "entry_point": f"0x{u32(data,0x38):08X}",
+        "heap_size_min": u32(data,0x38),
+        "heap_size_max": u32(data,0x3C),
+        "stack_size": u32(data,0x40),
+        "bss_size": u32(data,0x44),
+        "entry_point": f"0x{u32(data,0x48):08X}",
         "code_base": u32(data,0x4C),
+        "data_base": u32(data,0x50),
         "dll_ref_count": u32(data,0x54),
         "export_dir_offset": u32(data,0x58),
         "export_count": u32(data,0x5C),
@@ -47,15 +55,15 @@ def inspect_module(path, module):
         "code_offset": u32(data,0x64),
         "data_offset": u32(data,0x68),
         "import_offset": u32(data,0x6C),
-        "import_size": u32(data,0x70),
-        "code_reloc_offset": u32(data,0x74),
-        "code_reloc_size": u32(data,0x78),
-        "data_reloc_offset": u32(data,0x7C),
-        "data_reloc_size": u32(data,0x80) if len(data) >= 0x84 else 0,
+        "code_reloc_offset": u32(data,0x70),
+        "code_reloc_size": u32(data,0x74),
+        "data_reloc_offset": u32(data,0x78),
+        "data_reloc_size": u32(data,0x7C),
+        "process_priority": u32(data,0x80) if len(data) >= 0x84 else 0,
     }
     code_off = fields["code_offset"]
     code_size = fields["code_size"]
-    exp_off = code_off + fields["export_dir_offset"]
+    exp_off = fields["export_dir_offset"]
     count = fields["export_count"]
     valid = (
         signature == b"EPOC"
@@ -65,6 +73,7 @@ def inspect_module(path, module):
         and count * 4 <= len(data) - exp_off
     )
     fields["export_table_file_offset"] = exp_off
+    fields["import_table_size"] = max(0, fields["code_reloc_offset"] - fields["import_offset"])
     fields["export_table_valid"] = bool(valid)
     fields["file_size"] = len(data)
     fields["sha256"] = hashlib.sha256(data).hexdigest()

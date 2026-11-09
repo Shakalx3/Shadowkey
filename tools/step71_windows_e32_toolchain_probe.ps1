@@ -51,6 +51,50 @@ if ($linkExit -ne 0 -or -not (Test-Path $probeElf)) { throw "ELF link failed ($l
 $elfHeader = (& $readelf.FullName -h $probeElf 2>&1 | Out-String)
 $elfAttributes = (& $readelf.FullName -A $probeElf 2>&1 | Out-String)
 
+$eabi4Object = Join-Path $workRoot "probe-eabi4.o"
+$eabi4Elf = Join-Path $workRoot "probe-eabi4.elf"
+$eabi4E32 = Join-Path $workRoot "probe-eabi4.exe"
+$eabi4CompileOutput = ""
+$eabi4CompileExit = -999
+$eabi4ObjectHeader = ""
+$eabi4ObjectAttributes = ""
+$eabi4LinkOutput = ""
+$eabi4LinkExit = -999
+$eabi4ElfHeader = ""
+$eabi4ConversionOutput = ""
+$eabi4ConversionExit = -999
+$eabi4E32Hash = ""
+$eabi4E32Size = 0
+$eabi4E32HeaderBytes = ""
+$eabi4CompileOutput = (& $gcc.FullName -march=armv5te -mfloat-abi=soft -meabi=4 -ffreestanding -fno-builtin -fno-exceptions -fno-rtti -c $probeSource -o $eabi4Object 2>&1 | Out-String)
+$eabi4CompileExit = $LASTEXITCODE
+if ($eabi4CompileExit -eq 0 -and (Test-Path $eabi4Object)) {
+  $eabi4ObjectHeader = (& $readelf.FullName -h $eabi4Object 2>&1 | Out-String)
+  $eabi4ObjectAttributes = (& $readelf.FullName -A $eabi4Object 2>&1 | Out-String)
+  $eabi4LinkOutput = (& $ld.FullName -e E32Main -Ttext 0x10000 -o $eabi4Elf $eabi4Object 2>&1 | Out-String)
+  $eabi4LinkExit = $LASTEXITCODE
+  if ($eabi4LinkExit -eq 0 -and (Test-Path $eabi4Elf)) {
+    $eabi4ElfHeader = (& $readelf.FullName -h $eabi4Elf 2>&1 | Out-String)
+    $eabi4Args = @(
+      "--elfinput=$eabi4Elf", "--output=$eabi4E32", "--targettype=EXE",
+      "--uid1=0x1000007A", "--uid2=0x20000001", "--uid3=0x20000001",
+      "--sid=0x20000001", "--capability=none", "--version=1.0",
+      "--stack=8192", "--heap=4096,1048576", "--libpath=$libPath"
+    )
+    $eabi4ConversionOutput = (& $elf2e32 @eabi4Args 2>&1 | Out-String)
+    $eabi4ConversionExit = $LASTEXITCODE
+    if ($eabi4ConversionExit -eq 0 -and (Test-Path $eabi4E32)) {
+      $eabi4Bytes = [IO.File]::ReadAllBytes($eabi4E32)
+      $eabi4E32Size = $eabi4Bytes.Length
+      $eabi4E32HeaderBytes = [BitConverter]::ToString($eabi4Bytes[0..([Math]::Min(63, $eabi4Bytes.Length - 1))])
+      $eabi4E32Hash = (Get-FileHash -Algorithm SHA256 $eabi4E32).Hash.ToLower()
+      Copy-Item $eabi4E32 (Join-Path $reportRoot "probe-eabi4.e32")
+    }
+  }
+}
+$coneDsoHeader = (& $readelf.FullName -h (Join-Path $libPath "cone.dso") 2>&1 | Out-String)
+$euserDsoHeader = (& $readelf.FullName -h (Join-Path $libPath "euser.dso") 2>&1 | Out-String)
+
 $elf2e32 = Join-Path $sdkRoot "Epoc32\tools\elf2e32.exe"
 if (-not (Test-Path $elf2e32)) { $elf2e32 = Get-ChildItem -Path $sdkRoot -Recurse -Filter "elf2e32.exe" | Select-Object -First 1 -ExpandProperty FullName }
 if (-not $elf2e32) { throw "SDK elf2e32.exe not found" }
@@ -104,6 +148,21 @@ $report = [ordered]@{
   link_output = $linkOutput
   elf_header = $elfHeader
   elf_attributes = $elfAttributes
+  eabi4_compile_exit = $eabi4CompileExit
+  eabi4_compile_output = $eabi4CompileOutput
+  eabi4_object_header = $eabi4ObjectHeader
+  eabi4_object_attributes = $eabi4ObjectAttributes
+  eabi4_link_exit = $eabi4LinkExit
+  eabi4_link_output = $eabi4LinkOutput
+  eabi4_elf_header = $eabi4ElfHeader
+  eabi4_conversion_exit = $eabi4ConversionExit
+  eabi4_conversion_output = $eabi4ConversionOutput
+  eabi4_e32_created = (Test-Path $eabi4E32)
+  eabi4_e32_size = $eabi4E32Size
+  eabi4_e32_sha256 = $eabi4E32Hash
+  eabi4_e32_first_64_bytes = $eabi4E32HeaderBytes
+  cone_dso_header = $coneDsoHeader
+  euser_dso_header = $euserDsoHeader
   elf2e32_path = $elf2e32
   elf2e32_help_exit = $helpExit
   elf2e32_help = $helpOutput
@@ -118,9 +177,12 @@ $report = [ordered]@{
 }
 $report | ConvertTo-Json -Depth 8 | Set-Content -Encoding utf8 (Join-Path $reportRoot "step71-e32-toolchain-probe.json")
 $report | Format-List | Out-String | Set-Content -Encoding utf8 (Join-Path $reportRoot "STEP71_E32_TOOLCHAIN_PROBE.txt")
-Write-Host "GCCE compile exit: $compileExit; ELF link exit: $linkExit; elf2e32 exit: $conversionExit; E32 size: $e32Size; SHA-256: $e32Hash; header dump exit: $dumpExit"
+Write-Host "GCCE default EABI compile/link/convert: $compileExit/$linkExit/$conversionExit; E32 size: $e32Size; SHA-256: $e32Hash; EABI4 compile/link/convert: $eabi4CompileExit/$eabi4LinkExit/$eabi4ConversionExit; EABI4 E32 created: $(Test-Path $eabi4E32)"
 Write-Host $objectHeader
 Write-Host $objectAttributes
 Write-Host $elfHeader
 Write-Host $elfAttributes
-Write-Host $dumpOutput
+Write-Host $eabi4ObjectHeader
+Write-Host $eabi4ElfHeader
+Write-Host $coneDsoHeader
+Write-Host $euserDsoHeader

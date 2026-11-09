@@ -40,18 +40,13 @@ ELF header:
 - `e_flags = 0x05000200`;
 - ABI: **Version 5 EABI**.
 
-The target S60 3.1 FP1 SDK import libraries used elsewhere in this project are identified as EABI4. elf2e32 accepting the EABI5 input does not prove that Symbian OS 9.2's loader will accept the result. This EABI mismatch is now an explicit blocker.
+The target S60 3.1 FP1 SDK import libraries are confirmed by readelf to use flags 0x04000004 (Version4 EABI). elf2e32 accepting the EABI5 input does not prove that Symbian OS 9.2's loader will accept the result. This EABI mismatch is an explicit blocker.
 
 ## 3. Follow-up EABI4 probe
 
-A follow-up probe is being added with GCC's `-meabi=4` option. It will record:
-- whether GCCE 14.2 accepts `-meabi=4`;
-- the resulting ELF header flags;
-- whether the ELF links;
-- whether elf2e32 converts the result;
-- target `cone.dso` and `euser.dso` ELF header flags for direct comparison.
+GCCE 14.2 was tested with `-meabi=4`; it rejects the option as unrecognized. The target DSO headers were read in the same run and both `cone.dso` and `euser.dso` report `e_flags = 0x04000004`, Version4 EABI.
 
-If GCCE cannot emit EABI4, the next route is an older Symbian GCCE toolchain or a different compiler configuration. Do not patch the EABI version bits in an EABI5 ELF and call that an EABI4 build.
+The next route is the original CodeSourcery GCCE 2005Q1C (GCC 3.4.3) toolchain. Historical Symbian SDK build documentation identifies GCCE 2005Q1 as the default compiler shipped with public S60 3rd Edition and later SDKs. Its archived Linux toolchain package is only about 11 MB and targets `arm-none-symbianelf`. The Step72 workflow now probes that exact compiler against the pinned FP1 SDK. Do not patch the EABI version bits in an EABI5 ELF and call that an EABI4 build.
 
 ## 4. Reproducibility
 

@@ -126,8 +126,8 @@ jobs:
                           with p.open("rb") as f: head=f.read(0x80)
                           if len(head)>=0x40 and head[0x10:0x14]==b"EPOC":
                               uid1,uid2,uid3=struct.unpack_from("<III",head,0)
-                              e32ver=struct.unpack_from("<I",head,0x14)[0]
-                              exp=struct.unpack_from("<I",head,0x34)[0]
+                              e32ver=struct.unpack_from("<I",head,0x18)[0]
+                              exp=struct.unpack_from("<I",head,0x5c)[0]
                               copyname=f"{digest[:12]}_{p.name}"
                               shutil.copy2(p,candidates/copyname)
                               e32.write(f"{root.name}\t{uid1:08X}\t{uid2:08X}\t{uid3:08X}\t{e32ver:08X}\t{exp}\t{p.stat().st_size}\t{digest}\t{p.as_posix()}\t{copyname}\n")

@@ -63,6 +63,7 @@ jobs:
           LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/core firmware-input/core-image.fpsx > firmware-input/core-unpack.log 2>&1
           echo $? > firmware-input/core-unpack.exit
           python3 tools/step76_inspect_sos_partition_headers.py
+          echo "Carving SOS+CORE, SOS+ROFS and SOS+ROFX partitions"
           python3 tools/step77_carve_sos_rofs_partitions.py
           python3 tools/step78_scan_core_rom_e32.py
           python3 -m py_compile tools/step76_inspect_sos_partition_headers.py tools/step77_carve_sos_rofs_partitions.py tools/step78_scan_core_rom_e32.py

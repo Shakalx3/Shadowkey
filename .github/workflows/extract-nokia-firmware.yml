@@ -66,7 +66,9 @@ jobs:
           echo "Carving SOS+CORE, SOS+ROFS and SOS+ROFX partitions"
           python3 tools/step77_carve_sos_rofs_partitions.py
           echo "Decode TRomHeader, ROM directory and XIP export tables"
+          echo "Reconstruct compressed unpaged ROM image and rescan XIP modules"
           python3 tools/step78_scan_core_rom_e32.py
+          python3 -m py_compile tools/step78_scan_core_rom_e32.py
           python3 -m py_compile tools/step78_scan_core_rom_e32.py
           python3 -m py_compile tools/step76_inspect_sos_partition_headers.py tools/step77_carve_sos_rofs_partitions.py tools/step78_scan_core_rom_e32.py
           mkdir -p firmware-parsed/core-rofs firmware-parsed/ppm-rofs

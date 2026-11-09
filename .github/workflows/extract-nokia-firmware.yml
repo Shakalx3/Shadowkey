@@ -176,8 +176,11 @@ jobs:
           DEM=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name 'arm-none-symbianelf-c++filt' | head -n1)
           test -n "$DEM" && test -x "$DEM"
           BIN=$(dirname "$DEM")
+          OBJDUMP=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name 'arm-none-symbianelf-objdump' | head -n1)
+          test -n "$OBJDUMP" && test -x "$OBJDUMP"
           echo "EPOC_DEMANGLER=$DEM" >> "$GITHUB_ENV"
           echo "LD_LIBRARY_PATH=$BIN/../lib:$BIN/../lib32" >> "$GITHUB_ENV"
+          echo "EPOC_OBJDUMP=$OBJDUMP" >> "$GITHUB_ENV"
           "$DEM" < <(printf '%s\n' '__7TPtrC16PCUs' '__ne__C6TInt64RC6TInt64') > firmware-input/STEP81_EPOC_DEMANGLER_CHECK.txt
       - name: Symbolize actual N95 ROM exports against target SDK
         run: |
@@ -203,6 +206,15 @@ jobs:
             --gamecomms-dispatch firmware-input/GAMECOMMS_DLL_import_dispatch.c \
             --gamecomms-arm-map firmware-input/STEP46_GAMECOMMS_ARM_IMPORTS.tsv
           cat firmware-input/STEP82_IMPORT_MAPPING_SUMMARY.json
+      - name: Inspect BTENG ordinal compatibility against N95 ROM
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step85_inspect_bteng_rom_ordinals.py
+          python3 tools/step85_inspect_bteng_rom_ordinals.py \
+            --sdk-root "$GITHUB_WORKSPACE/ngagesdk-sdk" \
+            --rom-dir firmware-input \
+            --epoc-demangler "$EPOC_DEMANGLER" \
+            --objdump "$EPOC_OBJDUMP"
       - name: Inventory E32 modules and export candidates
         run: |
           python3 - <<'PY'

@@ -25,7 +25,7 @@ if not rom.exists():
     report.append("SOS+CORE image missing")
 else:
     data = rom.read_bytes()
-    report.append(f"path={rom} size={len(rom_data)} sha256={hashlib.sha256(data).hexdigest()}")
+    report.append(f"path={rom} size={len(data)} sha256={hashlib.sha256(data).hexdigest()}")
     report.append("first256=" + data[:256].hex())
     report.append("payload+0x400=" + data[1024:1536].hex())
     base_word = struct.pack("<I", 0x80000000)
@@ -234,7 +234,7 @@ else:
     else:
         hits = []
         for pos in range(0, len(data) - 4, 4):
-            if rom_data[pos:pos + 4] == base_word:
+            if data[pos:pos + 4] == base_word:
                 hits.append(pos)
         report.append("rom_base_word_offsets=" + ",".join(f"0x{x:X}" for x in hits[:100]))
         report.append("No structurally valid TRomHeader found; EPOC scan follows.")

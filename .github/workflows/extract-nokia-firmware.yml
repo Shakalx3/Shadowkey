@@ -14,6 +14,8 @@ jobs:
   extract:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
       - name: Install extraction tools
         run: |
           sudo apt-get update
@@ -95,7 +97,11 @@ jobs:
             echo "ROFS exit codes:"
             for f in firmware-input/*-rofs-unpack.exit; do [ -f "$f" ] && cat "$f"; done
             echo "ROFS headers:"
-            cat firmware-input/ROFS_HEADERS.txt\n            echo "ROFS signature scan:"\n            cat firmware-input/ROFS_SIGNATURE_SCAN.tsv\n            echo "ROFS candidate parser log:"\n            cat firmware-input/rofs-candidate-unpack.log
+            cat firmware-input/ROFS_HEADERS.txt
+            echo "ROFS signature scan:"
+            cat firmware-input/ROFS_SIGNATURE_SCAN.tsv
+            echo "ROFS candidate parser log:"
+            cat firmware-input/rofs-candidate-unpack.log
             echo "ROFS parser logs:"
             for f in firmware-input/*-rofs-unpack.log; do [ -f "$f" ] && { echo "### $f"; cat "$f"; }; done
             echo "Parsed files:"

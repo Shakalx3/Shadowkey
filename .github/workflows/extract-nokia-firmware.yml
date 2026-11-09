@@ -63,6 +63,12 @@ jobs:
           LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/core firmware-input/core-image.fpsx > firmware-input/core-unpack.log 2>&1
           echo $? > firmware-input/core-unpack.exit
           python3 tools/step76_inspect_sos_partition_headers.py
+          python3 tools/step77_carve_sos_rofs_partitions.py
+          mkdir -p firmware-parsed/core-rofs firmware-parsed/ppm-rofs
+          LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/core-rofs firmware-parsed/carved/core-sos-rofs.rofs > firmware-input/core-rofs-unpack.log 2>&1
+          echo $? > firmware-input/core-rofs-unpack.exit
+          LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/ppm-rofs firmware-parsed/carved/ppm-sos-rofx.rofs > firmware-input/ppm-rofx-unpack.log 2>&1
+          echo $? > firmware-input/ppm-rofx-unpack.exit
           python3 tools/step75_scan_rofs_signatures.py firmware-parsed/ppm/rofs.img firmware-parsed/core/rofs.img --out firmware-input/rofs-candidates
           mkdir -p firmware-parsed/rofs-candidate-files
           : > firmware-input/rofs-candidate-unpack.log

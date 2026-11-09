@@ -1,0 +1,27 @@
+name: Step81 EPOC C++ demangler probe
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/step81-epoc-demangler-probe.yml"
+      - "tools/step81_epoc_demangler_probe.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe original GCCE demangler
+        run: bash tools/step81_epoc_demangler_probe.sh
+      - name: Upload demangler probe
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: step81-epoc-demangler-probe
+          path: step81-demangler-probe/
+          if-no-files-found: warn

@@ -80,11 +80,11 @@ def main() -> int:
         raise SystemExit("could not extract sub_10021138 from lifted source")
 
     systemgc_callsites = []
-    for match in re.finditer(r"ngage_call\\(c,\\s*0x1009f540u\\)", source):
+    for match in re.finditer(r"ngage_call\(c,\s*0x1009f540u\)", source):
         prefix = source[:match.start()]
-        functions = list(re.finditer(r"void\\s+(sub_[0-9a-fA-F]+)\\(ngage_cpu_t \\*c\\)", prefix))
+        functions = list(re.finditer(r"void\s+(sub_[0-9a-fA-F]+)\(ngage_cpu_t \*c\)", prefix))
         function_name = functions[-1].group(1) if functions else None
-        line_number = source.count("\\n", 0, match.start()) + 1
+        line_number = source.count("\n", 0, match.start()) + 1
         systemgc_callsites.append({"function": function_name, "line": line_number, "call": match.group(0)})
 
     text_hits = {}

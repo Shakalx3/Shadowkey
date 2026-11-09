@@ -88,11 +88,13 @@ jobs:
           python3 tools/step61_avkon_target_export_map.py
           python3 tools/step63_target_lifecycle_export_map.py
           python3 tools/step64_coecontrol_layout_compare.py
+          python3 tools/step66_gdi_virtual_abi_compare.py
           : > /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikapp.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikappui.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'coecntrl.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'gdi.h' -print >> /tmp/probe/framework-headers.txt
+          find /tmp/s60-devkit -type f -iname 'w32std.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'e32std.h' -print >> /tmp/probe/framework-headers.txt
           sort -o /tmp/probe/framework-headers.txt /tmp/probe/framework-headers.txt
           {
@@ -102,6 +104,8 @@ jobs:
             grep -n -A180 -B8 'class CEikAppUi' /tmp/s60-devkit/Epoc32/include/eikappui.h || true
             echo '===== coemain.h: MCoeMessageObserver ====='
             grep -n -A70 -B8 'class MCoeMessageObserver' /tmp/s60-devkit/Epoc32/include/coemain.h || true
+            echo '===== w32std.h: CWindowGc virtual declaration ====='
+            grep -n -A130 -B8 'class CWindowGc' /tmp/s60-devkit/Epoc32/include/w32std.h || true
           } > /tmp/probe/framework-header-layout.txt
           grep -R -n -E -A20 -B10 'typedef.*TInt64|TInt64.*operator|operator.*TInt64|TInt64' /tmp/s60-devkit/Epoc32/include --include='*.h' > /tmp/probe/tint64-header.txt || true
           echo 'Target S60 SDK headers and export ordinal table captured.'

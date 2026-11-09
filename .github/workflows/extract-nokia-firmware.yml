@@ -131,6 +131,13 @@ jobs:
           echo "7ed8b62b15f191ca47d2f6ca97ee5ce74cd02ce3e42b74bc7b1f9513d7df87b5  /tmp/s60-sdk-devkit-core.tar.gz" | sha256sum -c -
           mkdir -p /tmp/s60-devkit
           tar -xzf /tmp/s60-sdk-devkit-core.tar.gz -C /tmp/s60-devkit
+      - name: Parse bundled SIMKIN and GAMECOMMS DLL imports
+        run: |
+          set -euo pipefail
+          python3 tools/e32/shadowkey_extract_e32_imports.py "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/SIMKIN.DLL" -o firmware-input/SIMKIN_DLL_import_thunks.csv > firmware-input/SIMKIN_DLL_import_extract.log 2>&1
+          python3 tools/e32/shadowkey_extract_e32_imports.py "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/libs/GAMECOMMS.DLL" -o firmware-input/GAMECOMMS_DLL_import_thunks.csv > firmware-input/GAMECOMMS_DLL_import_extract.log 2>&1
+          python3 tools/step83_csv_to_import_dispatch.py --csv firmware-input/GAMECOMMS_DLL_import_thunks.csv --out firmware-input/GAMECOMMS_DLL_import_dispatch.c
+          python3 -m py_compile tools/step83_csv_to_import_dispatch.py
       - name: Checkout N-Gage ARM UREL import libraries
         uses: actions/checkout@v4
         with:
@@ -147,6 +154,7 @@ jobs:
           set -euo pipefail
           SHADOWKEY_IMPORT_DISPATCH="source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c" SHADOWKEY_IMPORT_OUT="firmware-input/STEP46_GAME_ARM_IMPORTS.md" python3 tools/step46_arm_importlib_ordinal_map.py
           SHADOWKEY_IMPORT_DISPATCH="source_bundle/shadowkey_step35_work/simkin_import_dispatch.c" SHADOWKEY_IMPORT_OUT="firmware-input/STEP46_SIMKIN_ARM_IMPORTS.md" python3 tools/step46_arm_importlib_ordinal_map.py
+          SHADOWKEY_IMPORT_DISPATCH="firmware-input/GAMECOMMS_DLL_import_dispatch.c" SHADOWKEY_IMPORT_OUT="firmware-input/STEP46_GAMECOMMS_ARM_IMPORTS.md" python3 tools/step46_arm_importlib_ordinal_map.py
       - name: Download original GCCE EPOC demangler
         run: |
           set -euo pipefail
@@ -186,15 +194,9 @@ jobs:
             --simkin-dispatch source_bundle/shadowkey_step35_work/simkin_import_dispatch.c \
             --game-arm-map firmware-input/STEP46_GAME_ARM_IMPORTS.tsv \
             --simkin-arm-map firmware-input/STEP46_SIMKIN_ARM_IMPORTS.tsv
+            --gamecomms-dispatch firmware-input/GAMECOMMS_DLL_import_dispatch.c \
+            --gamecomms-arm-map firmware-input/STEP46_GAMECOMMS_ARM_IMPORTS.tsv
           cat firmware-input/STEP82_IMPORT_MAPPING_SUMMARY.json
-      - name: Parse bundled SIMKIN and GAMECOMMS DLL imports
-        run: |
-          set +e
-          python3 tools/e32/shadowkey_extract_e32_imports.py "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/SIMKIN.DLL" -o firmware-input/SIMKIN_DLL_import_thunks.csv > firmware-input/SIMKIN_DLL_import_extract.log 2>&1
-          echo $? > firmware-input/SIMKIN_DLL_import_extract.exit
-          python3 tools/e32/shadowkey_extract_e32_imports.py "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/libs/GAMECOMMS.DLL" -o firmware-input/GAMECOMMS_DLL_import_thunks.csv > firmware-input/GAMECOMMS_DLL_import_extract.log 2>&1
-          echo $? > firmware-input/GAMECOMMS_DLL_import_extract.exit
-          set -e
       - name: Inventory E32 modules and export candidates
         run: |
           python3 - <<'PY'

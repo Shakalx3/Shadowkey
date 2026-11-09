@@ -132,4 +132,4 @@ Mapped the original control imports to target CONE exports: SystemGc 226→287, 
 
 ### Step 68 — graphics-context adapter requirement
 
-Found four direct game SystemGc call sites and traced their subsequent CWindowGc vtable offsets. The compatibility design now requires two cooperating native adapters: an S60 CCoeControl proxy for stack registration and a legacy-order CWindowGc shim for the original game's virtual dispatch. The shim forwards to a real target CWindowGc by semantic method name. See [Step68](docs/STEP68_CWINDOWGC_LEGACY_VTABLE_ADAPTER.md).
+Found four direct game SystemGc call sites and traced their subsequent CWindowGc virtual calls. Correcting for the 8-byte vtable prefix, the legacy-to-target slot map is 16→16, 44→46, 46→48, 52→54 and 53→55. The compatibility design requires two cooperating native adapters: an S60 CCoeControl proxy for stack registration and a legacy-order CWindowGc shim for the original game's virtual dispatch. See [Step68](docs/STEP68_CWINDOWGC_LEGACY_VTABLE_ADAPTER.md).

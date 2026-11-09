@@ -6,6 +6,7 @@ on:
       - ".github/workflows/s60-runtime-import-probe.yml"
       - ".github/s60-runtime-import-probe.trigger"
       - "tools/step66_gdi_virtual_abi_compare.py"
+      - "tools/step67_target_coecontrol_export_map.py"
   workflow_dispatch:
 
 permissions:
@@ -90,6 +91,7 @@ jobs:
           python3 tools/step63_target_lifecycle_export_map.py
           python3 tools/step64_coecontrol_layout_compare.py
           python3 tools/step66_gdi_virtual_abi_compare.py
+          python3 tools/step67_target_coecontrol_export_map.py
           : > /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikapp.h' -print >> /tmp/probe/framework-headers.txt
           find /tmp/s60-devkit -type f -iname 'eikappui.h' -print >> /tmp/probe/framework-headers.txt

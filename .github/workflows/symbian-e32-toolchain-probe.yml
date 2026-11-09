@@ -1,0 +1,29 @@
+name: Symbian E32Image toolchain probe
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/symbian-e32-toolchain-probe.yml"
+      - "tools/step71_windows_e32_toolchain_probe.ps1"
+
+permissions:
+  contents: read
+
+jobs:
+  windows-gcce-e32-probe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run GCCE and elf2e32 probe
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: \${{ github.token }}
+        run: ./tools/step71_windows_e32_toolchain_probe.ps1
+      - name: Upload probe report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: symbian-e32-toolchain-probe
+          path: e32-probe/
+          if-no-files-found: warn

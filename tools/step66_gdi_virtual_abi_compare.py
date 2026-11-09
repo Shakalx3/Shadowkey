@@ -42,6 +42,8 @@ def extract_class(text: str, name: str) -> str:
     raise SystemExit(f"unbalanced class body: {name}")
 
 def virtual_declarations(block: str):
+    block = re.sub(r"/\\*.*?\\*/", "", block, flags=re.S)
+    block = re.sub(r"//[^\\n]*", "", block)
     rows, current = [], ""
     for raw in block.splitlines():
         line = raw.strip()
@@ -73,6 +75,7 @@ def main():
             "target_virtual_count": len(new_v), "old_virtuals": old_v,
             "target_virtuals": new_v, "diff": diff,
             "exact_sequence_match": old_v == new_v,
+            "critical_vtable_slots": ({str(n): {"old": old_v[n], "target": new_v[n]} for n in (18, 46) if n < len(old_v) and n < len(new_v)} if name == "CWindowGc" else {}),
         }
         md += [
             f"## {name}", "",

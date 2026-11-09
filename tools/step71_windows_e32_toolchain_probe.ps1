@@ -51,6 +51,31 @@ if ($linkExit -ne 0 -or -not (Test-Path $probeElf)) { throw "ELF link failed ($l
 $elfHeader = (& $readelf.FullName -h $probeElf 2>&1 | Out-String)
 $elfAttributes = (& $readelf.FullName -A $probeElf 2>&1 | Out-String)
 
+$elf2e32 = Join-Path $sdkRoot "Epoc32\tools\elf2e32.exe"
+if (-not (Test-Path $elf2e32)) { $elf2e32 = Get-ChildItem -Path $sdkRoot -Recurse -Filter "elf2e32.exe" | Select-Object -First 1 -ExpandProperty FullName }
+if (-not $elf2e32) { throw "SDK elf2e32.exe not found" }
+$helpOutput = (& $elf2e32 --help 2>&1 | Out-String)
+$helpExit = $LASTEXITCODE
+
+$libPath = Join-Path $sdkRoot "Epoc32\release\armv5\lib"
+$args = @(
+  "--elfinput=$probeElf",
+  "--output=$e32Path",
+  "--targettype=EXE",
+  "--uid1=0x1000007A",
+  "--uid2=0x20000001",
+  "--uid3=0x20000001",
+  "--sid=0x20000001",
+  "--capability=none",
+  "--version=1.0",
+  "--stack=8192",
+  "--heap=4096,1048576",
+  "--libpath=$libPath"
+)
+$conversionOutput = (& $elf2e32 @args 2>&1 | Out-String)
+$conversionExit = $LASTEXITCODE
+if ($conversionExit -ne 0 -or -not (Test-Path $e32Path)) { throw "elf2e32 conversion failed ($conversionExit): $conversionOutput" }
+
 $eabi4Object = Join-Path $workRoot "probe-eabi4.o"
 $eabi4Elf = Join-Path $workRoot "probe-eabi4.elf"
 $eabi4E32 = Join-Path $workRoot "probe-eabi4.exe"
@@ -95,30 +120,6 @@ if ($eabi4CompileExit -eq 0 -and (Test-Path $eabi4Object)) {
 $coneDsoHeader = (& $readelf.FullName -h (Join-Path $libPath "cone.dso") 2>&1 | Out-String)
 $euserDsoHeader = (& $readelf.FullName -h (Join-Path $libPath "euser.dso") 2>&1 | Out-String)
 
-$elf2e32 = Join-Path $sdkRoot "Epoc32\tools\elf2e32.exe"
-if (-not (Test-Path $elf2e32)) { $elf2e32 = Get-ChildItem -Path $sdkRoot -Recurse -Filter "elf2e32.exe" | Select-Object -First 1 -ExpandProperty FullName }
-if (-not $elf2e32) { throw "SDK elf2e32.exe not found" }
-$helpOutput = (& $elf2e32 --help 2>&1 | Out-String)
-$helpExit = $LASTEXITCODE
-
-$libPath = Join-Path $sdkRoot "Epoc32\release\armv5\lib"
-$args = @(
-  "--elfinput=$probeElf",
-  "--output=$e32Path",
-  "--targettype=EXE",
-  "--uid1=0x1000007A",
-  "--uid2=0x20000001",
-  "--uid3=0x20000001",
-  "--sid=0x20000001",
-  "--capability=none",
-  "--version=1.0",
-  "--stack=8192",
-  "--heap=4096,1048576",
-  "--libpath=$libPath"
-)
-$conversionOutput = (& $elf2e32 @args 2>&1 | Out-String)
-$conversionExit = $LASTEXITCODE
-if ($conversionExit -ne 0 -or -not (Test-Path $e32Path)) { throw "elf2e32 conversion failed ($conversionExit): $conversionOutput" }
 
 Write-Host "Re-reading the generated E32Image header"
 $dumpExit = -998

@@ -60,16 +60,19 @@ jobs:
           echo $? > firmware-input/ppm-unpack.exit
           LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/core firmware-input/core-image.fpsx > firmware-input/core-unpack.log 2>&1
           echo $? > firmware-input/core-unpack.exit
-          if [ -f firmware-parsed/ppm/rofs.img ]; then
-            cp firmware-parsed/ppm/rofs.img firmware-input/ppm.rofs
-            LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/ppm-rofs firmware-input/ppm.rofs > firmware-input/ppm-rofs-unpack.log 2>&1
-            echo $? > firmware-input/ppm-rofs-unpack.exit
-          fi
-          if [ -f firmware-parsed/core/rofs.img ]; then
-            cp firmware-parsed/core/rofs.img firmware-input/core.rofs
-            LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/core-rofs firmware-input/core.rofs > firmware-input/core-rofs-unpack.log 2>&1
-            echo $? > firmware-input/core-rofs-unpack.exit
-          fi
+          python3 tools/step75_scan_rofs_signatures.py firmware-parsed/ppm/rofs.img firmware-parsed/core/rofs.img --out firmware-input/rofs-candidates
+          mkdir -p firmware-parsed/rofs-candidate-files
+          : > firmware-input/rofs-candidate-unpack.log
+          candidate_index=0
+          while IFS= read -r candidate; do
+            [ -f "$candidate" ] || continue
+            candidate_index=$((candidate_index+1))
+            outdir="firmware-parsed/rofs-candidate-files/candidate-$candidate_index"
+            mkdir -p "$outdir"
+            echo "### $candidate" >> firmware-input/rofs-candidate-unpack.log
+            LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o "$outdir" "$candidate" >> firmware-input/rofs-candidate-unpack.log 2>&1
+            echo "exit=$?" >> firmware-input/rofs-candidate-unpack.log
+          done < <(find firmware-input/rofs-candidates -type f -name '*.img' | sort)
           set -e
           python3 - <<'PY'
           from pathlib import Path
@@ -92,7 +95,7 @@ jobs:
             echo "ROFS exit codes:"
             for f in firmware-input/*-rofs-unpack.exit; do [ -f "$f" ] && cat "$f"; done
             echo "ROFS headers:"
-            cat firmware-input/ROFS_HEADERS.txt
+            cat firmware-input/ROFS_HEADERS.txt\n            echo "ROFS signature scan:"\n            cat firmware-input/ROFS_SIGNATURE_SCAN.tsv\n            echo "ROFS candidate parser log:"\n            cat firmware-input/rofs-candidate-unpack.log
             echo "ROFS parser logs:"
             for f in firmware-input/*-rofs-unpack.log; do [ -f "$f" ] && { echo "### $f"; cat "$f"; }; done
             echo "Parsed files:"
@@ -103,7 +106,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import hashlib, shutil, struct
-          roots = [Path("firmware-extracted/ngage"), Path("firmware-extracted/n95-inno"), Path("firmware-parsed/uda"), Path("firmware-parsed/ppm-rofs"), Path("firmware-parsed/core-rofs")]
+          roots = [Path("firmware-extracted/ngage"), Path("firmware-extracted/n95-inno"), Path("firmware-parsed/uda"), Path("firmware-parsed/ppm-rofs"), Path("firmware-parsed/core-rofs"), Path("firmware-parsed/rofs-candidate-files")]
           wanted = {"euser.dll","cone.dll","gdi.dll","fbscli.dll","eikcore.dll","avkon.dll","ws32.dll","eikcoctl.dll","appcore.dll","efsrv.dll"}
           candidates = Path("firmware-input/e32-candidates")
           candidates.mkdir(parents=True, exist_ok=True)

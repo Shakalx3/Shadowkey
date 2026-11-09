@@ -65,6 +65,37 @@ def main():
 
     imports_path = args.rom_dir / "STEP46_GAMECOMMS_ARM_IMPORTS.tsv"
     imports = [r for r in read_tsv(imports_path) if r["dll"].lower() == "bteng"]
+    gamecomms_csv = args.rom_dir / "GAMECOMMS_DLL_import_thunks.csv"
+    import_uid3 = ""
+    if gamecomms_csv.exists():
+        with gamecomms_csv.open(newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                dep = row.get("dependency", "")
+                m = re.match(r"BTENG\[([0-9a-fA-F]+)\]\.DLL$", dep, re.I)
+                if m:
+                    import_uid3 = m.group(1).upper()
+                    break
+    target_uid3 = bteng["uid3"].replace("0x", "").upper()
+    uid_match = bool(import_uid3 and import_uid3 == target_uid3)
+    ordinal_max = max(ordinals) if ordinals else 0
+    target_export_count = int(bteng["export_count"])
+    compatibility = {
+        "bteng_import_uid3": import_uid3,
+        "n95_rom_uid3": target_uid3,
+        "uid_match": uid_match,
+        "ngage_import_library_ordinal_count": len(ordinals),
+        "ngage_import_library_max_ordinal": ordinal_max,
+        "n95_rom_export_count": target_export_count,
+        "ordinal_range_compatible": bool(ordinal_max and ordinal_max <= target_export_count),
+        "same_uid_ordinal_candidate": bool(uid_match and ordinal_max and ordinal_max <= target_export_count),
+        "used_bteng_import_ordinals": sorted({int(r["ordinal"]) for r in imports}),
+    }
+    (args.rom_dir / "STEP85_BTENG_ORDINAL_COMPATIBILITY.json").write_text(
+        __import__("json").dumps(compatibility, indent=2) + "\n", encoding="utf-8"
+    )
+    out.append(f"GAMECOMMS BTENG import UID3: {import_uid3 or 'not found'}")
+    out.append(f"BTENG import UID3 matches N95 ROM UID3: {uid_match}")
+    out.append(f"Ordinal-range compatible: {compatibility['ordinal_range_compatible']}")
     demangled = {}
     if args.epoc_demangler and imports:
         symbols = [r["arm_urel_symbol"] for r in imports if r["arm_urel_symbol"] and r["arm_urel_symbol"] != "<no archive-index symbol>"]

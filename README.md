@@ -145,3 +145,7 @@ A Windows GitHub Actions probe using GCCE4Symbian 14.2 and the pinned SDK elf2e3
 ### Step 69 — CWindowGc slot contract test
 
 Added a C mapping contract for the five proven old-to-target CWindowGc byte offsets and a host test that fails closed on unknown offsets. The static-audit workflow compiles and runs it with strict warnings; run 42573335365 passed. This is mapping metadata only, not a graphics adapter implementation. See [Step69](docs/STEP69_LEGACY_CWINDOWGC_SLOT_CONTRACT.md).
+
+### Step 72 — original GCCE 2005Q1C EABI4 match
+
+Found and ran the original CodeSourcery GCCE 2005Q1C (GCC 3.4.3) compiler used by S60 3rd Edition SDKs. It compiled and linked a minimal ARM ELF with EABI4 flags, matching target euser/cone/gdi DSOs (also Version4 EABI). The portable elf2e32 build hit a CMake 2.8 compatibility issue; the workflow has been updated and the E32 conversion rerun is pending. See [Step72](docs/STEP72_GCCE_2005Q1C_EABI4_MATCH.md).

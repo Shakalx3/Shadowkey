@@ -138,6 +138,12 @@ jobs:
           python3 tools/e32/shadowkey_extract_e32_imports.py "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/libs/GAMECOMMS.DLL" -o firmware-input/GAMECOMMS_DLL_import_thunks.csv > firmware-input/GAMECOMMS_DLL_import_extract.log 2>&1
           python3 tools/step83_csv_to_import_dispatch.py --csv firmware-input/GAMECOMMS_DLL_import_thunks.csv --out firmware-input/GAMECOMMS_DLL_import_dispatch.c
           python3 -m py_compile tools/step83_csv_to_import_dispatch.py
+          python3 -m py_compile tools/step84_inspect_bundled_private_e32_modules.py
+          python3 tools/step84_inspect_bundled_private_e32_modules.py \
+            --simkin "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/SIMKIN.DLL" \
+            --gamecomms "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/libs/GAMECOMMS.DLL" \
+            --game-dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
+            --out-dir firmware-input
       - name: Checkout N-Gage ARM UREL import libraries
         uses: actions/checkout@v4
         with:
@@ -147,7 +153,7 @@ jobs:
           sparse-checkout: |
             6.1/Series60/Epoc32/Release/armi/urel
           sparse-checkout-cone-mode: false
-      - name: Map original game and SIMKIN ARM UREL imports
+      - name: Map game, SIMKIN and GAMECOMMS ARM UREL imports
         env:
           SHADOWKEY_ARM_SDK_ROOT: ${{ github.workspace }}/ngagesdk-sdk
         run: |

@@ -65,15 +65,11 @@ jobs:
           python3 tools/step76_inspect_sos_partition_headers.py
           echo "Carving SOS+CORE, SOS+ROFS and SOS+ROFX partitions"
           python3 tools/step77_carve_sos_rofs_partitions.py
-          echo "Decode TRomHeader, ROM directory and XIP export tables"
-          echo "Reconstruct compressed unpaged ROM image and rescan XIP modules"
-          python3 tools/step78_scan_core_rom_e32.py
-          python3 -m py_compile tools/step78_scan_core_rom_e32.py
           echo "Skip the unpaged index prefix; reconstruct pageable ROM pages by absolute page number"
           python3 tools/step79_reconstruct_demand_paged_rom.py
           python3 -m py_compile tools/step79_reconstruct_demand_paged_rom.py
           python3 -m py_compile tools/step78_scan_core_rom_e32.py
-          python3 -m py_compile tools/step76_inspect_sos_partition_headers.py tools/step77_carve_sos_rofs_partitions.py tools/step78_scan_core_rom_e32.py
+          python3 -m py_compile tools/step76_inspect_sos_partition_headers.py tools/step77_carve_sos_rofs_partitions.py
           mkdir -p firmware-parsed/core-rofs firmware-parsed/ppm-rofs
           LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/core-rofs firmware-parsed/carved/core-sos-rofs.rofs > firmware-input/core-rofs-unpack.log 2>&1
           echo $? > firmware-input/core-rofs-unpack.exit
@@ -115,8 +111,6 @@ jobs:
             for f in firmware-input/*-rofs-unpack.exit firmware-input/ppm-rofx-unpack.exit; do [ -f "$f" ] && { echo "### $f"; cat "$f"; }; done
             echo "SOS partition carve report:"
             cat firmware-input/STEP77_CARVED_PARTITIONS.txt
-            echo "SOS+CORE ROM scan:"
-            cat firmware-input/STEP78_CORE_ROM_E32_SCAN.txt
             echo "ROFS headers:"
             cat firmware-input/ROFS_HEADERS.txt
             echo "ROFS signature scan:"
@@ -141,7 +135,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ngagesdk/sdk
-          ref: master
+          ref: main
           path: ngagesdk-sdk
           sparse-checkout: |
             6.1/Series60/Epoc32/Release/armi/urel

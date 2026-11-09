@@ -1,0 +1,98 @@
+name: Extract and inventory Nokia firmware
+
+on:
+  push:
+    paths:
+      - ".github/workflows/extract-nokia-firmware.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install extraction tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full unrar-free cabextract
+      - name: Download original release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p firmware-input/ngage firmware-input/n95
+          curl -fL --retry 3 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/octet-stream" \
+            "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/727070110" \
+            -o firmware-input/ngage/RH-029.v.04.10.N-GAGE.QD.rar
+          curl -fL --retry 3 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/octet-stream" \
+            "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/727054519" \
+            -o firmware-input/n95/RM-320.v.35.00.N-95.exe
+          sha256sum firmware-input/ngage/* firmware-input/n95/* | tee firmware-input/SHA256SUMS.txt
+          stat -c '%n %s bytes' firmware-input/ngage/* firmware-input/n95/* | tee firmware-input/SIZES.txt
+      - name: Inspect and extract N-Gage QD archive
+        run: |
+          set +e
+          7z l firmware-input/ngage/RH-029.v.04.10.N-GAGE.QD.rar > firmware-input/ngage-list.txt 2>&1
+          7z x firmware-input/ngage/RH-029.v.04.10.N-GAGE.QD.rar -ofirmware-extracted/ngage -y > firmware-input/ngage-extract.log 2>&1
+          echo $? > firmware-input/ngage-exit-code.txt
+          set -e
+      - name: Inspect and extract N95 firmware package
+        run: |
+          set +e
+          7z l firmware-input/n95/RM-320.v.35.00.N-95.exe > firmware-input/n95-list.txt 2>&1
+          7z x firmware-input/n95/RM-320.v.35.00.N-95.exe -ofirmware-extracted/n95 -y > firmware-input/n95-extract.log 2>&1
+          echo $? > firmware-input/n95-exit-code.txt
+          set -e
+          mkdir -p firmware-extracted/n95-nested
+          find firmware-extracted/n95 -type f \( -iname '*.exe' -o -iname '*.zip' -o -iname '*.rar' -o -iname '*.7z' -o -iname '*.cab' \) -print0 |
+          while IFS= read -r -d '' f; do
+            d="firmware-extracted/n95-nested/$(basename "$f").d"
+            mkdir -p "$d"
+            7z x "$f" "-o$d" -y >> firmware-input/n95-nested-extract.log 2>&1 || true
+          done
+      - name: Build firmware inventory and locate Symbian modules
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          roots = [Path("firmware-extracted/ngage"), Path("firmware-extracted/n95"), Path("firmware-extracted/n95-nested")]
+          wanted = {"euser.dll","cone.dll","gdi.dll","fbscli.dll","eikcore.dll","avkon.dll","ws32.dll","eikcoctl.dll","appcore.dll","efsrv.dll","euser.dso","cone.dso","gdi.dso"}
+          with open("firmware-input/EXTRACTED_INVENTORY.tsv","w") as out, open("firmware-input/TARGET_MODULES.tsv","w") as targets:
+              out.write("platform\tbytes\tsha256\tpath\n")
+              targets.write("platform\tbytes\tsha256\tpath\n")
+              for root in roots:
+                  if not root.exists(): continue
+                  platform = root.name
+                  for p in sorted(x for x in root.rglob("*") if x.is_file()):
+                      try:
+                          h=hashlib.sha256()
+                          with p.open("rb") as f:
+                              for b in iter(lambda:f.read(1024*1024),b""): h.update(b)
+                          row=f"{platform}\t{p.stat().st_size}\t{h.hexdigest()}\t{p.as_posix()}\n"
+                          out.write(row)
+                          if p.name.lower() in wanted or p.suffix.lower() in {".rom",".rofs",".fpsx",".uda"}:
+                              targets.write(row)
+                      except Exception as e:
+                          out.write(f"{platform}\tERROR\t{e}\t{p.as_posix()}\n")
+          PY
+          echo "File totals:"
+          wc -l firmware-input/EXTRACTED_INVENTORY.tsv firmware-input/TARGET_MODULES.tsv
+          echo "Archive inspection summaries:"
+          cat firmware-input/*exit-code.txt 2>/dev/null || true
+      - name: Upload extraction and inventory artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nokia-firmware-extraction-inventory
+          path: |
+            firmware-input/
+            firmware-extracted/
+          if-no-files-found: error
+          compression-level: 1
+          retention-days: 30

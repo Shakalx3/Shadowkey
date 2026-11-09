@@ -68,7 +68,8 @@ def main() -> int:
     function_names_to_extract = [
         "sub_10021138", "sub_10028374", "sub_10028340", "sub_100282f8",
         "sub_10021080", "sub_10020b04", "sub_100211c0", "sub_100209c8",
-        "sub_10021648", "sub_10021244",
+        "sub_10021648", "sub_10021244", "sub_100216f8", "sub_10021fc0",
+        "sub_100282f4", "sub_10028158", "sub_100281fc", "sub_100282f0",
     ]
     function_bodies = {}
     for name in function_names_to_extract:
@@ -173,7 +174,8 @@ def main() -> int:
                     signed_offset = header_word if header_word < 0x80000000 else header_word - 0x100000000
                     row["offset_to_top"] = signed_offset
                     row["typeinfo_pointer"] = f"0x{typeinfo:08x}"
-                    for slot in range(24):
+                    slot_limit = 48 if label == "game_control_primary" else 24
+                    for slot in range(slot_limit):
                         pos = off + 8 + slot * 4
                         if pos + 4 > len(image):
                             break

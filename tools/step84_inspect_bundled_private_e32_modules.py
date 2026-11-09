@@ -55,11 +55,9 @@ def inspect_module(path, module):
         "code_offset": u32(data,0x64),
         "data_offset": u32(data,0x68),
         "import_offset": u32(data,0x6C),
-        "code_reloc_offset": u32(data,0x70),
-        "code_reloc_size": u32(data,0x74),
-        "data_reloc_offset": u32(data,0x78),
-        "data_reloc_size": u32(data,0x7C),
-        "process_priority": u32(data,0x80) if len(data) >= 0x84 else 0,
+        "post_import_region_offset": u32(data,0x70),
+        "header_tail_74": f"0x{u32(data,0x74):08X}",
+        "header_tail_78": f"0x{u32(data,0x78):08X}",
     }
     code_off = fields["code_offset"]
     code_size = fields["code_size"]
@@ -75,7 +73,7 @@ def inspect_module(path, module):
     fields["export_table_file_offset"] = exp_off
     fields["export_dir_ends_at_import_offset"] = exp_off + count * 4 == fields["import_offset"]
     fields["code_segment_ends_at_import_offset"] = code_off + code_size == fields["import_offset"]
-    fields["import_table_size"] = max(0, fields["code_reloc_offset"] - fields["import_offset"])
+    fields["import_table_size"] = max(0, fields["post_import_region_offset"] - fields["import_offset"])
     fields["export_table_valid"] = bool(valid)
     fields["file_size"] = len(data)
     fields["sha256"] = hashlib.sha256(data).hexdigest()

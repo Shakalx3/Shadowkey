@@ -38,6 +38,7 @@ def main():
     root = Path("firmware-parsed")
     jobs = [
         ("core", "core-unpack.log", "core/rofs.img", "SOS+ROFS"),
+        ("rom", "core-unpack.log", "core/rofs.img", "SOS+CORE"),
         ("ppm", "ppm-unpack.log", "ppm/rofs.img", "SOS+ROFX"),
     ]
     report = []

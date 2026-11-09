@@ -54,9 +54,9 @@ jobs:
           set -euo pipefail
           sudo apt-get install -y build-essential git libssl-dev zlib1g-dev
           git clone --depth 1 https://github.com/saur0n/libunixpp.git /tmp/libunixpp
-          make -C /tmp/libunixpp
+          sudo make -C /tmp/libunixpp install
           git clone --depth 1 https://github.com/saur0n/unpacker.git /tmp/nokia-unpacker
-          make -C /tmp/nokia-unpacker
+          make -C /tmp/nokia-unpacker LIBRARIES="-L/usr/local/lib64 -lstdc++ -lunix++ -lcrypto -lz"
           mkdir -p firmware-parsed/uda firmware-parsed/ppm firmware-parsed/core
           set +e
           LD_LIBRARY_PATH=/tmp/libunixpp /tmp/nokia-unpacker/unpacker -o firmware-parsed/uda firmware-extracted/n95-inno/app/RM320_31.0.002_025_xxx_U01_uda.fpsx > firmware-input/uda-unpack.log 2>&1

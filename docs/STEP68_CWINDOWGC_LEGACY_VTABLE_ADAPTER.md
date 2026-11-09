@@ -70,9 +70,9 @@ The shim should be an ABI adapter, not a fake graphics implementation. It must p
 
 - GDI comparison tool: `tools/step66_gdi_virtual_abi_compare.py`.
 - Target CCoeControl export tool: `tools/step67_target_coecontrol_export_map.py`.
-- Step66 runtime SDK workflow: `42571809372`, completed successfully; its assertions validate the corrected byte-offset-to-slot mapping.
-- Step66/67 artifact: `s60-3.1-fp1-runtime-import-probe`, ID `13653134156`.
-- Artifact SHA-256: `6ffa5f07fa9410d72bd8416d05954ba9339ca46511a211aedc750f36a003e9e7`.
+- Step66 runtime SDK workflow: `42572524845`, completed successfully; its assertions validate the corrected byte-offset-to-slot mapping.
+- Step66/67 artifact: `s60-3.1-fp1-runtime-import-probe`, ID `13654020873`.
+- Artifact SHA-256: `63ae14ae299efd236bf21967f50e36c055ca506017d092b36f5ec99b7d9056b9`.
 - Step60 caller extraction run: `42571320167`, completed successfully.
 - Step60 artifact: `step60-appui-object-field-audit`, ID `13653695469`.
 - Step60 artifact SHA-256: `8a8df5fdcbd804cf3b6c862292d66d23de69e59b34538f28e3e9b4e50f838065`.

@@ -79,7 +79,8 @@ def main():
             continue
         outdir = root / "carved"
         outdir.mkdir(parents=True, exist_ok=True)
-        out = outdir / f"{name}-{wanted.lower().replace('+','-')}.rofs"
+        extension = ".img" if wanted == "SOS+CORE" else ".rofs"
+        out = outdir / f"{name}-{wanted.lower().replace('+', '-')}{extension}"
         with image.open("rb") as src, out.open("wb") as dst:
             src.seek(start)
             remaining = end - start

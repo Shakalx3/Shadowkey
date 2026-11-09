@@ -137,6 +137,40 @@ jobs:
           echo "7ed8b62b15f191ca47d2f6ca97ee5ce74cd02ce3e42b74bc7b1f9513d7df87b5  /tmp/s60-sdk-devkit-core.tar.gz" | sha256sum -c -
           mkdir -p /tmp/s60-devkit
           tar -xzf /tmp/s60-sdk-devkit-core.tar.gz -C /tmp/s60-devkit
+      - name: Checkout N-Gage ARM UREL import libraries
+        uses: actions/checkout@v4
+        with:
+          repository: ngagesdk/sdk
+          ref: master
+          path: ngagesdk-sdk
+          sparse-checkout: |
+            6.1/Series60/Epoc32/Release/armi/urel
+          sparse-checkout-cone-mode: false
+      - name: Map original game and SIMKIN ARM UREL imports
+        env:
+          SHADOWKEY_ARM_SDK_ROOT: ${{ github.workspace }}/ngagesdk-sdk
+        run: |
+          set -euo pipefail
+          SHADOWKEY_IMPORT_DISPATCH="source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c" SHADOWKEY_IMPORT_OUT="firmware-input/STEP46_GAME_ARM_IMPORTS.md" python3 tools/step46_arm_importlib_ordinal_map.py
+          SHADOWKEY_IMPORT_DISPATCH="source_bundle/shadowkey_step35_work/simkin_import_dispatch.c" SHADOWKEY_IMPORT_OUT="firmware-input/STEP46_SIMKIN_ARM_IMPORTS.md" python3 tools/step46_arm_importlib_ordinal_map.py
+      - name: Download original GCCE EPOC demangler
+        run: |
+          set -euo pipefail
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libc6-i386 lib32stdc++6 lib32gcc-s1 lib32z1
+          mkdir -p "$RUNNER_TEMP/step82-gcce"
+          curl -fL --retry 3 "https://www.martin.st/symbian/gnu-csl-arm-2005Q1C-arm-none-symbianelf-i686-pc-linux-gnu.tar.bz2" -o "$RUNNER_TEMP/step82-gcce/gcce.tar.bz2"
+          test "$(stat -c '%s' "$RUNNER_TEMP/step82-gcce/gcce.tar.bz2")" = "10896869"
+          test "$(md5sum "$RUNNER_TEMP/step82-gcce/gcce.tar.bz2" | awk '{print $1}')" = "622e4db70cfae6a9eec26892a9932633"
+          mkdir -p "$RUNNER_TEMP/step82-gcce/root"
+          tar -xjf "$RUNNER_TEMP/step82-gcce/gcce.tar.bz2" -C "$RUNNER_TEMP/step82-gcce/root"
+          DEM=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name 'arm-none-symbianelf-c++filt' | head -n1)
+          test -n "$DEM" && test -x "$DEM"
+          BIN=$(dirname "$DEM")
+          echo "EPOC_DEMANGLER=$DEM" >> "$GITHUB_ENV"
+          echo "LD_LIBRARY_PATH=$BIN/../lib:$BIN/../lib32" >> "$GITHUB_ENV"
+          "$DEM" < <(printf '%s\n' '__7TPtrC16PCUs' '__ne__C6TInt64RC6TInt64') > firmware-input/STEP81_EPOC_DEMANGLER_CHECK.txt
       - name: Symbolize actual N95 ROM exports against target SDK
         run: |
           set -euo pipefail
@@ -146,6 +180,27 @@ jobs:
           echo "Cross-check all 17 present game DLLs and flag missing N-Gage-only dependencies"
           python3 tools/step80_compare_n95_rom_sdk_exports.py --sdk-root /tmp/s60-devkit --rom-dir firmware-input
           cat firmware-input/STEP80_ROM_SDK_EXPORT_CHECK.json
+      - name: Map all game and SIMKIN imports to N95 ROM exports
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step82_map_game_imports_to_n95.py
+          python3 tools/step82_map_game_imports_to_n95.py \
+            --epoc-demangler "$EPOC_DEMANGLER" \
+            --target-demangler c++filt \
+            --rom-dir firmware-input \
+            --game-dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
+            --simkin-dispatch source_bundle/shadowkey_step35_work/simkin_import_dispatch.c \
+            --game-arm-map firmware-input/STEP46_GAME_ARM_IMPORTS.tsv \
+            --simkin-arm-map firmware-input/STEP46_SIMKIN_ARM_IMPORTS.tsv
+          cat firmware-input/STEP82_IMPORT_MAPPING_SUMMARY.json
+      - name: Parse bundled SIMKIN and GAMECOMMS DLL imports
+        run: |
+          set +e
+          python3 tools/e32/shadowkey_extract_e32_imports.py "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/SIMKIN.DLL" -o firmware-input/SIMKIN_DLL_import_thunks.csv > firmware-input/SIMKIN_DLL_import_extract.log 2>&1
+          echo $? > firmware-input/SIMKIN_DLL_import_extract.exit
+          python3 tools/e32/shadowkey_extract_e32_imports.py "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/libs/GAMECOMMS.DLL" -o firmware-input/GAMECOMMS_DLL_import_thunks.csv > firmware-input/GAMECOMMS_DLL_import_extract.log 2>&1
+          echo $? > firmware-input/GAMECOMMS_DLL_import_extract.exit
+          set -e
       - name: Inventory E32 modules and export candidates
         run: |
           python3 - <<'PY'

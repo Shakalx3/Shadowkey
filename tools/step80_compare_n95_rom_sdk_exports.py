@@ -136,6 +136,22 @@ def main():
             meta = module_meta.get(dll + ".dll")
             f.write(f"{dll}.dll\t{meta['path'] if meta else ''}\t{'PRESENT_IN_ROM' if meta else 'MISSING_FROM_ROM'}\n")
 
+    gamecomms_imports_path = Path("firmware-input/GAMECOMMS_DLL_import_thunks.csv")
+    gamecomms_dlls = set()
+    if gamecomms_imports_path.exists():
+        with gamecomms_imports_path.open(newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                dep = row.get("dependency", "").strip()
+                m = re.match(r"([A-Za-z0-9]+)(?:\[[0-9a-fA-F]+\])?\.DLL$", dep, re.I)
+                if m:
+                    gamecomms_dlls.add(m.group(1).lower())
+    gamecomms_availability_path = args.rom_dir / "GAMECOMMS_IMPORT_DLL_AVAILABILITY.tsv"
+    with gamecomms_availability_path.open("w", encoding="utf-8") as f:
+        f.write("dll\trom_path\tstatus\n")
+        for dll in sorted(gamecomms_dlls):
+            meta = module_meta.get(dll + ".dll")
+            f.write(f"{dll}.dll\t{meta['path'] if meta else ''}\t{'PRESENT_IN_ROM' if meta else 'MISSING_FROM_ROM'}\n")
+
     matches = sum(1 for r in count_rows if r[-1] == "MATCH")
     summary = {
         "rom_modules": len(modules),
@@ -145,6 +161,9 @@ def main():
         "game_import_dlls": len(imported_dlls),
         "game_import_dlls_present": sum(1 for d in imported_dlls if d + ".dll" in module_meta),
         "game_import_dlls_missing": [d for d in imported_dlls if d + ".dll" not in module_meta],
+        "gamecomms_import_dlls": len(gamecomms_dlls),
+        "gamecomms_import_dlls_present": sum(1 for d in gamecomms_dlls if d + ".dll" in module_meta),
+        "gamecomms_import_dlls_missing": [d for d in sorted(gamecomms_dlls) if d + ".dll" not in module_meta],
         "count_report": str(count_path),
         "symbolized_export_map": str(map_path),
         "game_import_report": str(game_path),

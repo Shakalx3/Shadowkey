@@ -57,7 +57,14 @@ def main():
         dso_by_module[stem] = symbols
         rom_exports = rom_by_module.get(module_name, {})
         rom_count = int(meta["export_count"])
-        status = "MATCH" if len(symbols) == rom_count and len(rom_exports) == rom_count else "COUNT_MISMATCH"
+        if len(symbols) == rom_count and len(rom_exports) == rom_count:
+            status = "MATCH"
+        elif rom_count > len(symbols) and len(rom_exports) == rom_count and all(o in rom_exports for o in symbols):
+            status = "ROM_EXTRA_EXPORTS"
+        elif len(symbols) > rom_count:
+            status = "ROM_MISSING_EXPORTS"
+        else:
+            status = "COUNT_MISMATCH"
         count_rows.append((module_name, meta["uid3"], rom_count, len(symbols), status))
         code_start = int(meta["code_address"], 16)
         code_end = code_start + int(meta["code_size"])

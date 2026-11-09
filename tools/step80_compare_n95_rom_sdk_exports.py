@@ -124,12 +124,29 @@ def main():
         for row in game_rows:
             f.write("\t".join(map(str, row)) + "\n")
 
+    dispatch_path = Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c")
+    dispatch_text = dispatch_path.read_text(encoding="utf-8", errors="replace")
+    imported_dlls = sorted(set(
+        name.lower() for name in re.findall(r'"([A-Z0-9]+)\\[[0-9a-fA-F]+\\]\\.DLL"', dispatch_text)
+    ))
+    availability_path = args.rom_dir / "GAME_IMPORT_DLL_AVAILABILITY.tsv"
+    with availability_path.open("w", encoding="utf-8") as f:
+        f.write("dll	rom_path	status
+")
+        for dll in imported_dlls:
+            meta = module_meta.get(dll + ".dll")
+            f.write(f"{dll}.dll	{meta['path'] if meta else ''}	{'PRESENT_IN_ROM' if meta else 'MISSING_FROM_ROM'}
+")
+
     matches = sum(1 for r in count_rows if r[-1] == "MATCH")
     summary = {
         "rom_modules": len(modules),
         "sdk_dso_modules_found": sum(1 for r in count_rows if r[-1] != "DSO_MISSING"),
         "export_count_matches": matches,
         "game_import_remaps": len(game_rows),
+        "game_import_dlls": len(imported_dlls),
+        "game_import_dlls_present": sum(1 for d in imported_dlls if d + ".dll" in module_meta),
+        "game_import_dlls_missing": [d for d in imported_dlls if d + ".dll" not in module_meta],
         "count_report": str(count_path),
         "symbolized_export_map": str(map_path),
         "game_import_report": str(game_path),

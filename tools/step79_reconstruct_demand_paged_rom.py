@@ -225,7 +225,9 @@ def main():
     pageable_start = u32(header, 0x148)
     pageable_size = u32(header, 0x14C)
     page_index_off = u32(header, 0x150)
-    page_count = (uncompressed_size - pageable_start + PAGE - 1) // PAGE
+    page_count = (uncompressed_size + PAGE - 1) // PAGE
+    first_pageable_index = pageable_start // PAGE
+    pageable_page_count = page_count - first_pageable_index
     table_off = h_off + page_index_off
     if table_off + page_count * 8 > len(raw):
         raise ValueError("ROM page index table extends beyond SOS+CORE image")
@@ -242,7 +244,7 @@ def main():
     for label, base in base_candidates:
         ok = 0
         tried = 0
-        for data_start, data_size, compression, attrs in entries:
+        for data_start, data_size, compression, attrs in entries[first_pageable_index:]:
             if not data_size or compression != 1:
                 continue
             off = base + data_start
@@ -257,7 +259,7 @@ def main():
             if tried >= 64:
                 break
         base_scores.append((ok, tried, label, base))
-    base_scores.sort(reverse=True)
+    base_scores.sort(key=lambda x: (x[0], x[1], x[2] == "rom-relative"), reverse=True)
     ok, tried, chosen_label, data_base = base_scores[0]
 
     outdir = Path("firmware-input")
@@ -265,13 +267,14 @@ def main():
         f"raw_size={len(raw)} sha256={hashlib.sha256(raw).hexdigest()}",
         f"rom_header_offset=0x{h_off:X} rom_base=0x{rom_base:08X} rom_size=0x{rom_size:X}",
         f"uncompressed_size=0x{uncompressed_size:X} pageable_start=0x{pageable_start:X} pageable_size=0x{pageable_size:X}",
-        f"page_index_offset=0x{page_index_off:X} page_count={page_count} page_index_file_offset=0x{table_off:X}",
+        f"page_index_offset=0x{page_index_off:X} page_count_total={page_count} first_pageable_index={first_pageable_index} pageable_page_count={pageable_page_count} page_index_file_offset=0x{table_off:X}",
         f"data_start_mapping={chosen_label} base=0x{data_base:X} sample_bytepair_ok={ok}/{tried}",
         f"compression_types={dict((x, sum(1 for e in entries if e[2] == x)) for x in sorted(set(e[2] for e in entries)))}",
         f"zero_size_pages={sum(1 for e in entries if e[1] == 0)}",
         f"non_pageable_flags={sum(1 for e in entries if not (e[3] & 1))}",
         f"data_size_min={min(e[1] for e in entries)} data_size_max={max(e[1] for e in entries)}",
-        f"data_start_min=0x{min(e[0] for e in entries):X} data_start_max=0x{max(e[0] for e in entries):X}",
+        f"pageable_data_start_min=0x{min(e[0] for e in entries[first_pageable_index:]):X} pageable_data_start_max=0x{max(e[0] for e in entries[first_pageable_index:]):X}",
+        f"base_scores={base_scores}",
     ]
     page_rows = ["index\trom_offset\tdata_start\tdata_size\tcompression\tattrs\traw_offset\tstatus"]
     output = bytearray(b"\xFF" * uncompressed_size)
@@ -282,7 +285,10 @@ def main():
     successes = {0: 0, 1: 0}
     failures = []
     for i, (data_start, data_size, compression, attrs) in enumerate(entries):
-        dst_off = pageable_start + i * PAGE
+        if i < first_pageable_index:
+            page_rows.append(f"{i}\\t{i*PAGE:08X}\\t{data_start:08X}\\t{data_size}\\t{compression}\\t{attrs:02X}\\t-\\tunpaged-skip")
+            continue
+        dst_off = i * PAGE
         raw_off = data_base + data_start
         status = "ok"
         page_len = min(PAGE, uncompressed_size - dst_off)

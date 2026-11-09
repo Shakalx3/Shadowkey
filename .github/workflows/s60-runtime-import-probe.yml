@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/s60-runtime-import-probe.yml"
       - ".github/s60-runtime-import-probe.trigger"
+      - "tools/step66_gdi_virtual_abi_compare.py"
   workflow_dispatch:
 
 permissions:

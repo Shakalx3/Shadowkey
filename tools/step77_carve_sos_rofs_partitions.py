@@ -11,7 +11,7 @@ import hashlib
 import re
 import sys
 
-BLOCK_RE = re.compile(r"Block #(\d+):\s*(.*?)(?=\nBlock #|\\Z)", re.S)
+BLOCK_RE = re.compile(r"Block #(\d+):\s*(.*?)(?=\nBlock #|\Z)", re.S)
 DESC_RE = re.compile(r"Description: (SOS\+ROFS|SOS\+ROFX)")
 DATA_RE = re.compile(r"Data block: (\d+):(\d+)")
 

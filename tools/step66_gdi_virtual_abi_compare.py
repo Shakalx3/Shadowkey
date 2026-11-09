@@ -42,8 +42,8 @@ def extract_class(text: str, name: str) -> str:
     raise SystemExit(f"unbalanced class body: {name}")
 
 def virtual_declarations(block: str):
-    block = re.sub(r"/\\*.*?\\*/", "", block, flags=re.S)
-    block = re.sub(r"//[^\\n]*", "", block)
+    block = re.sub(r"/\*.*?\*/", "", block, flags=re.S)
+    block = re.sub(r"//[^\n]*", "", block)
     rows, current = [], ""
     for raw in block.splitlines():
         line = raw.strip()

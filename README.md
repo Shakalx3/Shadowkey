@@ -117,3 +117,7 @@ Recovered the game construction/cleanup sequence. The old game object stores a C
 ### Step 63 — target lifecycle API remapping
 
 Mapped the nine imports used by the CAknAppUi construction/cleanup path to target S60 3.1 DSOs: BaseConstructL 63→2924, ApplicationRect 233→318, AddToStackL 12→202, SetKeyBlockMode 1529→2927, KeySounds 874→3002, PushContextL 1272→1141, PopContext 1213→1139, RemoveFromStack 167→211, and CAknAppUi destructor 2048→2937/2938/2939 (variant unresolved). Every unchanged old ordinal collides with an unrelated target method. The key-sound object is returned by target KeySounds and can potentially use target methods directly; the app-UI and control pointers still require layout-aware wrappers. See [Step63](docs/STEP63_TARGET_LIFECYCLE_EXPORT_REMAP.md).
+
+### Step 65 — original game CCoeControl requires a native target proxy
+
+Decoded the actual 0x444-byte game control allocation, its primary/secondary vptrs, and the primary virtual table. The original object derives from the old N-Gage CCoeControl ABI. The target S60 3.1 CCoeControl inserts five virtual methods after InputCapabilities and adds private state before iWin, shifting object fields. Therefore the original game control must not be registered directly with target AddToStackL; a separate native S60 CCoeControl proxy is required. See [Step65](docs/STEP65_GAME_COECONTROL_VTABLE_AND_TARGET_PROXY_REQUIREMENT.md).

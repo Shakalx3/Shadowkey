@@ -190,7 +190,7 @@ def main():
                     else:
                         status = "NO_TARGET_SIGNATURE"
 
-            if candidates and status in ("MANUAL_OVERRIDE", "EXACT_SIGNATURE_MATCH", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
+            if candidates and status in ("MANUAL_OVERRIDE", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
                 chosen = candidates[0]
                 target_ord = int(chosen["ordinal"])
                 target_symbol = chosen["sdk_symbol"]

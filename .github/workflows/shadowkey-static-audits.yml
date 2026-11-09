@@ -25,10 +25,4 @@ jobs:
       - name: Check WINS/ARM import conflict and fail-closed dispatch
         run: python tools/step48_import_hle_consistency_test.py
       - name: Compile and run legacy CWindowGc slot mapping contract
-        run: |
-          gcc -std=c99 -Wall -Wextra -Werror \\
-            -Isource_bundle/shadowkey_step35_work \\
-            source_bundle/shadowkey_step35_work/shadowkey_legacy_cwindowgc_slots.c \\
-            tools/step69_legacy_gc_slot_contract_test.c \\
-            -o /tmp/step69_gc_slot_test
-          /tmp/step69_gc_slot_test
+        run: gcc -std=c99 -Wall -Wextra -Werror -Isource_bundle/shadowkey_step35_work source_bundle/shadowkey_step35_work/shadowkey_legacy_cwindowgc_slots.c tools/step69_legacy_gc_slot_contract_test.c -o /tmp/step69_gc_slot_test && /tmp/step69_gc_slot_test

@@ -1,0 +1,29 @@
+name: Original Symbian GCCE 2005Q1C probe
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/symbian-gcce-2005q1c-probe.yml"
+      - "tools/step72_gcce_2005q1c_probe.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  gcce-2005q1c:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run original Symbian GCCE probe
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bash tools/step72_gcce_2005q1c_probe.sh
+      - name: Upload GCCE probe
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gcce-2005q1c-eabi-probe
+          path: step72-probe/
+          if-no-files-found: warn

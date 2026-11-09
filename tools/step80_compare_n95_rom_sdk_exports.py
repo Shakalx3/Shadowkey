@@ -127,16 +127,14 @@ def main():
     dispatch_path = Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c")
     dispatch_text = dispatch_path.read_text(encoding="utf-8", errors="replace")
     imported_dlls = sorted(set(
-        name.lower() for name in re.findall(r'"([A-Z0-9]+)\\[[0-9a-fA-F]+\\]\\.DLL"', dispatch_text)
+        name.lower() for name in re.findall(r'"([A-Z0-9]+)\[[0-9a-fA-F]+\]\.DLL"', dispatch_text)
     ))
     availability_path = args.rom_dir / "GAME_IMPORT_DLL_AVAILABILITY.tsv"
     with availability_path.open("w", encoding="utf-8") as f:
-        f.write("dll	rom_path	status
-")
+        f.write("dll\trom_path\tstatus\n")
         for dll in imported_dlls:
             meta = module_meta.get(dll + ".dll")
-            f.write(f"{dll}.dll	{meta['path'] if meta else ''}	{'PRESENT_IN_ROM' if meta else 'MISSING_FROM_ROM'}
-")
+            f.write(f"{dll}.dll\t{meta['path'] if meta else ''}\t{'PRESENT_IN_ROM' if meta else 'MISSING_FROM_ROM'}\n")
 
     matches = sum(1 for r in count_rows if r[-1] == "MATCH")
     summary = {

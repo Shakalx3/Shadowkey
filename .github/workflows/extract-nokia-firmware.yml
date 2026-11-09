@@ -49,6 +49,28 @@ jobs:
           innoextract -d firmware-extracted/n95-inno firmware-input/n95/RM-320.v.35.00.N-95.exe > firmware-input/n95-inno-extract.log 2>&1
           echo $? > firmware-input/n95-inno-exit-code.txt
           set -e
+      - name: Build Nokia BB5 image parser and inspect firmware blocks
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y build-essential git libssl-dev zlib1g-dev
+          git clone --depth 1 https://github.com/saur0n/libunixpp.git /tmp/libunixpp
+          make -C /tmp/libunixpp
+          git clone --depth 1 https://github.com/saur0n/unpacker.git /tmp/nokia-unpacker
+          make -C /tmp/nokia-unpacker
+          mkdir -p firmware-parsed/uda firmware-parsed/ppm firmware-parsed/core
+          set +e
+          LD_LIBRARY_PATH=/tmp/libunixpp /tmp/nokia-unpacker/unpacker -o firmware-parsed/uda firmware-extracted/n95-inno/app/RM320_31.0.002_025_xxx_U01_uda.fpsx > firmware-input/uda-unpack.log 2>&1
+          echo $? > firmware-input/uda-unpack.exit
+          LD_LIBRARY_PATH=/tmp/libunixpp /tmp/nokia-unpacker/unpacker -o firmware-parsed/ppm firmware-extracted/n95-inno/app/RM-320_35.0.001_PR.v05 > firmware-input/ppm-unpack.log 2>&1
+          echo $? > firmware-input/ppm-unpack.exit
+          LD_LIBRARY_PATH=/tmp/libunixpp /tmp/nokia-unpacker/unpacker -o firmware-parsed/core firmware-extracted/n95-inno/app/RM-320_35.0.001_PR.C0R > firmware-input/core-unpack.log 2>&1
+          echo $? > firmware-input/core-unpack.exit
+          set -e
+          find firmware-parsed -type f -printf '%p\t%s bytes\n' | sort > firmware-input/PARSED_FILES.tsv
+          echo "Parser exit codes (UDA, PPM, CORE):"
+          cat firmware-input/uda-unpack.exit firmware-input/ppm-unpack.exit firmware-input/core-unpack.exit
+          echo "Parsed files:"
+          cat firmware-input/PARSED_FILES.tsv
       - name: Build firmware inventory and locate Symbian modules
         run: |
           python3 - <<'PY'

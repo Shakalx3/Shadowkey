@@ -76,8 +76,19 @@ $conversionExit = $LASTEXITCODE
 if ($conversionExit -ne 0 -or -not (Test-Path $e32Path)) { throw "elf2e32 conversion failed ($conversionExit): $conversionOutput" }
 
 Write-Host "Re-reading the generated E32Image header"
-$dumpOutput = (& $elf2e32 "--e32input=$e32Path" "--dump=h" 2>&1 | Out-String)
-$dumpExit = $LASTEXITCODE
+$dumpStdout = Join-Path $workRoot "e32-dump.stdout.txt"
+$dumpStderr = Join-Path $workRoot "e32-dump.stderr.txt"
+$dumpProcess = Start-Process -FilePath $elf2e32 -ArgumentList @("--e32input=$e32Path", "--dump=h") -NoNewWindow -PassThru -RedirectStandardOutput $dumpStdout -RedirectStandardError $dumpStderr
+if ($dumpProcess.WaitForExit(20000)) {
+  $dumpExit = $dumpProcess.ExitCode
+} else {
+  Stop-Process -Id $dumpProcess.Id -Force
+  $dumpExit = -999
+}
+$dumpOutput = ""
+if (Test-Path $dumpStdout) { $dumpOutput += Get-Content $dumpStdout -Raw }
+if (Test-Path $dumpStderr) { $dumpOutput += Get-Content $dumpStderr -Raw }
+if ($dumpExit -eq -999) { $dumpOutput += "E32 header dump timed out after 20 seconds." }
 $e32Bytes = [IO.File]::ReadAllBytes($e32Path)
 $e32Hex = [BitConverter]::ToString($e32Bytes[0..([Math]::Min(63, $e32Bytes.Length - 1))])
 $e32Hash = (Get-FileHash -Algorithm SHA256 $e32Path).Hash.ToLower()

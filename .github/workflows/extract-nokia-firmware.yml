@@ -24,16 +24,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p firmware-input/ngage firmware-input/n95
-          curl -fL --retry 3 \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/octet-stream" \
-            "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/727070110" \
-            -o firmware-input/ngage/RH-029.v.04.10.N-GAGE.QD.rar
-          curl -fL --retry 3 \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/octet-stream" \
-            "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/727054519" \
-            -o firmware-input/n95/RM-320.v.35.00.N-95.exe
+          curl -fL --retry 3 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/727070110" -o firmware-input/ngage/RH-029.v.04.10.N-GAGE.QD.rar
+          curl -fL --retry 3 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/727054519" -o firmware-input/n95/RM-320.v.35.00.N-95.exe
           sha256sum firmware-input/ngage/* firmware-input/n95/* | tee firmware-input/SHA256SUMS.txt
           stat -c '%n %s bytes' firmware-input/ngage/* firmware-input/n95/* | tee firmware-input/SIZES.txt
       - name: Inspect and extract N-Gage QD archive
@@ -49,7 +41,7 @@ jobs:
           innoextract -d firmware-extracted/n95-inno firmware-input/n95/RM-320.v.35.00.N-95.exe > firmware-input/n95-inno-extract.log 2>&1
           echo $? > firmware-input/n95-inno-exit-code.txt
           set -e
-      - name: Build Nokia BB5 image parser and inspect firmware blocks
+      - name: Parse FPSX containers and inspect ROFS
         run: |
           set -euo pipefail
           sudo apt-get install -y build-essential git libssl-dev zlib1g-dev
@@ -58,20 +50,16 @@ jobs:
           sudo make -C /tmp/libunixpp install
           git clone --depth 1 https://github.com/saur0n/unpacker.git /tmp/nokia-unpacker
           make -C /tmp/nokia-unpacker LIBRARIES="-L/usr/local/lib64 -lstdc++ -lunix++ -lcrypto -lz"
-          mkdir -p firmware-parsed/uda firmware-parsed/ppm firmware-parsed/core
+          mkdir -p firmware-parsed/uda firmware-parsed/ppm firmware-parsed/core firmware-parsed/ppm-rofs firmware-parsed/core-rofs
           set +e
           LD_LIBRARY_PATH=/usr/local/lib64:/tmp/libunixpp /tmp/nokia-unpacker/unpacker -o firmware-parsed/uda firmware-extracted/n95-inno/app/RM320_31.0.002_025_xxx_U01_uda.fpsx > firmware-input/uda-unpack.log 2>&1
           echo $? > firmware-input/uda-unpack.exit
-          # The upstream detector only recognizes FPSX files by the .fpsx suffix.
-          # C0R and v05 are also FPSX containers; stage them under that suffix.
           cp firmware-extracted/n95-inno/app/RM-320_35.0.001_PR.v05 firmware-input/ppm-image.fpsx
           cp firmware-extracted/n95-inno/app/RM-320_35.0.001_PR.C0R firmware-input/core-image.fpsx
           LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/ppm firmware-input/ppm-image.fpsx > firmware-input/ppm-unpack.log 2>&1
           echo $? > firmware-input/ppm-unpack.exit
           LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/core firmware-input/core-image.fpsx > firmware-input/core-unpack.log 2>&1
           echo $? > firmware-input/core-unpack.exit
-          # Recursively unpack ROFS images produced by the FPSX container.
-          mkdir -p firmware-parsed/ppm-rofs firmware-parsed/core-rofs
           if [ -f firmware-parsed/ppm/rofs.img ]; then
             cp firmware-parsed/ppm/rofs.img firmware-input/ppm.rofs
             LD_LIBRARY_PATH=/usr/local/lib64 /tmp/nokia-unpacker/unpacker -o firmware-parsed/ppm-rofs firmware-input/ppm.rofs > firmware-input/ppm-rofs-unpack.log 2>&1
@@ -83,48 +71,80 @@ jobs:
             echo $? > firmware-input/core-rofs-unpack.exit
           fi
           set -e
-          find firmware-parsed -type f -printf '%p\\t%s bytes\\n' | sort > firmware-input/PARSED_FILES.tsv
-          echo "Parser exit codes (UDA, PPM, CORE):"
-          cat firmware-input/uda-unpack.exit firmware-input/ppm-unpack.exit firmware-input/core-unpack.exit
-          echo "Parsed files:"
-          cat firmware-input/PARSED_FILES.tsv
-      - name: Build firmware inventory and locate Symbian modules
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          out = Path("firmware-input/ROFS_HEADERS.txt")
+          with out.open("w") as f:
+              for p in [Path("firmware-parsed/ppm/rofs.img"), Path("firmware-parsed/core/rofs.img")]:
+                  if not p.exists():
+                      continue
+                  b = p.read_bytes()[:1100]
+                  f.write(f"{p}: size={p.stat().st_size}\n")
+                  for off in (0, 1024):
+                      if len(b) >= off+16:
+                          f.write(f"  offset {off}: magic={b[off:off+4]!r} hex={b[off:off+4].hex()} header={b[off+4:off+16].hex()}\n")
+          PY
+          find firmware-parsed -type f -printf '%p\t%s bytes\n' | sort > firmware-input/PARSED_FILES.tsv
+          {
+            echo "FPSX exit codes (UDA, PPM, CORE):"
+            cat firmware-input/uda-unpack.exit firmware-input/ppm-unpack.exit firmware-input/core-unpack.exit
+            echo "ROFS exit codes:"
+            for f in firmware-input/*-rofs-unpack.exit; do [ -f "$f" ] && cat "$f"; done
+            echo "ROFS headers:"
+            cat firmware-input/ROFS_HEADERS.txt
+            echo "ROFS parser logs:"
+            for f in firmware-input/*-rofs-unpack.log; do [ -f "$f" ] && { echo "### $f"; cat "$f"; }; done
+            echo "Parsed files:"
+            cat firmware-input/PARSED_FILES.tsv
+          } > firmware-input/PARSER_SUMMARY.txt
+      - name: Inventory E32 modules and export candidates
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib
-          roots = [Path("firmware-extracted/ngage"), Path("firmware-extracted/n95-inno"), Path("firmware-parsed/ppm-rofs"), Path("firmware-parsed/core-rofs")]
-          wanted = {"euser.dll","cone.dll","gdi.dll","fbscli.dll","eikcore.dll","avkon.dll","ws32.dll","eikcoctl.dll","appcore.dll","efsrv.dll","euser.dso","cone.dso","gdi.dso"}
-          with open("firmware-input/EXTRACTED_INVENTORY.tsv","w") as out, open("firmware-input/TARGET_MODULES.tsv","w") as targets:
-              out.write("platform\tbytes\tsha256\tpath\n")
-              targets.write("platform\tbytes\tsha256\tpath\n")
+          import hashlib, shutil, struct
+          roots = [Path("firmware-extracted/ngage"), Path("firmware-extracted/n95-inno"), Path("firmware-parsed/uda"), Path("firmware-parsed/ppm-rofs"), Path("firmware-parsed/core-rofs")]
+          wanted = {"euser.dll","cone.dll","gdi.dll","fbscli.dll","eikcore.dll","avkon.dll","ws32.dll","eikcoctl.dll","appcore.dll","efsrv.dll","fbscli.dll","gdi.dll"}
+          candidates = Path("firmware-input/e32-candidates")
+          candidates.mkdir(parents=True, exist_ok=True)
+          with open("firmware-input/EXTRACTED_INVENTORY.tsv","w") as out, open("firmware-input/TARGET_MODULES.tsv","w") as targets, open("firmware-input/E32_CANDIDATES.tsv","w") as e32:
+              out.write("tree\tbytes\tsha256\tpath\n")
+              targets.write("tree\tbytes\tsha256\tpath\n")
+              e32.write("tree\tuid1\tuid2\tuid3\te32_version\texport_count\tbytes\tsha256\tpath\tcopied_as\n")
               for root in roots:
                   if not root.exists(): continue
-                  platform = root.name
                   for p in sorted(x for x in root.rglob("*") if x.is_file()):
                       try:
                           h=hashlib.sha256()
                           with p.open("rb") as f:
-                              for b in iter(lambda:f.read(1024*1024),b""): h.update(b)
-                          row=f"{platform}\t{p.stat().st_size}\t{h.hexdigest()}\t{p.as_posix()}\n"
+                              for block in iter(lambda:f.read(1024*1024),b""): h.update(block)
+                          digest=h.hexdigest()
+                          row=f"{root.name}\t{p.stat().st_size}\t{digest}\t{p.as_posix()}\n"
                           out.write(row)
                           if p.name.lower() in wanted or p.suffix.lower() in {".rom",".rofs",".fpsx",".uda",".c0r"}:
                               targets.write(row)
-                      except Exception as e:
-                          out.write(f"{platform}\tERROR\t{e}\t{p.as_posix()}\n")
+                          with p.open("rb") as f: head=f.read(0x80)
+                          if len(head)>=0x40 and head[0x10:0x14]==b"EPOC":
+                              uid1,uid2,uid3=struct.unpack_from("<III",head,0)
+                              e32ver=struct.unpack_from("<I",head,0x14)[0]
+                              exp=struct.unpack_from("<I",head,0x34)[0]
+                              copyname=f"{digest[:12]}_{p.name}"
+                              shutil.copy2(p,candidates/copyname)
+                              e32.write(f"{root.name}\t{uid1:08X}\t{uid2:08X}\t{uid3:08X}\t{e32ver:08X}\t{exp}\t{p.stat().st_size}\t{digest}\t{p.as_posix()}\t{copyname}\n")
+                      except Exception as ex:
+                          out.write(f"{root.name}\tERROR\t{ex}\t{p.as_posix()}\n")
+          print("Inventory complete")
+          print(Path("firmware-input/E32_CANDIDATES.tsv").read_text())
           PY
-          echo "File totals:"
-          wc -l firmware-input/EXTRACTED_INVENTORY.tsv firmware-input/TARGET_MODULES.tsv
-          echo "N95 extraction result:"
-          cat firmware-input/n95-inno-exit-code.txt 2>/dev/null || true
-      - name: Upload extraction and inventory artifact
+      - name: Remove large intermediate images and source packages
+        run: |
+          rm -f firmware-input/ngage/*.rar firmware-input/n95/*.exe firmware-input/*.fpsx firmware-input/*.rofs
+          rm -rf firmware-parsed firmware-extracted
+      - name: Upload compact diagnostic artifact
         uses: actions/upload-artifact@v4
         with:
-          name: nokia-firmware-extraction-inventory
-          path: |
-            firmware-input/
-            firmware-extracted/
-            firmware-parsed/
+          name: nokia-firmware-rofs-diagnostics
+          path: firmware-input/
           if-no-files-found: error
-          compression-level: 1
+          compression-level: 6
           retention-days: 30

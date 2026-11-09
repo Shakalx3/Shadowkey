@@ -104,7 +104,7 @@ jobs:
           from pathlib import Path
           import hashlib, shutil, struct
           roots = [Path("firmware-extracted/ngage"), Path("firmware-extracted/n95-inno"), Path("firmware-parsed/uda"), Path("firmware-parsed/ppm-rofs"), Path("firmware-parsed/core-rofs")]
-          wanted = {"euser.dll","cone.dll","gdi.dll","fbscli.dll","eikcore.dll","avkon.dll","ws32.dll","eikcoctl.dll","appcore.dll","efsrv.dll","fbscli.dll","gdi.dll"}
+          wanted = {"euser.dll","cone.dll","gdi.dll","fbscli.dll","eikcore.dll","avkon.dll","ws32.dll","eikcoctl.dll","appcore.dll","efsrv.dll"}
           candidates = Path("firmware-input/e32-candidates")
           candidates.mkdir(parents=True, exist_ok=True)
           with open("firmware-input/EXTRACTED_INVENTORY.tsv","w") as out, open("firmware-input/TARGET_MODULES.tsv","w") as targets, open("firmware-input/E32_CANDIDATES.tsv","w") as e32:
@@ -128,8 +128,10 @@ jobs:
                               uid1,uid2,uid3=struct.unpack_from("<III",head,0)
                               e32ver=struct.unpack_from("<I",head,0x18)[0]
                               exp=struct.unpack_from("<I",head,0x5c)[0]
-                              copyname=f"{digest[:12]}_{p.name}"
-                              shutil.copy2(p,candidates/copyname)
+                              copyname=""
+                              if p.name.lower() in wanted:
+                                  copyname=f"{digest[:12]}_{p.name}"
+                                  shutil.copy2(p,candidates/copyname)
                               e32.write(f"{root.name}\t{uid1:08X}\t{uid2:08X}\t{uid3:08X}\t{e32ver:08X}\t{exp}\t{p.stat().st_size}\t{digest}\t{p.as_posix()}\t{copyname}\n")
                       except Exception as ex:
                           out.write(f"{root.name}\tERROR\t{ex}\t{p.as_posix()}\n")

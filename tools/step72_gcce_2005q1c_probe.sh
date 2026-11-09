@@ -15,7 +15,7 @@ mkdir -p "$WORK" "$OUT" "$SDK_ROOT" "$TOOLCHAIN_ROOT"
 echo "Installing 32-bit runtime dependencies for the original CodeSourcery toolchain"
 sudo dpkg --add-architecture i386
 sudo apt-get update -qq
-sudo apt-get install -y -qq libc6-i386 lib32stdc++6 lib32gcc-s1 lib32z1
+sudo apt-get install -y -qq libc6-i386 lib32stdc++6 lib32gcc-s1 lib32z1 g++-multilib
 
 echo "Downloading pinned S60 3.1 FP1 SDK"
 curl -fL --retry 3 \
@@ -71,7 +71,7 @@ LIB="$SDK_ROOT/Epoc32/release/armv5/lib"
 
 echo "Build portable elf2e32 replacement"
 git clone --depth 1 https://github.com/fedor4ever/elf2e32.git "$ELF2E32_SRC"
-cmake -S "$ELF2E32_SRC" -B "$ELF2E32_BUILD" -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_CXX_FLAGS=-D__LINUX__\ -include\ string.h
+cmake -S "$ELF2E32_SRC" -B "$ELF2E32_BUILD" -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_CXX_FLAGS="-m32 -D__LINUX__ -include string.h" -DCMAKE_EXE_LINKER_FLAGS=-m32
 cmake --build "$ELF2E32_BUILD" --parallel 2
 ELF2E32="$ELF2E32_BUILD/elf2e32"
 if [ ! -x "$ELF2E32" ]; then ELF2E32=$(find "$ELF2E32_BUILD" -type f -name elf2e32 -perm -111 | head -n1); fi

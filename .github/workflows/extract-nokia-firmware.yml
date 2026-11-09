@@ -69,6 +69,7 @@ jobs:
           echo "Reconstruct compressed unpaged ROM image and rescan XIP modules"
           python3 tools/step78_scan_core_rom_e32.py
           python3 -m py_compile tools/step78_scan_core_rom_e32.py
+          echo "Skip the unpaged index prefix; reconstruct pageable ROM pages by absolute page number"
           python3 tools/step79_reconstruct_demand_paged_rom.py
           python3 -m py_compile tools/step79_reconstruct_demand_paged_rom.py
           python3 -m py_compile tools/step78_scan_core_rom_e32.py

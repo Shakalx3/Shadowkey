@@ -121,3 +121,15 @@ Mapped the nine imports used by the CAknAppUi construction/cleanup path to targe
 ### Step 65 — original game CCoeControl requires a native target proxy
 
 Decoded the actual 0x444-byte game control allocation, its primary/secondary vptrs, and the primary virtual table. The original object derives from the old N-Gage CCoeControl ABI. The target S60 3.1 CCoeControl inserts five virtual methods after InputCapabilities and adds private state before iWin, shifting object fields. Therefore the original game control must not be registered directly with target AddToStackL; a separate native S60 CCoeControl proxy is required. See [Step65](docs/STEP65_GAME_COECONTROL_VTABLE_AND_TARGET_PROXY_REQUIREMENT.md).
+
+### Step 66 — GDI virtual ABI mismatch
+
+Compared CGraphicsContext, CBitmapContext and CWindowGc declarations in the original N-Gage SDK and target S60 3.1 FP1 SDK. CWindowGc has 59 old virtual declarations vs 71 target declarations. The old game's Draw code calls slots 18, 46, 48, 54 and 55; slot 46 is CopyRect in N-Gage but Clear in target S60, and other used slots also shift. A legacy-order CWindowGc shim is required; returning the target pointer directly is unsafe.
+
+### Step 67 — target CCoeControl export map
+
+Mapped the original control imports to target CONE exports: SystemGc 226→287, Rect 160→276, CreateWindowL 40→25, SetRect 214→57, and the control lifecycle/virtual methods. Old ordinals collide with unrelated target exports. See [Step67](docs/STEP67_TARGET_COECONTROL_EXPORT_REMAP.md).
+
+### Step 68 — graphics-context adapter requirement
+
+Found four direct game SystemGc call sites and traced their subsequent CWindowGc vtable offsets. The compatibility design now requires two cooperating native adapters: an S60 CCoeControl proxy for stack registration and a legacy-order CWindowGc shim for the original game's virtual dispatch. The shim forwards to a real target CWindowGc by semantic method name. See [Step68](docs/STEP68_CWINDOWGC_LEGACY_VTABLE_ADAPTER.md).

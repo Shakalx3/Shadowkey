@@ -9,6 +9,7 @@ $gccRoot = Join-Path $root "gcc"
 
 Write-Host "Downloading pinned S60 3.1 FP1 SDK devkit"
 curl.exe -fL --retry 3 -H "Authorization: Bearer $env:GITHUB_TOKEN" -H "Accept: application/octet-stream" "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/723972349" -o $sdkArchive
+if ($LASTEXITCODE -ne 0) { throw "SDK download failed: $LASTEXITCODE" }
 $sdkHash = (Get-FileHash -Algorithm SHA256 $sdkArchive).Hash.ToLower()
 if ($sdkHash -ne "7ed8b62b15f191ca47d2f6ca97ee5ce74cd02ce3e42b74bc7b1f9513d7df87b5") { throw "Pinned SDK SHA-256 mismatch: $sdkHash" }
 New-Item -ItemType Directory -Force -Path $sdkRoot | Out-Null
@@ -17,6 +18,7 @@ tar.exe -xzf $sdkArchive -C $sdkRoot
 Write-Host "Downloading GCCE4Symbian 14.2.0 Windows toolchain"
 $gccUrl = "https://downloads.sourceforge.net/project/gcce4symbian/GCC-14.2.0_BINUTILS-2.29.1/gcc-14.2.0_win32.zip"
 curl.exe -fL --retry 3 $gccUrl -o $gccArchive
+if ($LASTEXITCODE -ne 0) { throw "GCCE download failed: $LASTEXITCODE" }
 $gccHash = (Get-FileHash -Algorithm SHA256 $gccArchive).Hash.ToLower()
 Expand-Archive -Force $gccArchive $gccRoot
 
@@ -63,7 +65,6 @@ if ($linkExit -eq 0 -and (Test-Path $probeElf)) {
     "--elfinput=$probeElf",
     "--output=$e32Path",
     "--targettype=EXE",
-    "--uid1=0x1000007A",
     "--uid2=0x20000001",
     "--uid3=0x20000001",
     "--sid=0x20000001",

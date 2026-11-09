@@ -72,26 +72,39 @@ def main():
         diff = list(difflib.unified_diff(old_v, new_v, fromfile=f"old/{name}", tofile=f"target/{name}", lineterm=""))
         legacy_slot_map = {}
         if name == "CWindowGc":
+            # Symbian ARM vptr points at a two-word vtable prefix
+            # (offset-to-top, RTTI pointer); code loads slots at vptr+8+4*n.
+            vtable_header_bytes = 8
             expected = [
-                (18, 18, "SetPenSize"),
-                (46, 48, "CopyRect"),
-                (48, 50, "BitBlt"),
-                (54, 56, "DrawTextVertical"),
-                (55, 57, "DrawTextVertical"),
+                (0x48, 16, 16, "SetPenColor", "SetPenColor"),
+                (0xB8, 44, 46, "Clear", "Clear"),
+                (0xC0, 46, 48, "CopyRect", "CopyRect"),
+                (0xD8, 52, 54, "BitBltMasked", "BitBltMasked"),
+                (0xDC, 53, 55, "MapColors", "MapColors"),
             ]
-            target_at_old_slot = {46: "Clear", 48: "CopyRect", 54: "BitBltMasked", 55: "MapColors"}
-            for old_slot, target_slot, method in expected:
-                assert method in old_v[old_slot], (old_slot, old_v[old_slot], method)
-                assert method in new_v[target_slot], (target_slot, new_v[target_slot], method)
-                legacy_slot_map[str(old_slot)] = {
+            target_at_old_slot = {
+                44: "DrawText(const TDesC",
+                46: "Clear()",
+                52: "BitBlt(const TPoint",
+                53: "BitBlt(const TPoint",
+            }
+            for byte_offset, old_slot, target_slot, old_method, target_method in expected:
+                assert byte_offset == vtable_header_bytes + old_slot * 4
+                assert old_method in old_v[old_slot], (old_slot, old_v[old_slot], old_method)
+                assert target_method in new_v[target_slot], (target_slot, new_v[target_slot], target_method)
+                legacy_slot_map[hex(byte_offset)] = {
+                    "byte_offset_from_vptr": byte_offset,
+                    "old_declaration_slot": old_slot,
                     "old_method": old_v[old_slot],
-                    "target_slot": target_slot,
+                    "target_declaration_slot": target_slot,
                     "target_method": new_v[target_slot],
-                    "target_method_at_unchanged_slot": new_v[old_slot],
+                    "target_method_at_unchanged_old_slot": new_v[old_slot],
                 }
             for slot, method in target_at_old_slot.items():
                 assert method in new_v[slot], (slot, new_v[slot], method)
-                legacy_slot_map[str(slot)]["target_method_at_unchanged_slot"] = new_v[slot]
+                byte_offset = vtable_header_bytes + slot * 4
+                if hex(byte_offset) in legacy_slot_map:
+                    legacy_slot_map[hex(byte_offset)]["target_method_at_unchanged_old_slot"] = new_v[slot]
         report["classes"][name] = {
             "header": filename, "old_virtual_count": len(old_v),
             "target_virtual_count": len(new_v), "old_virtuals": old_v,

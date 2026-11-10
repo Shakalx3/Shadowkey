@@ -6,6 +6,7 @@ on:
       - ".github/workflows/extract-nokia-firmware.yml"
       - "source_bundle/host/legacy_app_host.cpp"
       - "tools/step90_build_eka2_app_host.sh"
+      - "tools/step92_validate_sdk_dso_dynsym.py"
   workflow_dispatch:
 
 permissions:
@@ -204,6 +205,18 @@ jobs:
           set -euo pipefail
           bash tools/step90_build_eka2_app_host.sh
         continue-on-error: true
+      - name: Record EKA2 host build outcome
+        if: always()
+        run: |
+          set -euo pipefail
+          out=firmware-input/STEP90_LEGACY_APP_HOST
+          if [ -s "$out/6R51Host.exe" ] && [ -s "$out/host-e32-header.json" ]; then
+            echo "HOST_E32_BUILD=SUCCESS" | tee "$out/STEP90_BUILD_STATUS.txt"
+            cat "$out/host-e32-header.json"
+          else
+            echo "HOST_E32_BUILD=NOT_BUILT_OR_NOT_VALIDATED" | tee "$out/STEP90_BUILD_STATUS.txt"
+            if [ -f "$out/build.log" ]; then tail -n 60 "$out/build.log"; fi
+          fi
       - name: Disassemble the legacy APP factory export
         run: |
           set -euo pipefail
@@ -233,6 +246,16 @@ jobs:
           echo "Cross-check all 25 game and GAMECOMMS system DLL dependencies"
           python3 tools/step80_compare_n95_rom_sdk_exports.py --sdk-root /tmp/s60-devkit --rom-dir firmware-input
           cat firmware-input/STEP80_ROM_SDK_EXPORT_CHECK.json
+      - name: Independently validate SDK DSO dynsym ordinals
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step92_validate_sdk_dso_dynsym.py
+          set +e
+          python3 tools/step92_validate_sdk_dso_dynsym.py --sdk-root /tmp/s60-devkit --rom-dir firmware-input > firmware-input/STEP92_DSO_DYNSYM_VALIDATION.log 2>&1
+          status=$?
+          echo "$status" > firmware-input/STEP92_DSO_DYNSYM_VALIDATION.exit
+          cat firmware-input/STEP92_DSO_DYNSYM_VALIDATION.log
+          set -e
       - name: Map game, SIMKIN and GAMECOMMS imports to N95 ROM exports and validate cross-DLL aliases
         run: |
           set -euo pipefail

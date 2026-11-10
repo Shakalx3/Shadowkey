@@ -29,7 +29,7 @@ GLDEF_C TInt E32Main()
     TRAP(result,
         User::LeaveIfError(gLegacyAppLibrary.Load(_L("6R51")));
         TApaApplicationFactory factory(&NewLegacyApplication);
-        result = EikStart::RunApplication(factory);
+        EikStart::RunApplication(factory, NULL);
     );
 
     gLegacyAppLibrary.Close();

@@ -206,6 +206,27 @@ jobs:
             --gamecomms-dispatch firmware-input/GAMECOMMS_DLL_import_dispatch.c \
             --gamecomms-arm-map firmware-input/STEP46_GAMECOMMS_ARM_IMPORTS.tsv
           cat firmware-input/STEP82_IMPORT_MAPPING_SUMMARY.json
+          python3 - <<'PY'
+          import csv
+          from pathlib import Path
+          p = Path("firmware-input/STEP82_GAMECOMMS_IMPORT_TARGET_MAP.tsv")
+          rows = list(csv.DictReader(p.open(newline="", encoding="utf-8"), delimiter="\t"))
+          expected = {
+              61: ("bluetooth", 146),
+              40: ("bluetooth", 141),
+              51: ("bluetooth", 139),
+              43: ("bluetooth", 140),
+              47: ("bluetooth", 144),
+          }
+          by_old = {int(r["old_ordinal"]): r for r in rows if r["dll"] == "btmanclient"}
+          for old, (dll, ordinal) in expected.items():
+              row = by_old.get(old)
+              assert row, f"missing btmanclient ordinal {old}"
+              assert row["target_dll"] == dll, (old, row)
+              assert int(row["target_ordinal"]) == ordinal, (old, row)
+              assert row["status"].startswith("CROSS_DLL"), (old, row)
+          print("PASS: five btmanclient APIs resolve to exact bluetooth.dll exports")
+          PY
       - name: Inspect BTENG ordinal compatibility against N95 ROM
         run: |
           set -euo pipefail

@@ -21,13 +21,9 @@ This is a loader/entry-point prototype. It is not a successful load of `6R51.APP
 
 ## Current conversion blocker
 
-The first `elf2e32` conversion now gets past undefined-symbol resolution but reports:
+The first conversion after the SONAME-alias fix produced a 557-byte E32 EXE with the expected three DLL references and development UIDs. Its E32 entry-point field is `0`; the host ELF entry is `0x10000` and the E32 code base is also `0x10000`, so the field is a code-relative offset and resolves to the correct entry VA.
 
-```
-E1034: DSO .../APPARC{000a0000}.dso not found
-```
-
-The SDK file is stored as `apparc.dso`, while its ELF SONAME is `APPARC{000a0000}.dso`. The build script now creates temporary SONAME aliases in the extracted SDK directory before invoking `elf2e32`. The next workflow run must confirm conversion and validate the resulting E32 header and import table.
+The first validation script incorrectly treated a zero entry-point offset as invalid. The workflow also marked the build successful merely because the output and header JSON existed, even though that assertion had failed. Both checks have been corrected: the build now verifies `code_base + entry_point_offset == ELF e_entry`, requires the offset to lie inside the code segment, runs `elf2e32 --dump=hi`, and writes an explicit validation marker. The workflow reports success only when that marker exists. The next run must confirm the import dump and this stricter validation.
 
 ## Boundaries
 

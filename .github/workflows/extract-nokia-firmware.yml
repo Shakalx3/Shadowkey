@@ -191,7 +191,7 @@ jobs:
           echo "Cross-check all 25 game and GAMECOMMS system DLL dependencies"
           python3 tools/step80_compare_n95_rom_sdk_exports.py --sdk-root /tmp/s60-devkit --rom-dir firmware-input
           cat firmware-input/STEP80_ROM_SDK_EXPORT_CHECK.json
-      - name: Map game, SIMKIN and GAMECOMMS imports to N95 ROM exports
+      - name: Map game, SIMKIN and GAMECOMMS imports to N95 ROM exports and validate cross-DLL aliases
         run: |
           set -euo pipefail
           python3 -m py_compile tools/step82_map_game_imports_to_n95.py

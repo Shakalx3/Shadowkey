@@ -4,24 +4,32 @@ Date: 2026-11-10
 
 ## Purpose
 
-Step80 currently obtains S60 3.1 FP1 DSO exports with `readelf -Ws` and derives a Symbian ordinal as `st_value / 4 + 1` for aligned, defined GLOBAL DEFAULT symbols. Step92 independently reads ELF32 program headers and `PT_DYNAMIC` entries, then follows `DT_SYMTAB`, `DT_STRTAB` and the SysV/GNU hash table to enumerate dynamic symbols. It does not use readelf to enumerate symbols. The first prototype assumed standard 40-byte ELF32 section headers; the pinned Symbian DSOs instead report `e_shentsize=32` and `e_shnum=2`, so that path was rejected and replaced with the program-header/dynamic-table parser.
+Step80 obtains S60 3.1 FP1 DSO exports with `readelf -Ws` and derives a Symbian ordinal as `st_value / 4 + 1` for aligned, defined GLOBAL DEFAULT symbols. Step92 independently reads ELF32 program headers and `PT_DYNAMIC` entries, follows `DT_SYMTAB`, `DT_STRTAB` and `DT_HASH`, and compares the resulting ordinal/name map with Step80. It does not use readelf to enumerate symbols.
 
-## Checks
+## Finding from the first run
 
-- ELF class and endianness are ELF32 little-endian.
-- Machine is ARM (EM_ARM).
-- `PT_LOAD` and `PT_DYNAMIC` segments are structurally in range.
-- Each export is defined, GLOBAL, DEFAULT visibility and word-aligned.
-- Ordinal maps and unique-export counts are compared with the Step80 readelf-derived map.
-- Duplicate ordinal aliases and unaligned global symbols are reported, not silently discarded.
+The first Step92 attempt reported 24 parse errors, all with the same structural pattern. For example, EUSER's DSO has:
 
-Outputs:
-- `STEP92_DSO_DYNSYM_VALIDATION.json`
-- `STEP92_DSO_DYNSYM_MODULES.tsv`
-- `STEP92_DSO_DYNSYM_MISMATCHES.tsv`
+- `PT_LOAD`: file offset `0x19C`, virtual address `0`, file size `0x228C`; this segment contains only `ER_RO`.
+- `PT_DYNAMIC`: file offset `0x2428`, virtual address `0`.
+- `DT_HASH=0x2478`, `DT_STRTAB=0x6410`, `DT_SYMTAB=0x16218`.
+- The section headers independently show `.hash` at `0x2478`, `.strtab` at `0x6410`, and `.dynsym` at `0x16218`.
 
-A mismatch is evidence that the earlier readelf-derived symbol map needs review. A pass independently validates the SDK DSO ordinal derivation, but does not by itself prove that the SDK DSOs are byte-identical to the RM-320 ROM or that a patched E32 image will load.
+The initial parser incorrectly treated those dynamic pointer values as process virtual addresses that must be backed by `PT_LOAD`. In these S60 3.1 FP1 DSOs, the dynamic pointer values are zero-based file offsets, and the only `PT_LOAD` segment does not cover the dynamic tables. This is a parser address-model error, not evidence that the SDK DSO files are corrupt or incomplete.
+
+## Corrected parser
+
+The parser now:
+- tries normal `PT_LOAD` VA-to-file translation first;
+- falls back to direct file offsets only when all relevant `PT_LOAD` and `PT_DYNAMIC` virtual addresses are zero and the requested range is within the file;
+- cross-checks `DT_HASH`, `DT_STRTAB`, and `DT_SYMTAB` against the corresponding section file offsets when section headers exist;
+- checks `.dynsym` type, entry size, and byte size against `DT_SYMENT` and the SysV hash `nchain`;
+- reports the address model used for each DSO and retains duplicate ordinals, unaligned exports, and symbol-map mismatches.
+
+The rerun is the deciding test. A passing SDK DSO audit validates the SDK symbol-to-ordinal extraction independently; it does not prove that SDK exports and RM-320 ROM code are byte-identical, nor that a patched E32 image will load.
 
 ## Scope boundary
 
-The ROM export addresses themselves are recovered from the RM-320 v35.0.001 SOS+CORE ROM reconstruction. SDK DSO symbol names are used to label those ROM export ordinals. Step92 checks the SDK symbol-to-ordinal side of that process; it does not replace target-ROM code disassembly for disputed symbols, ABI review, or a real-device test.
+The target export addresses and counts come from the reconstructed RM-320 v35.0.001 SOS+CORE ROM. SDK DSO symbols label those ROM export ordinals. The seven critical target modules (EUSER, CONE, GDI, FBSCLI, EIKCORE, WS32, EFSRV) are present in the reconstructed ROM. ROM export counts may exceed SDK DSO export counts; those extra ROM ordinals require direct ROM disassembly and must not be filled by guessing.
+
+No N95 hardware launch has been performed; the phone is not currently available. Host-harness success is not device compatibility evidence.

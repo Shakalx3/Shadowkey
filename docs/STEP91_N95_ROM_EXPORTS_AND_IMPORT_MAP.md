@@ -17,7 +17,7 @@ The pinned S60 3.1 FP1 ARMv5 SDK comparison found 24 matching DSO files, 11 modu
 
 ## Seven critical system DLLs
 
-The successful Step91 summary from run 42798741455 confirms all seven requested OS modules exist in the reconstructed ROM:
+The successful Step91 summary from firmware audit run 42804065202 confirms all seven requested OS modules exist in the reconstructed ROM:
 
 | Module | UID3 | ROM exports | SDK DSO exports | Result |
 |---|---:|---:|---:|---|
@@ -50,7 +50,7 @@ The exact mangled ARM UREL and SDK symbol names, ROM addresses, and per-import r
 ## Validation caveats
 
 1. ROM export addresses come from the reconstructed RM-320 ROM. SDK symbol names are cross-checked against S60 3.1 FP1 DSO exports; modules with extra ROM exports need per-ordinal review.
-2. The SDK DSO parser emits readelf virtual-address/segment warnings. An independent ELF dynsym parser is the next validation step.
+2. Step92 independently parsed all 24 matching SDK DSOs and verified every export ordinal/name map: 24/24 PASS, zero parse errors, zero mapping mismatches (run 42805802416). This validates the SDK DSO ordinal extraction, not the identity of SDK code with ROM code.
 3. A successful host harness does not establish Symbian loader compatibility.
 4. No N95 hardware launch has been performed; the phone is not available.
 

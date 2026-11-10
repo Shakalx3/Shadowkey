@@ -58,9 +58,9 @@ UID3 equality is not sufficient proof of ordinal stability: BTMANCLIENT has the 
 
 ## 4. EKA2 host prototype attempt
 
-Run 42798741455 captured the first useful host-build diagnostics. The GCCE compile was missing the standard Symbian platform defines and the SDK's gcce/gcce.h preinclude. Consequently IMPORT_C and other API declarations were not active; the compiler then reported missing RLibrary, User and CTrapCleanup methods. The source also called EikStart::RunApplication with the wrong argument count and treated its void result as TInt.
+Run 55 showed that the GCCE compile needed the standard Symbian platform defines and the SDK gcce.h preinclude. Run 57 applied those defines but exposed two more concrete issues: the extracted SDK gcce.h contains a Windows-style relative include (..\symcpp.h), which the Linux GCC preprocessor did not resolve, and the source called the private two-argument EikStart overload. The public SDK entry point is the one-argument EikStart::RunApplication(TApaApplicationFactory), which returns TInt.
 
-The host source now passes NULL as the CApaCommandLine argument. The build script now supplies the S60 3rd Edition / EKA2 GCCE defines, variant include directory and SDK GCCE preinclude. The next workflow run must still verify the ELF link, elf2e32 conversion and final E32 header before the host EXE can be counted as built. This step remains non-blocking so a host build failure cannot suppress ROM export and import audits.
+The source now calls the public one-argument overload. The build script normalizes backslashes in the temporary extracted gcce.h and checks the required SDK headers before compiling. The next run must still verify the ELF link, elf2e32 conversion and final E32 header before the host EXE can be counted as built. This step remains non-blocking so a host build failure cannot suppress ROM export and import audits.
 
 ## 5. Next work
 

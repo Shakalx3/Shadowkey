@@ -261,6 +261,15 @@ jobs:
               assert int(row["target_ordinal"]) == ordinal, (old, row)
               assert row["status"] == "CONST_MEMBER_ABI_MATCH", (old, row)
           print("PASS: five cross-DLL security APIs and three const-qualified TBTDeviceClass methods remap")
+          game_rows = list(csv.DictReader(Path("firmware-input/STEP82_GAME_IMPORT_TARGET_MAP.tsv").open(newline="", encoding="utf-8"), delimiter="\t"))
+          by_game = {(r["dll"], int(r["old_ordinal"])): r for r in game_rows}
+          key_sounds = by_game[("avkon", 874)]
+          assert key_sounds["target_dll"] == "avkon" and int(key_sounds["target_ordinal"]) == 3002
+          assert key_sounds["status"] == "CLASS_HIERARCHY_ALIAS"
+          fs_close = by_game[("efsrv", 15)]
+          assert fs_close["target_dll"] == "euser" and int(fs_close["target_ordinal"]) == 387
+          assert fs_close["status"] == "NEEDS_SUBSESSION_CLOSE_WRAPPER"
+          print("PASS: AVKON base-class alias and RFsBase subsession-wrapper candidate")
           PY
       - name: Inspect BTENG ordinal compatibility against N95 ROM
         run: |

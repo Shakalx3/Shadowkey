@@ -2,53 +2,51 @@
 
 Date: 2026-11-10
 
-## Verified firmware extraction result
+## Verified ROM reconstruction
 
-The N95 RM-320 v35.0.001 firmware package is no longer limited to its UDA user area. The workflow extracts the SOS+CORE partition and reconstructs the demand-paged ROM:
+The N95 RM-320 v35.0.001 C0R SOS+CORE partition was reconstructed as a demand-paged Symbian ROM:
 
-- ROM base: `0x80000000`
-- ROM size: `0x03A00000`
-- reconstructed uncompressed image: 60,600,320 bytes
-- pageable pages: 12,671
-- BytePair decode failures: 0
-- ROM directory: 1 root, 2,726 directory entries
-- selected system-module candidates: 25
+- ROM base: 0x80000000; ROM size: 0x03A00000
+- reconstructed image: 60,600,320 bytes
+- pageable pages: 12,671; BytePair decode failures: 0
+- ROM directory: 1 root, 2,726 entries
+- target system modules: 25
 - raw ROM export-address rows: 15,412
 
-The reconstruction is based on the RM-320 v35.0.001 C0R image, not on the N-Gage QD WINS import ordinals. The raw reconstructed ROM and extracted module binaries are transient workflow inputs; they are not committed to Git or retained in the compact diagnostic artifact.
+The pinned S60 3.1 FP1 ARMv5 SDK comparison found 24 matching DSO files, 11 modules with equal export counts, and 15,325 SDK-symbolized export-map rows. SIMKIN and GAMECOMMS are bundled private game DLLs and are not expected in the N95 ROM.
 
-## SDK symbolization and import mapping
+## Seven critical system DLLs
 
-The successful full audit (Actions run [42777589219](https://github.com/Shakalx3/Shadowkey/actions/runs/42777589219)) compared ROM module export addresses with S60 3.1 FP1 SDK DSO symbol tables:
+The successful Step91 summary from run 42797908530 confirms all seven requested OS modules exist in the reconstructed ROM:
 
-- 25 target ROM modules
-- 24 matching SDK DSO modules found
-- 11 modules with equal ROM/SDK export counts
-- 15,223 symbolized ROM/SDK export-map rows
-- 415 game IAT slots, including the previously unrecognized final slot
-- 79 SIMKIN imports
-- 205 GAMECOMMS imports
+| Module | UID3 | ROM exports | SDK DSO exports | Result |
+|---|---:|---:|---:|---|
+| CONE | 10003A41 | 722 | 721 | ROM has 1 extra export |
+| EFSRV | 100039E4 | 351 | 335 | ROM has 16 extra exports |
+| EIKCORE | 10004892 | 590 | 590 | Count match |
+| EUSER | 100039E5 | 2,229 | 2,210 | ROM has 19 extra exports |
+| FBSCLI | 10003A15 | 241 | 240 | ROM has 1 extra export |
+| GDI | 10003B15 | 348 | 344 | ROM has 4 extra exports |
+| WS32 | 10003B21 | 580 | 578 | ROM has 2 extra exports |
 
-The mapping audit reported 34 game imports, 28 SIMKIN imports, and 16 GAMECOMMS imports without a target signature. These are unresolved signature matches, not proof that the target ROM lacks the functions. Other categories include destructor candidates, same-address aliases, one AVKON base-class alias, a provisional forwarder, and an RFs subsession-close wrapper candidate. Those categories must not be patched as if they were proven ABI matches.
+The 5,061 selected export rows are available as STEP91_TARGET_EXPORTS.tsv. The import audit also produced 395 mappings touching these modules: 271 exact signature matches, 35 same-address aliases, 9 destructor candidates, 8 PASS overrides, 1 typedef/ABI alias, 2 subsession-close wrapper cases, and 68 unresolved signatures. The unresolved count is not proof that the functions are absent from the ROM.
 
-The seven modules central to the current compatibility investigation are `EUSER`, `CONE`, `GDI`, `FBSCLI`, `EIKCORE`, `WS32`, and `EFSRV`. Step91 emits their module IDs, export counts, SDK names, ROM addresses, and import remaps into:
+## Ordinal cases requiring explicit review
 
-- `STEP91_N95_ROM_EXPORT_SUMMARY.md`
-- `STEP91_TARGET_EXPORTS.tsv`
-- `STEP91_SELECTED_IMPORTS.tsv`
+The earlier WINS-based hypotheses for EUSER 1407/1575, CONE 160 and GDI 101/108/151 must be checked against the actual N-Gage ARM UREL import symbols and the reconstructed N95 ROM exports. The current Step91 report records those exact cases, including the ARM UREL symbol and target symbol/ordinal. A PASS override is accepted only after the ARM UREL and target SDK signatures normalize to the same ABI signature; otherwise it is emitted as a mismatch diagnostic.
 
-The exact per-module rows are generated from the extracted ROM and SDK DSO data; no ordinal should be inferred from the old N-Gage WINS library.
+The EUSER 1575 case has no direct target API symbol in the Step58 SDK remap and remains unresolved. It must not be assigned a guessed ordinal.
 
-## Important caveats
+## Validation caveats
 
-1. SDK DSO symbolization is an ABI/name cross-check against the matching S60 3.1 FP1 SDK. ROM export addresses come from the reconstructed target ROM, but SDK symbol names still require independent confirmation where export counts differ or the SDK reader emits segment warnings.
-2. A matching export count does not prove every ordinal has the same meaning. Use exact symbol and code-address evidence.
-3. A successful host build or host harness does not establish Symbian loader acceptance.
-4. No N95 hardware test has been performed; the device is not currently available.
+1. ROM export addresses come from the reconstructed RM-320 ROM. SDK symbol names are cross-checked against S60 3.1 FP1 DSO exports; the modules with extra ROM exports need per-ordinal review.
+2. The SDK DSO parser emits readelf virtual-address/segment warnings. An independent ELF dynsym parser is the next validation step.
+3. A successful host harness does not establish Symbian loader compatibility.
+4. No N95 hardware launch has been performed; the phone is not available.
 
-## Next technical checkpoints
+## Next checkpoints
 
-1. Review the Step91 selected-module table, especially count mismatches and absent target modules.
-2. Independently validate SDK DSO-to-ROM export ordinal mapping for the seven core system DLLs, using import-library symbols and disassembly where needed.
-3. Resolve remaining game/SIMKIN/GAMECOMMS import signatures and wrappers before generating any binary patch.
-4. Keep the EKA2 launcher prototype isolated from the firmware/import audit so a host-build failure cannot suppress ROM export reports.
+1. Review Step91's exact key ordinal cases and any OVERRIDE_ARM_SIGNATURE_MISMATCH results.
+2. Independently parse the SDK DSO dynsym tables and compare symbol-to-ordinal mappings with the current readelf implementation.
+3. Resolve the remaining import signatures/wrappers, then patch a copy of the E32 import tables.
+4. Keep raw ROM/system binaries out of Git history and compact diagnostic artifacts.

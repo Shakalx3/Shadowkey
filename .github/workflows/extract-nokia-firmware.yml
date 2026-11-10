@@ -304,9 +304,20 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386
           WORK="$RUNNER_TEMP/step99-elf2e32"
-          if [ ! -d "$WORK/src/.git" ]; then
-            git clone --depth 1 https://github.com/fedor4ever/elf2e32.git "$WORK/src"
+          mkdir -p "$WORK"
+          if [ ! -d "$WORK/src/.git" ] && [ ! -f "$WORK/src/CMakeLists.txt" ]; then
+            # Git smart-HTTP cloning can intermittently fail on hosted runners;
+            # fall back to GitHub's source archive without changing the source.
+            if ! git -c http.version=HTTP/1.1 clone --depth 1 https://github.com/fedor4ever/elf2e32.git "$WORK/src" 2>"$OUT/elf2e32-clone.log"; then
+              rm -rf "$WORK/src"
+              mkdir -p "$WORK/src"
+              curl --fail --location --retry 3 --retry-delay 2 \
+                https://codeload.github.com/fedor4ever/elf2e32/tar.gz/refs/heads/master \
+                -o "$WORK/elf2e32-source.tar.gz"
+              tar -xzf "$WORK/elf2e32-source.tar.gz" --strip-components=1 -C "$WORK/src"
+            fi
           fi
+          test -f "$WORK/src/CMakeLists.txt"
           cmake -S "$WORK/src" -B "$WORK/build" \
             -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_C_FLAGS=-m32 \

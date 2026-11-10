@@ -20,7 +20,9 @@ The initial generic parser did not expose the PPM/C0R filesystems as ordinary to
 - C0R SOS+ROFS: starts at 0x03A40000, carved partition length 21,660,672 bytes.
 - PPM SOS+ROFX: starts at 0x05140000, carved partition length 18,904,576 bytes.
 
-The SOS+ROFS and SOS+ROFX partitions are passed to the ROFS parser separately. The Core ROFS output includes a SYS/BIN tree with valid E32 files. The PPM ROFX parser is retained as a separate result; it is not treated as the source of the system ROM export table.
+The carved C0R SOS+ROFS image is accepted by the parser (magic `ROFS`, format version 2) and produces a populated filesystem tree, including `SYS/BIN` E32 files. The parser nevertheless exits with code 1 and warns that the directory count in the image does not match the number of parsed entries (`20812<>310`); treat the tree as useful but not yet completeness-validated.
+
+The carved PPM partition has magic `ROFx`, not `ROFS`. The current parser explicitly rejects it with `wrong ROFS magic number`; this is an isolated format-support gap, not evidence of a damaged PPM image. The generic FPSX parser's large `rofs.img` outputs (104,101,376 bytes from PPM and 82,740,224 bytes from C0R) are not valid ROFS filesystems and must not be confused with the custom-carved SOS partitions.
 
 ## Demand-paged ROM reconstruction breakthrough
 
@@ -35,7 +37,7 @@ The system ROM is in the C0R SOS+CORE partition. The reconstruction now has a st
 - target system-module entries: 25
 - raw ROM export-address rows: 15,412
 
-The subsequent comparison against the pinned S60 3.1 FP1 ARMv5 SDK found 24 corresponding SDK DSO modules, 11 exact export-count matches, and 15,325 symbolized ROM/SDK export-map rows. The selected modules EUSER, CONE, GDI, FBSCLI, EIKCORE, WS32 and EFSRV are all present in the reconstructed ROM. Their exact counts and per-ordinal evidence are recorded in Step91.
+The subsequent comparison against the pinned S60 3.1 FP1 ARMv5 SDK found 24 corresponding SDK DSO modules, 11 exact export-count matches, and 15,325 symbolized ROM/SDK export-map rows. The selected modules EUSER, CONE, GDI, FBSCLI, EIKCORE, WS32 and EFSRV are all present in the reconstructed ROM. Step92 independently parsed the 24 SDK DSOs and confirmed all 24 ordinal/name maps with zero mismatches. Their exact counts and per-ordinal evidence are recorded in Step91.
 
 ## Diagnostic artifact hygiene
 
@@ -51,7 +53,7 @@ Run 55 exposed a cleanup-path mismatch: the compact Actions artifact still conta
 
 ## Next steps
 
-1. Review the Step91 per-module counts and key import cases.
-2. Validate SDK DSO symbolization independently for the seven core system DLLs.
-3. Resolve all remaining import signatures and wrappers before producing a binary patch.
+1. Complete the PPM ROFx filesystem parser or determine whether its format differs materially from ROFS v2.
+2. Validate the completeness of the C0R SOS+ROFS tree despite the parser's directory-count warning.
+3. Resolve remaining import signatures and wrappers; Step90 now provides a validated EKA2 host EXE and Step93 records actual call sites for the key imports.
 4. Keep raw firmware and system DLLs out of Git history and diagnostic artifacts.

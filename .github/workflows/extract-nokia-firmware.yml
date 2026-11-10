@@ -190,6 +190,13 @@ jobs:
           echo "LD_LIBRARY_PATH=$BIN/../lib:$BIN/../lib32" >> "$GITHUB_ENV"
           echo "EPOC_OBJDUMP=$OBJDUMP" >> "$GITHUB_ENV"
           "$DEM" < <(printf '%s\n' '__7TPtrC16PCUs' '__ne__C6TInt64RC6TInt64') > firmware-input/STEP81_EPOC_DEMANGLER_CHECK.txt
+      - name: Inspect target EikStart and RLibrary declarations
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step89_find_eikstart_factory_api.py
+          python3 tools/step89_find_eikstart_factory_api.py \
+            --sdk-root /tmp/s60-devkit \
+            --out firmware-input/STEP89_EIKSTART_FACTORY_API.txt
       - name: Disassemble the legacy APP factory export
         run: |
           set -euo pipefail

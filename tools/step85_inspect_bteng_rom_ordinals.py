@@ -77,6 +77,24 @@ def main():
                     break
     target_uid3 = bteng["uid3"].replace("0x", "").upper()
     uid_match = bool(import_uid3 and import_uid3 == target_uid3)
+
+    # A matching UID3 identifies the DLL family, but does not by itself prove
+    # that ordinal numbering remained stable across platform generations.
+    btman_counterexample = {}
+    btman_import = next((r for r in read_tsv(imports_path)
+                         if r["dll"].lower() == "btmanclient" and int(r["ordinal"]) == 61), None)
+    target_export_map = args.rom_dir / "ROM_SDK_EXPORT_MAP.tsv"
+    if target_export_map.exists() and btman_import:
+        btman_target = next((r for r in read_tsv(target_export_map)
+                             if r["module"].lower() == "btmanclient.dll" and int(r["ordinal"]) == 61), None)
+        if btman_target:
+            btman_counterexample = {
+                "old_sdk_symbol": btman_import["arm_urel_symbol"],
+                "n95_same_ordinal_symbol": btman_target["sdk_symbol"],
+                "different_symbols": btman_import["arm_urel_symbol"] != btman_target["sdk_symbol"],
+                "shared_uid3": "100069CB",
+            }
+
     ordinal_max = max(ordinals) if ordinals else 0
     target_export_count = int(bteng["export_count"])
     compatibility = {
@@ -88,6 +106,8 @@ def main():
         "n95_rom_export_count": target_export_count,
         "ordinal_range_compatible": bool(ordinal_max and ordinal_max <= target_export_count),
         "same_uid_ordinal_candidate": bool(uid_match and ordinal_max and ordinal_max <= target_export_count),
+        "uid3_alone_proves_ordinal_compatibility": False,
+        "same_uid3_ordinal_counterexample": btman_counterexample,
         "used_bteng_import_ordinals": sorted({int(r["ordinal"]) for r in imports}),
     }
     (args.rom_dir / "STEP85_BTENG_ORDINAL_COMPATIBILITY.json").write_text(
@@ -96,6 +116,12 @@ def main():
     out.append(f"GAMECOMMS BTENG import UID3: {import_uid3 or 'not found'}")
     out.append(f"BTENG import UID3 matches N95 ROM UID3: {uid_match}")
     out.append(f"Ordinal-range compatible: {compatibility['ordinal_range_compatible']}")
+    out.append("Caution: UID3 equality alone is not proof of ordinal compatibility.")
+    if btman_counterexample:
+        out.append("Same-UID3 counterexample in BTMANCLIENT ordinal 61:")
+        out.append(f"  N-Gage import symbol: {btman_counterexample['old_sdk_symbol']}")
+        out.append(f"  N95 ROM symbol: {btman_counterexample['n95_same_ordinal_symbol']}")
+        out.append(f"  symbols differ: {btman_counterexample['different_symbols']}")
     demangled = {}
     if args.epoc_demangler and imports:
         symbols = [r["arm_urel_symbol"] for r in imports if r["arm_urel_symbol"] and r["arm_urel_symbol"] != "<no archive-index symbol>"]

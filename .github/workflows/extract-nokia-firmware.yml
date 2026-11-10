@@ -237,6 +237,7 @@ jobs:
           cat firmware-input/STEP82_IMPORT_MAPPING_SUMMARY.json
           python3 - <<'PY'
           import csv
+          import json
           from pathlib import Path
           p = Path("firmware-input/STEP82_GAMECOMMS_IMPORT_TARGET_MAP.tsv")
           rows = list(csv.DictReader(p.open(newline="", encoding="utf-8"), delimiter="\t"))

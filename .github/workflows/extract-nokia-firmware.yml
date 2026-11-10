@@ -214,7 +214,7 @@ jobs:
         run: |
           set -euo pipefail
           out=firmware-input/STEP90_LEGACY_APP_HOST
-          if [ -s "$out/6R51Host.exe" ] && [ -s "$out/host-e32-header.json" ]; then
+          if [ -s "$out/6R51Host.exe" ] && [ -s "$out/host-e32-header.json" ] && [ -s "$out/host-e32-validated.txt" ]; then
             echo "HOST_E32_BUILD=SUCCESS" | tee "$out/STEP90_BUILD_STATUS.txt"
             cat "$out/host-e32-header.json"
           else

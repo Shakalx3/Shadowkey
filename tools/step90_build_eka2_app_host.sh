@@ -68,17 +68,19 @@ PY
 
 echo "Linking host ELF against EUSER, APPARC and EIKCORE import DSOs" | tee -a "$OUT/build.log"
 LINK_MODE="direct-import-dso"
-if ! "$LD" -e E32Main -Ttext 0x10000 -o "$OUT/legacy_app_host.elf" \
+if ! "$LD" --no-as-needed -e E32Main -Ttext 0x10000 -o "$OUT/legacy_app_host.elf" \
     "$OUT/legacy_app_host.o" "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" \
     >> "$OUT/build.log" 2>&1; then
   echo "Direct DSO link failed; retrying with unresolved symbols for elf2e32 import resolution" | tee -a "$OUT/build.log"
   LINK_MODE="elf2e32-libpath"
-  "$LD" -e E32Main -Ttext 0x10000 --unresolved-symbols=ignore-all \
+  "$LD" --no-as-needed -e E32Main -Ttext 0x10000 --unresolved-symbols=ignore-all \
     -o "$OUT/legacy_app_host.elf" "$OUT/legacy_app_host.o" >> "$OUT/build.log" 2>&1
 fi
 "$READELF" -h "$OUT/legacy_app_host.elf" > "$OUT/host-elf-header.txt"
 "$READELF" -A "$OUT/legacy_app_host.elf" > "$OUT/host-elf-attributes.txt"
 "$READELF" -s "$OUT/legacy_app_host.elf" > "$OUT/host-elf-symbols.txt"
+"$READELF" -d "$OUT/legacy_app_host.elf" > "$OUT/host-elf-dynamic.txt"
+"$READELF" -V "$OUT/legacy_app_host.elf" > "$OUT/host-elf-versions.txt"
 
 echo "Build portable elf2e32" | tee -a "$OUT/build.log"
 if [ ! -d "$ELF2E32_SRC/.git" ]; then

@@ -38,8 +38,20 @@ echo "GCCE compiler: $CXX" | tee "$OUT/build.log"
 file "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" > "$OUT/import-library-file-types.txt"
 
 SRC="${GITHUB_WORKSPACE}/source_bundle/host/legacy_app_host.cpp"
-"$CXX" -march=armv5te -O1 -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
-  -I"$SDK_ROOT/Epoc32/include" \
+GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"
+VARIANT_DIR="$SDK_ROOT/Epoc32/include/variant"
+test -f "$GCCE_HEADER"
+test -d "$VARIANT_DIR"
+{
+  echo "GCCE preinclude: $GCCE_HEADER"
+  echo "Platform defines: __SYMBIAN32__ __EPOC32__ __GCCE__ __MARM__ __EABI__ __EXE__ __S60_3X__"
+} >> "$OUT/build.log"
+"$CXX" -march=armv5te -marm -O1 -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
+  -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \
+  -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__EXE__ -D_UNICODE \
+  -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \
+  -I"$SDK_ROOT/Epoc32/include" -I"$VARIANT_DIR" \
+  -include "$GCCE_HEADER" \
   -c "$SRC" -o "$OUT/legacy_app_host.o" >> "$OUT/build.log" 2>&1
 
 echo "Linking host ELF against EUSER, APPARC and EIKCORE import DSOs" | tee -a "$OUT/build.log"

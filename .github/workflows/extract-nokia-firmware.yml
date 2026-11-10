@@ -250,6 +250,10 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m py_compile tools/step92_validate_sdk_dso_dynsym.py
+          lib=/tmp/s60-devkit/Epoc32/release/armv5/lib
+          for name in euser cone gdi; do
+            readelf -h -l -d -S "$lib/$name.dso" > "firmware-input/STEP92_${name^^}_ELF_LAYOUT.txt"
+          done
           set +e
           python3 tools/step92_validate_sdk_dso_dynsym.py --sdk-root /tmp/s60-devkit --rom-dir firmware-input > firmware-input/STEP92_DSO_DYNSYM_VALIDATION.log 2>&1
           status=$?

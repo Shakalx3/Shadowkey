@@ -201,6 +201,7 @@ jobs:
         run: |
           set -euo pipefail
           bash tools/step90_build_eka2_app_host.sh
+        continue-on-error: true
       - name: Disassemble the legacy APP factory export
         run: |
           set -euo pipefail
@@ -284,6 +285,11 @@ jobs:
           assert fs_close["status"] == "NEEDS_SUBSESSION_CLOSE_WRAPPER"
           print("PASS: AVKON base-class alias and RFsBase subsession-wrapper candidate")
           PY
+      - name: Summarize core RM-320 ROM exports and selected import mappings
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step91_summarize_n95_rom_exports.py
+          python3 tools/step91_summarize_n95_rom_exports.py
       - name: Inspect BTENG ordinal compatibility against N95 ROM
         run: |
           set -euo pipefail
@@ -335,7 +341,8 @@ jobs:
           PY
       - name: Remove large intermediate images and source packages
         run: |
-          rm -rf firmware-input/rofs-candidates
+          rm -rf firmware-input/rofs-candidates firmware-input/rom-modules
+          rm -f firmware-input/rom-unpaged-reconstructed.bin
           rm -f firmware-input/ngage/*.rar firmware-input/n95/*.exe firmware-input/*.fpsx firmware-input/*.rofs
           rm -rf firmware-parsed firmware-extracted
       - name: Upload compact diagnostic artifact

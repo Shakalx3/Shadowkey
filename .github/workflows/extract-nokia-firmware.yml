@@ -150,6 +150,7 @@ jobs:
           python3 -m py_compile tools/step86_inspect_game_e32_header.py
           python3 tools/step86_inspect_game_e32_header.py \
             --game source_bundle/shadowkey_step35_work/6R51.APP \
+            --dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
             --out-dir firmware-input
       - name: Checkout N-Gage ARM UREL import libraries
         uses: actions/checkout@v4

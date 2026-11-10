@@ -142,7 +142,7 @@ def inspect(path):
     h["iat_slots"] = sum(int(x["import_count"]) for x in blocks)
     h["iat_matches_import_ordinals"] = all(x["iat_values_match_ordinals"] for x in blocks)
     h["import_blocks"] = len(blocks)
-    return h, blocks
+    return h, blocks, export_rows, iat_slots
 
 def main():
     ap = argparse.ArgumentParser()
@@ -150,7 +150,7 @@ def main():
     ap.add_argument("--out-dir", type=Path, required=True)
     args = ap.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    header, blocks = inspect(args.game)
+    header, blocks, export_rows, iat_slots = inspect(args.game)
     (args.out_dir / "STEP86_GAME_E32_HEADER.json").write_text(json.dumps(header, indent=2) + "\n", encoding="utf-8")
     with (args.out_dir / "STEP86_GAME_EXPORTS.tsv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["ordinal","raw_offset","runtime_address","thumb","code_file_offset","valid_code_offset","sample_hex"], delimiter="\t")

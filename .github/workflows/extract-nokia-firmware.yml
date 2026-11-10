@@ -305,15 +305,21 @@ jobs:
           sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386
           WORK="$RUNNER_TEMP/step99-elf2e32"
           mkdir -p "$WORK"
-          if [ ! -d "$WORK/src/.git" ] && [ ! -f "$WORK/src/CMakeLists.txt" ]; then
-            # Git smart-HTTP cloning can intermittently fail on hosted runners;
-            # fall back to GitHub's source archive without changing the source.
+          # Keep diagnostics when any network/build substep fails.
+          trap 'rc=$?; echo "Step99 failed (exit $rc)"; for f in "$OUT/elf2e32-clone.log" "$OUT/elf2e32-download.log" "$OUT/converter-cmake.log"; do if [ -f "$f" ]; then echo "===== $f ====="; tail -n 100 "$f"; fi; done; exit "$rc"' ERR
+          if [ ! -f "$WORK/src/CMakeLists.txt" ]; then
+            rm -rf "$WORK/src"
+            mkdir -p "$WORK/src"
             if ! git -c http.version=HTTP/1.1 clone --depth 1 https://github.com/fedor4ever/elf2e32.git "$WORK/src" 2>"$OUT/elf2e32-clone.log"; then
               rm -rf "$WORK/src"
               mkdir -p "$WORK/src"
-              curl --fail --location --retry 3 --retry-delay 2 \
-                https://codeload.github.com/fedor4ever/elf2e32/tar.gz/refs/heads/master \
-                -o "$WORK/elf2e32-source.tar.gz"
+              if ! curl --fail --location --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 \
+                https://api.github.com/repos/fedor4ever/elf2e32/tarball/master \
+                -o "$WORK/elf2e32-source.tar.gz" 2>"$OUT/elf2e32-download.log"; then
+                curl --fail --location --retry 2 --retry-delay 2 --connect-timeout 15 --max-time 120 \
+                  https://codeload.github.com/fedor4ever/elf2e32/tar.gz/refs/heads/master \
+                  -o "$WORK/elf2e32-source.tar.gz" 2>>"$OUT/elf2e32-download.log"
+              fi
               tar -xzf "$WORK/elf2e32-source.tar.gz" --strip-components=1 -C "$WORK/src"
             fi
           fi
@@ -324,8 +330,8 @@ jobs:
             -DCMAKE_CXX_FLAGS="-m32 -std=gnu++14 -D__LINUX__ -include string.h -include string -include strings.h -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp" \
             -DCMAKE_EXE_LINKER_FLAGS=-m32 > "$OUT/converter-cmake.log" 2>&1
           cmake --build "$WORK/build" --parallel 2 >> "$OUT/converter-cmake.log" 2>&1
-          ELF2E32="$WORK/build/elf2e32"
-          test -x "$ELF2E32"
+          ELF2E32=$(find "$WORK/build" -type f -name elf2e32 -perm -111 | head -n1)
+          test -n "$ELF2E32" && test -x "$ELF2E32"
           "$ELF2E32" --elfinput="$OUT/shim.elf" --definput="$OUT/step98.def" \
             --defoutput="$OUT/ShadowkeyCompat{000a0000}.def" \
             --dso="$OUT/ShadowkeyCompat{000a0000}.dso" \

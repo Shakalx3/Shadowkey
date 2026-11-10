@@ -14,6 +14,7 @@ on:
       - "tools/step94_disassemble_n95_rom_extra_exports.py"
       - "tools/step95_extract_tint64_trap_headers.py"
       - "tools/step96_ttrap_abi_probe.cpp"
+      - "tools/step98_tint64_shim_probe.cpp"
       - "docs/STEP96_TTRAP_ABI_PROBE.md"
   workflow_dispatch:
 
@@ -258,6 +259,21 @@ jobs:
             'This is a target-header/compiler ABI check, not a runtime leave/trap test.' \
             > firmware-input/STEP96_TTRAP_ABI_CHECK.txt
           rm -f /tmp/step96_ttrap_abi_probe.o
+      - name: Validate isolated legacy TInt64 comparison shim
+        run: |
+          set -euo pipefail
+          g++ -std=c++11 -Wall -Wextra -Werror -DSTEP98_HOST_TEST tools/step98_tint64_shim_probe.cpp -o /tmp/step98_host_test
+          /tmp/step98_host_test
+          "$CXX" -march=armv5te -marm -O1 -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \\
+            -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \\
+            -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__EXE__ -D_UNICODE \\
+            -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \\
+            -c tools/step98_tint64_shim_probe.cpp -o /tmp/step98_tint64_shim_probe.o
+          "$OBJDUMP" -d /tmp/step98_tint64_shim_probe.o > firmware-input/STEP98_TINT64_SHIM_DISASSEMBLY.txt
+          grep -q "Step98TInt64NotEqual" firmware-input/STEP98_TINT64_SHIM_DISASSEMBLY.txt
+          echo "PASS: host semantics and ARMv5TE code generation for two-word TInt64 inequality" > firmware-input/STEP98_TINT64_SHIM_CHECK.txt
+          echo "Not yet an E32 DLL, import-table patch, or device test." >> firmware-input/STEP98_TINT64_SHIM_CHECK.txt
+          rm -f /tmp/step98_host_test /tmp/step98_tint64_shim_probe.o
       - name: Build EKA2 host with Linux-normalized GCCE headers and public EikStart API
         run: |
           set -euo pipefail

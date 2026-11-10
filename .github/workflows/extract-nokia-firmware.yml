@@ -228,6 +228,7 @@ jobs:
             --target-demangler c++filt \
             --rom-dir firmware-input \
             --game-dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
+            --game-iat-refs firmware-input/STEP86_GAME_IAT_REFERENCES.tsv \
             --simkin-dispatch source_bundle/shadowkey_step35_work/simkin_import_dispatch.c \
             --game-arm-map firmware-input/STEP46_GAME_ARM_IMPORTS.tsv \
             --simkin-arm-map firmware-input/STEP46_SIMKIN_ARM_IMPORTS.tsv \

@@ -39,7 +39,7 @@ The subsequent comparison against the pinned S60 3.1 FP1 ARMv5 SDK found 24 corr
 
 ## Diagnostic artifact hygiene
 
-Run 55 exposed a cleanup-path mismatch: the compact Actions artifact still contained the 60,600,320-byte reconstructed ROM file named rom-reconstructed.bin. It was not committed to Git history. The workflow now removes both reconstructed-ROM filename variants and fails the cleanup step if any .bin, .dll, .img, .fpsx, .rofs or .c0r file remains. Run 57 is the verification run for this stricter artifact check.
+Run 55 exposed a cleanup-path mismatch: the compact Actions artifact still contained the 60,600,320-byte reconstructed ROM file named rom-reconstructed.bin. It was not committed to Git history. The workflow now removes both reconstructed-ROM filename variants and fails the cleanup step if any .bin, .dll, .img, .fpsx, .rofs or .c0r file remains. Run 57 passed the stricter artifact check: the uploaded diagnostic artifact is 940,327 bytes and the raw-binary guard found no remaining .bin, .dll, .img, .fpsx, .rofs or .c0r files.
 
 ## Interpretation constraints
 

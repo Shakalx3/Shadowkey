@@ -144,6 +144,13 @@ jobs:
             --gamecomms "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/libs/GAMECOMMS.DLL" \
             --game-dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
             --out-dir firmware-input
+      - name: Inspect original 6R51.APP E32 loader contract
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step86_inspect_game_e32_header.py
+          python3 tools/step86_inspect_game_e32_header.py \
+            --game source_bundle/shadowkey_step35_work/6R51.APP \
+            --out-dir firmware-input
       - name: Checkout N-Gage ARM UREL import libraries
         uses: actions/checkout@v4
         with:

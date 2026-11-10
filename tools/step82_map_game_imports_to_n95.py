@@ -230,7 +230,7 @@ def main():
                     else:
                         status = "NO_TARGET_SIGNATURE"
 
-            if candidates and status in ("MANUAL_OVERRIDE", "PROVISIONAL_PLACEHOLDER_FORWARDER", "CLASS_HIERARCHY_ALIAS", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
+            if candidates and status in ("MANUAL_OVERRIDE", "PROVISIONAL_PLACEHOLDER_FORWARDER", "CLASS_HIERARCHY_ALIAS", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "CROSS_DLL_SIGNATURE_MATCH", "CROSS_DLL_TYPE_ALIAS_MATCH", "CROSS_DLL_ALIAS_SAME_ADDRESS", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
                 chosen = candidates[0]
                 target_ord = int(chosen["ordinal"])
                 target_dll = chosen["module"].lower().removesuffix(".dll")

@@ -290,6 +290,7 @@ jobs:
           set -euo pipefail
           python3 -m py_compile tools/step91_summarize_n95_rom_exports.py
           python3 tools/step91_summarize_n95_rom_exports.py
+          echo 'Step91 key ordinal cases include EUSER 1407/1575, CONE 160 and GDI 101/108/151.'
       - name: Inspect BTENG ordinal compatibility against N95 ROM
         run: |
           set -euo pipefail
@@ -341,10 +342,15 @@ jobs:
           PY
       - name: Remove large intermediate images and source packages
         run: |
-          rm -rf firmware-input/rofs-candidates firmware-input/rom-modules
+          rm -rf firmware-input/rofs-candidates firmware-input/rom-modules firmware-input/e32-candidates
           rm -f firmware-input/rom-unpaged-reconstructed.bin
           rm -f firmware-input/ngage/*.rar firmware-input/n95/*.exe firmware-input/*.fpsx firmware-input/*.rofs
           rm -rf firmware-parsed firmware-extracted
+          echo "Largest remaining diagnostic files:"
+          find firmware-input -type f -printf '%s\t%p\n' | sort -nr | head -n 30
+          echo "Unexpected raw system/firmware binaries (must be empty):"
+          raw_files=$(find firmware-input -type f \( -iname '*.dll' -o -iname '*.c0r' -o -iname '*.fpsx' -o -iname '*.rofs' -o -iname '*.img' \) -print)
+          if [ -n "$raw_files" ]; then printf '%s\n' "$raw_files"; exit 1; fi
       - name: Upload compact diagnostic artifact
         uses: actions/upload-artifact@v4
         with:

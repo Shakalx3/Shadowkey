@@ -76,6 +76,7 @@ def inspect(path):
     iat_start = h["text_size"]
     code = data[code_off:code_off+code_size]
     blocks = []
+    iat_slots = []
     for index in range(h["dll_ref_count"]):
         if pos + 8 > end:
             raise ValueError(f"import descriptor {index} exceeds import table")
@@ -88,18 +89,37 @@ def inspect(path):
         if iat_start + count*4 > len(code):
             raise ValueError(f"IAT for {name} exceeds code segment")
         iat_values = list(struct.unpack_from("<" + "I"*count, code, iat_start)) if count else []
+        array_base = int(h["code_base"], 16) + iat_start
         blocks.append({
             "index": index,
             "dependency": name,
-            "array_base": f"0x{int(h['code_base'],16)+iat_start:08X}",
+            "array_base": f"0x{array_base:08X}",
             "import_count": count,
             "ordinals": ",".join(map(str, ordinals)),
             "iat_values_match_ordinals": iat_values == ordinals,
         })
+        for slot_index, ordinal in enumerate(ordinals):
+            iat_slots.append({
+                "dependency": name,
+                "ordinal": ordinal,
+                "slot_address": array_base + slot_index*4,
+            })
         iat_start += count*4
         pos = ord_end
     if pos > end:
         raise ValueError("import descriptor table overflow")
+    for slot in iat_slots:
+        needle = struct.pack("<I", slot["slot_address"])
+        refs = []
+        pos_ref = 0
+        while True:
+            found = code.find(needle, pos_ref)
+            if found < 0:
+                break
+            refs.append(found)
+            pos_ref = found + 1
+        slot["reference_count"] = len(refs)
+        slot["reference_offsets"] = ",".join(f"0x{code_off+x:08X}" for x in refs)
     h["import_table_size"] = imp_size
     h["import_descriptors_end"] = pos
     h["import_table_trailing_bytes"] = end - pos
@@ -120,6 +140,14 @@ def main():
         w = csv.DictWriter(f, fieldnames=["index","dependency","array_base","import_count","ordinals","iat_values_match_ordinals"], delimiter="\t")
         w.writeheader()
         w.writerows(blocks)
+    with (args.out_dir / "STEP86_GAME_IAT_REFERENCES.tsv").open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=["dependency","ordinal","slot_address","reference_count","reference_offsets"], delimiter="\t")
+        w.writeheader()
+        for slot in iat_slots:
+            w.writerow({
+                **slot,
+                "slot_address": f"0x{slot['slot_address']:08X}",
+            })
     print(json.dumps({
         "uid1": header["uid1"],
         "uid2": header["uid2"],

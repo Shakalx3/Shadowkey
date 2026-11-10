@@ -86,10 +86,10 @@ def main():
         for row in count_rows:
             f.write("\t".join(map(str, row)) + "\n")
     map_path = args.rom_dir / "ROM_SDK_EXPORT_MAP.tsv"
-    with map_path.open("w", encoding="utf-8") as f:
-        f.write("module\tordinal\tsdk_symbol\trom_address\tthumb\tlocation\n")
-        for row in export_rows:
-            f.write("\t".join(map(str, row)) + "\n")
+    with map_path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f, delimiter="\t", lineterminator="\n")
+        writer.writerow(["module", "ordinal", "sdk_symbol", "rom_address", "thumb", "location"])
+        writer.writerows(export_rows)
 
     game_rows = []
     for case in remap.get("game_import_remaps", []):
@@ -118,11 +118,12 @@ def main():
             api_rom["address"] if api_rom else "", loc(api_rom),
         ))
     game_path = args.rom_dir / "STEP80_GAME_IMPORT_ROM_REMAP.tsv"
-    with game_path.open("w", encoding="utf-8") as f:
-        f.write("dll\toriginal_ngage_ordinal\tsdk_symbol_at_same_ordinal\trom_address_at_same_ordinal\tlocation\t"
-                "correct_target_symbol\ttarget_ordinal\ttarget_rom_address\ttarget_location\n")
-        for row in game_rows:
-            f.write("\t".join(map(str, row)) + "\n")
+    with game_path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f, delimiter="\t", lineterminator="\n")
+        writer.writerow(["dll", "original_ngage_ordinal", "sdk_symbol_at_same_ordinal",
+                         "rom_address_at_same_ordinal", "location", "correct_target_symbol",
+                         "target_ordinal", "target_rom_address", "target_location"])
+        writer.writerows(game_rows)
 
     dispatch_path = Path("source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c")
     dispatch_text = dispatch_path.read_text(encoding="utf-8", errors="replace")

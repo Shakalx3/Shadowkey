@@ -225,8 +225,7 @@ jobs:
               assert row["target_dll"] == dll, (old, row)
               assert int(row["target_ordinal"]) == ordinal, (old, row)
               assert row["status"].startswith("CROSS_DLL"), (old, row)
-          simkin = list(csv.DictReader(Path("firmware-input/STEP82_SIMKIN_IMPORT_TARGET_MAP.tsv").open(newline="", encoding="utf-8"), delimiter="\t"))
-          device = {int(r["old_ordinal"]): r for r in simkin if r["dll"] == "btdevice"}
+          device = {int(r["old_ordinal"]): r for r in rows if r["dll"] == "btdevice"}
           expected_device = {34: 97, 33: 95, 35: 96}
           for old, ordinal in expected_device.items():
               row = device[old]

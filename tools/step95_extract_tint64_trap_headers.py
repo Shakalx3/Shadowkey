@@ -66,6 +66,34 @@ def main():
             lines_out.append(f"... {len(matches)-limit} additional contexts omitted")
         lines_out.append("")
 
+    # Focused, untruncated audit of the core headers most likely to define
+    # TInt64 representation. The broad report intentionally caps contexts.
+    focused = args.out.parent / "STEP95_TINT64_CORE_HEADERS.txt"
+    core_names = {"e32def.h", "e32std.h", "e32std.inl", "e32cmn.h", "e32cmn.inl"}
+    focused_lines = ["Step95 focused core-header audit", f"SDK include root: {include}", ""]
+    for path in files:
+        if path.name.lower() not in core_names:
+            continue
+        try:
+            source_lines = path.read_text(encoding="latin-1", errors="replace").splitlines()
+        except Exception as exc:
+            focused_lines.append(f"ERROR {path}: {exc}")
+            continue
+        indexes = [i for i, line in enumerate(source_lines)
+                   if re.search(r"\\bTInt64\\b|TInt64Rep|TInt64Value|iLow|iHigh", line)]
+        if not indexes:
+            continue
+        focused_lines.append(f"=== {path.relative_to(include)} ===")
+        emitted = set()
+        for idx in indexes:
+            lo, hi = max(0, idx - 5), min(len(source_lines), idx + 8)
+            if any(n in emitted for n in range(lo, hi)):
+                continue
+            focused_lines.extend(f"{n+1:5d}: {source_lines[n]}" for n in range(lo, hi))
+            emitted.update(range(lo, hi))
+            focused_lines.append("")
+    focused.write_text("\\n".join(focused_lines) + "\\n", encoding="utf-8")
+    print(f"Focused core-header audit: {focused}")
     args.out.write_text("\n".join(lines_out) + "\n", encoding="utf-8")
     args.summary.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({

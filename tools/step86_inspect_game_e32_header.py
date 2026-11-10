@@ -68,6 +68,22 @@ def inspect(path):
     else:
         h["code_ends_at_import_offset"] = True
 
+    exp_off = h["export_dir_offset"]
+    export_rows = []
+    if exp_off > len(data) or h["export_count"]*4 > len(data)-exp_off:
+        raise ValueError("export table lies outside file")
+    for ordinal in range(1, h["export_count"]+1):
+        raw = u32(data, exp_off + (ordinal-1)*4)
+        code_file_off = code_off + (raw & ~1)
+        export_rows.append({
+            "ordinal": ordinal,
+            "raw_offset": f"0x{raw:08X}",
+            "runtime_address": f"0x{(int(h['code_base'],16)+raw)&0xFFFFFFFF:08X}",
+            "thumb": raw & 1,
+            "code_file_offset": f"0x{code_file_off:08X}",
+            "valid_code_offset": code_off <= code_file_off < code_off+code_size,
+            "sample_hex": data[code_file_off:code_file_off+16].hex() if code_file_off < len(data) else "",
+        })
     imp_size = u32(data, imp_off)
     if imp_size < 4 or imp_size > len(data) - imp_off:
         raise ValueError(f"invalid import table size 0x{imp_size:X}")
@@ -136,6 +152,10 @@ def main():
     args.out_dir.mkdir(parents=True, exist_ok=True)
     header, blocks = inspect(args.game)
     (args.out_dir / "STEP86_GAME_E32_HEADER.json").write_text(json.dumps(header, indent=2) + "\n", encoding="utf-8")
+    with (args.out_dir / "STEP86_GAME_EXPORTS.tsv").open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=["ordinal","raw_offset","runtime_address","thumb","code_file_offset","valid_code_offset","sample_hex"], delimiter="\t")
+        w.writeheader()
+        w.writerows(export_rows)
     with (args.out_dir / "STEP86_GAME_IMPORT_BLOCKS.tsv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["index","dependency","array_base","import_count","ordinals","iat_values_match_ordinals"], delimiter="\t")
         w.writeheader()
@@ -160,6 +180,7 @@ def main():
         "dll_ref_count": header["dll_ref_count"],
         "export_count": header["export_count"],
         "iat_slots": header["iat_slots"],
+        "exports": export_rows,
         "iat_matches_import_ordinals": header["iat_matches_import_ordinals"],
         "code_ends_at_import_offset": header["code_ends_at_import_offset"],
     }, indent=2))

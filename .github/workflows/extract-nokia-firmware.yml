@@ -200,6 +200,16 @@ jobs:
             --exports firmware-input/STEP86_GAME_EXPORTS.tsv \
             --objdump "$EPOC_OBJDUMP" \
             --out firmware-input/STEP87_GAME_FACTORY_DISASSEMBLY.txt
+      - name: Disassemble unmatched legacy APP import thunk
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step88_disassemble_unmatched_iat_slots.py
+          python3 tools/step88_disassemble_unmatched_iat_slots.py \
+            --game source_bundle/shadowkey_step35_work/6R51.APP \
+            --header firmware-input/STEP86_GAME_E32_HEADER.json \
+            --iat-refs firmware-input/STEP86_GAME_IAT_REFERENCES.tsv \
+            --objdump "$EPOC_OBJDUMP" \
+            --out firmware-input/STEP88_UNMATCHED_IAT_DISASSEMBLY.txt
       - name: Symbolize actual N95 ROM exports against target SDK
         run: |
           set -euo pipefail

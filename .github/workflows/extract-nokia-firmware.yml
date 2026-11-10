@@ -214,6 +214,34 @@ jobs:
             --sdk-root /tmp/s60-devkit \
             --out firmware-input/STEP95_TINT64_TRAP_HEADERS.txt \
             --summary firmware-input/STEP95_TINT64_TRAP_HEADERS.json
+      - name: Compile target TInt64 and TTrap ABI probe
+        run: |
+          set -euo pipefail
+          CXX=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-g++ | head -n1)
+          READELF=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-readelf | head -n1)
+          test -x "$CXX" && test -x "$READELF"
+          SDK_ROOT=/tmp/s60-devkit
+          GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"
+          VARIANT_DIR="$SDK_ROOT/Epoc32/include/variant"
+          python3 -m py_compile tools/step95_extract_tint64_trap_headers.py
+          "$CXX" -march=armv5te -marm -O1 -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
+            -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \
+            -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__EXE__ -D_UNICODE \
+            -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \
+            -I"$SDK_ROOT/Epoc32/include" -I"$VARIANT_DIR" -include "$GCCE_HEADER" \
+            -c tools/step96_ttrap_abi_probe.cpp -o /tmp/step96_ttrap_abi_probe.o
+          "$READELF" -s /tmp/step96_ttrap_abi_probe.o > firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
+          grep -q 'Step96CallTrap' firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
+          grep -q 'Step96CallUnTrap' firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
+          grep -q 'Trap' firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
+          grep -q 'UnTrap' firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
+          printf '%s\\n' \
+            'PASS: TInt64 is 8 bytes in the target GCCE ABI' \
+            'PASS: TTrap is 76 bytes with iState/iNext/iResult/iHandler offsets 0/64/68/72' \
+            'PASS: TTrap::Trap(TInt&) is an instance method and TTrap::UnTrap() is static' \
+            'This is a target-header/compiler ABI check, not a runtime leave/trap test.' \
+            > firmware-input/STEP96_TTRAP_ABI_CHECK.txt
+          rm -f /tmp/step96_ttrap_abi_probe.o
       - name: Build EKA2 host with Linux-normalized GCCE headers and public EikStart API
         run: |
           set -euo pipefail

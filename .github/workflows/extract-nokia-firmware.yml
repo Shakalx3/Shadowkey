@@ -12,6 +12,7 @@ on:
       - "tools/step92_validate_sdk_dso_dynsym.py"
       - "tools/step93_disassemble_selected_import_calls.py"
       - "tools/step94_disassemble_n95_rom_extra_exports.py"
+      - "tools/step95_extract_tint64_trap_headers.py"
   workflow_dispatch:
 
 permissions:
@@ -205,6 +206,14 @@ jobs:
           python3 tools/step89_find_eikstart_factory_api.py \
             --sdk-root /tmp/s60-devkit \
             --out firmware-input/STEP89_EIKSTART_FACTORY_API.txt
+      - name: Extract target TInt64 and TTrap declarations
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step95_extract_tint64_trap_headers.py
+          python3 tools/step95_extract_tint64_trap_headers.py \
+            --sdk-root /tmp/s60-devkit \
+            --out firmware-input/STEP95_TINT64_TRAP_HEADERS.txt \
+            --summary firmware-input/STEP95_TINT64_TRAP_HEADERS.json
       - name: Build EKA2 host with Linux-normalized GCCE headers and public EikStart API
         run: |
           set -euo pipefail

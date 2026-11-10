@@ -84,6 +84,7 @@ def main():
     ap.add_argument("--target-demangler", default="c++filt")
     ap.add_argument("--rom-dir", type=Path, required=True)
     ap.add_argument("--game-dispatch", type=Path, required=True)
+    ap.add_argument("--game-iat-refs", type=Path, required=True)
     ap.add_argument("--simkin-dispatch", type=Path, required=True)
     ap.add_argument("--gamecomms-dispatch", type=Path, required=True)
     ap.add_argument("--game-arm-map", type=Path, required=True)
@@ -149,8 +150,27 @@ def main():
 
     private_dlls = {"simkin", "gamecomms"}
 
-    def map_dispatch(dispatch_path, arm_map, output_name):
+    def map_dispatch(dispatch_path, arm_map, output_name, iat_refs=None):
         imports = read_dispatch(dispatch_path)
+        iat_only_count = 0
+        if iat_refs is not None:
+            known_slots = {imp["slot"] for imp in imports}
+            for row in read_tsv(iat_refs):
+                if row["recognized_thunk"].lower() == "true":
+                    continue
+                slot = int(row["slot_address"], 16)
+                if slot in known_slots:
+                    continue
+                dependency = row["dependency"]
+                dll = dependency.split("[", 1)[0].lower()
+                imports.append({
+                    "thunk": 0,
+                    "slot": slot,
+                    "dll": dll,
+                    "ordinal": int(row["ordinal"]),
+                })
+                known_slots.add(slot)
+                iat_only_count += 1
         out_rows = []
         counts = {}
         for imp in imports:
@@ -261,7 +281,7 @@ def main():
                 target_location = ";".join(x["location"] for x in candidates)
 
             out_rows.append({
-                "thunk": f"0x{imp['thunk']:08X}",
+                "thunk": f"0x{imp['thunk']:08X}" if imp["thunk"] else "",
                 "slot": f"0x{imp['slot']:08X}",
                 "dll": dll,
                 "old_ordinal": old_ord,
@@ -285,19 +305,20 @@ def main():
             w = csv.DictWriter(f, fieldnames=fields, delimiter="\t")
             w.writeheader()
             w.writerows(out_rows)
-        return out_path, counts, len(imports)
+        return out_path, counts, len(imports), iat_only_count
 
-    game_path, game_counts, game_total = map_dispatch(
-        args.game_dispatch, game_arm, "STEP82_GAME_IMPORT_TARGET_MAP.tsv"
+    game_path, game_counts, game_total, game_iat_only = map_dispatch(
+        args.game_dispatch, game_arm, "STEP82_GAME_IMPORT_TARGET_MAP.tsv", args.game_iat_refs
     )
-    simkin_path, simkin_counts, simkin_total = map_dispatch(
+    simkin_path, simkin_counts, simkin_total, _ = map_dispatch(
         args.simkin_dispatch, simkin_arm, "STEP82_SIMKIN_IMPORT_TARGET_MAP.tsv"
     )
-    gamecomms_path, gamecomms_counts, gamecomms_total = map_dispatch(
+    gamecomms_path, gamecomms_counts, gamecomms_total, _ = map_dispatch(
         args.gamecomms_dispatch, gamecomms_arm, "STEP82_GAMECOMMS_IMPORT_TARGET_MAP.tsv"
     )
     summary = {
         "game_import_slots": game_total,
+        "game_iat_only_slots_added": game_iat_only,
         "game_status_counts": game_counts,
         "simkin_import_slots": simkin_total,
         "simkin_status_counts": simkin_counts,

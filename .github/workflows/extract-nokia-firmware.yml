@@ -262,12 +262,15 @@ jobs:
       - name: Validate isolated legacy TInt64 comparison shim
         run: |
           set -euo pipefail
+          CXX=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-g++ | head -n1)
+          OBJDUMP=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-objdump | head -n1)
+          test -x "$CXX" && test -x "$OBJDUMP"
           g++ -std=c++11 -Wall -Wextra -Werror -DSTEP98_HOST_TEST tools/step98_tint64_shim_probe.cpp -o /tmp/step98_host_test
           /tmp/step98_host_test
-          "$CXX" -march=armv5te -marm -O1 -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \\
-            -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \\
-            -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__EXE__ -D_UNICODE \\
-            -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \\
+          "$CXX" -march=armv5te -marm -O1 -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
+            -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \
+            -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__EXE__ -D_UNICODE \
+            -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \
             -c tools/step98_tint64_shim_probe.cpp -o /tmp/step98_tint64_shim_probe.o
           "$OBJDUMP" -d /tmp/step98_tint64_shim_probe.o > firmware-input/STEP98_TINT64_SHIM_DISASSEMBLY.txt
           grep -q "Step98TInt64NotEqual" firmware-input/STEP98_TINT64_SHIM_DISASSEMBLY.txt

@@ -316,9 +316,12 @@ jobs:
           ELF2E32="$WORK/build/elf2e32"
           test -x "$ELF2E32"
           "$ELF2E32" --elfinput="$OUT/shim.elf" --definput="$OUT/step98.def" \
+            --defoutput="$OUT/ShadowkeyCompat{000a0000}.def" \
+            --dso="$OUT/ShadowkeyCompat{000a0000}.dso" \
             --output="$OUT/ShadowkeyCompat.dll" --targettype=DLL \
-            --uid1=0x10000079 --uid2=0x00000000 --uid3=0xE000BEEF \
-            --version=1.0 --linkas=ShadowkeyCompat{000a0000}.dll \
+            --uid1=0x10000079 --uid2=0x1000008D --uid3=0xE000BEEF \
+            --sid=0xE000BEEF --version=1.0 --capability=none \
+            --linkas=ShadowkeyCompat{000a0000}[E000BEEF].dll \
             --libpath="$LIB" --uncompressed > "$OUT/elf2e32.log" 2>&1
           test -s "$OUT/ShadowkeyCompat.dll"
           "$ELF2E32" --dump=hi --e32input="$OUT/ShadowkeyCompat.dll" > "$OUT/e32-dump.txt" 2>&1

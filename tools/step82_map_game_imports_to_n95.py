@@ -204,13 +204,23 @@ def main():
                         row = target_by_dll_ord.get(api_dll, {}).get(int(api_ord))
                         if row is None:
                             status = "OVERRIDE_TARGET_ORDINAL_MISSING"
-                        elif row["sdk_symbol"] != override.get("target_api_symbol"):
-                            status = "OVERRIDE_SYMBOL_MISMATCH"
-                            candidates = [row]
                         else:
                             candidates = [row]
                             target_dll = api_dll
-                            status = override.get("status", "MANUAL_OVERRIDE")
+                            if row["sdk_symbol"] != override.get("target_api_symbol"):
+                                status = "OVERRIDE_SYMBOL_MISMATCH"
+                            else:
+                                override_status = override.get("status", "MANUAL_OVERRIDE")
+                                if override_status == "PASS":
+                                    target_signature = target_demangled[row["sdk_symbol"]]
+                                    if normalize(old_sig) == normalize(target_signature):
+                                        status = "PASS"
+                                    elif normalize(old_sig, type_aliases=True) == normalize(target_signature, type_aliases=True):
+                                        status = "PASS_TYPE_ALIAS"
+                                    else:
+                                        status = "OVERRIDE_ARM_SIGNATURE_MISMATCH"
+                                else:
+                                    status = override_status
                 else:
                     sig = normalize(old_sig)
                     candidates = target_by_dll_sig.get(dll, {}).get(sig, [])
@@ -265,7 +275,7 @@ def main():
                     else:
                         status = "NO_TARGET_SIGNATURE"
 
-            if candidates and status in ("MANUAL_OVERRIDE", "PROVISIONAL_PLACEHOLDER_FORWARDER", "CLASS_HIERARCHY_ALIAS", "CROSS_CLASS_BASE_METHOD_CANDIDATE", "NEEDS_SUBSESSION_CLOSE_WRAPPER", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "CONST_MEMBER_ABI_MATCH", "CROSS_DLL_SIGNATURE_MATCH", "CROSS_DLL_TYPE_ALIAS_MATCH", "CROSS_DLL_ALIAS_SAME_ADDRESS", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
+            if candidates and status in ("MANUAL_OVERRIDE", "PROVISIONAL_PLACEHOLDER_FORWARDER", "CLASS_HIERARCHY_ALIAS", "CROSS_CLASS_BASE_METHOD_CANDIDATE", "NEEDS_SUBSESSION_CLOSE_WRAPPER", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "CONST_MEMBER_ABI_MATCH", "PASS", "PASS_TYPE_ALIAS", "OVERRIDE_SYMBOL_MISMATCH", "OVERRIDE_ARM_SIGNATURE_MISMATCH", "CROSS_DLL_SIGNATURE_MATCH", "CROSS_DLL_TYPE_ALIAS_MATCH", "CROSS_DLL_ALIAS_SAME_ADDRESS", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
                 chosen = candidates[0]
                 target_ord = int(chosen["ordinal"])
                 target_dll = chosen["module"].lower().removesuffix(".dll")

@@ -42,6 +42,12 @@ GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"
 VARIANT_DIR="$SDK_ROOT/Epoc32/include/variant"
 test -f "$GCCE_HEADER"
 test -d "$VARIANT_DIR"
+test -f "$SDK_ROOT/Epoc32/include/symcpp.h"
+test -f "$SDK_ROOT/Epoc32/include/aparc.h"
+test -f "$SDK_ROOT/Epoc32/include/eikstart.h"
+# The legacy SDK gcce.h uses Windows-style relative include separators.
+# Normalize only the temporary extracted SDK copy for Linux GCC preprocessing.
+sed -i 's#\\\\#/#g' "$GCCE_HEADER"
 {
   echo "GCCE preinclude: $GCCE_HEADER"
   echo "Platform defines: __SYMBIAN32__ __EPOC32__ __GCCE__ __MARM__ __EABI__ __EXE__ __S60_3X__"

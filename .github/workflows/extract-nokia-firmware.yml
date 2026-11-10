@@ -277,6 +277,61 @@ jobs:
           echo "PASS: host semantics and ARMv5TE code generation for two-word TInt64 inequality" > firmware-input/STEP98_TINT64_SHIM_CHECK.txt
           echo "Not yet an E32 DLL, import-table patch, or device test." >> firmware-input/STEP98_TINT64_SHIM_CHECK.txt
           rm -f /tmp/step98_host_test /tmp/step98_tint64_shim_probe.o
+      - name: Convert isolated TInt64 shim into a minimal E32 DLL
+        run: |
+          set -euo pipefail
+          CXX=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-g++ | head -n1)
+          LD=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-ld | head -n1)
+          READELF=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-readelf | head -n1)
+          test -x "$CXX" && test -x "$LD" && test -x "$READELF"
+          SDK_ROOT=/tmp/s60-devkit
+          LIB="$SDK_ROOT/Epoc32/release/armv5/lib"
+          OUT=firmware-input/STEP99_TINT64_E32_DLL
+          mkdir -p "$OUT"
+          cat > "$OUT/step98.def" <<'EOF'
+          EXPORTS
+            Step98TInt64NotEqual @ 1 NONAME
+          EOF
+          "$CXX" -march=armv5te -marm -O1 -fPIC -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
+            -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \
+            -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__DLL__ -D_UNICODE \
+            -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \
+            -c tools/step98_tint64_shim_probe.cpp -o "$OUT/shim.o"
+          "$LD" -shared -soname=ShadowkeyCompat{000a0000}.dll -o "$OUT/shim.elf" "$OUT/shim.o"
+          "$READELF" -h "$OUT/shim.elf" > "$OUT/elf-header.txt"
+          "$READELF" -s "$OUT/shim.elf" > "$OUT/elf-symbols.txt"
+          grep -q 'Step98TInt64NotEqual' "$OUT/elf-symbols.txt"
+          ELF2E32=firmware-input/STEP90_LEGACY_APP_HOST/elf2e32
+          if [ ! -x "$ELF2E32" ]; then
+            echo "elf2e32 executable was not retained by Step90; building converter is required"
+            exit 3
+          fi
+          "$ELF2E32" --elfinput="$OUT/shim.elf" --definput="$OUT/step98.def" \
+            --output="$OUT/ShadowkeyCompat.dll" --targettype=DLL \
+            --uid1=0x10000079 --uid2=0x00000000 --uid3=0xE000BEEF \
+            --version=1.0 --linkas=ShadowkeyCompat{000a0000}.dll \
+            --libpath="$LIB" --uncompressed > "$OUT/elf2e32.log" 2>&1
+          test -s "$OUT/ShadowkeyCompat.dll"
+          "$ELF2E32" --dump=hi --e32input="$OUT/ShadowkeyCompat.dll" > "$OUT/e32-dump.txt" 2>&1
+          python3 - "$OUT/ShadowkeyCompat.dll" "$OUT/e32-header.json" <<'PY'
+          import json, struct, sys
+          from pathlib import Path
+          p=Path(sys.argv[1]); b=p.read_bytes()
+          if len(b)<0x80 or b[0x10:0x14]!=b"EPOC":
+              raise SystemExit("not a valid E32 image")
+          u=lambda off: struct.unpack_from("<I",b,off)[0]
+          h={"size":len(b),"uid1":f"0x{u(0):08X}","uid2":f"0x{u(4):08X}",
+             "uid3":f"0x{u(8):08X}","flags":f"0x{u(0x2c):08X}",
+             "export_dir_offset":u(0x58),"export_count":u(0x5c),
+             "dll_ref_count":u(0x54),"code_size":u(0x30)}
+          assert h["uid1"]=="0x10000079",h
+          assert h["export_count"]==1,h
+          assert h["code_size"]>0,h
+          Path(sys.argv[2]).write_text(json.dumps(h,indent=2)+"\\n")
+          print(json.dumps(h,indent=2))
+          PY
+          echo "PASS: minimal E32 DLL container created and has exactly one export" > "$OUT/STEP99_STATUS.txt"
+          echo "This validates E32 DLL conversion only; it is not yet loaded by Symbian or patched into 6R51.APP." >> "$OUT/STEP99_STATUS.txt"
       - name: Build EKA2 host with Linux-normalized GCCE headers and public EikStart API
         run: |
           set -euo pipefail

@@ -31,7 +31,7 @@ LIB="$SDK_ROOT/Epoc32/release/armv5/lib"
 for name in euser apparc eikcore; do
   test -f "$LIB/$name.dso" || { echo "missing target import library: $LIB/$name.dso"; exit 2; }
 done
-find "$SDK_ROOT/Epoc32/include" -iname 'eikstart.h' -o -iname 'aparc.h' > "$OUT/host-sdk-headers.txt"
+find "$SDK_ROOT/Epoc32/include" -iname 'eikstart.h' -o -iname 'apparc.h' > "$OUT/host-sdk-headers.txt"
 
 echo "GCCE compiler: $CXX" | tee "$OUT/build.log"
 "$CXX" --version >> "$OUT/build.log" 2>&1
@@ -43,7 +43,7 @@ VARIANT_DIR="$SDK_ROOT/Epoc32/include/variant"
 test -f "$GCCE_HEADER"
 test -d "$VARIANT_DIR"
 test -f "$SDK_ROOT/Epoc32/include/symcpp.h"
-test -f "$SDK_ROOT/Epoc32/include/aparc.h"
+test -f "$SDK_ROOT/Epoc32/include/apparc.h"
 test -f "$SDK_ROOT/Epoc32/include/eikstart.h"
 # The legacy SDK gcce.h uses Windows-style relative include separators.
 # Normalize only the temporary extracted SDK copy for Linux GCC preprocessing.

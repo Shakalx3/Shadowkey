@@ -7,13 +7,18 @@ from pathlib import Path
 ROOT = Path("firmware-input")
 SELECTED = {"euser.dll", "cone.dll", "gdi.dll", "fbscli.dll",
             "eikcore.dll", "ws32.dll", "efsrv.dll"}
-EXPECTED = {
+# SIMKIN and GAMECOMMS are private N-Gage game DLLs, not expected ROM modules.
+EXPECTED_ROM_MODULES = {
     "apparc.dll", "avkon.dll", "bafl.dll", "bitgdi.dll", "bluetooth.dll",
     "btdevice.dll", "bteng.dll", "btmanclient.dll", "cone.dll", "efsrv.dll",
     "eikcoctl.dll", "eikcore.dll", "esock.dll", "estlib.dll", "etel.dll",
-    "euser.dll", "ezlib.dll", "fbscli.dll", "gamecomms.dll", "gdi.dll",
-    "hal.dll", "mediaclientaudiostream.dll", "msgs.dll", "sdpagent.dll",
-    "sdpdatabase.dll", "simkin.dll", "ws32.dll",
+    "euser.dll", "ezlib.dll", "fbscli.dll", "gdi.dll", "hal.dll",
+    "mediaclientaudiostream.dll", "msgs.dll", "sdpagent.dll",
+    "sdpdatabase.dll", "ws32.dll",
+}
+KEY_CASES = {
+    ("euser", 1407), ("euser", 1575), ("cone", 160),
+    ("gdi", 101), ("gdi", 108), ("gdi", 151), ("eikcore", 224),
 }
 
 def read_tsv(name):
@@ -50,29 +55,38 @@ for name in ("STEP82_GAME_IMPORT_TARGET_MAP.tsv",
         if target_dll + ".dll" in SELECTED or source_dll + ".dll" in SELECTED:
             imports.append((name, r))
 
+columns = ("dll", "old_ordinal", "arm_urel_symbol", "original_demangled",
+           "target_dll", "target_ordinal", "target_sdk_symbol",
+           "target_rom_address", "status")
 with (ROOT / "STEP91_SELECTED_IMPORTS.tsv").open("w", encoding="utf-8") as f:
-    f.write("source_map\tsource_dll\told_ordinal\told_symbol\ttarget_dll\ttarget_ordinal\ttarget_symbol\ttarget_rom_address\tstatus\n")
+    f.write("source_map\t" + "\t".join(columns) + "\n")
     for name, r in imports:
-        fields = (name, r.get("dll", ""), r.get("old_ordinal", ""),
-                  r.get("old_symbol", ""), r.get("target_dll", ""),
-                  r.get("target_ordinal", ""), r.get("target_symbol", ""),
-                  r.get("target_rom_address", ""), r.get("status", ""))
-        f.write("\t".join(fields) + "\n")
+        f.write("\t".join([name] + [r.get(k, "") for k in columns]) + "\n")
+
+key_rows = [(name, r) for name, r in imports
+            if (r.get("dll", "").lower(), int(r.get("old_ordinal", "0") or 0)) in KEY_CASES]
+with (ROOT / "STEP91_KEY_IMPORT_CASES.tsv").open("w", encoding="utf-8") as f:
+    f.write("source_map\t" + "\t".join(columns) + "\n")
+    for name, r in key_rows:
+        f.write("\t".join([name] + [r.get(k, "") for k in columns]) + "\n")
 
 found = set(module_by_name)
-missing = sorted(EXPECTED - found)
+missing = sorted(EXPECTED_ROM_MODULES - found)
+dso_missing = sorted(r["module"].lower() for r in sdk_counts if r.get("status") == "DSO_MISSING")
+
 lines = [
     "# Step91 — RM-320 v35 ROM export summary",
     "",
     "Source: reconstructed SOS+CORE ROM from the RM-320 v35.0.001 package.",
     "SDK names are symbolization evidence, not a substitute for runtime testing.",
     "",
-    f"- Target modules found: **{len(modules)}**",
+    f"- Target ROM modules found: **{len(modules)}**",
     f"- Raw ROM export rows: **{len(rom_exports)}**",
     f"- SDK-symbolized export-map rows: **{len(sdk_map)}**",
     f"- Selected exports written: **{len(selected_export_rows)}**",
     f"- Selected import mappings: **{len(imports)}**",
-    f"- Expected target modules not found: **{len(missing)}**",
+    f"- Expected ROM modules not found: **{len(missing)}**",
+    f"- ROM modules without a matching SDK DSO: **{len(dso_missing)}**",
     "",
     "| Module | UID3 | ROM exports | SDK DSO exports | Count check |",
     "|---|---:|---:|---:|---|",
@@ -85,23 +99,37 @@ for name in sorted(SELECTED):
     status = c.get("status", "ROM_MODULE_MISSING" if not m else "NO_SDK_COUNT_ROW")
     rom_n = str(rom_count.get(name, 0)) if m else "—"
     lines.append(f"| {name} | {uid3} | {rom_n} | {sdk_n or '—'} | {status} |")
-lines += ["", "## Missing target modules", ""]
+
+lines += ["", "## Expected ROM modules not found", ""]
 lines += [f"- `{x}`" for x in missing] or ["None."]
+lines += ["", "## ROM modules without a matching SDK DSO", ""]
+lines += [f"- `{x}`" for x in dso_missing] or ["None."]
 lines += ["", "## Selected import-map status counts", ""]
 for status, count in sorted(Counter(r.get("status", "") for _, r in imports).items()):
     lines.append(f"- `{status}`: {count}")
+lines += ["", "## Key ordinal cases", "",
+          "| Import | ARM UREL symbol | Target | Target symbol | Status |",
+          "|---|---|---|---|---|"]
+for _, r in key_rows:
+    target = f'{r.get("target_dll","")}!{r.get("target_ordinal","")}'
+    lines.append(f'| {r.get("dll","")}!{r.get("old_ordinal","")} | '
+                 f'`{r.get("arm_urel_symbol","")}` | {target} | '
+                 f'`{r.get("target_sdk_symbol","")}` | {r.get("status","")} |')
 lines += [
     "",
     "Full selected export rows: `STEP91_TARGET_EXPORTS.tsv`.",
     "Selected import remaps: `STEP91_SELECTED_IMPORTS.tsv`.",
+    "Focused ordinal cases: `STEP91_KEY_IMPORT_CASES.tsv`.",
+    "SIMKIN and GAMECOMMS are bundled private DLLs, not missing N95 ROM modules.",
     "Raw ROM module binaries are removed before artifact upload.",
     "",
 ]
 report = "\n".join(lines)
 (ROOT / "STEP91_N95_ROM_EXPORT_SUMMARY.md").write_text(report, encoding="utf-8")
 print(report)
-print("Selected import mappings:")
-for name, r in imports:
-    print(f"{r.get('dll','')}!{r.get('old_ordinal','')} -> "
-          f"{r.get('target_dll','')}!{r.get('target_ordinal','')} "
-          f"{r.get('status','')} {r.get('target_symbol','')}")
+print("Key import cases:")
+for _, r in key_rows:
+    print(f'{r.get("dll","")}!{r.get("old_ordinal","")} '
+          f'[{r.get("arm_urel_symbol","")}] -> '
+          f'{r.get("target_dll","")}!{r.get("target_ordinal","")} '
+          f'{r.get("status","")} {r.get("target_sdk_symbol","")}')

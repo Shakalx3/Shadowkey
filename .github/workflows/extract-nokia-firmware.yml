@@ -343,13 +343,13 @@ jobs:
       - name: Remove large intermediate images and source packages
         run: |
           rm -rf firmware-input/rofs-candidates firmware-input/rom-modules firmware-input/e32-candidates
-          rm -f firmware-input/rom-unpaged-reconstructed.bin
+          rm -f firmware-input/rom-unpaged-reconstructed.bin firmware-input/rom-reconstructed.bin
           rm -f firmware-input/ngage/*.rar firmware-input/n95/*.exe firmware-input/*.fpsx firmware-input/*.rofs
           rm -rf firmware-parsed firmware-extracted
           echo "Largest remaining diagnostic files:"
           find firmware-input -type f -printf '%s\t%p\n' | sort -nr | head -n 30
           echo "Unexpected raw system/firmware binaries (must be empty):"
-          raw_files=$(find firmware-input -type f \( -iname '*.dll' -o -iname '*.c0r' -o -iname '*.fpsx' -o -iname '*.rofs' -o -iname '*.img' \) -print)
+          raw_files=$(find firmware-input -type f \( -iname '*.dll' -o -iname '*.c0r' -o -iname '*.fpsx' -o -iname '*.rofs' -o -iname '*.img' -o -iname '*.bin' \) -print)
           if [ -n "$raw_files" ]; then printf '%s\n' "$raw_files"; exit 1; fi
       - name: Upload compact diagnostic artifact
         uses: actions/upload-artifact@v4

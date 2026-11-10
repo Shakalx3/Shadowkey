@@ -1,6 +1,6 @@
 #include <e32base.h>
 #include <e32std.h>
-#include <aparc.h>
+#include <apparc.h>
 #include <eikstart.h>
 
 // The original 6R51.APP is an application DLL whose ordinal 1 is its

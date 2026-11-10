@@ -3,6 +3,7 @@
 import argparse
 import csv
 import json
+import re
 import struct
 from pathlib import Path
 
@@ -147,10 +148,24 @@ def inspect(path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--game", type=Path, required=True)
+    ap.add_argument("--dispatch", type=Path, required=True)
     ap.add_argument("--out-dir", type=Path, required=True)
     args = ap.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
     header, blocks, export_rows, iat_slots = inspect(args.game)
+    dispatch_text = args.dispatch.read_text(encoding="utf-8", errors="replace")
+    dispatch_re = re.compile(r'\{\s*(0x[0-9a-fA-F]+)u,\s*(0x[0-9a-fA-F]+)u,\s*"([A-Z0-9]+)\[[^]]+\]\.DLL",\s*(\d+)u\s*\}')
+    dispatch_by_slot = {}
+    for thunk, slot, dll, ordinal in dispatch_re.findall(dispatch_text):
+        dispatch_by_slot[int(slot, 16)] = {
+            "thunk_address": f"0x{int(thunk,16):08X}",
+            "dll": dll.lower(),
+            "ordinal": int(ordinal),
+        }
+    for slot in iat_slots:
+        found = dispatch_by_slot.get(slot["slot_address"])
+        slot["recognized_thunk"] = bool(found and found["dll"] == slot["dependency"].split("[")[0].lower() and found["ordinal"] == slot["ordinal"])
+        slot["thunk_address"] = found["thunk_address"] if slot["recognized_thunk"] else ""
     (args.out_dir / "STEP86_GAME_E32_HEADER.json").write_text(json.dumps(header, indent=2) + "\n", encoding="utf-8")
     with (args.out_dir / "STEP86_GAME_EXPORTS.tsv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["ordinal","raw_offset","runtime_address","thumb","code_file_offset","valid_code_offset","sample_hex"], delimiter="\t")
@@ -161,7 +176,7 @@ def main():
         w.writeheader()
         w.writerows(blocks)
     with (args.out_dir / "STEP86_GAME_IAT_REFERENCES.tsv").open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["dependency","ordinal","slot_address","reference_count","reference_offsets"], delimiter="\t")
+        w = csv.DictWriter(f, fieldnames=["dependency","ordinal","slot_address","reference_count","reference_offsets","recognized_thunk","thunk_address"], delimiter="\t")
         w.writeheader()
         for slot in iat_slots:
             w.writerow({
@@ -180,6 +195,8 @@ def main():
         "dll_ref_count": header["dll_ref_count"],
         "export_count": header["export_count"],
         "iat_slots": header["iat_slots"],
+        "recognized_thunk_slots": sum(1 for x in iat_slots if x["recognized_thunk"]),
+        "unrecognized_iat_slots": [x for x in iat_slots if not x["recognized_thunk"]],
         "exports": export_rows,
         "iat_matches_import_ordinals": header["iat_matches_import_ordinals"],
         "code_ends_at_import_offset": header["code_ends_at_import_offset"],

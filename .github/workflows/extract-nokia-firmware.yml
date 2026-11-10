@@ -131,7 +131,7 @@ jobs:
           echo "7ed8b62b15f191ca47d2f6ca97ee5ce74cd02ce3e42b74bc7b1f9513d7df87b5  /tmp/s60-sdk-devkit-core.tar.gz" | sha256sum -c -
           mkdir -p /tmp/s60-devkit
           tar -xzf /tmp/s60-sdk-devkit-core.tar.gz -C /tmp/s60-devkit
-      - name: Parse bundled SIMKIN and GAMECOMMS DLL imports
+      - name: Parse bundled SIMKIN and GAMECOMMS DLL imports and validate E32 boundaries
         run: |
           set -euo pipefail
           python3 tools/e32/shadowkey_extract_e32_imports.py "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/SIMKIN.DLL" -o firmware-input/SIMKIN_DLL_import_thunks.csv > firmware-input/SIMKIN_DLL_import_extract.log 2>&1

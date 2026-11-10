@@ -47,7 +47,13 @@ test -f "$SDK_ROOT/Epoc32/include/apparc.h"
 test -f "$SDK_ROOT/Epoc32/include/eikstart.h"
 # The legacy SDK gcce.h uses Windows-style relative include separators.
 # Normalize only the temporary extracted SDK copy for Linux GCC preprocessing.
-sed -i 's#\\\\#/#g' "$GCCE_HEADER"
+python3 - "$GCCE_HEADER" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+text = path.read_text(encoding="latin-1")
+path.write_text(text.replace(chr(92), "/"), encoding="latin-1")
+PY
 {
   echo "GCCE preinclude: $GCCE_HEADER"
   echo "Platform defines: __SYMBIAN32__ __EPOC32__ __GCCE__ __MARM__ __EABI__ __EXE__ __S60_3X__"

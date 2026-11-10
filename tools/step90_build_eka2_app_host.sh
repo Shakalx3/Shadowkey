@@ -8,6 +8,8 @@ TOOLCHAIN_ROOT="${RUNNER_TEMP:-/tmp}/step82-gcce/root"
 ELF2E32_SRC="$WORK/elf2e32-src"
 ELF2E32_BUILD="$WORK/elf2e32-build"
 mkdir -p "$WORK" "$OUT"
+sudo apt-get update -qq
+sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386
 
 CXX=$(find "$TOOLCHAIN_ROOT" -type f -name arm-none-symbianelf-g++ | head -n1)
 LD=$(find "$TOOLCHAIN_ROOT" -type f -name arm-none-symbianelf-ld | head -n1)

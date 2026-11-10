@@ -88,7 +88,7 @@ cmake -S "$ELF2E32_SRC" -B "$ELF2E32_BUILD" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DCMAKE_C_FLAGS=-m32 \
-  -DCMAKE_CXX_FLAGS="-m32 -std=gnu++14 -D__LINUX__ -include string.h" \
+  -DCMAKE_CXX_FLAGS="-m32 -std=gnu++14 -D__LINUX__ -include string.h -include string -include strings.h -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp" \
   -DCMAKE_EXE_LINKER_FLAGS=-m32 >> "$OUT/build.log" 2>&1
 cmake --build "$ELF2E32_BUILD" --parallel 2 >> "$OUT/build.log" 2>&1
 ELF2E32="$ELF2E32_BUILD/elf2e32"

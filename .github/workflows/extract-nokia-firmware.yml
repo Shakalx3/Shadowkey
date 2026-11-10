@@ -190,6 +190,16 @@ jobs:
           echo "LD_LIBRARY_PATH=$BIN/../lib:$BIN/../lib32" >> "$GITHUB_ENV"
           echo "EPOC_OBJDUMP=$OBJDUMP" >> "$GITHUB_ENV"
           "$DEM" < <(printf '%s\n' '__7TPtrC16PCUs' '__ne__C6TInt64RC6TInt64') > firmware-input/STEP81_EPOC_DEMANGLER_CHECK.txt
+      - name: Disassemble the legacy APP factory export
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step87_disassemble_legacy_app_factory.py
+          python3 tools/step87_disassemble_legacy_app_factory.py \
+            --game source_bundle/shadowkey_step35_work/6R51.APP \
+            --header firmware-input/STEP86_GAME_E32_HEADER.json \
+            --exports firmware-input/STEP86_GAME_EXPORTS.tsv \
+            --objdump "$EPOC_OBJDUMP" \
+            --out firmware-input/STEP87_GAME_FACTORY_DISASSEMBLY.txt
       - name: Symbolize actual N95 ROM exports against target SDK
         run: |
           set -euo pipefail

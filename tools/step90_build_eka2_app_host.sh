@@ -100,6 +100,20 @@ fi
 test -x "$ELF2E32"
 "$ELF2E32" --help > "$OUT/elf2e32-help.txt" 2>&1 || true
 
+# elf2e32 resolves DT_NEEDED entries by the DSO SONAME, not necessarily by
+# the SDK archive's short on-disk filename (e.g. APPARC{000a0000}.dso vs
+# apparc.dso). Create temporary aliases inside the extracted SDK tree.
+: > "$OUT/soname-aliases.txt"
+for dso in "$LIB"/*.dso; do
+  [ -f "$dso" ] || continue
+  soname=$("$READELF" -d "$dso" | sed -n 's/.*Library soname: \[\(.*\)\].*/\1/p' | head -n1)
+  [ -n "$soname" ] || continue
+  if [ ! -e "$LIB/$soname" ]; then
+    ln -s "$(basename "$dso")" "$LIB/$soname"
+    printf '%s -> %s\n' "$soname" "$(basename "$dso")" >> "$OUT/soname-aliases.txt"
+  fi
+done
+
 echo "Convert EKA2 host ELF to E32 EXE" | tee -a "$OUT/build.log"
 "$ELF2E32" --elfinput="$OUT/legacy_app_host.elf" \
   --output="$OUT/6R51Host.exe" \

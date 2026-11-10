@@ -6,6 +6,9 @@ on:
       - ".github/workflows/extract-nokia-firmware.yml"
       - "source_bundle/host/legacy_app_host.cpp"
       - "tools/step90_build_eka2_app_host.sh"
+      - "tools/step80_compare_n95_rom_sdk_exports.py"
+      - "tools/step82_map_game_imports_to_n95.py"
+      - "tools/step91_summarize_n95_rom_exports.py"
       - "tools/step92_validate_sdk_dso_dynsym.py"
   workflow_dispatch:
 

@@ -13,6 +13,8 @@ on:
       - "tools/step93_disassemble_selected_import_calls.py"
       - "tools/step94_disassemble_n95_rom_extra_exports.py"
       - "tools/step95_extract_tint64_trap_headers.py"
+      - "tools/step96_ttrap_abi_probe.cpp"
+      - "docs/STEP96_TTRAP_ABI_PROBE.md"
   workflow_dispatch:
 
 permissions:
@@ -223,6 +225,20 @@ jobs:
           SDK_ROOT=/tmp/s60-devkit
           GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"
           VARIANT_DIR="$SDK_ROOT/Epoc32/include/variant"
+          GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"
+          test -f "$SDK_ROOT/Epoc32/include/symcpp.h"
+          # The legacy SDK's gcce.h uses Windows-style relative include paths.
+          # Normalize only the disposable CI extraction before Linux preprocessing.
+          python3 - "$GCCE_HEADER" <<'PY'
+          from pathlib import Path
+          import sys
+          path = Path(sys.argv[1])
+          source = path.read_text(encoding="latin-1")
+          normalized = source.replace(chr(92), "/")
+          if normalized == source:
+              raise SystemExit("expected Windows-style separators in gcce.h; refusing silent no-op")
+          path.write_text(normalized, encoding="latin-1")
+          PY
           python3 -m py_compile tools/step95_extract_tint64_trap_headers.py
           "$CXX" -march=armv5te -marm -O1 -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
             -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \

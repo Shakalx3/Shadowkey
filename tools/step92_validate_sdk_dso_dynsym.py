@@ -69,6 +69,11 @@ def parse_dso(path: Path) -> dict:
     if not loads or not dynamics:
         raise ValueError(f"missing PT_LOAD/PT_DYNAMIC segments: loads={len(loads)} dynamic={len(dynamics)}")
 
+    load_summary = [
+        {"offset": f"0x{p[1]:X}", "vaddr": f"0x{p[2]:X}", "filesz": f"0x{p[4]:X}", "memsz": f"0x{p[5]:X}", "flags": f"0x{p[6]:X}"}
+        for p in loads
+    ]
+
     def va_to_off(va: int, size: int) -> int:
         for p in loads:
             _, p_offset, p_vaddr, _p_paddr, p_filesz, _p_memsz, _p_flags, _p_align = p
@@ -76,7 +81,7 @@ def parse_dso(path: Path) -> dict:
                 off = p_offset + (va - p_vaddr)
                 if off + size <= len(data):
                     return off
-        raise ValueError(f"virtual range 0x{va:08X}+0x{size:X} is not file-backed by PT_LOAD")
+        raise ValueError(f"virtual range 0x{va:08X}+0x{size:X} is not file-backed by PT_LOAD; PT_LOAD={json.dumps(load_summary, separators=(chr(44), chr(58)))}")
 
     tags = {}
     for dyn in dynamics:

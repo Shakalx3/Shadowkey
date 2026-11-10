@@ -26,7 +26,9 @@ The parser now:
 - checks `.dynsym` type, entry size, and byte size against `DT_SYMENT` and the SysV hash `nchain`;
 - reports the address model used for each DSO and retains duplicate ordinals, unaligned exports, and symbol-map mismatches.
 
-The rerun is the deciding test. A passing SDK DSO audit validates the SDK symbol-to-ordinal extraction independently; it does not prove that SDK exports and RM-320 ROM code are byte-identical, nor that a patched E32 image will load.
+The corrected parser then completed all 24 DSO parses and matched every module's export count. Its first comparison still reported 343 name mismatches across 15 modules. Inspection showed that every one was an absent-export placeholder: the raw SDK symbol is quote-wrapped (for example, `"_._.absent_export_73"`), while Step80's hand-written TSV output failed to escape literal quotes. The TSV reader therefore removed the quote characters from the expected map. No ordinary exported API name differed. Step80's symbol-bearing TSV writers have now been changed to use CSV-compliant quoting; the next run must confirm that all 24 ordinal/name maps agree.
+
+A passing SDK DSO audit validates the SDK symbol-to-ordinal extraction independently; it does not prove that SDK exports and RM-320 ROM code are byte-identical, nor that a patched E32 image will load.
 
 ## Scope boundary
 

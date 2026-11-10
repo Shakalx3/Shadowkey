@@ -23,7 +23,13 @@ This is a loader/entry-point prototype. It is not a successful load of `6R51.APP
 
 The first conversion after the SONAME-alias fix produced a 557-byte E32 EXE with the expected three DLL references and development UIDs. Its E32 entry-point field is `0`; the host ELF entry is `0x10000` and the E32 code base is also `0x10000`, so the field is a code-relative offset and resolves to the correct entry VA.
 
-The first validation script incorrectly treated a zero entry-point offset as invalid. The workflow also marked the build successful merely because the output and header JSON existed, even though that assertion had failed. Both checks have been corrected: the build now verifies `code_base + entry_point_offset == ELF e_entry`, requires the offset to lie inside the code segment, runs `elf2e32 --dump=hi`, and writes an explicit validation marker. The workflow reports success only when that marker exists. The next run must confirm the import dump and this stricter validation.
+The first validation script incorrectly treated a zero entry-point offset as invalid. The workflow also marked the build successful merely because the output and header JSON existed, even though that assertion had failed. Both checks have been corrected: the build now verifies `code_base + entry_point_offset == ELF e_entry`, requires the offset to lie inside the code segment, runs `elf2e32 --dump=hi`, and writes an explicit validation marker. The workflow reports success only when that marker exists. Run 42807134440 passed the stricter validation. The resulting 557-byte `6R51Host.exe` is reported by `elf2e32 --dump=hi` as an EKA2 ARMv5 / ARM EABI executable compressed with DEFLATE. Its entry VA is `0x00010000` (E32 code-relative offset `0` plus code base `0x00010000`), and the E32 dump confirms three import DLLs and eight imports:
+
+- APPARC ordinal 171 — `TApaApplicationFactory` constructor
+- EIKCORE ordinal 394 — `EikStart::RunApplication`
+- EUSER ordinals 196, 1311, 1169, 1308, 1838, 649 — `CTrapCleanup::New`, `RLibrary::Close`, `TPtrC16` constructor, `RLibrary::Load`, `RLibrary::Lookup`, and `User::Leave`
+
+This validates the minimal EKA2 host build and import-table packaging path. It still does not test loading the original `6R51.APP` DLL or running on the phone.
 
 ## Boundaries
 

@@ -4,6 +4,7 @@ import argparse
 import csv
 import json
 import subprocess
+import struct
 from pathlib import Path
 
 def main():
@@ -37,15 +38,29 @@ def main():
             continue
         for foff in refs:
             va = code_base + (foff - code_off)
-            lo = max(0, foff-16)
-            hi = min(len(data), foff+20)
+            lo = max(0, foff-48)
+            hi = min(len(data), foff+32)
             out.append(f"  reference fileoff=0x{foff:X} VA=0x{va:08X}")
             out.append(f"  bytes[{lo:#x}:{hi:#x}]={data[lo:hi].hex(' ')}")
+            candidate_start = va - 8
+            code = data[code_off:code_off+int(h["code_size"])]
+            branch_refs = []
+            for insn_off in range(0, len(code)-3, 4):
+                insn = struct.unpack_from("<I", code, insn_off)[0]
+                if (insn & 0x0E000000) == 0x0A000000:
+                    imm = insn & 0x00FFFFFF
+                    if imm & 0x00800000:
+                        imm -= 0x01000000
+                    target = code_base + insn_off + 8 + (imm << 2)
+                    if target == candidate_start:
+                        branch_refs.append(f"0x{code_base+insn_off:08X}")
+            out.append(f"  candidate two-instruction thunk start=0x{candidate_start:08X}")
+            out.append(f"  ARM B/BL references to candidate={branch_refs}")
             for mode in ("arm", "force-thumb"):
-                start = max(code_base, va-20)
+                start = max(code_base, va-48)
                 align = 4 if mode == "arm" else 2
                 start -= (start - code_base) % align
-                stop = va + 8
+                stop = va + 16
                 p = subprocess.run([
                     str(args.objdump), "-D", "-b", "binary", "-m", "arm", "-M", mode,
                     f"--adjust-vma=0x{adjust_vma:X}",

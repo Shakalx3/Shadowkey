@@ -47,7 +47,7 @@ def direct_branch_targets(disassembly: str, target: int) -> list[tuple[int, str]
             dest = int(m.group(2), 16)
         except ValueError:
             continue
-        if dest == target:
+        if (dest & ~1) == (target & ~1):
             found.append((address, mnemonic))
     return found
 

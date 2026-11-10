@@ -26,6 +26,12 @@ def demangle(tool, names):
         raise RuntimeError(f"{tool} returned {len(lines)} lines for {len(unique)} symbols")
     return dict(zip(unique, lines))
 
+def normalize_abi_const_member(s):
+    # A C++ const qualifier on a member function does not change its ARM
+    # calling convention or the layout of the implicit this pointer.
+    return re.sub(r"\s+const$", "", normalize(s))
+
+
 def normalize(s, type_aliases=False):
     s = s.strip()
     s = re.sub(r"\b(class|struct|enum)\s+", "", s)
@@ -90,6 +96,7 @@ def main():
     target_demangled = demangle(args.target_demangler, target_names)
     target_by_dll_sig = {}
     target_by_dll_alias_sig = {}
+    target_by_dll_const_sig = {}
     target_by_sig = {}
     target_by_alias_sig = {}
     target_by_dll_ord = {}
@@ -103,6 +110,9 @@ def main():
         alias_sig = normalize(demangled, type_aliases=True)
         target_by_dll_sig.setdefault(dll, {}).setdefault(sig, []).append(row)
         target_by_dll_alias_sig.setdefault(dll, {}).setdefault(alias_sig, []).append(row)
+        if demangled.rstrip().endswith(" const"):
+            const_sig = normalize_abi_const_member(demangled)
+            target_by_dll_const_sig.setdefault(dll, {}).setdefault(const_sig, []).append(row)
         target_by_sig.setdefault(sig, []).append(row)
         target_by_alias_sig.setdefault(alias_sig, []).append(row)
         target_by_dll_ord.setdefault(dll, {})[int(row["ordinal"])] = row
@@ -190,6 +200,11 @@ def main():
                         candidates = target_by_dll_alias_sig.get(dll, {}).get(alias_sig, [])
                         if candidates:
                             match_kind = "TYPE_ALIAS_SIGNATURE_MATCH"
+                    if not candidates:
+                        const_sig = normalize_abi_const_member(old_sig)
+                        candidates = target_by_dll_const_sig.get(dll, {}).get(const_sig, [])
+                        if candidates:
+                            match_kind = "CONST_MEMBER_ABI_MATCH"
                     if not candidates and "::" not in sig and "(" in sig:
                         # C runtime aliases may be exported by name without C++ parameter decoration.
                         base_name = sig.split("(", 1)[0]
@@ -230,7 +245,7 @@ def main():
                     else:
                         status = "NO_TARGET_SIGNATURE"
 
-            if candidates and status in ("MANUAL_OVERRIDE", "PROVISIONAL_PLACEHOLDER_FORWARDER", "CLASS_HIERARCHY_ALIAS", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "CROSS_DLL_SIGNATURE_MATCH", "CROSS_DLL_TYPE_ALIAS_MATCH", "CROSS_DLL_ALIAS_SAME_ADDRESS", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
+            if candidates and status in ("MANUAL_OVERRIDE", "PROVISIONAL_PLACEHOLDER_FORWARDER", "CLASS_HIERARCHY_ALIAS", "EXACT_SIGNATURE_MATCH", "TYPE_ALIAS_SIGNATURE_MATCH", "CONST_MEMBER_ABI_MATCH", "CROSS_DLL_SIGNATURE_MATCH", "CROSS_DLL_TYPE_ALIAS_MATCH", "CROSS_DLL_ALIAS_SAME_ADDRESS", "ALIAS_SAME_ADDRESS", "ABI_D1_DESTRUCTOR_CANDIDATE"):
                 chosen = candidates[0]
                 target_ord = int(chosen["ordinal"])
                 target_dll = chosen["module"].lower().removesuffix(".dll")

@@ -74,6 +74,10 @@ def inspect_module(path, module):
     fields["export_dir_ends_at_import_offset"] = exp_off + count * 4 == fields["import_offset"]
     fields["code_segment_ends_at_import_offset"] = code_off + code_size == fields["import_offset"]
     fields["import_table_size"] = max(0, fields["post_import_region_offset"] - fields["import_offset"])
+    if not fields["export_dir_ends_at_import_offset"]:
+        raise ValueError(f"{module}: export table does not end at import table boundary")
+    if not fields["code_segment_ends_at_import_offset"]:
+        raise ValueError(f"{module}: code segment does not end at import table boundary")
     fields["export_table_valid"] = bool(valid)
     fields["file_size"] = len(data)
     fields["sha256"] = hashlib.sha256(data).hexdigest()
@@ -137,7 +141,7 @@ def main():
                 "module": name,
                 "ordinal": imp["ordinal"],
                 "export_count": count,
-                "ordinal_in_range": imp["ordinal"] <= count,
+                "ordinal_in_range": 1 <= imp["ordinal"] <= count,
                 "export_nonzero": bool(export_values.get(name, {}).get(imp["ordinal"], 0)),
                 "export_raw_offset": f"0x{export_values.get(name, {}).get(imp['ordinal'], 0):08X}",
                 "thunk": imp["thunk"],
@@ -153,11 +157,16 @@ def main():
         w.writeheader()
         w.writerows(validation)
     (args.out_dir / "STEP84_PRIVATE_E32_MODULES.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    bad_exports = [
+        x for x in export_rows
+        if int(x["raw_offset"], 16) not in (0, 0xFFFFFFFF) and not x["valid_code_offset"]
+    ]
     print(json.dumps({
         "modules": {k: {x: v for x, v in val.items() if x not in ("sha256",)} for k, val in metadata.items()},
         "game_private_imports": {k: len(v) for k, v in used.items()},
         "import_ordinals_valid": sum(1 for x in validation if x["ordinal_in_range"] and x["export_nonzero"]),
         "import_ordinals_invalid": [x for x in validation if not (x["ordinal_in_range"] and x["export_nonzero"])],
+        "nonzero_export_offsets_outside_code": bad_exports,
     }, indent=2))
 
 if __name__ == "__main__":

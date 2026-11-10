@@ -35,7 +35,7 @@ def cstr(table: bytes, offset: int) -> str:
 
 def parse_dso(path: Path) -> dict:
     data = path.read_bytes()
-    if len(data) < 52 or data[:4] != b"\\x7fELF":
+    if len(data) < 52 or data[:4] != b"\x7fELF":
         raise ValueError("not an ELF file")
     ident = data[:16]
     if ident[4] != 1:

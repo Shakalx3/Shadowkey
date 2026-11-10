@@ -11,6 +11,7 @@ on:
       - "tools/step91_summarize_n95_rom_exports.py"
       - "tools/step92_validate_sdk_dso_dynsym.py"
       - "tools/step93_disassemble_selected_import_calls.py"
+      - "tools/step94_disassemble_n95_rom_extra_exports.py"
   workflow_dispatch:
 
 permissions:
@@ -334,6 +335,15 @@ jobs:
           python3 -m py_compile tools/step91_summarize_n95_rom_exports.py
           python3 tools/step91_summarize_n95_rom_exports.py
           echo 'Step91 key ordinal cases include EUSER 1407/1575, CONE 160 and GDI 101/108/151.'
+      - name: Disassemble ROM-only exports in critical N95 system DLLs
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step94_disassemble_n95_rom_extra_exports.py
+          python3 tools/step94_disassemble_n95_rom_extra_exports.py \
+            --rom-dir firmware-input \
+            --objdump "$EPOC_OBJDUMP" \
+            --out firmware-input/STEP94_ROM_ONLY_EXPORTS.txt \
+            --tsv firmware-input/STEP94_ROM_ONLY_EXPORTS.tsv
       - name: Inspect BTENG ordinal compatibility against N95 ROM
         run: |
           set -euo pipefail

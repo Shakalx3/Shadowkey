@@ -124,32 +124,59 @@ echo "Convert EKA2 host ELF to E32 EXE" | tee -a "$OUT/build.log"
   > "$OUT/elf2e32-conversion.log" 2>&1
 
 test -s "$OUT/6R51Host.exe"
-python3 - "$OUT/6R51Host.exe" "$OUT/host-e32-header.json" <<'PY'
+"$ELF2E32" --dump=hi --e32input="$OUT/6R51Host.exe" > "$OUT/host-e32-dump.txt" 2>&1
+
+python3 - "$OUT/6R51Host.exe" "$OUT/host-e32-header.json" "$OUT/legacy_app_host.elf" "$OUT/host-e32-dump.txt" "$OUT/host-e32-validated.txt" <<'PY'
 import json, struct, sys
 from pathlib import Path
 p=Path(sys.argv[1]); d=p.read_bytes()
+elf=Path(sys.argv[3]).read_bytes()
+dump=Path(sys.argv[4]).read_text(encoding="utf-8",errors="replace")
 if len(d)<0x7c or d[0x10:0x14]!=b"EPOC":
     raise SystemExit("converted output is not a valid E32 image")
+if len(elf)<52 or elf[:4]!=bytes((127,69,76,70)):
+    raise SystemExit("host input is not an ELF image")
 u=lambda o: struct.unpack_from("<I",d,o)[0]
+elf_entry=struct.unpack_from("<I",elf,24)[0]
+entry_offset=u(0x48)
+code_base=u(0x4c)
+code_size=u(0x30)
+entry_va=(code_base+entry_offset)&0xffffffff
 h={
  "file_size":len(d),
  "uid1":f"0x{u(0):08X}",
  "uid2":f"0x{u(4):08X}",
  "uid3":f"0x{u(8):08X}",
  "flags":f"0x{u(0x2c):08X}",
- "code_size":u(0x30),
- "entry_point":f"0x{u(0x48):08X}",
- "code_base":f"0x{u(0x4c):08X}",
+ "code_size":code_size,
+ "entry_point_offset":f"0x{entry_offset:08X}",
+ "entry_point_va":f"0x{entry_va:08X}",
+ "elf_entry_point":f"0x{elf_entry:08X}",
+ "entry_point_matches_elf":entry_va==elf_entry,
+ "code_base":f"0x{code_base:08X}",
  "dll_ref_count":u(0x54),
  "export_count":u(0x5c),
  "code_offset":u(0x64),
  "import_offset":u(0x6c),
+ "elf2e32_dump_bytes":len(dump.encode("utf-8")),
 }
 Path(sys.argv[2]).write_text(json.dumps(h,indent=2)+"\n")
 assert h["uid1"]=="0x1000007A", h
 assert h["uid2"]=="0x100039CE", h
 assert h["uid3"]=="0xE000BEEF", h
-assert h["entry_point"]!="0x00000000", h
+assert code_size>0 and code_base!=0, h
+assert code_base <= entry_va < code_base+code_size, h
+assert entry_va==elf_entry, h
+assert u(0x54)==3, h
+assert len(dump.strip())>0, "elf2e32 did not produce a header/import dump"
+Path(sys.argv[5]).write_text(
+    "PASS\n"
+    f"entry_point_va={entry_va:#010x}\n"
+    f"ELF_e_entry={elf_entry:#010x}\n"
+    f"dll_ref_count={u(0x54)}\n"
+    "elf2e32_header_and_import_dump=present\n",
+    encoding="utf-8"
+)
 print(json.dumps(h,indent=2))
 PY
 

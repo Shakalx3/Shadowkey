@@ -35,7 +35,7 @@ def cstr(table: bytes, offset: int) -> str:
 
 def parse_dso(path: Path) -> dict:
     data = path.read_bytes()
-    if len(data) < 52 or data[:4] != b"\x7fELF":
+    if len(data) < 52 or data[:4] != b"\\x7fELF":
         raise ValueError("not an ELF file")
     ident = data[:16]
     if ident[4] != 1:
@@ -44,82 +44,134 @@ def parse_dso(path: Path) -> dict:
         raise ValueError(f"expected little-endian ELF, got data encoding {ident[5]}")
 
     e_type, e_machine, e_version = struct.unpack_from("<HHI", data, 16)
+    e_phoff = struct.unpack_from("<I", data, 28)[0]
     e_shoff = struct.unpack_from("<I", data, 32)[0]
     e_flags = struct.unpack_from("<I", data, 36)[0]
-    e_ehsize, e_shentsize, e_shnum, e_shstrndx = struct.unpack_from("<HHHH", data, 40)
+    e_ehsize, e_phentsize, e_phnum, e_shentsize, e_shnum, e_shstrndx = struct.unpack_from(
+        "<HHHHHH", data, 40
+    )
     if e_machine != 40:
         raise ValueError(f"expected EM_ARM (40), got {e_machine}")
-    if e_ehsize < 52 or e_shentsize != 40 or e_shnum == 0:
+    if e_ehsize < 52 or e_phentsize != 32 or e_phnum == 0:
         raise ValueError(
-            f"unsupported ELF section table: ehsize={e_ehsize} "
-            f"shentsize={e_shentsize} shnum={e_shnum}"
+            f"unsupported ELF program table: ehsize={e_ehsize} "
+            f"phentsize={e_phentsize} phnum={e_phnum}"
         )
-    if e_shoff + e_shentsize * e_shnum > len(data):
-        raise ValueError("section header table extends beyond file")
-    if e_shstrndx >= e_shnum:
-        raise ValueError(f"invalid e_shstrndx {e_shstrndx}")
+    if e_phoff + e_phentsize * e_phnum > len(data):
+        raise ValueError("program header table extends beyond file")
 
-    sections = [
-        struct.unpack_from("<IIIIIIIIII", data, e_shoff + i * e_shentsize)
-        for i in range(e_shnum)
+    phdrs = [
+        struct.unpack_from("<IIIIIIII", data, e_phoff + i * e_phentsize)
+        for i in range(e_phnum)
     ]
-    shstr = sections[e_shstrndx]
-    if shstr[1] != SHT_STRTAB:
-        raise ValueError("section-name table is not SHT_STRTAB")
-    shstr_data = data[shstr[4]:shstr[4] + shstr[5]]
-    if len(shstr_data) != shstr[5]:
-        raise ValueError("truncated section-name string table")
+    loads = [p for p in phdrs if p[0] == 1 and p[4] > 0]  # PT_LOAD
+    dynamics = [p for p in phdrs if p[0] == 2]           # PT_DYNAMIC
+    if not loads or not dynamics:
+        raise ValueError(f"missing PT_LOAD/PT_DYNAMIC segments: loads={len(loads)} dynamic={len(dynamics)}")
 
-    dynsyms = []
-    for index, sec in enumerate(sections):
-        name = cstr(shstr_data, sec[0])
-        if sec[1] != SHT_DYNSYM:
-            continue
-        link = sec[6]
-        entsize = sec[9] or 16
-        if link >= len(sections) or sections[link][1] != SHT_STRTAB:
-            raise ValueError(f"{name or index}: invalid linked dynamic string table")
-        if entsize != 16 or sec[5] % entsize:
-            raise ValueError(f"{name or index}: unsupported Elf32_Sym entry size {entsize}")
-        symstr_sec = sections[link]
-        symstr = data[symstr_sec[4]:symstr_sec[4] + symstr_sec[5]]
-        if len(symstr) != symstr_sec[5]:
-            raise ValueError(f"{name or index}: truncated dynamic string table")
-        symdata = data[sec[4]:sec[4] + sec[5]]
-        if len(symdata) != sec[5]:
-            raise ValueError(f"{name or index}: truncated dynamic symbol table")
-        dynsyms.append((name or f"section-{index}", symdata, symstr, entsize))
+    def va_to_off(va: int, size: int) -> int:
+        for p in loads:
+            _, p_offset, p_vaddr, _p_paddr, p_filesz, _p_memsz, _p_flags, _p_align = p
+            if va >= p_vaddr and va + size <= p_vaddr + p_filesz:
+                off = p_offset + (va - p_vaddr)
+                if off + size <= len(data):
+                    return off
+        raise ValueError(f"virtual range 0x{va:08X}+0x{size:X} is not file-backed by PT_LOAD")
 
-    if not dynsyms:
-        raise ValueError("no SHT_DYNSYM section found")
+    tags = {}
+    for dyn in dynamics:
+        p_offset, p_filesz = dyn[1], dyn[4]
+        if p_offset + p_filesz > len(data):
+            raise ValueError("PT_DYNAMIC extends beyond file")
+        for off in range(p_offset, p_offset + p_filesz - 7, 8):
+            tag, value = struct.unpack_from("<iI", data, off)
+            if tag == 0:  # DT_NULL
+                break
+            tags.setdefault(tag, value)
+
+    # Dynamic tags: HASH=4, STRTAB=5, SYMTAB=6, STRSZ=10, SYMENT=11,
+    # GNU_HASH=0x6FFFFEF5.
+    for tag, label in ((5, "DT_STRTAB"), (6, "DT_SYMTAB"), (10, "DT_STRSZ"), (11, "DT_SYMENT")):
+        if tag not in tags:
+            raise ValueError(f"missing {label} in PT_DYNAMIC")
+    syment = tags[11]
+    if syment != 16:
+        raise ValueError(f"expected Elf32_Sym size 16, got {syment}")
+    strsz = tags[10]
+    strtab_off = va_to_off(tags[5], strsz)
+
+    if 4 in tags:  # SysV DT_HASH: nbucket, nchain, buckets[], chains[].
+        hash_off = va_to_off(tags[4], 8)
+        nbucket, nchain = struct.unpack_from("<II", data, hash_off)
+        if nchain == 0 or nchain > 100000:
+            raise ValueError(f"invalid DT_HASH nchain={nchain}")
+        if hash_off + 8 + 4 * (nbucket + nchain) > len(data):
+            raise ValueError("DT_HASH table extends beyond file")
+        symbol_count = nchain
+        hash_method = "DT_HASH"
+    elif 0x6FFFFEF5 in tags:  # GNU hash table, derive the last symbol index from chains.
+        hash_off = va_to_off(tags[0x6FFFFEF5], 16)
+        nbuckets, symoffset, bloom_size, bloom_shift = struct.unpack_from("<IIII", data, hash_off)
+        if not nbuckets or not bloom_size or symoffset > 100000:
+            raise ValueError("invalid DT_GNU_HASH header")
+        buckets_off = hash_off + 16 + bloom_size * 4
+        chains_off = buckets_off + nbuckets * 4
+        if chains_off > len(data):
+            raise ValueError("DT_GNU_HASH buckets extend beyond file")
+        max_symbol = symoffset - 1
+        for i in range(nbuckets):
+            bucket = struct.unpack_from("<I", data, buckets_off + i * 4)[0]
+            if bucket < symoffset:
+                continue
+            index = bucket
+            while True:
+                chain_off = chains_off + (index - symoffset) * 4
+                if chain_off + 4 > len(data) or index > 100000:
+                    raise ValueError("DT_GNU_HASH chain extends beyond file")
+                value = struct.unpack_from("<I", data, chain_off)[0]
+                max_symbol = max(max_symbol, index)
+                if value & 1:
+                    break
+                index += 1
+        symbol_count = max_symbol + 1
+        hash_method = "DT_GNU_HASH"
+    else:
+        raise ValueError("neither DT_HASH nor DT_GNU_HASH is present")
+
+    if symbol_count <= 0 or symbol_count > 100000:
+        raise ValueError(f"invalid dynamic symbol count {symbol_count}")
+    symtab_off = va_to_off(tags[6], symbol_count * syment)
+    strtab = data[strtab_off:strtab_off + strsz]
+    if len(strtab) != strsz:
+        raise ValueError("truncated dynamic string table")
+    symdata = data[symtab_off:symtab_off + symbol_count * syment]
+    if len(symdata) != symbol_count * syment:
+        raise ValueError("truncated dynamic symbol table")
 
     ordinal_names: dict[int, list[str]] = defaultdict(list)
     unaligned = []
     ignored = {"undefined": 0, "non_global": 0, "non_default": 0, "empty_name": 0}
-    symbol_rows = 0
-    for section_name, symdata, symstr, entsize in dynsyms:
-        for off in range(0, len(symdata), entsize):
-            st_name, st_value, st_size, st_info, st_other, st_shndx = struct.unpack_from(
-                "<IIIBBH", symdata, off
-            )
-            symbol_rows += 1
-            if st_shndx == SHN_UNDEF:
-                ignored["undefined"] += 1
-                continue
-            if (st_info >> 4) != STB_GLOBAL:
-                ignored["non_global"] += 1
-                continue
-            if (st_other & 0x3) != STV_DEFAULT:
-                ignored["non_default"] += 1
-                continue
-            name = cstr(symstr, st_name).split("@@", 1)[0]
-            if not name:
-                ignored["empty_name"] += 1
-                continue
-            if st_value & 3:
-                unaligned.append({"section": section_name, "name": name, "value": f"0x{st_value:08X}"})
-                continue
-            ordinal_names[st_value // 4 + 1].append(name)
+    for off in range(0, len(symdata), syment):
+        st_name, st_value, st_size, st_info, st_other, st_shndx = struct.unpack_from(
+            "<IIIBBH", symdata, off
+        )
+        if st_shndx == SHN_UNDEF:
+            ignored["undefined"] += 1
+            continue
+        if (st_info >> 4) != STB_GLOBAL:
+            ignored["non_global"] += 1
+            continue
+        if (st_other & 0x3) != STV_DEFAULT:
+            ignored["non_default"] += 1
+            continue
+        name = cstr(strtab, st_name).split("@@", 1)[0]
+        if not name:
+            ignored["empty_name"] += 1
+            continue
+        if st_value & 3:
+            unaligned.append({"name": name, "value": f"0x{st_value:08X}"})
+            continue
+        ordinal_names[st_value // 4 + 1].append(name)
 
     canonical = {ordinal: names[-1] for ordinal, names in ordinal_names.items()}
     duplicates = {
@@ -132,15 +184,17 @@ def parse_dso(path: Path) -> dict:
         "machine": e_machine,
         "e_flags": f"0x{e_flags:08X}",
         "eabi_version": (e_flags >> 24) & 0xFF,
-        "dynsym_sections": [x[0] for x in dynsyms],
-        "symbol_rows": symbol_rows,
+        "section_header_entry_size": e_shentsize,
+        "section_header_count": e_shnum,
+        "symbol_source": "PT_DYNAMIC",
+        "hash_method": hash_method,
+        "symbol_rows": symbol_count,
         "export_count": len(canonical),
         "exports": canonical,
         "duplicate_ordinals": duplicates,
         "unaligned_global_defined": unaligned,
         "ignored": ignored,
     }
-
 
 def read_tsv(path: Path) -> list[dict]:
     with path.open(newline="", encoding="utf-8") as f:

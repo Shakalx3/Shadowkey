@@ -19,7 +19,7 @@ The original 6R51.APP is an E32 DLL, not a standalone EXE:
 
 The single export is ordinal 1 at VA 0x1002841C (ARM state). Disassembly shows it allocating a 0x22C-byte object, calling its constructor, installing a vtable pointer at 0x100FD9BC, and returning the object pointer. This is consistent with the legacy application factory convention (NewApplication).
 
-The launch architecture remains a small S60 3.1 / EKA2 host EXE that loads the patched 6R51.APP DLL, resolves ordinal 1, and passes the factory to the target EikStart application runner. This is a design direction, not a device-tested launcher.
+The launch architecture remains a small S60 3.1 / EKA2 host EXE that loads 6R51.APP, resolves ordinal 1, and passes the factory to the target EikStart application runner. This is a design direction, not a device-tested launcher.
 
 ## 2. E32 and IAT integrity
 
@@ -52,18 +52,20 @@ Candidate statuses are not all approved for binary patching. Destructor candidat
 
 ### BTENG caution
 
-The N-Gage SDK bteng.lib contains 57 ordinal imports (1–57); the N95 ROM bteng.dll has 87 exports and the same UID3 (0x10005952) as the GAMECOMMS dependency. Six imported ordinals are 11, 22, 24, 31, 47, and 48.
+The N-Gage SDK bteng.lib contains 57 ordinal imports (1–57); the N95 ROM bteng.dll has 87 exports and the same UID3 (0x10005952) as the GAMECOMMS dependency. The pinned S60 SDK does not include a bteng.dso, so its 87 ROM exports require separate import-library and code-level validation. Six imported ordinals are 11, 22, 24, 31, 47, and 48.
 
 UID3 equality is not sufficient proof of ordinal stability: BTMANCLIENT has the same UID3 on both platforms, yet old ordinal 61 is TBTServiceSecurity construction while N95 ordinal 61 is TBTCommPortSettings::SetNoSecurity. Therefore the six BTENG same-ordinal results remain candidates until their target functions are independently verified.
 
 ## 4. EKA2 host prototype attempt
 
-The workflow now compiles a minimal host EXE that loads 6R51.APP, resolves ordinal 1, wraps the factory in TApaApplicationFactory, and calls EikStart::RunApplication. The first automated attempt (run 42797908530) failed inside the GCCE host-build script before producing a verified 6R51Host.exe. The step is non-blocking so a launcher-prototype failure cannot suppress the ROM export and import audits. A diagnostic trap has been added to print the build-log tail on the next attempt; the precise compiler/linker cause remains to be captured.
+Run 42798741455 captured the first useful host-build diagnostics. The GCCE compile was missing the standard Symbian platform defines and the SDK's gcce/gcce.h preinclude. Consequently IMPORT_C and other API declarations were not active; the compiler then reported missing RLibrary, User and CTrapCleanup methods. The source also called EikStart::RunApplication with the wrong argument count and treated its void result as TInt.
+
+The host source now passes NULL as the CApaCommandLine argument. The build script now supplies the S60 3rd Edition / EKA2 GCCE defines, variant include directory and SDK GCCE preinclude. The next workflow run must still verify the ELF link, elf2e32 conversion and final E32 header before the host EXE can be counted as built. This step remains non-blocking so a host build failure cannot suppress ROM export and import audits.
 
 ## 5. Next work
 
-1. Capture and resolve the Step90 GCCE/elf2e32 build failure; do not count the host EXE as built until the E32 header and output-file checks pass.
-2. Validate the seven core ROM export maps independently, especially EUSER, CONE and GDI.
+1. Verify the revised host source compiles and the converted E32 EXE has the expected UID1/UID2/UID3, nonzero entry point and import table.
+2. Independently validate the seven core ROM export maps, especially EUSER, CONE and GDI.
 3. Resolve remaining EUSER/compiler-runtime imports, distinguishing functions that can be implemented in a compatibility DLL from APIs needing semantic wrappers.
 4. Verify remaining BTMANCLIENT and BTENG imports from target code and headers; do not reuse old ordinals solely because UID3 matches.
 5. Build an E32 import-table patcher that preserves every IAT slot, including duplicate dependency blocks.

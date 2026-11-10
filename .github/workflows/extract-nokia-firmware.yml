@@ -306,7 +306,7 @@ jobs:
           WORK="$RUNNER_TEMP/step99-elf2e32"
           mkdir -p "$WORK"
           # Keep diagnostics when any network/build substep fails.
-          trap 'rc=$?; echo "Step99 failed (exit $rc)"; for f in "$OUT/elf2e32-clone.log" "$OUT/elf2e32-download.log" "$OUT/converter-cmake.log"; do if [ -f "$f" ]; then echo "===== $f ====="; tail -n 100 "$f"; fi; done; exit "$rc"' ERR
+          trap 'rc=$?; echo "Step99 failed (exit $rc)"; for f in "$OUT/elf2e32-clone.log" "$OUT/elf2e32-download.log" "$OUT/converter-cmake.log" "$OUT/elf2e32.log"; do if [ -f "$f" ]; then echo "===== $f ====="; tail -n 100 "$f"; fi; done; exit "$rc"' ERR
           if [ ! -f "$WORK/src/CMakeLists.txt" ]; then
             rm -rf "$WORK/src"
             mkdir -p "$WORK/src"
@@ -332,14 +332,19 @@ jobs:
           cmake --build "$WORK/build" --parallel 2 >> "$OUT/converter-cmake.log" 2>&1
           ELF2E32=$(find "$WORK/build" -type f -name elf2e32 -perm -111 | head -n1)
           test -n "$ELF2E32" && test -x "$ELF2E32"
-          "$ELF2E32" --elfinput="$OUT/shim.elf" --definput="$OUT/step98.def" \
+          if ! "$ELF2E32" --elfinput="$OUT/shim.elf" --definput="$OUT/step98.def" \
             --defoutput="$OUT/ShadowkeyCompat{000a0000}.def" \
             --dso="$OUT/ShadowkeyCompat{000a0000}.dso" \
             --output="$OUT/ShadowkeyCompat.dll" --targettype=DLL \
             --uid1=0x10000079 --uid2=0x1000008D --uid3=0xE000BEEF \
             --sid=0xE000BEEF --version=1.0 --capability=none \
             --linkas=ShadowkeyCompat{000a0000}[E000BEEF].dll \
-            --libpath="$LIB" --uncompressed > "$OUT/elf2e32.log" 2>&1
+            --libpath="$LIB" --uncompressed > "$OUT/elf2e32.log" 2>&1; then
+            cat "$OUT/elf2e32.log"
+            "$ELF2E32" --help > "$OUT/elf2e32-help.txt" 2>&1 || true
+            cat "$OUT/elf2e32-help.txt"
+            exit 1
+          fi
           test -s "$OUT/ShadowkeyCompat.dll"
           "$ELF2E32" --dump=hi --e32input="$OUT/ShadowkeyCompat.dll" > "$OUT/e32-dump.txt" 2>&1
           python3 - "$OUT/ShadowkeyCompat.dll" "$OUT/e32-header.json" <<'PY'

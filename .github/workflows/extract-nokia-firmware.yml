@@ -10,6 +10,7 @@ on:
       - "tools/step82_map_game_imports_to_n95.py"
       - "tools/step91_summarize_n95_rom_exports.py"
       - "tools/step92_validate_sdk_dso_dynsym.py"
+      - "tools/step93_disassemble_selected_import_calls.py"
   workflow_dispatch:
 
 permissions:
@@ -240,6 +241,16 @@ jobs:
             --iat-refs firmware-input/STEP86_GAME_IAT_REFERENCES.tsv \
             --objdump "$EPOC_OBJDUMP" \
             --out firmware-input/STEP88_UNMATCHED_IAT_DISASSEMBLY.txt
+      - name: Disassemble selected legacy import callers and thunks
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step93_disassemble_selected_import_calls.py
+          python3 tools/step93_disassemble_selected_import_calls.py \
+            --game source_bundle/shadowkey_step35_work/6R51.APP \
+            --header firmware-input/STEP86_GAME_E32_HEADER.json \
+            --iat-refs firmware-input/STEP86_GAME_IAT_REFERENCES.tsv \
+            --objdump "$EPOC_OBJDUMP" \
+            --out firmware-input/STEP93_SELECTED_IMPORT_CALLS.txt
       - name: Symbolize actual N95 ROM exports against target SDK
         run: |
           set -euo pipefail

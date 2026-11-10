@@ -90,6 +90,8 @@ def main():
     target_demangled = demangle(args.target_demangler, target_names)
     target_by_dll_sig = {}
     target_by_dll_alias_sig = {}
+    target_by_sig = {}
+    target_by_alias_sig = {}
     target_by_dll_ord = {}
     for row in target_rows:
         dll = row["module"].lower().removesuffix(".dll")
@@ -101,6 +103,8 @@ def main():
         alias_sig = normalize(demangled, type_aliases=True)
         target_by_dll_sig.setdefault(dll, {}).setdefault(sig, []).append(row)
         target_by_dll_alias_sig.setdefault(dll, {}).setdefault(alias_sig, []).append(row)
+        target_by_sig.setdefault(sig, []).append(row)
+        target_by_alias_sig.setdefault(alias_sig, []).append(row)
         target_by_dll_ord.setdefault(dll, {})[int(row["ordinal"])] = row
 
     remap_json = json.loads((args.rom_dir / "s60-sdk/target-export-remap.json").read_text(encoding="utf-8"))
@@ -195,13 +199,27 @@ def main():
                             and row["sdk_symbol"]
                             and normalize(target_demangled[row["sdk_symbol"]]).split("(", 1)[0] == base_name
                         ]
+                    cross_dll = False
+                    if not candidates:
+                        candidates = [row for row in target_by_sig.get(sig, [])
+                                      if row["module"].lower().removesuffix(".dll") != dll]
+                        if candidates:
+                            match_kind = "CROSS_DLL_SIGNATURE_MATCH"
+                            cross_dll = True
+                    if not candidates:
+                        alias_sig = normalize(old_sig, type_aliases=True)
+                        candidates = [row for row in target_by_alias_sig.get(alias_sig, [])
+                                      if row["module"].lower().removesuffix(".dll") != dll]
+                        if candidates:
+                            match_kind = "CROSS_DLL_TYPE_ALIAS_MATCH"
+                            cross_dll = True
                     if len(candidates) == 1:
                         status = match_kind
                     elif len(candidates) > 1:
                         addresses = {x["rom_address"] for x in candidates}
                         if len(addresses) == 1:
                             candidates = [min(candidates, key=lambda x: int(x["ordinal"]))]
-                            status = "ALIAS_SAME_ADDRESS"
+                            status = "CROSS_DLL_ALIAS_SAME_ADDRESS" if cross_dll else "ALIAS_SAME_ADDRESS"
                         else:
                             d1 = [x for x in candidates if "D1Ev" in x["sdk_symbol"]]
                             if d1 and all(any(tag in x["sdk_symbol"] for tag in ("D0Ev", "D1Ev", "D2Ev")) for x in candidates):

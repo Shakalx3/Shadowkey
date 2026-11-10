@@ -197,7 +197,7 @@ jobs:
           python3 tools/step89_find_eikstart_factory_api.py \
             --sdk-root /tmp/s60-devkit \
             --out firmware-input/STEP89_EIKSTART_FACTORY_API.txt
-      - name: Build an EKA2 host EXE for the legacy APP factory
+      - name: Build and verify the EKA2 host EXE for the legacy APP factory
         run: |
           set -euo pipefail
           bash tools/step90_build_eka2_app_host.sh

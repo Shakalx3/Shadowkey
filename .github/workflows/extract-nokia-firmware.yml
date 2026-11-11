@@ -624,7 +624,7 @@ jobs:
           find firmware-input -type f -printf '%s\t%p\n' | sort -nr | head -n 30
           echo "Unexpected raw system/firmware binaries (must be empty):"
           # Only the explicitly generated Step99 test DLL is allowed; no firmware/system DLL is retained.
-raw_files=$(find firmware-input -type f \( -iname '*.dll' -o -iname '*.c0r' -o -iname '*.fpsx' -o -iname '*.rofs' -o -iname '*.img' -o -iname '*.bin' \) ! -path 'firmware-input/STEP99_TINT64_E32_DLL/ShadowkeyCompat.dll' -print)
+          raw_files=$(find firmware-input -type f \( -iname '*.dll' -o -iname '*.c0r' -o -iname '*.fpsx' -o -iname '*.rofs' -o -iname '*.img' -o -iname '*.bin' \) ! -path 'firmware-input/STEP99_TINT64_E32_DLL/ShadowkeyCompat.dll' -print)
           if [ -n "$raw_files" ]; then printf '%s\n' "$raw_files"; exit 1; fi
       - name: Upload compact diagnostic artifact
         uses: actions/upload-artifact@v4

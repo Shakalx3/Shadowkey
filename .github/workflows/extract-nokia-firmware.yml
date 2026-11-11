@@ -302,7 +302,10 @@ jobs:
           "$LD" -shared --export-dynamic -soname=ShadowkeyCompat{000a0000}.dll -o "$OUT/shim.elf" "$OUT/shim.o"
           "$READELF" -h "$OUT/shim.elf" > "$OUT/elf-header.txt"
           "$READELF" -s "$OUT/shim.elf" > "$OUT/elf-symbols.txt"
-          "$READELF" --dyn-syms "$OUT/shim.elf" > "$OUT/elf-dynamic-symbols.txt"
+          # The bundled GCCE readelf is an older build without --dyn-syms.
+          # Host GNU readelf understands ARM ELF and can inspect .dynsym.
+          HOST_READELF=$(command -v readelf)
+          "$HOST_READELF" --dyn-syms "$OUT/shim.elf" > "$OUT/elf-dynamic-symbols.txt"
           grep -q 'Step98TInt64NotEqual' "$OUT/elf-dynamic-symbols.txt"
           sudo apt-get update -qq
           sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386

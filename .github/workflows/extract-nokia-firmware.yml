@@ -297,10 +297,13 @@ jobs:
             -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__DLL__ -D_UNICODE \
             -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \
             -c tools/step98_tint64_shim_probe.cpp -o "$OUT/shim.o"
-          "$LD" -shared -soname=ShadowkeyCompat{000a0000}.dll -o "$OUT/shim.elf" "$OUT/shim.o"
+          # elf2e32 resolves frozen DEF exports from the ELF dynamic symbol table.
+          # A plain ld -shared link can leave a function visible only in .symtab.
+          "$LD" -shared --export-dynamic -soname=ShadowkeyCompat{000a0000}.dll -o "$OUT/shim.elf" "$OUT/shim.o"
           "$READELF" -h "$OUT/shim.elf" > "$OUT/elf-header.txt"
           "$READELF" -s "$OUT/shim.elf" > "$OUT/elf-symbols.txt"
-          grep -q 'Step98TInt64NotEqual' "$OUT/elf-symbols.txt"
+          "$READELF" --dyn-syms "$OUT/shim.elf" > "$OUT/elf-dynamic-symbols.txt"
+          grep -q 'Step98TInt64NotEqual' "$OUT/elf-dynamic-symbols.txt"
           sudo apt-get update -qq
           sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386
           WORK="$RUNNER_TEMP/step99-elf2e32"

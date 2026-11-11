@@ -5,7 +5,7 @@
 typedef unsigned int TUint32;
 typedef char Step98Require32BitUint[(sizeof(TUint32) == 4) ? 1 : -1];
 
-extern "C" int Step98TInt64NotEqual(const TUint32* aThis, const TUint32* aOther)
+extern "C" __attribute__((visibility("default"))) int Step98TInt64NotEqual(const TUint32* aThis, const TUint32* aOther)
     {
     return (aThis[0] != aOther[0]) || (aThis[1] != aOther[1]);
     }

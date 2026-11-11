@@ -253,7 +253,7 @@ jobs:
           grep -q 'Step96CallUnTrap' firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
           grep -q 'Trap' firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
           grep -q 'UnTrap' firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
-          printf '%s\\n' \
+          printf '%s\n' \
             'PASS: TInt64 is 8 bytes in the target GCCE ABI' \
             'PASS: TTrap is 76 bytes with iState/iNext/iResult/iHandler offsets 0/64/68/72' \
             'PASS: TTrap::Trap(TInt&) is an instance method and TTrap::UnTrap() is static' \

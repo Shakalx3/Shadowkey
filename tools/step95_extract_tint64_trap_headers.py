@@ -82,7 +82,7 @@ def main():
             focused_lines.append(f"ERROR {path}: {exc}")
             continue
         indexes = [i for i, line in enumerate(source_lines)
-                   if re.search(r"\\b(?:TInt64|Int64|TUint64|Uint64)\\b|TInt64Rep|TInt64Value|iLow|iHigh", line)]
+                   if re.search(r"\b(?:TInt64|Int64|TUint64|Uint64)\b|TInt64Rep|TInt64Value|iLow|iHigh", line)]
         if not indexes:
             continue
         focused_lines.append(f"=== {path.relative_to(include)} ===")

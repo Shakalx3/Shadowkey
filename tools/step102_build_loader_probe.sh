@@ -87,7 +87,7 @@ fi
   >> "$OUT/build.log" 2>&1
 
 "$HOST_READELF" -h "$OUT/probe.elf" > "$OUT/elf-header.txt"
-"$HOST_READELF" -s "$OUT/probe.elf" > "$OUT/elf-symbols.txt"
+"$HOST_READELF" --wide -s "$OUT/probe.elf" > "$OUT/elf-symbols.txt"
 "$HOST_READELF" -d "$OUT/probe.elf" > "$OUT/elf-dynamic.txt"
 "$TARGET_CXXFILT" < "$OUT/elf-symbols.txt" > "$OUT/elf-symbols-demangled.txt"
 echo "=== Step102 target EABI imports (GNU c++filt) ==="

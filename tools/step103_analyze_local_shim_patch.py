@@ -92,6 +92,7 @@ def main() -> None:
                 matches.append({
                     "block_index": block["index"],
                     "dependency": block["dependency"],
+                    "ordinal": ordinal,
                     "ordinal_index_in_block": within,
                     "global_iat_index": global_index,
                     "slot_address": code_base + text_size + 4 * global_index,

@@ -463,6 +463,10 @@ jobs:
         run: |
           set -euo pipefail
           bash tools/step102_build_loader_probe.sh
+        # Keep firmware extraction, ROM inventory and text checkpoints running
+        # even if this independent experimental loader-probe build fails.
+        # The device package remains gated on outcome == success below.
+        continue-on-error: true
       - name: Build EKA2 host with Linux-normalized GCCE headers and public EikStart API
         if: always()
         run: |

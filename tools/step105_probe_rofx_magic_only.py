@@ -42,8 +42,8 @@ def main():
             f.write(b"ROFS")
         patched=probe.read_bytes()
         changed=[i for i,(x,y) in enumerate(zip(original,patched)) if x!=y]
-        if changed != [base,base+1,base+2,base+3]:
-            raise SystemExit("magic-only copy changed bytes outside the four-byte identifier")
+        if changed != [base+3]:
+            raise SystemExit(f"magic-only copy changed unexpected bytes: {changed[:16]}")
         out=root/"out"
         out.mkdir()
         env=os.environ.copy()

@@ -82,7 +82,7 @@ Sources:
 - https://github.com/SymbianRevive/symbian-headers/blob/main/rofs.h
 - https://github.com/SymbianRevive/symbian-build/blob/main/imgtools/romtools/readimage/src/rofs_image_reader.cpp
 
-Step105 performs a reversible magic-only test on a temporary copy of the carved PPM ROFx image. It verifies that exactly four bytes change, runs the current unpacker, records extracted files, and checks that the source firmware remains unchanged. A successful probe would justify adding explicit ROFx recognition; a failed probe will isolate the next structural difference.
+Step105 performs a reversible magic-only test on a temporary copy of the carved PPM ROFx image. The first run exposed an over-strict byte-diff assertion: ROFx to ROFS changes only the final identifier byte. The guard is corrected to require exactly offset 0x403 to change; the probe then runs the current unpacker, records extracted files, and checks that the source firmware remains unchanged. A successful probe would justify adding explicit ROFx recognition; a failed probe will isolate the next structural difference.
 
 ## Next checkpoint
 

@@ -11,7 +11,7 @@ static TInt Step102Report(const TDesC& aMessage, TInt aResult)
     return aResult;
     }
 
-GLDEF_C TInt E32Main()
+extern "C" TInt E32Main()
     {
     RLibrary library;
     TInt error = library.Load(_L("ShadowkeyCompat.dll"));

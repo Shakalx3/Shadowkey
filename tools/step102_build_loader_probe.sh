@@ -30,6 +30,18 @@ test -x "$CXXFILT" && test -x "$ELF2E32"
 test -s "$DLL"
 test -f "$LIB/euser.dso"
 
+HOST_READELF=$(command -v readelf)
+"$HOST_READELF" --dyn-syms -Ws "$LIB/euser.dso" > "$OUT/euser-dynsym.txt"
+"$CXXFILT" < "$OUT/euser-dynsym.txt" > "$OUT/euser-dynsym-demangled.txt"
+if grep -E 'TInt64::operator!=|TTrap::(Trap|UnTrap)' "$OUT/euser-dynsym-demangled.txt"; then
+  echo "Unexpected legacy TInt64/TTrap member export in target EUSER DSO" >&2
+  exit 1
+fi
+printf '%s\n' \
+  "PASS: target EUSER DSO has no legacy TInt64::operator!= export" \
+  "PASS: target EUSER DSO has no TTrap::Trap/UnTrap export" \
+  > "$OUT/STEP102_TARGET_DSO_ABI_CHECK.txt"
+
 GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"
 VARIANT_DIR="$SDK_ROOT/Epoc32/include/variant"
 test -f "$GCCE_HEADER" && test -d "$VARIANT_DIR"
@@ -154,5 +166,6 @@ echo "PASS: EKA2 test EXE built with RLibrary::Load/Lookup and EUSER imports" \
   | tee "$OUT/STEP102_BUILD_STATUS.txt"
 echo "NOT DEVICE TESTED: runtime loader acceptance still requires the RM-320." \
   | tee -a "$OUT/STEP102_BUILD_STATUS.txt"
+cat "$OUT/STEP102_TARGET_DSO_ABI_CHECK.txt"
 cat "$OUT/e32-header.json"
 cat "$OUT/STEP102_BUILD_STATUS.txt"

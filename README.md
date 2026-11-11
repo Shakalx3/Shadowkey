@@ -19,7 +19,9 @@ Both platform generations are now pinned and available to the project:
 
 See [Step54: both SDKs pinned and expected development impact](docs/STEP54_BOTH_SDKS_PINNED_AND_IMPACT.md). The N-Gage SDK components are not covered by the upstream toolchain's MIT license, so we reference the original repository rather than duplicating its proprietary SDK payload. SDK availability does not itself prove a successful N95 launch.
 
-## Current verified state — SDK/toolchain milestones through step 54; native app port remains incomplete
+## Current verified state — Step100 target ABI probe; native app port remains incomplete
+
+As of 2026-11-11, the target GCCE compile-time probes have confirmed the S60 3.1 FP1 `TInt64` type category (8-byte signed non-class type) and the `TTrap` size/member offsets. The legacy N-Gage `TInt64::operator!=` import at EUSER 1575 therefore has no same-named target export; the target compiler lowers these operations as primitive 64-bit expressions. The isolated two-word ARM shim passes host semantic tests and ARMv5TE compilation, but Step99's E32 conversion has not yet passed because the first link attempt contained a duplicate `_E32Dll` marker. See [Step101](docs/STEP101_TINT64_TARGET_TYPE_AND_STEP99_FIX.md). No loader test, import-table patch, or physical N95 launch has been demonstrated.
 
 The step35 archive is preserved at the repository root and its extracted 2,191-file working tree is committed under `source_bundle/shadowkey_step35_work/`. The import workflow verified the archive SHA-256, ZIP entry count, and total uncompressed byte count before extraction.
 

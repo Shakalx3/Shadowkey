@@ -1,10 +1,3 @@
-// Minimal Symbian DLL entry marker for this isolated shim.
-// This probe has no static C++ objects or constructors, so its entry hook is
-// intentionally empty. elf2e32 detects DLL targets by the _E32Dll symbol.
-extern "C" __attribute__((visibility("default"), used)) void _E32Dll(void)
-    {
-    }
-
 // Isolated ABI candidate for the legacy N-Gage TInt64::operator!= call.
 // The N-Gage 6.1 SDK declares TUint iLow; TUint iHigh;.
 // Keep the primitive type available to the legacy GCCE compiler: its bundled

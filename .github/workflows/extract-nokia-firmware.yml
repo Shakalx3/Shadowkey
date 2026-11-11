@@ -15,8 +15,10 @@ on:
       - "tools/step95_extract_tint64_trap_headers.py"
       - "tools/step96_ttrap_abi_probe.cpp"
       - "tools/step98_tint64_shim_probe.cpp"
+      - "tools/step99_e32_dll_marker.cpp"
       - "tools/step100_tint64_builtin_probe.cpp"
       - "docs/STEP96_TTRAP_ABI_PROBE.md"
+      - "docs/STEP101_TINT64_TARGET_TYPE_AND_STEP99_FIX.md"
   workflow_dispatch:
 
 permissions:
@@ -218,6 +220,8 @@ jobs:
             --sdk-root /tmp/s60-devkit \
             --out firmware-input/STEP95_TINT64_TRAP_HEADERS.txt \
             --summary firmware-input/STEP95_TINT64_TRAP_HEADERS.json
+          echo "=== Step95 focused core-header evidence ==="
+          cat firmware-input/STEP95_TINT64_CORE_HEADERS.txt
       - name: Compile target TInt64 and TTrap ABI probe
         run: |
           set -euo pipefail
@@ -259,6 +263,8 @@ jobs:
             'PASS: TTrap::Trap(TInt&) is an instance method and TTrap::UnTrap() is static' \
             'This is a target-header/compiler ABI check, not a runtime leave/trap test.' \
             > firmware-input/STEP96_TTRAP_ABI_CHECK.txt
+          cat firmware-input/STEP96_TTRAP_ABI_CHECK.txt
+          cat firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
           rm -f /tmp/step96_ttrap_abi_probe.o
       - name: Compile target TInt64 primitive ABI probe
         run: |
@@ -290,6 +296,12 @@ jobs:
             'PASS: native comparison, equality, subtraction, division, construction and GetTInt codegen emitted' \
             'Inspect the symbol/disassembly files for any compiler runtime helper dependencies.' \
             > firmware-input/STEP100_TINT64_BUILTIN_CHECK.txt
+          echo "=== Step100 target TInt64 code generation ==="
+          cat firmware-input/STEP100_TINT64_BUILTIN_CHECK.txt
+          cat firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt
+          cat firmware-input/STEP100_TINT64_BUILTIN_DISASSEMBLY.txt
+          echo "=== Step100 undefined target/runtime symbols ==="
+          grep ' UND ' firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt || true
           rm -f /tmp/step100_tint64_builtin_probe.o
       - name: Validate isolated legacy TInt64 comparison shim
         run: |
@@ -308,6 +320,8 @@ jobs:
           grep -q "Step98TInt64NotEqual" firmware-input/STEP98_TINT64_SHIM_DISASSEMBLY.txt
           echo "PASS: host semantics and ARMv5TE code generation for two-word TInt64 inequality" > firmware-input/STEP98_TINT64_SHIM_CHECK.txt
           echo "Not yet an E32 DLL, import-table patch, or device test." >> firmware-input/STEP98_TINT64_SHIM_CHECK.txt
+          cat firmware-input/STEP98_TINT64_SHIM_CHECK.txt
+          cat firmware-input/STEP98_TINT64_SHIM_DISASSEMBLY.txt
           rm -f /tmp/step98_host_test /tmp/step98_tint64_shim_probe.o
       - name: Convert isolated TInt64 shim into a minimal E32 DLL
         run: |
@@ -426,6 +440,9 @@ jobs:
           PY
           echo "PASS: minimal E32 DLL container created and has exactly one export" > "$OUT/STEP99_STATUS.txt"
           echo "This validates E32 DLL conversion only; it is not yet loaded by Symbian or patched into 6R51.APP." >> "$OUT/STEP99_STATUS.txt"
+          cat "$OUT/e32-header.json"
+          cat "$OUT/e32-dump.txt"
+          cat "$OUT/STEP99_STATUS.txt"
       - name: Build EKA2 host with Linux-normalized GCCE headers and public EikStart API
         run: |
           set -euo pipefail
@@ -630,7 +647,23 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nokia-firmware-rofs-diagnostics
-          path: firmware-input/
+          path: |
+            firmware-input/STEP95_TINT64_CORE_HEADERS.txt
+            firmware-input/STEP95_TINT64_TRAP_HEADERS.json
+            firmware-input/STEP96_TTRAP_ABI_CHECK.txt
+            firmware-input/STEP96_TTRAP_ABI_SYMBOLS.txt
+            firmware-input/STEP98_TINT64_SHIM_CHECK.txt
+            firmware-input/STEP98_TINT64_SHIM_DISASSEMBLY.txt
+            firmware-input/STEP99_TINT64_E32_DLL/ShadowkeyCompat.dll
+            firmware-input/STEP99_TINT64_E32_DLL/STEP99_STATUS.txt
+            firmware-input/STEP99_TINT64_E32_DLL/e32-header.json
+            firmware-input/STEP99_TINT64_E32_DLL/e32-dump.txt
+            firmware-input/STEP100_TINT64_BUILTIN_CHECK.txt
+            firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt
+            firmware-input/STEP100_TINT64_BUILTIN_DISASSEMBLY.txt
+            firmware-input/STEP80_GAME_IMPORT_ROM_REMAP.tsv
+            firmware-input/STEP82_GAME_IMPORT_TARGET_MAP.tsv
+            firmware-input/STEP82_IMPORT_MAPPING_SUMMARY.json
           if-no-files-found: error
           compression-level: 6
-          retention-days: 30
+          retention-days: 7

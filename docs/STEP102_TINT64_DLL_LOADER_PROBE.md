@@ -35,9 +35,11 @@ Observed E32 header:
 | Entry-point offset | 0x30 |
 | Code base | 0x00010000 |
 
-elf2e32 --dump=hi identified an ARMV5 DLL, ARM EABI, built against EKA2, uncompressed, with no imported DLL references. The DLL entry point is _E32Dll; the one intended export is Step98TInt64NotEqual at ordinal 1. The previous workflow did not yet assert the raw export-table address, so the next build adds that check rather than treating the count alone as sufficient.
+elf2e32 --dump=hi identified an ARMV5 DLL, ARM EABI, built against EKA2, uncompressed, with no imported DLL references. The DLL entry point is _E32Dll; the one intended export is Step98TInt64NotEqual at ordinal 1.
 
-This is only an E32 container/build proof. The DLL has not yet been passed to RLibrary::Load on Symbian, and no device execution is claimed.
+Run 43010636058 added a raw export-table check and exposed an important format detail: the single export-table word is 0x00010000, equal to the linked code base 0x00010000. It is a linked virtual address in this image, not a zero-based offset. The converter had already produced the same 244-byte E32 DLL; run104 failed only because the new assertion incorrectly expected zero. The parser now checks that the export VA lies inside the code segment and resolves to the first code byte. Run105 is verifying this corrected interpretation.
+
+This remains an E32 container/build proof. The DLL has not yet been passed to RLibrary::Load on Symbian, and no device execution is claimed.
 
 ## Step102: loader test being added
 

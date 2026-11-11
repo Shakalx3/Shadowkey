@@ -8,7 +8,10 @@ import subprocess
 from pathlib import Path
 
 SELECTED = [
-    ("euser", 1407), ("euser", 1575), ("cone", 160),
+    ("euser", 1407),
+    ("euser", 501), ("euser", 1379), ("euser", 1515),
+    ("euser", 1520), ("euser", 1557), ("euser", 1575),
+    ("cone", 160),
     ("eikcore", 224), ("gdi", 101), ("gdi", 108), ("gdi", 151),
 ]
 

@@ -8,6 +8,8 @@ from pathlib import Path
 PATTERNS = {
     "TInt64 class": re.compile(r"\b(class|struct)\s+TInt64\b"),
     "TInt64 declarations": re.compile(r"\bTInt64\b"),
+    "TInt64 typedefs": re.compile(r"^\s*typedef\b.*\bTInt64\b"),
+    "Int64 typedefs": re.compile(r"^\s*typedef\b.*\bInt64\b"),
     "TTrap class": re.compile(r"\b(class|struct)\s+TTrap\b"),
     "TTrap declarations": re.compile(r"\bTTrap\b"),
     "TRAP macros": re.compile(r"^\s*#\s*define\s+TRAP(?:D|_IGNORE)?\b"),
@@ -80,7 +82,7 @@ def main():
             focused_lines.append(f"ERROR {path}: {exc}")
             continue
         indexes = [i for i, line in enumerate(source_lines)
-                   if re.search(r"\\bTInt64\\b|TInt64Rep|TInt64Value|iLow|iHigh", line)]
+                   if re.search(r"\\b(?:TInt64|Int64|TUint64|Uint64)\\b|TInt64Rep|TInt64Value|iLow|iHigh", line)]
         if not indexes:
             continue
         focused_lines.append(f"=== {path.relative_to(include)} ===")

@@ -15,6 +15,7 @@ on:
       - "tools/step95_extract_tint64_trap_headers.py"
       - "tools/step96_ttrap_abi_probe.cpp"
       - "tools/step98_tint64_shim_probe.cpp"
+      - "tools/step100_tint64_builtin_probe.cpp"
       - "docs/STEP96_TTRAP_ABI_PROBE.md"
   workflow_dispatch:
 
@@ -259,6 +260,37 @@ jobs:
             'This is a target-header/compiler ABI check, not a runtime leave/trap test.' \
             > firmware-input/STEP96_TTRAP_ABI_CHECK.txt
           rm -f /tmp/step96_ttrap_abi_probe.o
+      - name: Compile target TInt64 primitive ABI probe
+        run: |
+          set -euo pipefail
+          CXX=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-g++ | head -n1)
+          OBJDUMP=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-objdump | head -n1)
+          READELF=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-readelf | head -n1)
+          test -x "$CXX" && test -x "$OBJDUMP" && test -x "$READELF"
+          SDK_ROOT=/tmp/s60-devkit
+          GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"
+          VARIANT_DIR="$SDK_ROOT/Epoc32/include/variant"
+          "$CXX" -march=armv5te -marm -O1 -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
+            -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \
+            -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__EXE__ -D_UNICODE \
+            -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \
+            -I"$SDK_ROOT/Epoc32/include" -I"$VARIANT_DIR" -include "$GCCE_HEADER" \
+            -c tools/step100_tint64_builtin_probe.cpp -o /tmp/step100_tint64_builtin_probe.o
+          "$OBJDUMP" -d /tmp/step100_tint64_builtin_probe.o > firmware-input/STEP100_TINT64_BUILTIN_DISASSEMBLY.txt
+          "$READELF" -s /tmp/step100_tint64_builtin_probe.o > firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt
+          grep -q 'Step100TInt64NotEqual' firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt
+          grep -q 'Step100TInt64Subtract' firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt
+          grep -q 'Step100TInt64Divide' firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt
+          if grep -E 'TInt64.*operator|__ne__C6TInt64|__eq__C6TInt64|__mi__C6TInt64|__dv__C6TInt64' firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt; then
+            echo "Unexpected legacy TInt64 member operator reference in target object" >&2
+            exit 1
+          fi
+          printf '%s\\n' \
+            'PASS: target GCCE sees TInt64 as an 8-byte signed non-class type' \
+            'PASS: native comparison, equality, subtraction, division, construction and GetTInt codegen emitted' \
+            'Inspect the symbol/disassembly files for any compiler runtime helper dependencies.' \
+            > firmware-input/STEP100_TINT64_BUILTIN_CHECK.txt
+          rm -f /tmp/step100_tint64_builtin_probe.o
       - name: Validate isolated legacy TInt64 comparison shim
         run: |
           set -euo pipefail

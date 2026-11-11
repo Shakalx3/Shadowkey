@@ -17,13 +17,15 @@ on:
       - "tools/step98_tint64_shim_probe.cpp"
       - "tools/step99_e32_dll_marker.cpp"
       - "tools/step100_tint64_builtin_probe.cpp"
+      - "source_bundle/host/step102_tint64_loader_probe.cpp"
+      - "tools/step102_build_loader_probe.sh"
+      - "tools/step102_package_device_probe.py"
       - "tools/step102_summarize_firmware_extraction.py"
       - "docs/STEP96_TTRAP_ABI_PROBE.md"
-      - "docs/STEP101_TINT64_TARGET_TYPE_AND_STEP99_FIX.md"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   actions: write
 
 jobs:
@@ -421,18 +423,26 @@ jobs:
               raise SystemExit("not a valid E32 image")
           u=lambda off: struct.unpack_from("<I",b,off)[0]
           entry_offset=u(0x48); code_base=u(0x4c); flags=u(0x2c)
+          export_dir=u(0x58); export_count=u(0x5c); code_offset=u(0x64)
+          if export_count != 1 or export_dir + 4*export_count > len(b):
+              raise SystemExit("invalid one-entry E32 export directory")
+          export_entry=u(export_dir)
           elf=Path(sys.argv[1]).with_name("shim.elf").read_bytes()
           elf_entry=struct.unpack_from("<I",elf,24)[0]
           h={"size":len(b),"uid1":f"0x{u(0):08X}","uid2":f"0x{u(4):08X}",
              "uid3":f"0x{u(8):08X}","flags":f"0x{flags:08X}",
-             "export_dir_offset":u(0x58),"export_count":u(0x5c),
-             "dll_ref_count":u(0x54),"code_size":u(0x30),
+             "export_dir_offset":export_dir,"export_count":export_count,
+             "export_entry_offset":f"0x{export_entry:08X}",
+             "code_offset":code_offset,"dll_ref_count":u(0x54),"code_size":u(0x30),
              "entry_point_offset":f"0x{entry_offset:08X}",
              "code_base":f"0x{code_base:08X}","elf_entry_point":f"0x{elf_entry:08X}"}
           assert h["uid1"]=="0x10000079",h
           assert h["uid2"]=="0x1000008D",h
           assert (flags & 1)==1,h
           assert h["export_count"]==1,h
+          assert export_entry==0,h
+          assert code_offset+export_entry<export_dir,h
+          assert h["dll_ref_count"]==0,h
           assert h["code_size"]>0 and code_base!=0,h
           assert entry_offset<h["code_size"],h
           assert code_base+entry_offset==elf_entry,h
@@ -444,6 +454,10 @@ jobs:
           cat "$OUT/e32-header.json"
           cat "$OUT/e32-dump.txt"
           cat "$OUT/STEP99_STATUS.txt"
+      - name: Build EKA2 RLibrary loader probe for the isolated TInt64 DLL
+        run: |
+          set -euo pipefail
+          bash tools/step102_build_loader_probe.sh
       - name: Build EKA2 host with Linux-normalized GCCE headers and public EikStart API
         run: |
           set -euo pipefail
@@ -652,6 +666,30 @@ jobs:
           # Only the explicitly generated Step99 test DLL is allowed; no firmware/system DLL is retained.
           raw_files=$(find firmware-input -type f \( -iname '*.dll' -o -iname '*.c0r' -o -iname '*.fpsx' -o -iname '*.rofs' -o -iname '*.img' -o -iname '*.bin' \) ! -path 'firmware-input/STEP99_TINT64_E32_DLL/ShadowkeyCompat.dll' -print)
           if [ -n "$raw_files" ]; then printf '%s\n' "$raw_files"; exit 1; fi
+      - name: Package and publish reversible Step102 first-device test
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          OUT=firmware-input/STEP102_FIRST_DEVICE_TEST
+          mkdir -p "$OUT"
+          python3 tools/step102_package_device_probe.py \
+            --dll firmware-input/STEP99_TINT64_E32_DLL/ShadowkeyCompat.dll \
+            --exe firmware-input/STEP102_TINT64_LOADER_PROBE/ShadowkeyAbiProbe.exe \
+            --readme docs/STEP102_FIRST_DEVICE_TEST_README.txt \
+            --out "$OUT/Shadowkey-Step102-FirstDeviceTest.zip"
+          cat "$OUT/Shadowkey-Step102-FirstDeviceTest.sha256"
+          TAG="shadowkey-step102-${GITHUB_RUN_ID}"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$OUT/Shadowkey-Step102-FirstDeviceTest.zip" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" "$OUT/Shadowkey-Step102-FirstDeviceTest.zip" \
+              --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+              --title "Shadowkey Step102 first-device loader probe" \
+              --notes "Reversible EKA2 loader test only; not a Shadowkey game build. No ROM or firmware files are included." \
+              --prerelease
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url,name,isDraft,isPrerelease,assets
       - name: Upload compact diagnostic artifact
         id: upload-diagnostics
         uses: actions/upload-artifact@v4
@@ -672,6 +710,10 @@ jobs:
             firmware-input/STEP100_TINT64_BUILTIN_CHECK.txt
             firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt
             firmware-input/STEP100_TINT64_BUILTIN_DISASSEMBLY.txt
+            firmware-input/STEP102_TINT64_LOADER_PROBE/STEP102_TARGET_DSO_ABI_CHECK.txt
+            firmware-input/STEP102_TINT64_LOADER_PROBE/STEP102_BUILD_STATUS.txt
+            firmware-input/STEP102_TINT64_LOADER_PROBE/e32-header.json
+            firmware-input/STEP102_TINT64_LOADER_PROBE/e32-dump.txt
             firmware-input/STEP102_FIRMWARE_EXTRACTION_AUDIT.md
             firmware-input/STEP80_GAME_IMPORT_ROM_REMAP.tsv
             firmware-input/STEP82_GAME_IMPORT_TARGET_MAP.tsv

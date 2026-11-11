@@ -18,6 +18,7 @@ on:
       - "tools/step99_e32_dll_marker.cpp"
       - "tools/step100_tint64_builtin_probe.cpp"
       - "tools/step103_analyze_local_shim_patch.py"
+      - "tools/step104_audit_eka1_e32_header.py"
       - "source_bundle/host/step102_tint64_loader_probe.cpp"
       - "tools/step102_build_loader_probe.sh"
       - "tools/step102_package_device_probe.py"
@@ -180,6 +181,15 @@ jobs:
             --dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
             --out-dir firmware-input
           cat firmware-input/STEP103_LOCAL_SHIM_PATCH_FEASIBILITY.md
+      - name: Audit legacy EKA1 E32 header and relocation boundaries
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step104_audit_eka1_e32_header.py
+          python3 tools/step104_audit_eka1_e32_header.py \
+            --game source_bundle/shadowkey_step35_work/6R51.APP \
+            --out-dir firmware-input
+          cat firmware-input/STEP104_EKA1_HEADER_AUDIT.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP104_EKA1_HEADER_AUDIT.md
       - name: Checkout N-Gage ARM UREL import libraries
         uses: actions/checkout@v4
         with:

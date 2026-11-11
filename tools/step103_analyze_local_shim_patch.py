@@ -43,17 +43,89 @@ def main() -> None:
     import_end = import_off + import_size
     total_imports = int(header["iat_slots"])
 
-    # EKA1 and EKA2 headers share later code/import offsets, but differ in
-    # the words immediately after the EPOC signature. Validate, don't guess.
+def parse_eka1_reloc(data: bytes, off: int, code_off: int, expected_file_offsets=(), target_file_offset=None):
+    if off == 0:
+        return {"present": False, "offset": 0}
+    if off < 0 or off + 8 > len(data):
+        return {"present": True, "offset": off, "valid_header_bounds": False}
+    section_size, declared_count = struct.unpack_from("<II", data, off)
+    expected_rel = {x - code_off for x in expected_file_offsets}
+    attempts = []
+    for includes_header in (True, False):
+        end = off + section_size if includes_header else off + 8 + section_size
+        pos = off + 8
+        blocks = count = bad_types = bad_pages = 0
+        type_counts = {1: 0, 2: 0, 3: 0}
+        targets = set()
+        first_blocks = []
+        error = None
+        if end > len(data) or end < pos:
+            error = "section end outside file"
+        while error is None and pos < end:
+            if pos + 8 > end:
+                error = "truncated relocation block header"
+                break
+            page_off, block_size = struct.unpack_from("<II", data, pos)
+            if block_size < 8 or block_size % 4 or pos + block_size > end:
+                error = "invalid relocation block size"
+                break
+            if page_off % 0x1000:
+                bad_pages += 1
+            nbytes = block_size - 8
+            entries = struct.unpack_from("<" + "H" * (nbytes // 2), data, pos + 8) if nbytes else ()
+            nonzero = 0
+            for entry in entries:
+                if entry == 0:
+                    continue
+                nonzero += 1
+                kind = entry >> 12
+                if kind in type_counts:
+                    type_counts[kind] += 1
+                else:
+                    bad_types += 1
+                targets.add(page_off + (entry & 0x0FFF))
+            if len(first_blocks) < 4:
+                first_blocks.append({"page_offset": page_off, "block_size": block_size, "nonzero_entries": nonzero})
+            count += nonzero
+            blocks += 1
+            pos += block_size
+        valid = error is None and pos == end and count == declared_count and bad_types == 0 and bad_pages == 0
+        attempts.append({
+            "size_includes_header": includes_header, "candidate_end": end,
+            "candidate_section_bytes": end - off, "parsed_end": pos,
+            "block_count": blocks, "parsed_relocation_count": count,
+            "declared_relocation_count": declared_count, "type_counts": type_counts,
+            "bad_type_entries": bad_types, "unaligned_page_offsets": bad_pages,
+            "expected_iat_references": len(expected_rel),
+            "matched_iat_references": len(expected_rel & targets),
+            "missing_iat_references": [f"0x{x + code_off:08X}" for x in sorted(expected_rel - targets)[:24]],
+            "target_literal_relocated": target_file_offset is not None and (target_file_offset - code_off) in targets,
+            "first_blocks": first_blocks, "error": error, "valid": valid
+        })
+    valid_attempts = [x for x in attempts if x["valid"]]
+    chosen = next((x for x in valid_attempts if x["size_includes_header"]), valid_attempts[0] if valid_attempts else attempts[0])
+    return {
+        "present": True, "offset": off, "section_size_field": section_size,
+        "declared_relocation_count": declared_count, "header_hex": data[off:off+16].hex(),
+        "attempts": attempts, "chosen_interpretation": chosen, "valid": chosen["valid"],
+        "trailing_bytes_after_chosen_end": len(data) - chosen["candidate_end"] if chosen["valid"] else None,
+        "trailing_hex": data[chosen["candidate_end"]:chosen["candidate_end"]+16].hex() if chosen["valid"] else None
+    }
+
+
+    # Legacy EKA1 field map: separate structural layout validation from checksum validation.
     word14, word18, word1c, word20 = (u32(data, x) for x in (0x14, 0x18, 0x1C, 0x20))
     cpu_names = {0x1000: "x86", 0x2000: "ARM", 0x4000: "MCore"}
-    code_checksum = word_sum(data[code_off:code_off + text_size])
+    code_checksum_text = word_sum(data[code_off:code_off + text_size])
+    code_checksum_code = word_sum(data[code_off:code_off + code_size])
     data_off = int(header["data_offset"])
     data_size = int(header["data_size"])
     data_checksum = word_sum(data[data_off:data_off + data_size])
-    legacy_header_match = (
-        word14 in cpu_names and word18 == code_checksum and word1c == data_checksum
+    priority = u32(data, 0x78)
+    legacy_header_layout_match = (
+        word14 in cpu_names and code_off == 0x7C and code_off + code_size == import_off
     )
+    legacy_code_checksum_matches = word18 == code_checksum_code
 
     # Recover the exact import-descriptor byte range and all DLL-name offsets.
     pos = import_off + 4
@@ -154,22 +226,20 @@ def main() -> None:
     new_slot_index = total_imports - 1
     new_slot_va = iat_start_va + 4 * new_slot_index
 
+    # EKA1 uses offsets at 0x70/0x74 and a 32-bit process priority at 0x78.
     code_reloc_off = u32(data, 0x70)
-    code_reloc_size = u32(data, 0x74)
-    data_reloc_off = u32(data, 0x78)
-    data_reloc_size = u32(data, 0x7C)
-    relocations = []
-    for name, off, size in (
-        ("code", code_reloc_off, code_reloc_size),
-        ("data", data_reloc_off, data_reloc_size),
-    ):
-        relocations.append({
-            "kind": name,
-            "offset": off,
-            "size": size,
-            "present": bool(off and size),
-            "starts_after_import_table": bool(off and off >= import_end),
-        })
+    data_reloc_off = u32(data, 0x74)
+    all_iat_reference_file_offsets = [
+        int(off, 16) for row in slots for off in row["reference_offsets"].split(",") if off
+    ]
+    code_reloc = parse_eka1_reloc(
+        data, code_reloc_off, code_off, all_iat_reference_file_offsets, thunk_literal_file_off
+    )
+    data_reloc = parse_eka1_reloc(data, data_reloc_off, code_off)
+    relocations = [
+        {"kind": "code", **code_reloc, "starts_after_import_table": bool(code_reloc_off and code_reloc_off >= import_end)},
+        {"kind": "data", **data_reloc, "starts_after_import_table": bool(data_reloc_off and data_reloc_off >= import_end)},
+    ]
 
     # Remove one ordinal from EUSER (-4 descriptor bytes), then append a
     # one-ordinal DLL block (+12 descriptor bytes). The IAT count is unchanged.
@@ -190,9 +260,12 @@ def main() -> None:
             "offset_0x1C": f"0x{word1c:08X}",
             "offset_0x20": f"0x{word20:08X}",
             "legacy_cpu_guess": cpu_names.get(word14, "not a known EKA1 CPU marker"),
-            "legacy_code_checksum_computed": f"0x{code_checksum:08X}",
+            "legacy_code_checksum_text_size": f"0x{code_checksum_text:08X}",
+            "legacy_code_checksum_code_size": f"0x{code_checksum_code:08X}",
+            "legacy_code_checksum_matches_code_size": legacy_code_checksum_matches,
             "legacy_data_checksum_computed": f"0x{data_checksum:08X}",
-            "legacy_eka1_header_interpretation_matches": legacy_header_match,
+            "legacy_eka1_header_layout_matches": legacy_header_layout_match,
+            "legacy_priority_at_0x78": priority,
         },
         "e32_layout": {
             "flags": header["flags"],
@@ -214,6 +287,7 @@ def main() -> None:
             "import_descriptor_end": descriptor_end,
             "first_name_offset": name_start,
             "bytes_between_descriptors_and_import_end": import_end - descriptor_end,
+            "priority_at_0x78": priority,
             "relocations": relocations,
         },
         "target_import": {
@@ -235,6 +309,13 @@ def main() -> None:
             "new_name_storage_bytes_aligned": name_padded,
             "net_import_table_growth_bytes": import_table_growth,
             "iat_count_remains_unchanged": True,
+            "required_header_updates": {
+                "iCodeRelocOffset_0x70_before": f"0x{code_reloc_off:08X}",
+                "iCodeRelocOffset_0x70_after": f"0x{(code_reloc_off + import_table_growth) if code_reloc_off else 0:08X}",
+                "iDataRelocOffset_0x74_unchanged": f"0x{data_reloc_off:08X}",
+                "iPriority_0x78_unchanged": priority,
+                "code_relocation_section_bytes_unchanged": True,
+            },
             "required_code_pointer_rewrites": {
                 "old_slot": f"0x{target['slot_address']:08X}",
                 "new_slot": f"0x{new_slot_va:08X}",
@@ -245,9 +326,11 @@ def main() -> None:
             "iat_slots_with_no_literal_references": zero_ref_slots,
         },
         "safety_gates": [
-            "Do not patch until EKA1/EKA2 header format is conclusively identified.",
-            "Recompute the correct code checksum or header CRC after any code/import change.",
-            "Account for relocation-table movement if either relocation section follows the import table.",
+            "The EKA1 layout is structurally consistent, but this does not make the legacy image loadable by the N95 EKA2 loader.",
+            "The stored code checksum does not match the computed code-size word sum; resolve this before modifying code bytes.",
+            "Use EKA1 relocation offsets at 0x70 and 0x74; 0x78 is process priority, not a relocation offset or size.",
+            "The code relocation section follows the import table; update iCodeRelocOffset by the import-table growth.",
+            "Verify parsed relocation blocks and IAT-literal coverage before any patch.",
             "Verify every IAT literal rewrite against ARM disassembly, not only byte-pattern scans.",
             "Write a separate patched copy and byte-compare all untouched ranges; never overwrite 6R51.APP.",
             "Test the patched image with an EKA2 loader before any game launch attempt.",
@@ -265,10 +348,11 @@ def main() -> None:
         "",
         "## Header-format discriminator",
         "",
-        f"- Word at 0x14: {result['header_words_after_epoc']['offset_0x14']} ({result['header_words_after_epoc']['legacy_cpu_guess']})",
-        f"- Word at 0x18: {result['header_words_after_epoc']['offset_0x18']}; computed legacy code checksum: {result['header_words_after_epoc']['legacy_code_checksum_computed']}",
-        f"- Word at 0x1C: {result['header_words_after_epoc']['offset_0x1C']}; computed legacy data checksum: {result['header_words_after_epoc']['legacy_data_checksum_computed']}",
-        f"- EKA1 legacy-header interpretation matches: **{legacy_header_match}**",
+        f"- CPU at 0x14: {result['header_words_after_epoc']['offset_0x14']} ({result['header_words_after_epoc']['legacy_cpu_guess']})",
+        f"- Code checksum stored: {result['header_words_after_epoc']['offset_0x18']}; text-size sum: {result['header_words_after_epoc']['legacy_code_checksum_text_size']}; code-size sum: {result['header_words_after_epoc']['legacy_code_checksum_code_size']}",
+        f"- Data checksum stored/computed: {result['header_words_after_epoc']['offset_0x1C']} / {result['header_words_after_epoc']['legacy_data_checksum_computed']}",
+        f"- EKA1 layout structural match: **{legacy_header_layout_match}**; code checksum match: **{legacy_code_checksum_matches}**",
+        f"- EKA1 priority at 0x78: {priority}",
         "",
         "## Exact import and thunk",
         "",

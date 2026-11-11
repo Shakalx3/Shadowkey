@@ -19,6 +19,7 @@ on:
       - "tools/step100_tint64_builtin_probe.cpp"
       - "tools/step103_analyze_local_shim_patch.py"
       - "tools/step104_audit_eka1_e32_header.py"
+      - "tools/step105_probe_rofx_magic_only.py"
       - "source_bundle/host/step102_tint64_loader_probe.cpp"
       - "tools/step102_build_loader_probe.sh"
       - "tools/step102_package_device_probe.py"
@@ -142,6 +143,17 @@ jobs:
             echo "Parsed files:"
             cat firmware-input/PARSED_FILES.tsv
           } > firmware-input/PARSER_SUMMARY.txt
+      - name: Probe PPM ROFx using a temporary magic-only copy
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step105_probe_rofx_magic_only.py
+          python3 tools/step105_probe_rofx_magic_only.py \
+            --source firmware-parsed/carved/ppm-sos-rofx.rofs \
+            --unpacker /tmp/nokia-unpacker/unpacker \
+            --out-dir firmware-input \
+            --library-path /usr/local/lib64:/tmp/libunixpp
+          cat firmware-input/STEP105_ROFX_MAGIC_PROBE.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP105_ROFX_MAGIC_PROBE.md
       - name: Download pinned S60 3.1 FP1 devkit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

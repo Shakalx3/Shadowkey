@@ -170,6 +170,15 @@ jobs:
             --game source_bundle/shadowkey_step35_work/6R51.APP \
             --dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
             --out-dir firmware-input
+      - name: Analyze safe EUSER 1575 local-shim patch feasibility
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step103_analyze_local_shim_patch.py
+          python3 tools/step103_analyze_local_shim_patch.py \
+            --game source_bundle/shadowkey_step35_work/6R51.APP \
+            --dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
+            --out-dir firmware-input
+          cat firmware-input/STEP103_LOCAL_SHIM_PATCH_FEASIBILITY.md
       - name: Checkout N-Gage ARM UREL import libraries
         uses: actions/checkout@v4
         with:

@@ -17,6 +17,7 @@ on:
       - "tools/step98_tint64_shim_probe.cpp"
       - "tools/step99_e32_dll_marker.cpp"
       - "tools/step100_tint64_builtin_probe.cpp"
+      - "tools/step102_summarize_firmware_extraction.py"
       - "docs/STEP96_TTRAP_ABI_PROBE.md"
       - "docs/STEP101_TINT64_TARGET_TYPE_AND_STEP99_FIX.md"
   workflow_dispatch:
@@ -631,6 +632,14 @@ jobs:
           print("Inventory complete")
           print(Path("firmware-input/E32_CANDIDATES.tsv").read_text())
           PY
+      - name: Generate text-only firmware extraction checkpoint
+        id: firmware-audit
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step102_summarize_firmware_extraction.py
+          python3 tools/step102_summarize_firmware_extraction.py
+          cat firmware-input/STEP102_FIRMWARE_EXTRACTION_AUDIT.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP102_FIRMWARE_EXTRACTION_AUDIT.md
       - name: Remove large intermediate images and source packages
         run: |
           rm -rf firmware-input/rofs-candidates firmware-input/rom-modules firmware-input/e32-candidates
@@ -644,7 +653,9 @@ jobs:
           raw_files=$(find firmware-input -type f \( -iname '*.dll' -o -iname '*.c0r' -o -iname '*.fpsx' -o -iname '*.rofs' -o -iname '*.img' -o -iname '*.bin' \) ! -path 'firmware-input/STEP99_TINT64_E32_DLL/ShadowkeyCompat.dll' -print)
           if [ -n "$raw_files" ]; then printf '%s\n' "$raw_files"; exit 1; fi
       - name: Upload compact diagnostic artifact
+        id: upload-diagnostics
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: nokia-firmware-rofs-diagnostics
           path: |
@@ -661,9 +672,14 @@ jobs:
             firmware-input/STEP100_TINT64_BUILTIN_CHECK.txt
             firmware-input/STEP100_TINT64_BUILTIN_SYMBOLS.txt
             firmware-input/STEP100_TINT64_BUILTIN_DISASSEMBLY.txt
+            firmware-input/STEP102_FIRMWARE_EXTRACTION_AUDIT.md
             firmware-input/STEP80_GAME_IMPORT_ROM_REMAP.tsv
             firmware-input/STEP82_GAME_IMPORT_TARGET_MAP.tsv
             firmware-input/STEP82_IMPORT_MAPPING_SUMMARY.json
           if-no-files-found: error
           compression-level: 6
           retention-days: 7
+      - name: Note artifact storage fallback
+        if: steps.upload-diagnostics.outcome == 'failure'
+        run: |
+          echo "The diagnostic artifact could not be uploaded (for example, Actions storage quota). The text-only firmware audit is preserved in this job summary and the log." >> "$GITHUB_STEP_SUMMARY"

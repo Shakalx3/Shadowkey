@@ -78,6 +78,17 @@ def main():
     for label, exit_name, log_name, outdir, note in jobs:
         count, total, files = tree_stats(outdir)
         lines.append(f"| {label} | {read_exit(exit_name)} | {count} | {total} | {note} |")
+    lines += ["", "### Unpacker log tails", ""]
+    for label, _, log_name, _, _ in jobs:
+        p = ROOT / log_name
+        lines.append(f"**{label}**")
+        if p.is_file():
+            tail = p.read_text(encoding="utf-8", errors="replace").splitlines()[-12:]
+            lines.extend(["```text", *tail, "```"])
+        else:
+            lines.append("- Log missing.")
+        lines.append("")
+
     lines += ["", "### Output-tree samples", ""]
     for label, _, _, outdir, _ in jobs:
         count, total, files = tree_stats(outdir)

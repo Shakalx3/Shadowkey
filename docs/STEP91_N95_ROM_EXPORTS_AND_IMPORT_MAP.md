@@ -17,7 +17,7 @@ The pinned S60 3.1 FP1 ARMv5 SDK comparison found 24 matching DSO files, 11 modu
 
 ## Seven critical system DLLs
 
-The successful Step91 summary from firmware audit run 42804065202 confirms all seven requested OS modules exist in the reconstructed ROM:
+The Step91 summary was reproduced in firmware audit run 43006595394 on 2026-11-11. That run confirms all seven requested OS modules exist in the reconstructed ROM:
 
 | Module | UID3 | ROM exports | SDK DSO exports | Result |
 |---|---:|---:|---:|---|
@@ -29,7 +29,7 @@ The successful Step91 summary from firmware audit run 42804065202 confirms all s
 | GDI | 10003B15 | 348 | 344 | ROM has 4 extra exports |
 | WS32 | 10003B21 | 580 | 578 | ROM has 2 extra exports |
 
-The 5,061 selected export rows are available as STEP91_TARGET_EXPORTS.tsv. The import audit produced 395 mappings touching these modules: 271 exact signature matches, 35 same-address aliases, 9 destructor candidates, 8 PASS overrides, 1 typedef/ABI alias, 2 subsession-close wrapper cases, and 68 unresolved signatures. The unresolved count is not proof that the functions are absent from the ROM.
+The run generated 5,061 selected export rows in `STEP91_TARGET_EXPORTS.tsv` and the import audit produced 395 mappings touching these modules: 271 exact signature matches, 35 same-address aliases, 9 destructor candidates, 8 PASS overrides, 1 typedef/ABI alias, 2 subsession-close wrapper cases, and 68 unresolved signatures. The unresolved count is not proof that the functions are absent from the ROM.
 
 ## Key ordinal cases — now checked against ARM UREL symbols
 
@@ -50,13 +50,14 @@ The exact mangled ARM UREL and SDK symbol names, ROM addresses, and per-import r
 ## Validation caveats
 
 1. ROM export addresses come from the reconstructed RM-320 ROM. SDK symbol names are cross-checked against S60 3.1 FP1 DSO exports; modules with extra ROM exports need per-ordinal review.
-2. Step92 independently parsed all 24 matching SDK DSOs and verified every export ordinal/name map: 24/24 PASS, zero parse errors, zero mapping mismatches (run 42805802416). This validates the SDK DSO ordinal extraction, not the identity of SDK code with ROM code.
-3. A successful host harness does not establish Symbian loader compatibility.
-4. No N95 hardware launch has been performed; the phone is not available.
+2. Step92 independently parsed all 24 matching SDK DSOs and verified every export ordinal/name map: 24/24 PASS, zero parse errors, zero mapping mismatches (run 42805802416). This validates SDK DSO ordinal extraction, not the identity of SDK code with ROM code.
+3. Firmware run 43006595394 reproduced the ROM/export inventory and passed the isolated Step99 E32 DLL conversion. The overall job ended as `failure` only because GitHub rejected the final artifact upload after the Actions storage quota was hit. The full TSVs were generated in the ephemeral runner, but the artifact was not persisted; use the text-only Step102 job summary for the durable compact checkpoint.
+4. A successful host harness or static E32 build does not establish Symbian loader compatibility.
+5. No N95 hardware launch has been performed; a physical-device test remains pending.
 
 ## Next checkpoints
 
 1. Verify the EKA2 host build after adding the proper GCCE preinclude and platform defines.
 2. Independently parse the SDK DSO dynsym tables and compare symbol-to-ordinal mappings with the current readelf implementation.
 3. Resolve remaining import signatures/wrappers, then patch a copy of the E32 import tables.
-4. Keep raw ROM/system binaries out of Git history and compact diagnostic artifacts.
+5. Keep raw ROM/system binaries out of Git history and compact diagnostic artifacts.

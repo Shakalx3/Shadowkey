@@ -12,8 +12,8 @@ mkdir -p "$OUT"
 
 on_error() {
   status=$?
-  echo "Step102 failed (exit=$status); diagnostics:"
-  for f in "$OUT/build.log" "$OUT/elf2e32.log" "$OUT/e32-dump.txt"; do
+  echo "Step102 failed (exit=$status, line=${BASH_LINENO[0]:-unknown}); command=${BASH_COMMAND}"
+  for f in "$OUT/build.log" "$OUT/elf-symbols.txt" "$OUT/elf-symbols-demangled.txt" "$OUT/elf-dynamic.txt" "$OUT/elf2e32.log" "$OUT/e32-dump.txt" "$OUT/probe-disassembly.txt"; do
     if [ -f "$f" ]; then echo "===== $f ====="; tail -n 100 "$f"; fi
   done
   exit "$status"
@@ -23,16 +23,17 @@ trap on_error ERR
 CXX=$(find "$TOOLCHAIN_ROOT" -type f -name arm-none-symbianelf-g++ | head -n1)
 LD=$(find "$TOOLCHAIN_ROOT" -type f -name arm-none-symbianelf-ld | head -n1)
 READELF=$(find "$TOOLCHAIN_ROOT" -type f -name arm-none-symbianelf-readelf | head -n1)
-CXXFILT=$(find "$TOOLCHAIN_ROOT" -type f -name arm-none-symbianelf-c++filt | head -n1)
+OBJDUMP=$(find "$TOOLCHAIN_ROOT" -type f -name arm-none-symbianelf-objdump | head -n1)
+TARGET_CXXFILT=$(command -v c++filt)
 ELF2E32=$(find "$CONVERTER_ROOT" -type f -name elf2e32 -perm -111 | head -n1)
 test -x "$CXX" && test -x "$LD" && test -x "$READELF"
-test -x "$CXXFILT" && test -x "$ELF2E32"
+test -x "$OBJDUMP" && test -x "$TARGET_CXXFILT" && test -x "$ELF2E32"
 test -s "$DLL"
 test -f "$LIB/euser.dso"
 
 HOST_READELF=$(command -v readelf)
 "$HOST_READELF" --dyn-syms -Ws "$LIB/euser.dso" > "$OUT/euser-dynsym.txt"
-"$CXXFILT" < "$OUT/euser-dynsym.txt" > "$OUT/euser-dynsym-demangled.txt"
+"$TARGET_CXXFILT" < "$OUT/euser-dynsym.txt" > "$OUT/euser-dynsym-demangled.txt"
 if grep -E 'TInt64::operator!=|TTrap::(Trap|UnTrap)' "$OUT/euser-dynsym-demangled.txt"; then
   echo "Unexpected legacy TInt64/TTrap member export in target EUSER DSO" >&2
   exit 1
@@ -60,7 +61,7 @@ if normalized != source:
 PY
 
 # elf2e32 resolves DT_NEEDED by the DSO SONAME, not the SDK's short filename.
-SONAME=$("$READELF" -d "$LIB/euser.dso" | sed -n 's/.*Library soname: \[\(.*\)\].*/\1/p' | head -n1)
+SONAME=$("$HOST_READELF" -d "$LIB/euser.dso" | sed -n 's/.*Library soname: \[\(.*\)\].*/\1/p' | head -n1)
 if [ -n "$SONAME" ] && [ ! -e "$LIB/$SONAME" ]; then
   ln -s "$(basename "$LIB/euser.dso")" "$LIB/$SONAME"
 fi
@@ -85,10 +86,13 @@ fi
   -o "$OUT/probe.elf" "$OUT/probe.o" "$LIB/euser.dso" \
   >> "$OUT/build.log" 2>&1
 
-"$READELF" -h "$OUT/probe.elf" > "$OUT/elf-header.txt"
-"$READELF" -s "$OUT/probe.elf" > "$OUT/elf-symbols.txt"
-"$READELF" -d "$OUT/probe.elf" > "$OUT/elf-dynamic.txt"
-"$CXXFILT" < "$OUT/elf-symbols.txt" > "$OUT/elf-symbols-demangled.txt"
+"$HOST_READELF" -h "$OUT/probe.elf" > "$OUT/elf-header.txt"
+"$HOST_READELF" -s "$OUT/probe.elf" > "$OUT/elf-symbols.txt"
+"$HOST_READELF" -d "$OUT/probe.elf" > "$OUT/elf-dynamic.txt"
+"$TARGET_CXXFILT" < "$OUT/elf-symbols.txt" > "$OUT/elf-symbols-demangled.txt"
+echo "=== Step102 target EABI imports (GNU c++filt) ==="
+grep -E 'RLibrary::|User::' "$OUT/elf-symbols-demangled.txt" || true
+"$OBJDUMP" -dr "$OUT/probe.o" > "$OUT/probe-disassembly.txt"
 grep -q 'RLibrary::Load' "$OUT/elf-symbols-demangled.txt"
 grep -q 'RLibrary::Lookup' "$OUT/elf-symbols-demangled.txt"
 grep -q 'User::InfoPrint' "$OUT/elf-symbols-demangled.txt"
@@ -97,7 +101,7 @@ if grep -E 'TInt64.*operator|TTrap::(Trap|UnTrap)' "$OUT/elf-symbols-demangled.t
   echo "Unexpected legacy TInt64/TTrap dependency in the loader probe" >&2
   exit 1
 fi
-grep -q 'EUSER' "$OUT/elf-dynamic.txt"
+grep -qi 'EUSER' "$OUT/elf-dynamic.txt"
 
 if ! "$ELF2E32" --elfinput="$OUT/probe.elf" \
   --output="$OUT/ShadowkeyAbiProbe.exe" --targettype=EXE \

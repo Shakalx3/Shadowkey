@@ -327,6 +327,7 @@ jobs:
           cat firmware-input/STEP98_TINT64_SHIM_DISASSEMBLY.txt
           rm -f /tmp/step98_host_test /tmp/step98_tint64_shim_probe.o
       - name: Convert isolated TInt64 shim into a minimal E32 DLL
+        id: step99-e32-dll
         run: |
           set -euo pipefail
           CXX=$(find "$RUNNER_TEMP/step82-gcce/root" -type f -name arm-none-symbianelf-g++ | head -n1)
@@ -429,24 +430,27 @@ jobs:
           export_entry=u(export_dir)
           elf=Path(sys.argv[1]).with_name("shim.elf").read_bytes()
           elf_entry=struct.unpack_from("<I",elf,24)[0]
+          code_size=u(0x30)
           h={"size":len(b),"uid1":f"0x{u(0):08X}","uid2":f"0x{u(4):08X}",
              "uid3":f"0x{u(8):08X}","flags":f"0x{flags:08X}",
              "export_dir_offset":export_dir,"export_count":export_count,
-             "export_entry_offset":f"0x{export_entry:08X}",
-             "code_offset":code_offset,"dll_ref_count":u(0x54),"code_size":u(0x30),
+             "export_entry_va":f"0x{export_entry:08X}",
+             "code_offset":code_offset,"dll_ref_count":u(0x54),"code_size":code_size,
              "entry_point_offset":f"0x{entry_offset:08X}",
              "code_base":f"0x{code_base:08X}","elf_entry_point":f"0x{elf_entry:08X}"}
           assert h["uid1"]=="0x10000079",h
           assert h["uid2"]=="0x1000008D",h
           assert (flags & 1)==1,h
           assert h["export_count"]==1,h
-          assert export_entry==0,h
-          assert code_offset+export_entry<export_dir,h
+          # E32 export entries are linked VAs in this image, not zero-based offsets.
+          assert export_entry==code_base,h
+          assert code_base <= export_entry < code_base+code_size,h
+          assert code_offset+(export_entry-code_base)<export_dir,h
           assert h["dll_ref_count"]==0,h
-          assert h["code_size"]>0 and code_base!=0,h
-          assert entry_offset<h["code_size"],h
+          assert code_size>0 and code_base!=0,h
+          assert entry_offset<code_size,h
           assert code_base+entry_offset==elf_entry,h
-          Path(sys.argv[2]).write_text(json.dumps(h,indent=2)+"\\n")
+          Path(sys.argv[2]).write_text(json.dumps(h,indent=2)+"\n")
           print(json.dumps(h,indent=2))
           PY
           echo "PASS: minimal E32 DLL container created and has exactly one export" > "$OUT/STEP99_STATUS.txt"
@@ -455,10 +459,12 @@ jobs:
           cat "$OUT/e32-dump.txt"
           cat "$OUT/STEP99_STATUS.txt"
       - name: Build EKA2 RLibrary loader probe for the isolated TInt64 DLL
+        id: step102-loader-probe
         run: |
           set -euo pipefail
           bash tools/step102_build_loader_probe.sh
       - name: Build EKA2 host with Linux-normalized GCCE headers and public EikStart API
+        if: always()
         run: |
           set -euo pipefail
           bash tools/step90_build_eka2_app_host.sh
@@ -468,6 +474,7 @@ jobs:
         run: |
           set -euo pipefail
           out=firmware-input/STEP90_LEGACY_APP_HOST
+          mkdir -p "$out"
           if [ -s "$out/6R51Host.exe" ] && [ -s "$out/host-e32-header.json" ] && [ -s "$out/host-e32-validated.txt" ]; then
             echo "HOST_E32_BUILD=SUCCESS" | tee "$out/STEP90_BUILD_STATUS.txt"
             cat "$out/host-e32-header.json"
@@ -655,6 +662,7 @@ jobs:
           cat firmware-input/STEP102_FIRMWARE_EXTRACTION_AUDIT.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP102_FIRMWARE_EXTRACTION_AUDIT.md
       - name: Remove large intermediate images and source packages
+        id: cleanup-firmware
         run: |
           rm -rf firmware-input/rofs-candidates firmware-input/rom-modules firmware-input/e32-candidates
           rm -f firmware-input/rom-unpaged-reconstructed.bin firmware-input/rom-reconstructed.bin
@@ -667,6 +675,7 @@ jobs:
           raw_files=$(find firmware-input -type f \( -iname '*.dll' -o -iname '*.c0r' -o -iname '*.fpsx' -o -iname '*.rofs' -o -iname '*.img' -o -iname '*.bin' \) ! -path 'firmware-input/STEP99_TINT64_E32_DLL/ShadowkeyCompat.dll' -print)
           if [ -n "$raw_files" ]; then printf '%s\n' "$raw_files"; exit 1; fi
       - name: Package and publish reversible Step102 first-device test
+        if: always() && steps.step99-e32-dll.outcome == 'success' && steps.step102-loader-probe.outcome == 'success' && steps.cleanup-firmware.outcome == 'success'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

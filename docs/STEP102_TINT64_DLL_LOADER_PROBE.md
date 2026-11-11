@@ -41,16 +41,48 @@ Run 43010636058 added a raw export-table check and exposed an important format d
 
 This remains an E32 container/build proof. The DLL has not yet been passed to RLibrary::Load on Symbian, and no device execution is claimed.
 
-## Step102: loader test being added
+## Step102: target EKA2 loader probe build
 
-source_bundle/host/step102_tint64_loader_probe.cpp and tools/step102_build_loader_probe.sh build a tiny EKA2 EXE linked to the target EUSER DSO. At runtime it:
+The loader probe source is `source_bundle/host/step102_tint64_loader_probe.cpp`; the build is driven by `tools/step102_build_loader_probe.sh`. It compiles a target EKA2 EXE against the pinned S60 3.1 FP1 EUSER DSO and checks the actual EABI imports.
 
-1. calls RLibrary::Load("ShadowkeyCompat.dll");
-2. resolves ordinal 1 with RLibrary::Lookup(1);
-3. calls the export with equal operands, a low-word difference, and a high-word difference;
-4. displays SK DLL PASS only if all three checks succeed.
+Run **43013640871** first exposed a diagnostics bug: host `readelf -s` truncated long mangled names (for example `_ZN8RLib[...]`), so the demangler could not recognize `RLibrary::Load`. The next commit switched target EABI names to GNU `c++filt`; run **43014127693** then passed after `readelf --wide -s` preserved the complete names. The final demangled imports include:
 
-The test EXE does not use the target TRAP macro and does not import the legacy TInt64 member operator. It is deliberately separate from 6R51.APP and contains no game code.
+- `RLibrary::Load(TDesC16 const&, TDesC16 const&)`
+- `RLibrary::Lookup(int) const`
+- `RLibrary::Close()`
+- `User::InfoPrint(TDesC16 const&)`
+- `User::After(TTimeIntervalMicroSeconds32)`
+
+The target EUSER DSO check also passed: no `TInt64::operator!=` or `TTrap::Trap/UnTrap` legacy member export is present.
+
+Observed Step102 test EXE header in run 43014127693:
+
+| Field | Value |
+|---|---:|
+| File size | 667 bytes |
+| UID1 | 0x1000007A (EXE) |
+| UID2 | 0x100039CE |
+| UID3 / SID | 0xE000BEF0 |
+| Flags | 0x12000028 |
+| Code size | 708 bytes |
+| Entry-point offset / VA | 0x20 / 0x00010020 |
+| DLL reference count | 1 (EUSER) |
+| Export count | 0 |
+
+The EXE's source loads `ShadowkeyCompat.dll`, looks up ordinal 1, and checks equal, low-word-different and high-word-different operands. This is compile/link/E32-structure evidence only. It has not been executed by an EKA2 loader on an emulator or a physical N95.
+
+## Step102 first-device probe package
+
+Run **43014127693** built and published the prerelease asset:
+
+- [Shadowkey Step102 first-device loader probe](https://github.com/Shakalx3/Shadowkey/releases/tag/shadowkey-step102-43014127693)
+- Asset: `Shadowkey-Step102-FirstDeviceTest.zip`
+- Size: 2,675 bytes
+- SHA-256: `a976772f3a402e05c6fce4b6bbd68a41db6f5fdd06d56ffed97b69fb7f1f8b64`
+
+The ZIP contains only the custom test DLL, the test EXE, a README and SHA-256 sums. It contains no game binary, ROM image, firmware or system DLL. The Actions artifact upload was rejected because the repository's Actions storage quota was full; the separate GitHub prerelease asset upload succeeded and its release metadata reports the exact asset digest above.
+
+The EXE is a bare `E32Main` test harness, not a registered S60 menu application. It requires an existing trusted launcher that can start a raw E32 EXE. No automatic menu icon or SIS installer is included. If no such launcher is already available, the next packaging task is a registered S60 shell rather than asking the user to try an unverified launch route.
 
 ## Device safety boundary
 
@@ -68,8 +100,11 @@ Rollback is deletion of those two files only. No system DLL or original game bin
 - Step96 target GCCE compile-time ABI checks: PASS.
 - Step100 target primitive TInt64 code generation: PASS.
 - Step98 host semantics and ARMv5TE comparison code generation: PASS.
-- Step99 minimal EKA2 E32 DLL conversion: PASS; artifact upload failed due storage quota, not DLL build.
-- Step102 EKA2 RLibrary loader test: added; CI result pending.
+- Step99 minimal EKA2 E32 DLL conversion: PASS.
+- Step102 EKA2 loader-probe EXE build and E32 validation: PASS in run 43014127693.
+- Step102 prerelease ZIP: published and SHA-256 verified in the workflow log.
 - Symbian loader acceptance: not tested.
 - Physical RM-320 test: not performed.
 - Shadowkey game launch: not achieved.
+
+The package README requires an already-authorized way to write the two unique test binaries to a writable drive's `\\sys\\bin`. It also requires an existing launcher capable of starting the bare E32 EXE. Before any live device instructions, reconfirm the handset's `*#0000#` firmware string and the available cable / memory-card transfer method. If access to `\\sys\\bin` is denied, stop; do not bypass controls, overwrite ROM, or flash firmware.

@@ -299,14 +299,17 @@ jobs:
             -c tools/step98_tint64_shim_probe.cpp -o "$OUT/shim.o"
           # elf2e32 resolves frozen DEF exports from the ELF dynamic symbol table.
           # A plain ld -shared link can leave a function visible only in .symtab.
-          "$LD" -shared --export-dynamic -soname=ShadowkeyCompat{000a0000}.dll -o "$OUT/shim.elf" "$OUT/shim.o"
+          "$LD" -shared --export-dynamic --hash-style=sysv -soname=ShadowkeyCompat{000a0000}.dll -o "$OUT/shim.elf" "$OUT/shim.o"
           "$READELF" -h "$OUT/shim.elf" > "$OUT/elf-header.txt"
           "$READELF" -s "$OUT/shim.elf" > "$OUT/elf-symbols.txt"
           # The bundled GCCE readelf is an older build without --dyn-syms.
           # Host GNU readelf understands ARM ELF and can inspect .dynsym.
           HOST_READELF=$(command -v readelf)
-          "$HOST_READELF" --dyn-syms "$OUT/shim.elf" > "$OUT/elf-dynamic-symbols.txt"
-          grep -q 'Step98TInt64NotEqual' "$OUT/elf-dynamic-symbols.txt"
+          "$HOST_READELF" -l -d --dyn-syms -Ws "$OUT/shim.elf" > "$OUT/elf-linker-diagnostics.txt"
+          cat "$OUT/elf-linker-diagnostics.txt"
+          grep -q '(HASH)' "$OUT/elf-linker-diagnostics.txt"
+          grep -q 'Step98TInt64NotEqual' "$OUT/elf-linker-diagnostics.txt"
+          grep -q 'FUNC.*GLOBAL.*DEFAULT' "$OUT/elf-linker-diagnostics.txt"
           sudo apt-get update -qq
           sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386
           WORK="$RUNNER_TEMP/step99-elf2e32"

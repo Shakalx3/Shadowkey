@@ -300,7 +300,15 @@ jobs:
           # elf2e32 resolves frozen DEF exports from the ELF dynamic symbol table.
           # A plain ld -shared link can leave a function visible only in .symtab.
           # This 2005Q1C Symbian linker predates --hash-style; its default ELF hash is SysV DT_HASH.
-          "$LD" -shared --export-dynamic -soname=ShadowkeyCompat{000a0000}.dll -o "$OUT/shim.elf" "$OUT/shim.o"
+          "$CXX" -march=armv5te -marm -O1 -fPIC -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
+            -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \
+            -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__DLL__ -D_UNICODE \
+            -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \
+            -c tools/step99_e32_dll_marker.cpp -o "$OUT/dll-marker.o"
+          # elf2e32 detects DLLs from the _E32Dll static symbol, not from --targettype alone.
+          # E32Dll is a real entry point so the generated E32 header does not have a zero entry.
+          "$LD" -shared --export-dynamic -e E32Dll -Ttext 0x10000 \
+            -soname=ShadowkeyCompat{000a0000}.dll -o "$OUT/shim.elf" "$OUT/shim.o" "$OUT/dll-marker.o"
           "$READELF" -h "$OUT/shim.elf" > "$OUT/elf-header.txt"
           "$READELF" -s "$OUT/shim.elf" > "$OUT/elf-symbols.txt"
           # The bundled GCCE readelf is an older build without --dyn-syms.
@@ -311,6 +319,8 @@ jobs:
           grep -q '(HASH)' "$OUT/elf-linker-diagnostics.txt"
           grep -q 'Step98TInt64NotEqual' "$OUT/elf-linker-diagnostics.txt"
           grep -q 'FUNC.*GLOBAL.*DEFAULT' "$OUT/elf-linker-diagnostics.txt"
+          grep -q '_E32Dll' "$OUT/elf-symbols.txt"
+          grep -q 'E32Dll' "$OUT/elf-symbols.txt"
           sudo apt-get update -qq
           sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386
           WORK="$RUNNER_TEMP/step99-elf2e32"
@@ -364,13 +374,22 @@ jobs:
           if len(b)<0x80 or b[0x10:0x14]!=b"EPOC":
               raise SystemExit("not a valid E32 image")
           u=lambda off: struct.unpack_from("<I",b,off)[0]
+          entry_offset=u(0x48); code_base=u(0x4c); flags=u(0x2c)
+          elf=Path(sys.argv[1]).with_name("shim.elf").read_bytes()
+          elf_entry=struct.unpack_from("<I",elf,24)[0]
           h={"size":len(b),"uid1":f"0x{u(0):08X}","uid2":f"0x{u(4):08X}",
-             "uid3":f"0x{u(8):08X}","flags":f"0x{u(0x2c):08X}",
+             "uid3":f"0x{u(8):08X}","flags":f"0x{flags:08X}",
              "export_dir_offset":u(0x58),"export_count":u(0x5c),
-             "dll_ref_count":u(0x54),"code_size":u(0x30)}
+             "dll_ref_count":u(0x54),"code_size":u(0x30),
+             "entry_point_offset":f"0x{entry_offset:08X}",
+             "code_base":f"0x{code_base:08X}","elf_entry_point":f"0x{elf_entry:08X}"}
           assert h["uid1"]=="0x10000079",h
+          assert h["uid2"]=="0x1000008D",h
+          assert (flags & 1)==1,h
           assert h["export_count"]==1,h
-          assert h["code_size"]>0,h
+          assert h["code_size"]>0 and code_base!=0,h
+          assert entry_offset<h["code_size"],h
+          assert code_base+entry_offset==elf_entry,h
           Path(sys.argv[2]).write_text(json.dumps(h,indent=2)+"\\n")
           print(json.dumps(h,indent=2))
           PY

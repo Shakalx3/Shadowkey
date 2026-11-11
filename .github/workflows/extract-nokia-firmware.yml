@@ -305,9 +305,9 @@ jobs:
             -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__DLL__ -D_UNICODE \
             -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \
             -c tools/step99_e32_dll_marker.cpp -o "$OUT/dll-marker.o"
-          # elf2e32 detects DLLs from the _E32Dll static symbol, not from --targettype alone.
-          # E32Dll is a real entry point so the generated E32 header does not have a zero entry.
-          "$LD" -shared --export-dynamic -e E32Dll -Ttext 0x10000 \
+          # elf2e32 detects DLLs from a static _E32Dll symbol; use a code symbol, not BSS data.
+          # It is also the actual DLL entry point, matching the EKA2 entry-point convention.
+          "$LD" -shared --export-dynamic -e _E32Dll -Ttext 0x10000 \
             -soname=ShadowkeyCompat{000a0000}.dll -o "$OUT/shim.elf" "$OUT/shim.o" "$OUT/dll-marker.o"
           "$READELF" -h "$OUT/shim.elf" > "$OUT/elf-header.txt"
           "$READELF" -s "$OUT/shim.elf" > "$OUT/elf-symbols.txt"
@@ -319,8 +319,7 @@ jobs:
           grep -q '(HASH)' "$OUT/elf-linker-diagnostics.txt"
           grep -q 'Step98TInt64NotEqual' "$OUT/elf-linker-diagnostics.txt"
           grep -q 'FUNC.*GLOBAL.*DEFAULT' "$OUT/elf-linker-diagnostics.txt"
-          grep -q '_E32Dll' "$OUT/elf-symbols.txt"
-          grep -q 'E32Dll' "$OUT/elf-symbols.txt"
+          grep -q 'FUNC.*_E32Dll' "$OUT/elf-symbols.txt"
           sudo apt-get update -qq
           sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386
           WORK="$RUNNER_TEMP/step99-elf2e32"

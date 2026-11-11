@@ -17,6 +17,7 @@ on:
       - "tools/step98_tint64_shim_probe.cpp"
       - "tools/step99_e32_dll_marker.cpp"
       - "tools/step100_tint64_builtin_probe.cpp"
+      - "tools/step103_analyze_local_shim_patch.py"
       - "source_bundle/host/step102_tint64_loader_probe.cpp"
       - "tools/step102_build_loader_probe.sh"
       - "tools/step102_package_device_probe.py"

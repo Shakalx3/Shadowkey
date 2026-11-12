@@ -121,12 +121,8 @@ def lfn_piece(entry: bytes) -> str:
         + list(struct.unpack_from("<6H", entry, 14))
         + list(struct.unpack_from("<2H", entry, 28))
     )
-    chars = []
-    for word in words:
-        if word in (0x0000, 0xFFFF):
-            continue
-        chars.append(chr(word))
-    return "".join(chars)
+    raw = struct.pack("<13H", *words)
+    return raw.decode("utf-16le", errors="replace").split("\0", 1)[0].replace("\uffff", "")
 
 
 def inspect_volume(image: bytes, bpb: dict) -> dict:

@@ -244,6 +244,7 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         except (ValueError, zlib.error, struct.error) as exc:
             row["status"] = "COMPRESSED_UNDECODED"
             row["reason"] = str(exc)
+            row["iat_matches"] = None
             row["compression_algorithm"] = {
                 DEFLATE_UID: "deflate",
                 BYTEPAIR_UID: "bytepair",
@@ -515,12 +516,11 @@ def self_test() -> None:
     row, _, _ = parse_candidate(bytes(bad_iat), "TEST", "sys/bin/bad.dll")
     assert row["status"] == "PARTIAL" and "IAT values differ" in row["reason"], row
 
-    compressed = bytearray(good)
-    struct.pack_into("<I", compressed, 0x1C, 1)
-    struct.pack_into("<I", compressed, 0x30, 0x1000)
-    row, _, imports = parse_candidate(bytes(compressed), "TEST", "sys/bin/compressed.dll")
-    assert row["status"] == "PARTIAL" and row["iat_matches"] is None, row
-    assert imports and imports[0]["iat_value_matches"] == "not-checked-compressed", imports
+    unknown_compression = bytearray(good)
+    struct.pack_into("<I", unknown_compression, 0x1C, 1)
+    row, _, imports = parse_candidate(bytes(unknown_compression), "TEST", "sys/bin/unknown-compression.dll")
+    assert row["status"] == "COMPRESSED_UNDECODED" and row["iat_matches"] is None, row
+    assert not imports, imports
 
     truncated = good[:0x90]
     row, _, _ = parse_candidate(truncated, "TEST", "sys/bin/truncated.dll")

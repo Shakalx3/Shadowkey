@@ -154,8 +154,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m py_compile tools/step112_audit_uda_fat16.py
-          python3 tools/step112_audit_uda_fat16.py --self-test
-          python3 tools/step112_audit_uda_fat16.py --image firmware-parsed/uda/userarea.img --out firmware-input/STEP112_UDA_FAT16_AUDIT.md
+          python3 tools/step112_audit_uda_fat16.py --self-test --image firmware-parsed/uda/userarea.img --out firmware-input/STEP112_UDA_FAT16_AUDIT.md
           cat firmware-input/STEP112_UDA_FAT16_AUDIT.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP112_UDA_FAT16_AUDIT.md
       - name: Probe PPM ROFx using a temporary magic-only copy

@@ -55,7 +55,7 @@ The existing parser tries zlib-wrapped and raw Deflate and has a bounded BytePai
 
 ## Step112 UDA FAT16 audit — now wired into CI
 
-The read-only Step112 tool already has two synthetic tests for a FAT16 volume and an MBR-partitioned volume. This change invokes it against the actual extracted UDA image before cleanup and adds its text report to the Actions job summary. The audit validates the BPB, FAT16 cluster chains, directory tree and presence of SYS/BIN; it does not modify or extract files.
+The read-only Step112 tool already has two synthetic tests for a FAT16 volume and an MBR-partitioned volume. The first integration run, 43219534563, exposed a CLI contract: --image is required even when --self-test is supplied. The workflow now invokes the self-tests and the actual UDA image audit in one command, satisfying both requirements. The audit validates the BPB, FAT16 cluster chains, directory tree and presence of SYS/BIN; it does not modify or extract files.
 
 A valid UDA tree is independent of the C0R/PPM ROFS/ROFx system filesystem and must not be mistaken for system ROM content.
 

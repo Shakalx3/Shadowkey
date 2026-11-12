@@ -15,13 +15,13 @@ The unpacker objects had compiled. This was a CI dependency/library-search-path 
 
 ## Latest successful firmware reconstruction
 
-Firmware workflow [43210325818](https://github.com/Shakalx3/Shadowkey/actions/runs/43210325818), commit `838ccee15afd0b241984df9a91701a60bdf9fdc3`, completed the full extraction, Step96 ABI, Step99 DLL-conversion, Step102 EKA2 loader-probe build, and ROM-export inventory job successfully.
+The latest fully successful firmware baseline is workflow [43212434654](https://github.com/Shakalx3/Shadowkey/actions/runs/43212434654), commit `da975370f972f2acec11a75cb5ad54e1c427ca89`. It completed the extraction, Step96 ABI, Step99 DLL conversion, Step102 EKA2 loader-probe build, Step109 merge, and ROM-export inventory. The earlier [43210325818](https://github.com/Shakalx3/Shadowkey/actions/runs/43210325818) run also passed and published the first Step102 probe release.
 
 ### UDA, PPM, and C0R interpretation
 
 | Input | Verified output | Interpretation |
 |---|---|---|
-| UDA FPSX | `uda/userarea.img`, 41,206,272 bytes | User-area image, not the system ROM. The Step106 audit records a FAT16 inspection with SYS/BIN and 432 files. |
+| UDA FPSX | `uda/userarea.img`, 41,206,272 bytes | User-area image, not the system ROM. The current workflow emits the image but does not yet produce a verified directory tree. A read-only FAT16 audit has been added as Step112 and still needs to run against this image. |
 | PPM FPSX | `ppm/rofs.img`, 104,101,376 bytes | Sparse flash-address image, not a directly extracted filesystem. Its SOS+ROFx extension is carved and reconstructed separately. |
 | C0R / CORE FPSX | `core/rofs.img`, 82,740,224 bytes, plus PAPUBKEYS | Sparse flash-address image. It contains separate SOS+ROFS and SOS+CORE partitions. |
 
@@ -96,6 +96,10 @@ Step95/96/100 independently confirm that target S60 3.1 FP1 GCCE treats TInt64 a
 Step108/109 originally labelled the 32-bit word at file offset 0x14 as `cpu`. That was incorrect for these EKA2 filesystem images: the existing EKA2 inspectors identify offset 0x14 as the E32 header CRC; the legacy EKA1 header uses a different layout. The TSV/manifest field is corrected to `header_crc` in both extractors.
 
 Added `tools/step111_validate_rofs_e32_candidates.py`. It will validate the 135 merged EPOC-signature candidates using the S60 3.1 FP1 EKA2 header layout, bounds-check export tables, inspect import descriptors and compare uncompressed IAT values to import ordinals. It emits text/JSON/TSV inventories only. Its five synthetic tests are included in the next firmware workflow run. Compressed payloads will be classified as partially validated unless decompressed; header CRC values are recorded but not recomputed.
+
+The first Step111 validator run ([43212434654](https://github.com/Shakalx3/Shadowkey/actions/runs/43212434654)) found that all 135 candidates carry a nonzero compression UID. It therefore reported 0 structurally valid files while still reading 1,104 candidate export rows; the common errors were offsets outside the compressed on-disk file. This is not evidence that all 135 files are corrupt. For compressed E32 images, the section offsets are interpreted after inflation, not against the compressed byte stream. The parser has to inflate the payload first.
+
+The existing Step109 inventory has now been extended to inflate Deflate (UID 0x101F7AFC) and BytePair (UID 0x102822AA) E32 payloads before checking export/import tables. Its synthetic tests cover both algorithms. The first workflow attempt stopped in the self-test because an old test fixture used an unsupported compression UID without an uncompressed-size field; that fixture was corrected. The next firmware run is the first production test of the decompression path.
 
 The 135 filesystem candidates are separate from the seven XIP ROM modules above. An EPOC marker alone is not treated as proof of a valid E32 image.
 

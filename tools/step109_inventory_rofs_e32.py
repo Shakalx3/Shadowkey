@@ -42,6 +42,11 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         "uid1": "",
         "uid2": "",
         "uid3": "",
+        "header_crc": "",
+        "module_version": "",
+        "tools_version": "",
+        "entry_point": "",
+        "data_base": "",
         "kind": "",
         "flags": "",
         "compression_type": "",
@@ -82,7 +87,12 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
 
     try:
         fields = {
+            "header_crc": u32(data, 0x14),
+            "module_version": u32(data, 0x18),
+            "tools_version": u32(data, 0x20),
             "flags": u32(data, 0x2C),
+            "entry_point": u32(data, 0x48),
+            "data_base": u32(data, 0x50),
             "code_size": u32(data, 0x30),
             "data_size": u32(data, 0x34),
             "dll_ref_count": u32(data, 0x54),
@@ -98,7 +108,7 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
             "compression_type": u32(data, 0x1C),
         }
         row.update(fields)
-        for key in ("flags", "compression_type", "code_base"):
+        for key in ("header_crc", "module_version", "tools_version", "flags", "compression_type", "code_base", "entry_point", "data_base"):
             row[key] = f"0x{row[key]:08X}"
 
         errors: list[str] = []
@@ -111,12 +121,21 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         text_size = fields["text_size"]
         dll_count = fields["dll_ref_count"]
 
-        if code_size == 0 or code_off < 0x7C or code_off > len(data) or code_size > len(data) - code_off:
-            errors.append("code segment is empty or outside file")
+        compressed = fields["compression_type"] != 0
+        if code_size == 0 or code_off < 0x7C or code_off > len(data):
+            errors.append("code segment is empty or its offset is outside file")
+        elif not compressed and code_size > len(data) - code_off:
+            errors.append("uncompressed code segment is outside file")
         if import_off < code_off or import_off > len(data) - 4:
             errors.append("import offset is outside file/code region")
-        elif code_off + code_size != import_off:
+        elif not compressed and code_off + code_size != import_off:
             warnings.append("code segment does not end at import offset")
+        if compressed:
+            warnings.append("compressed image: code payload and IAT bytes are not decoded")
+        if fields["data_size"] and fields["data_offset"] >= len(data):
+            errors.append("data offset is outside file")
+        elif fields["data_size"] and not compressed and fields["data_size"] > len(data) - fields["data_offset"]:
+            errors.append("uncompressed data segment is outside file")
         if export_count > MAX_EXPORTS:
             errors.append(f"export count exceeds safety cap {MAX_EXPORTS}")
         export_bytes = export_count * 4
@@ -187,7 +206,7 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
                 total_imports = 0
                 parsed_blocks = 0
                 iat_matches = True
-                code_bytes = data[code_off:code_off + code_size]
+                code_bytes = data[code_off:code_off + code_size] if not compressed else b""
                 for block_index in range(dll_count):
                     if pos + 8 > import_end:
                         errors.append(f"import descriptor {block_index} exceeds import table")
@@ -211,19 +230,23 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
                     name = data[name_off:name_end].decode("ascii", "replace")
                     ordinals = struct.unpack_from("<" + "I" * count, data, pos + 8) if count else ()
                     iat_off = text_size + total_imports * 4
-                    if iat_off > code_size or count * 4 > code_size - iat_off:
-                        errors.append(f"IAT block {block_index} exceeds code segment")
-                        break
-                    iat_values = struct.unpack_from("<" + "I" * count, code_bytes, iat_off) if count else ()
-                    block_match = tuple(iat_values) == tuple(ordinals)
-                    if not block_match:
-                        iat_matches = False
-                        warnings.append(f"IAT values differ from ordinal array for {name}")
+                    if compressed:
+                        block_match = None
+                    else:
+                        if iat_off > code_size or count * 4 > code_size - iat_off:
+                            errors.append(f"IAT block {block_index} exceeds code segment")
+                            break
+                        iat_values = struct.unpack_from("<" + "I" * count, code_bytes, iat_off) if count else ()
+                        block_match = tuple(iat_values) == tuple(ordinals)
+                        if not block_match:
+                            iat_matches = False
+                            warnings.append(f"IAT values differ from ordinal array for {name}")
                     for index, ordinal in enumerate(ordinals):
                         imports.append({
                             "image": image, "path": path, "dependency": name,
-                            "ordinal": ordinal, "iat_file_offset": f"0x{code_off + iat_off + index * 4:08X}",
-                            "iat_value_matches": str(block_match).lower(),
+                            "ordinal": ordinal,
+                            "iat_file_offset": "" if compressed else f"0x{code_off + iat_off + index * 4:08X}",
+                            "iat_value_matches": "not-checked-compressed" if block_match is None else str(block_match).lower(),
                         })
                     total_imports += count
                     parsed_blocks += 1
@@ -354,7 +377,8 @@ def main() -> int:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     module_fields = [
         "image", "path", "size", "sha256", "status", "reason", "uid1", "uid2", "uid3",
-        "kind", "flags", "compression_type", "code_base", "code_size", "data_size",
+        "header_crc", "module_version", "tools_version", "kind", "flags", "compression_type",
+        "code_base", "entry_point", "data_base", "code_size", "data_size",
         "code_offset", "data_offset", "text_size", "import_offset", "import_size",
         "code_reloc_offset", "data_reloc_offset", "export_dir_offset", "export_count",
         "valid_exports", "zero_exports", "invalid_exports", "dll_ref_count", "import_count",

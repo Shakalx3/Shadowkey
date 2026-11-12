@@ -392,7 +392,7 @@ def self_test() -> None:
     parsed, _ = inspect_image(bytes(bad_export), "bad-export.dll")
     assert parsed["status"] == "INVALID", parsed
 
-    truncated = b"\x00" * 0x14 + b"EPOC"
+    truncated = b"\x00" * 0x10 + b"EPOC"
     parsed, _ = inspect_image(truncated, "truncated.dll")
     assert parsed["status"] == "INVALID", parsed
     print("Step111 EKA2 E32 candidate self-tests: PASS (5/5)")

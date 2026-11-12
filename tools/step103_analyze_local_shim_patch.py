@@ -31,6 +31,10 @@ def parse_eka1_reloc(data: bytes, off: int, code_off: int, expected_file_offsets
         return {"present": True, "offset": off, "valid_header_bounds": False}
     section_size, declared_count = struct.unpack_from("<II", data, off)
     expected_rel = {x - code_off for x in expected_file_offsets}
+    # step86's bytewise scan also finds unaligned coincidental 32-bit patterns.
+    # ARM literal-pool/IAT pointer words must be word-aligned relocation sites.
+    aligned_expected_rel = {x for x in expected_rel if (x & 3) == 0}
+    unaligned_expected_rel = expected_rel - aligned_expected_rel
     attempts = []
     for includes_header in (True, False):
         end = off + section_size if includes_header else off + 8 + section_size
@@ -78,7 +82,11 @@ def parse_eka1_reloc(data: bytes, off: int, code_off: int, expected_file_offsets
             "declared_relocation_count": declared_count, "type_counts": type_counts,
             "bad_type_entries": bad_types, "unaligned_page_offsets": bad_pages,
             "expected_iat_references": len(expected_rel),
-            "matched_iat_references": len(expected_rel & targets),
+            "unaligned_byte_scan_matches": len(unaligned_expected_rel),
+            "aligned_expected_iat_references": len(aligned_expected_rel),
+            "matched_aligned_iat_references": len(aligned_expected_rel & targets),
+            "missing_aligned_iat_references": [f"0x{x + code_off:08X}" for x in sorted(aligned_expected_rel - targets)],
+            "matched_iat_references_all_offsets": len(expected_rel & targets),
             "missing_iat_references": [f"0x{x + code_off:08X}" for x in sorted(expected_rel - targets)[:24]],
             "target_literal_relocated": target_file_offset is not None and (target_file_offset - code_off) in targets,
             "first_blocks": first_blocks, "error": error, "valid": valid
@@ -331,7 +339,7 @@ def main() -> None:
             "The stored code checksum does not match the computed code-size word sum; resolve this before modifying code bytes.",
             "Use EKA1 relocation offsets at 0x70 and 0x74; 0x78 is process priority, not a relocation offset or size.",
             "The code relocation section follows the import table; update iCodeRelocOffset by the import-table growth.",
-            "Verify parsed relocation blocks and IAT-literal coverage before any patch.",
+            "Verify parsed relocation blocks and word-aligned IAT-literal coverage before any patch.",
             "Verify every IAT literal rewrite against ARM disassembly, not only byte-pattern scans.",
             "Write a separate patched copy and byte-compare all untouched ranges; never overwrite 6R51.APP.",
             "Test the patched image with an EKA2 loader before any game launch attempt.",

@@ -196,6 +196,8 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         "kind": "",
         "flags": "",
         "compression_type": "",
+        "compression_header_hex": "",
+        "compressed_payload_prefix_hex": "",
         "compression_algorithm": "none",
         "uncompressed_size_field": 0,
         "decompression_size_mode": "",
@@ -239,6 +241,9 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
     original_compression = u32(data, 0x1C)
     row["compression_type"] = f"0x{original_compression:08X}"
     if original_compression:
+        # Preserve only a short header/payload prefix for diagnosis; never emit module code.
+        row["compression_header_hex"] = data[0x7C:min(len(data), 0x90)].hex()
+        row["compressed_payload_prefix_hex"] = data[0x80:min(len(data), 0xA0)].hex()
         try:
             data, inflation = inflate_e32(data)
         except (ValueError, zlib.error, struct.error) as exc:
@@ -580,7 +585,7 @@ def main() -> int:
     module_fields = [
         "image", "path", "size", "sha256", "status", "reason", "uid1", "uid2", "uid3",
         "header_crc", "module_version", "tools_version", "kind", "flags", "compression_type",
-        "compression_algorithm", "uncompressed_size_field", "decompression_size_mode",
+        "compression_header_hex", "compressed_payload_prefix_hex", "compression_algorithm", "uncompressed_size_field", "decompression_size_mode",
         "decompressed", "flat_size", "code_base", "entry_point", "data_base", "code_size", "data_size",
         "code_offset", "data_offset", "text_size", "import_offset", "import_size",
         "code_reloc_offset", "data_reloc_offset", "export_dir_offset", "export_count",
@@ -601,12 +606,17 @@ def main() -> int:
     counts = Counter(row.get("status", "UNKNOWN") for row in rows)
     compression_counts = Counter(row.get("compression_type", "unknown") for row in rows)
     decompressed_count = sum(1 for row in rows if row.get("decompressed"))
+    decompression_error_counts = Counter(
+        row.get("reason") or "unspecified decompression failure"
+        for row in rows if row.get("status") == "COMPRESSED_UNDECODED"
+    )
     summary = {
         "format": "Step109 bounded ROFS/ROFx E32 inventory",
         "candidate_count": len(rows),
         "status_counts": dict(sorted(counts.items())),
         "compression_type_counts": dict(sorted(compression_counts.items())),
         "decompressed_modules": decompressed_count,
+        "decompression_error_counts": dict(sorted(decompression_error_counts.items())),
         "structurally_valid_modules": sum(1 for row in rows if row.get("status") == "PASS"),
         "export_rows": len(exports),
         "import_rows": len(imports),
@@ -631,9 +641,28 @@ def main() -> int:
         f"- Status counts: `{dict(sorted(counts.items()))}`",
         f"- Compression UID counts: `{dict(sorted(compression_counts.items()))}`",
         f"- Compressed modules successfully inflated: **{decompressed_count}**",
+        f"- Decompression error counts: {dict(sorted(decompression_error_counts.items()))}",
         f"- Structurally valid modules: **{summary['structurally_valid_modules']}**",
         f"- Decoded export rows: **{len(exports)}**",
         f"- Decoded import rows: **{len(imports)}**",
+        "",
+        "## Decompression diagnostics",
+        "",
+    ]
+    for message, count in decompression_error_counts.most_common(10):
+        lines.append(f"- {count} candidate(s): {message}")
+    samples = [row for row in rows if row.get("status") == "COMPRESSED_UNDECODED"][:8]
+    if samples:
+        lines += ["", "### First failed candidates (header/payload prefixes only)", ""]
+        for row in samples:
+            lines.append(
+                "- {} ({}, size-field=0x{:08X}): {}; header={}; payload={}".format(
+                    row["path"], row["compression_algorithm"],
+                    int(row.get("uncompressed_size_field") or 0), row["reason"],
+                    row["compression_header_hex"], row["compressed_payload_prefix_hex"]
+                )
+            )
+    lines += [
         "",
         "## Structurally valid candidates",
         "",

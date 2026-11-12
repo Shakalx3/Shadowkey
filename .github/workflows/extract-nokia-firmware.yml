@@ -29,7 +29,9 @@ on:
       - "tools/step108_extract_rofs_local_files.py"
       - "tools/step109_resolve_rofx_base_references.py"
       - "tools/step109_inventory_rofs_e32.py"
+      - "tools/step112_audit_uda_fat16.py"
       - "docs/STEP111_ROFX_MERGE_AND_N95_ROM_EXPORTS.md"
+      - "docs/STEP113_FIRMWARE_AUDIT_DIAGNOSTICS.md"
   workflow_dispatch:
 
 permissions:
@@ -148,6 +150,14 @@ jobs:
             echo "Parsed files:"
             cat firmware-input/PARSED_FILES.tsv
           } > firmware-input/PARSER_SUMMARY.txt
+      - name: Audit extracted UDA user-area filesystem
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step112_audit_uda_fat16.py
+          python3 tools/step112_audit_uda_fat16.py --self-test
+          python3 tools/step112_audit_uda_fat16.py --image firmware-parsed/uda/userarea.img --out firmware-input/STEP112_UDA_FAT16_AUDIT.md
+          cat firmware-input/STEP112_UDA_FAT16_AUDIT.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP112_UDA_FAT16_AUDIT.md
       - name: Probe PPM ROFx using a temporary magic-only copy
         run: |
           set -euo pipefail
@@ -808,6 +818,7 @@ jobs:
             firmware-input/STEP102_TINT64_LOADER_PROBE/e32-header.json
             firmware-input/STEP102_TINT64_LOADER_PROBE/e32-dump.txt
             firmware-input/STEP102_FIRMWARE_EXTRACTION_AUDIT.md
+            firmware-input/STEP112_UDA_FAT16_AUDIT.md
             firmware-input/STEP80_GAME_IMPORT_ROM_REMAP.tsv
             firmware-input/STEP82_GAME_IMPORT_TARGET_MAP.tsv
             firmware-input/STEP82_IMPORT_MAPPING_SUMMARY.json

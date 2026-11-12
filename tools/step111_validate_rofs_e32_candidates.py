@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+from collections import Counter
 import json
 import struct
 from pathlib import Path
@@ -263,11 +264,15 @@ def write_reports(results: list[dict], exports: list[dict], out_dir: Path) -> di
     for row in results:
         kind = row.get("module_kind", "UNKNOWN")
         kinds[kind] = kinds.get(kind, 0) + 1
+    error_counts = Counter(message for row in results for message in row.get("errors", []))
+    warning_counts = Counter(message for row in results for message in row.get("warnings", []))
     summary = {
         "format": "S60 3.1 FP1 EKA2 E32 candidate validation",
         "candidate_count": len(results),
         "status_counts": counts,
         "module_kind_counts": kinds,
+        "error_counts": dict(error_counts.most_common()),
+        "warning_counts": dict(warning_counts.most_common()),
         "export_rows": len(exports),
         "valid_export_rows": sum(1 for row in exports if row["valid_code_offset"]),
         "import_ordinal_count": sum(int(row.get("import_ordinal_count", 0)) for row in results),
@@ -316,6 +321,11 @@ def write_reports(results: list[dict], exports: list[dict], out_dir: Path) -> di
     ]
     for kind, count in sorted(kinds.items()):
         lines.append(f"| {kind} | {count} |")
+    lines += ["", "## Most frequent parser findings", ""]
+    for message, count in error_counts.most_common(12):
+        lines.append(f"- ERROR x{count}: {message}")
+    for message, count in warning_counts.most_common(8):
+        lines.append(f"- WARNING x{count}: {message}")
     lines += [
         "",
         "Detailed module and export inventories are in STEP111_E32_MODULES.tsv and STEP111_E32_EXPORTS.tsv.",

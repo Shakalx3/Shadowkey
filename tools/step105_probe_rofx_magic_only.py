@@ -77,7 +77,7 @@ def main():
     (a.out_dir/"STEP105_ROFX_MAGIC_PROBE.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
     lines=[
         "# Step105 — PPM ROFx magic-only probe","",
-        "The source image is read-only. A temporary copy was changed at exactly four bytes and deleted after the test.","",
+        "The source image is read-only. A temporary copy changed only the final magic byte at offset 0x403 and was deleted after the test.","",
         f"- Result: **{result['result']}**",
         f"- Source unchanged: **{result['source_unchanged']}**",
         f"- Source size/SHA-256: {len(original)} / {before}",

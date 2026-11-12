@@ -25,6 +25,7 @@ on:
       - "tools/step102_package_device_probe.py"
       - "tools/step102_summarize_firmware_extraction.py"
       - "docs/STEP96_TTRAP_ABI_PROBE.md"
+      - "tools/step106_audit_rofs_tree.py"
   workflow_dispatch:
 
 permissions:
@@ -154,6 +155,17 @@ jobs:
             --library-path /usr/local/lib64:/tmp/libunixpp
           cat firmware-input/STEP105_ROFX_MAGIC_PROBE.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP105_ROFX_MAGIC_PROBE.md
+      - name: Audit ROFS and ROFx trees using Symbian structures
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step106_audit_rofs_tree.py
+          python3 tools/step106_audit_rofs_tree.py --self-test
+          python3 tools/step106_audit_rofs_tree.py \
+            --image C0R_SOS_ROFS=firmware-parsed/carved/core-sos-rofs.rofs \
+            --image PPM_SOS_ROFX=firmware-parsed/carved/ppm-sos-rofx.rofs \
+            --out-dir firmware-input
+          cat firmware-input/STEP106_ROFS_DIRECTORY_AUDIT.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP106_ROFS_DIRECTORY_AUDIT.md
       - name: Download pinned S60 3.1 FP1 devkit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

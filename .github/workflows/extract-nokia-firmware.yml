@@ -185,12 +185,7 @@ jobs:
           set -euo pipefail
           python3 -m py_compile tools/step109_resolve_rofx_base_references.py
           python3 tools/step109_resolve_rofx_base_references.py --self-test
-          python3 tools/step109_resolve_rofx_base_references.py \\
-            --base firmware-parsed/carved/core-sos-rofs.rofs \\
-            --extension firmware-parsed/carved/ppm-sos-rofx.rofs \\
-            --out-dir firmware-parsed/step109-merged \\
-            --report-dir firmware-input \\
-            --label PPM_OVER_C0R
+          python3 tools/step109_resolve_rofx_base_references.py --base firmware-parsed/carved/core-sos-rofs.rofs --extension firmware-parsed/carved/ppm-sos-rofx.rofs --out-dir firmware-parsed/step109-merged --report-dir firmware-input --label PPM_OVER_C0R
           cat firmware-input/STEP109_ROFX_BASE_REFERENCE_RESOLUTION.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP109_ROFX_BASE_REFERENCE_RESOLUTION.md
           cat firmware-input/STEP109_MERGED_E32_CANDIDATES.tsv

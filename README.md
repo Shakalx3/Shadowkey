@@ -19,15 +19,20 @@ Both platform generations are now pinned and available to the project:
 
 See [Step54: both SDKs pinned and expected development impact](docs/STEP54_BOTH_SDKS_PINNED_AND_IMPACT.md). The N-Gage SDK components are not covered by the upstream toolchain's MIT license, so we reference the original repository rather than duplicating its proprietary SDK payload. SDK availability does not itself prove a successful N95 launch.
 
-## Current verified state — Step102 EKA2 loader probe built; device test pending
+## Current verified state — firmware reconstruction and Step102 loader probe; device test pending
 
-As of 2026-11-11:
+As of 2026-11-12:
 
 - Step96 target GCCE compile-time checks pass: `TInt64` is 8 bytes; `TTrap` is 76 bytes with offsets `0/64/68/72`.
 - Step100 confirms target `TInt64` is a signed built-in integer, not the old N-Gage class. Target `e32def.h` explicitly says that from Symbian OS 8.1b the old class member functions are no longer exported from EUSER.LIB. This explains why N-Gage ARM UREL EUSER 1575 (`TInt64::operator!=`) has no target signature. The N95's same-numbered ordinal is a different API and must not be substituted.
 - Step98 host semantic tests and ARMv5TE comparison code generation pass. Step99 converts the isolated two-word comparison shim into a 244-byte E32 DLL.
-- Step102 builds a 667-byte EKA2 EXE that imports target `RLibrary::Load/Lookup` and EUSER reporting functions. Run 43014127693 passed the static build/E32 checks and published a small prerelease package: [Step102 first-device loader probe](https://github.com/Shakalx3/Shadowkey/releases/tag/shadowkey-step102-43014127693).
+- Step102 builds a 667-byte EKA2 EXE that imports target `RLibrary::Load/Lookup` and EUSER reporting functions. Run 43014127693 passed the static build/E32 checks and published a small prerelease package: [Step102 first-device loader probe](https://github.com/Shakalx3/Shadowkey/releases/tag/shadowkey-step102-43210325818).
 - The Step102 package tests only custom DLL loading and a two-word comparison. It contains no Shadowkey game code. It has not been run on a Symbian loader or on a physical N95.
+
+- Firmware run [43210325818](https://github.com/Shakalx3/Shadowkey/actions/runs/43210325818) reconstructs the RM-320 v35 SOS+CORE ROM: 25 XIP modules and 15,412 raw export rows. All seven focus ROM modules (EUSER, CONE, GDI, FBSCLI, EIKCORE, WS32, EFSRV) were found and their export counts cross-checked against the S60 3.1 FP1 SDK DSOs.
+- The C0R ROFS / PPM ROFx merge now resolves all 1,441 external references by exact address, path, size and UID bytes; the merged tree contains 5,909 files / 40,035,661 bytes. It yields 135 EPOC-signature E32 candidates for a separate structural/export-table validation pass.
+- The historical firmware run 42604419519 failed at link time because the CI image could not find libunix++; later workflow revisions fixed the library path. This was not a firmware-format failure.
+- Step111 records the extraction and ROM inventory in [the firmware checkpoint](docs/STEP111_ROFX_MERGE_AND_N95_ROM_EXPORTS.md). The new E32 candidate validator is queued for the next firmware workflow run; an EPOC signature alone is not treated as a valid E32 image.
 - The EXE is a bare `E32Main` harness, not a registered S60 menu application. It requires an existing trusted launcher capable of starting a raw E32 EXE. No SIS installer or registration resource is included.
 
 The original `6R51.APP` remains a legacy application DLL with 20 import dependencies and 415 IAT slots. EUSER 1575 is a precise local-shim candidate (thunk `0x1009F240`, IAT slot `0x101007E8`, one literal reference), but no import-table patch has been made. The full game import map still contains 34 imports without a target signature, and other class-layout/wrapper issues remain. A shim DLL alone is not a port and does not prove the original app can load under EKA2.

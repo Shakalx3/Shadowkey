@@ -114,18 +114,13 @@ class Audit:
         count = 0
         while pos < end:
             remaining = end - pos
-            if remaining < 32:
+            if remaining <= 3:
                 tail = self.payload[pos:end]
-                if len(tail) <= 3 and not any(tail):
+                if not any(tail):
                     self.warnings.append(
                         f"{path}: {len(tail)} zero trailing byte(s) in file-entry block at 0x{pos:X}"
                     )
                     break
-                self.errors.append(
-                    f"{path}: {remaining} trailing byte(s) cannot hold TRofsEntry at 0x{pos:X}; "
-                    f"tail={tail[:16].hex()}"
-                )
-                break
             try:
                 entry, next_pos = self.parse_entry(pos, end, f"{path} file entry")
             except ValueError as exc:
@@ -222,18 +217,13 @@ class Audit:
         child_pos = pos + 12
         while child_pos < dir_end:
             remaining = dir_end - child_pos
-            if remaining < 32:
+            if remaining <= 3:
                 tail = self.payload[child_pos:dir_end]
-                if len(tail) <= 3 and not any(tail):
+                if not any(tail):
                     self.warnings.append(
                         f"{path or '/'}: {len(tail)} zero trailing byte(s) in subdirectory list"
                     )
                     break
-                self.errors.append(
-                    f"{path or '/'}: {remaining} trailing byte(s) cannot hold subdirectory TRofsEntry "
-                    f"at 0x{child_pos:X}; tail={tail[:16].hex()}"
-                )
-                break
             try:
                 entry, next_pos = self.parse_entry(
                     child_pos, dir_end, f"{path or '/'} subdirectory entry"
@@ -322,6 +312,7 @@ class Audit:
             "local_files": self.local_files,
             "external_references": self.external_files,
             "invalid_file_ranges": self.invalid_file_ranges,
+            "entry_boundary_crossings": len(self.entry_boundary_crossings),
             "errors": self.errors,
             "warnings": self.warnings,
             "status": "PASS" if not self.errors else "PARTIAL",
@@ -330,7 +321,7 @@ class Audit:
         }
 
 
-def synthetic_image(magic: bytes) -> bytes:
+def synthetic_image(magic: bytes, short_file_block_by: int = 0) -> bytes:
     # One directory with one one-character file. ROFx virtual addresses are
     # shifted by 0x1000; the official extension adjustment reverses that shift.
     adjustment = 0x1000 if magic == b"ROFx" else 0
@@ -347,7 +338,7 @@ def synthetic_image(magic: bytes) -> bytes:
     struct.pack_into("<H", directory, 0, 12)
     directory[3] = 12
     struct.pack_into("<I", directory, 4, file_block_offset)
-    struct.pack_into("<I", directory, 8, len(entry))
+    struct.pack_into("<I", directory, 8, len(entry) - short_file_block_by)
     payload = bytearray(96)
     payload[:4] = magic
     payload[4] = 48
@@ -360,6 +351,34 @@ def synthetic_image(magic: bytes) -> bytes:
     return bytes(payload)
 
 
+def synthetic_subdirectory_crossing_image(magic: bytes) -> bytes:
+    adjustment = 0x1000 if magic == b"ROFx" else 0
+    tree_offset = 48 + adjustment
+    child_dir_address = 92 + adjustment
+    file_entries_offset = 104 + adjustment
+    payload = bytearray(104)
+    payload[:4] = magic
+    payload[4] = 48
+    struct.pack_into("<H", payload, 6, 0x0200)
+    struct.pack_into("<IIII", payload, 8, tree_offset, 56, file_entries_offset, 0)
+    struct.pack_into(">III", payload, 36, len(payload), 0, len(payload))
+    root = bytearray(12)
+    struct.pack_into("<H", root, 0, 42)
+    root[3] = 12
+    payload[48:60] = root
+    child = bytearray(32)
+    struct.pack_into("<H", child, 0, 32)
+    struct.pack_into("<I", child, 24, child_dir_address)
+    child[29] = 1
+    child[30:32] = "D".encode("utf-16le")
+    payload[60:92] = child
+    child_dir = bytearray(12)
+    struct.pack_into("<H", child_dir, 0, 12)
+    child_dir[3] = 12
+    payload[92:104] = child_dir
+    return bytes(payload)
+
+
 def self_test():
     for magic in (b"ROFS", b"ROFx"):
         result = Audit(synthetic_image(magic), magic.decode()).run()
@@ -368,7 +387,18 @@ def self_test():
         assert result["file_entries"] == 1, result
         assert result["local_files"] == 1, result
         assert result["file_rows"][0]["payload_offset"] == 92, result
-    print("Step106 synthetic ROFS/ROFx layout tests: PASS (2/2)")
+
+        short = Audit(synthetic_image(magic, short_file_block_by=2), "short-file-block").run()
+        assert short["status"] == "PASS", short
+        assert short["file_entries"] == 1, short
+        assert short["entry_boundary_crossings"] == 1, short
+
+        subdir = Audit(synthetic_subdirectory_crossing_image(magic), "subdir-crossing").run()
+        assert subdir["status"] == "PASS", subdir
+        assert subdir["directories"] == 2, subdir
+        assert subdir["entry_boundary_crossings"] == 1, subdir
+
+    print("Step107 synthetic ROFS/ROFx cursor-boundary tests: PASS (6/6)")
 
 
 def write_reports(results: list[dict], out_dir: Path):
@@ -405,6 +435,7 @@ def write_reports(results: list[dict], out_dir: Path):
             f"- File-entry block: virtual 0x{h.get('file_entries_offset', 0):X} + {h.get('file_entries_size', 0)} bytes",
             f"- Parsed directories/files: {r['directories']} / {r['file_entries']}",
             f"- Local files / external references / invalid local ranges: {r['local_files']} / {r['external_references']} / {r['invalid_file_ranges']}",
+            f"- Final entries crossing per-directory cursor ends: {r['entry_boundary_crossings']}",
         ]
         if r["errors"]:
             lines += ["", "Errors:"] + [f"- {x}" for x in r["errors"]]
@@ -415,8 +446,11 @@ def write_reports(results: list[dict], out_dir: Path):
         "## Method and limits",
         "",
         "- Uses the published Symbian TRofsDir, TRofsEntry, and TExtensionRofsHeader field layout.",
-        "- For ROFx, uses the official adjustment iDirTreeOffset minus the file position after the 48-byte header.",
+        "- For ROFx, uses the official adjustment iDirTreeOffset minus the file position immediately after the 48-byte header.",
+        "- Mirrors the official cursor rule: test the entry start against the per-directory end, then read the full record against the enclosing global metadata-table boundary.",
+        "- A final record may cross a per-directory cursor end; it is accepted only when the complete record remains inside the enclosing global table and the crossing is reported.",
         "- A ROFx file address at or below iDirTreeOffset is classified as an external/base-image reference, matching the official reader.",
+        "- Header tree/file-entry sizes describe global regions; the root directory's own structSize and file block are not expected to equal those global sizes.",
         "- This audit does not modify firmware and does not claim every referenced base-image file is present in the extension.",
         "- PASS means the metadata walk and local ranges passed these structural checks; it is not a device compatibility result.",
         "",

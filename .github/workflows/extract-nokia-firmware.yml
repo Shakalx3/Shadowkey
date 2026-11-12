@@ -26,7 +26,10 @@ on:
       - "tools/step102_summarize_firmware_extraction.py"
       - "docs/STEP96_TTRAP_ABI_PROBE.md"
       - "tools/step106_audit_rofs_tree.py"
+      - "tools/step108_extract_rofs_local_files.py"
       - "tools/step109_resolve_rofx_base_references.py"
+      - "tools/step111_validate_rofs_e32_candidates.py"
+      - "docs/STEP111_ROFX_MERGE_AND_N95_ROM_EXPORTS.md"
   workflow_dispatch:
 
 permissions:
@@ -189,6 +192,17 @@ jobs:
           cat firmware-input/STEP109_ROFX_BASE_REFERENCE_RESOLUTION.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP109_ROFX_BASE_REFERENCE_RESOLUTION.md
           cat firmware-input/STEP109_MERGED_E32_CANDIDATES.tsv
+      - name: Validate merged ROFS and ROFx EKA2 E32 candidates
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step111_validate_rofs_e32_candidates.py
+          python3 tools/step111_validate_rofs_e32_candidates.py --self-test
+          python3 tools/step111_validate_rofs_e32_candidates.py \
+            --root firmware-parsed/step109-merged/PPM_OVER_C0R \
+            --candidate-list firmware-input/STEP109_MERGED_E32_CANDIDATES.tsv \
+            --out-dir firmware-input
+          cat firmware-input/STEP111_E32_VALIDATION.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP111_E32_VALIDATION.md
       - name: Download pinned S60 3.1 FP1 devkit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

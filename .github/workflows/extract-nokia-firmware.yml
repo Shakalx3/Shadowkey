@@ -166,6 +166,19 @@ jobs:
             --out-dir firmware-input
           cat firmware-input/STEP106_ROFS_DIRECTORY_AUDIT.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP106_ROFS_DIRECTORY_AUDIT.md
+      - name: Extract validated local ROFS and ROFx file extents
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step108_extract_rofs_local_files.py
+          python3 tools/step108_extract_rofs_local_files.py --self-test
+          python3 tools/step108_extract_rofs_local_files.py \
+            --image C0R_SOS_ROFS=firmware-parsed/carved/core-sos-rofs.rofs \
+            --image PPM_SOS_ROFX=firmware-parsed/carved/ppm-sos-rofx.rofs \
+            --out-dir firmware-parsed/step108-extracted \
+            --report-dir firmware-input
+          cat firmware-input/STEP108_LOCAL_FILE_EXTRACTION.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP108_LOCAL_FILE_EXTRACTION.md
+          cat firmware-input/STEP108_E32_FILE_CANDIDATES.tsv
       - name: Download pinned S60 3.1 FP1 devkit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

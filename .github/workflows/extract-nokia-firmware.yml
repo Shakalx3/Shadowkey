@@ -26,6 +26,7 @@ on:
       - "tools/step102_summarize_firmware_extraction.py"
       - "docs/STEP96_TTRAP_ABI_PROBE.md"
       - "tools/step106_audit_rofs_tree.py"
+      - "tools/step109_resolve_rofx_base_references.py"
   workflow_dispatch:
 
 permissions:
@@ -179,6 +180,20 @@ jobs:
           cat firmware-input/STEP108_LOCAL_FILE_EXTRACTION.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP108_LOCAL_FILE_EXTRACTION.md
           cat firmware-input/STEP108_E32_FILE_CANDIDATES.tsv
+      - name: Resolve PPM ROFx external references against C0R base ROFS
+        run: |
+          set -euo pipefail
+          python3 -m py_compile tools/step109_resolve_rofx_base_references.py
+          python3 tools/step109_resolve_rofx_base_references.py --self-test
+          python3 tools/step109_resolve_rofx_base_references.py \\
+            --base firmware-parsed/carved/core-sos-rofs.rofs \\
+            --extension firmware-parsed/carved/ppm-sos-rofx.rofs \\
+            --out-dir firmware-parsed/step109-merged \\
+            --report-dir firmware-input \\
+            --label PPM_OVER_C0R
+          cat firmware-input/STEP109_ROFX_BASE_REFERENCE_RESOLUTION.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP109_ROFX_BASE_REFERENCE_RESOLUTION.md
+          cat firmware-input/STEP109_MERGED_E32_CANDIDATES.tsv
       - name: Download pinned S60 3.1 FP1 devkit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

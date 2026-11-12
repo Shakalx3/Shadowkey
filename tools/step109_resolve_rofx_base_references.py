@@ -231,11 +231,11 @@ def merge(base_path: Path, extension_path: Path, out_dir: Path,
             })
             if len(content) >= 0x18 and content[0x10:0x14] == b"EPOC":
                 uid1, uid2, uid3 = struct.unpack_from("<III", content, 0)
-                cpu = struct.unpack_from("<I", content, 0x14)[0]
+                header_crc = struct.unpack_from("<I", content, 0x14)[0]
                 e32_rows.append({
                     "path": item["path"], "size": len(content), "sha256": digest,
                     "uid1": f"0x{uid1:08X}", "uid2": f"0x{uid2:08X}",
-                    "uid3": f"0x{uid3:08X}", "cpu": f"0x{cpu:08X}",
+                    "uid3": f"0x{uid3:08X}", "header_crc": f"0x{header_crc:08X}",
                     "source": item["source"],
                 })
         stage.rename(final_root)
@@ -284,7 +284,7 @@ def merge(base_path: Path, extension_path: Path, out_dir: Path,
     (report_dir / "STEP109_ROFX_BASE_REFERENCE_MANIFEST.json").write_text(
         json.dumps(result, indent=2) + "\n", encoding="utf-8"
     )
-    fields = ("path", "size", "sha256", "uid1", "uid2", "uid3", "cpu", "source")
+    fields = ("path", "size", "sha256", "uid1", "uid2", "uid3", "header_crc", "source")
     lines = ["\t".join(fields)]
     for row in e32_rows:
         lines.append("\t".join(str(row[field]) for field in fields))

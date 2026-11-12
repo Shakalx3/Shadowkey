@@ -44,6 +44,11 @@ class Audit:
         self.local_files = 0
         self.external_files = 0
         self.invalid_file_ranges = 0
+        self.dir_tree_start = 0
+        self.dir_tree_end = 0
+        self.file_entries_start = 0
+        self.file_entries_end = 0
+        self.entry_boundary_crossings: list[dict] = []
 
     def adjusted(self, address: int, what: str) -> int:
         if address < self.adjustment:
@@ -105,9 +110,10 @@ class Audit:
             self.errors.append(str(exc))
             return
         end = start + size
-        if end > len(self.payload):
+        if start < self.file_entries_start or end > self.file_entries_end:
             self.errors.append(
-                f"{path}: file block [0x{start:X},0x{end:X}) exceeds payload 0x{len(self.payload):X}"
+                f"{path}: file block [0x{start:X},0x{end:X}) is outside enclosing file-entry table "
+                f"[0x{self.file_entries_start:X},0x{self.file_entries_end:X})"
             )
             return
         pos = start
@@ -122,7 +128,7 @@ class Audit:
                     )
                     break
             try:
-                entry, next_pos = self.parse_entry(pos, end, f"{path} file entry")
+                entry, next_pos = self.parse_entry(pos, self.file_entries_end, f"{path} file entry")
             except ValueError as exc:
                 self.errors.append(str(exc))
                 break
@@ -166,6 +172,16 @@ class Audit:
                     self.errors.append(str(exc))
             self.files.append(record)
             count += 1
+            if next_pos > end:
+                self.entry_boundary_crossings.append({
+                    "kind": "file-block", "path": path or "/", "entry_offset": pos,
+                    "record_end": next_pos, "cursor_end": end, "overrun": next_pos - end,
+                })
+                self.warnings.append(
+                    f"{path or '/'}: final file entry at 0x{pos:X} crosses per-directory "
+                    f"file-block end by {next_pos - end} byte(s); complete record remains "
+                    "inside the enclosing file-entry table"
+                )
             pos = next_pos
         if pos < end and count == 0:
             self.warnings.append(f"{path}: no file entries parsed from non-empty block")
@@ -194,8 +210,11 @@ class Audit:
             self.errors.append(f"{path or '/'}: directory structSize {dir_size} < 12 at 0x{pos:X}")
             return
         dir_end = pos + dir_size
-        if dir_end > len(self.payload):
-            self.errors.append(f"{path or '/'}: directory range exceeds payload at 0x{pos:X}")
+        if pos < self.dir_tree_start or dir_end > self.dir_tree_end:
+            self.errors.append(
+                f"{path or '/'}: directory range [0x{pos:X},0x{dir_end:X}) is outside "
+                f"enclosing directory tree [0x{self.dir_tree_start:X},0x{self.dir_tree_end:X})"
+            )
             return
         if first_entry_offset != 12:
             self.warnings.append(
@@ -226,15 +245,31 @@ class Audit:
                     break
             try:
                 entry, next_pos = self.parse_entry(
-                    child_pos, dir_end, f"{path or '/'} subdirectory entry"
+                    child_pos, self.dir_tree_end, f"{path or '/'} subdirectory entry"
                 )
             except ValueError as exc:
                 self.errors.append(str(exc))
                 break
+            if next_pos > dir_end:
+                self.entry_boundary_crossings.append({
+                    "kind": "subdirectory-list", "path": path or "/", "entry_offset": child_pos,
+                    "record_end": next_pos, "cursor_end": dir_end, "overrun": next_pos - dir_end,
+                })
+                self.warnings.append(
+                    f"{path or '/'}: final subdirectory entry at 0x{child_pos:X} crosses "
+                    f"directory cursor end by {next_pos - dir_end} byte(s); complete record "
+                    "remains inside the enclosing directory tree"
+                )
             child_path = f"{path}/{entry['name']}" if path else entry["name"]
             self.parse_directory(entry["file_address"], child_path, depth + 1)
             # Official TDirectoryEntry::AddSubDirs rounds each entry to 32-bit alignment.
             child_pos = next_pos + ((4 - entry["struct_size"]) & 3)
+            if child_pos > self.dir_tree_end:
+                self.errors.append(
+                    f"{path or '/'}: aligned subdirectory cursor 0x{child_pos:X} exceeds "
+                    f"directory-tree end 0x{self.dir_tree_end:X}"
+                )
+                break
 
     def run(self) -> dict:
         if len(self.data) >= 1028 and self.data[1024:1028] in (b"ROFS", b"ROFx"):

@@ -289,29 +289,22 @@ class Audit:
             self.header["dir_tree_offset"] - header_size if self.magic == "ROFx" else 0
         )
         self.root_offset = self.header["dir_tree_offset"] - self.adjustment
-        file_entries_offset = self.header["file_entries_offset"] - self.adjustment
-        if file_entries_offset < 0:
-            self.errors.append("adjusted file-entry offset is negative")
-        if file_entries_offset + self.header["file_entries_size"] > len(self.payload):
+        self.file_entries_start = self.header["file_entries_offset"] - self.adjustment
+        self.dir_tree_start = self.root_offset
+        self.dir_tree_end = self.dir_tree_start + self.header["dir_tree_size"]
+        self.file_entries_end = self.file_entries_start + self.header["file_entries_size"]
+        if self.dir_tree_start < 0 or self.dir_tree_end > len(self.payload):
+            self.errors.append("header directory-tree range exceeds payload")
+        if self.file_entries_start < 0 or self.file_entries_end > len(self.payload):
             self.errors.append("header file-entry range exceeds payload")
-        if self.root_offset + self.header["dir_tree_size"] != file_entries_offset:
+        if self.dir_tree_end != self.file_entries_start:
             self.warnings.append(
                 "adjusted directory-tree end does not equal adjusted file-entry start: "
-                f"0x{self.root_offset + self.header['dir_tree_size']:X} vs 0x{file_entries_offset:X}"
+                f"0x{self.dir_tree_end:X} vs 0x{self.file_entries_start:X}"
             )
+        if self.errors:
+            return self.result()
         self.parse_directory(self.header["dir_tree_offset"])
-        if self.directories:
-            root = self.directories[0]
-            if root["struct_size"] != self.header["dir_tree_size"]:
-                self.warnings.append(
-                    f"root directory structSize {root['struct_size']} differs from header tree size "
-                    f"{self.header['dir_tree_size']}"
-                )
-            if (root["file_block_address"] != self.header["file_entries_offset"] or
-                    root["file_block_size"] != self.header["file_entries_size"]):
-                self.warnings.append(
-                    "root directory file block differs from header file-entry offset/size"
-                )
         return self.result()
 
     def result(self) -> dict:

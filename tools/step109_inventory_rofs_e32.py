@@ -121,13 +121,16 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
             errors.append(f"export count exceeds safety cap {MAX_EXPORTS}")
         export_bytes = export_count * 4
         export_bounded = (
-            export_off >= code_off
-            and export_off <= len(data)
-            and export_bytes <= len(data) - export_off
+            (export_count == 0 and export_off == 0)
+            or (
+                export_off >= code_off
+                and export_off <= len(data)
+                and export_bytes <= len(data) - export_off
+            )
         )
         if not export_bounded:
             errors.append("export table is outside file/code region")
-        elif import_off <= len(data) and export_off + export_bytes != import_off:
+        elif export_count and import_off <= len(data) and export_off + export_bytes != import_off:
             warnings.append("export table does not end at import offset")
         if text_size > code_size:
             errors.append("text size exceeds code size")
@@ -250,7 +253,7 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
 
 
 def synthetic_e32() -> bytes:
-    data = bytearray(0xB5)
+    data = bytearray(0xB6)
     struct.pack_into("<III", data, 0, DLL_UID, 0x1000008D, 0xE0001090)
     data[0x10:0x14] = b"EPOC"
     struct.pack_into("<I", data, 0x1C, 0)       # compression type
@@ -264,11 +267,11 @@ def synthetic_e32() -> bytes:
     struct.pack_into("<I", data, 0x60, 0x10)   # IAT starts at code+0x10
     struct.pack_into("<I", data, 0x64, 0x7C)   # code offset
     struct.pack_into("<I", data, 0x6C, 0x9C)   # import offset
-    struct.pack_into("<I", data, 0x70, 0xB5)   # end of import table
+    struct.pack_into("<I", data, 0x70, 0xB6)   # end of import table
     struct.pack_into("<I", data, 0x78, 350)    # priority/reserved tail
     struct.pack_into("<I", data, 0x8C, 7)     # IAT ordinal
     struct.pack_into("<I", data, 0x98, 4)     # one export at code+4
-    struct.pack_into("<I", data, 0x9C, 25)    # import table size
+    struct.pack_into("<I", data, 0x9C, 26)    # import table size
     struct.pack_into("<II", data, 0xA0, 16, 1)
     struct.pack_into("<I", data, 0xA8, 7)
     data[0xAC:0xB5] = b"euser.dll\0"

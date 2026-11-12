@@ -207,7 +207,7 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
                 pos = import_off + 4
                 total_imports = 0
                 parsed_blocks = 0
-                iat_matches = True
+                iat_matches = None if compressed else True
                 code_bytes = data[code_off:code_off + code_size] if not compressed else b""
                 for block_index in range(dll_count):
                     if pos + 8 > import_end:

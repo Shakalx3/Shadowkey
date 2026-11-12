@@ -125,7 +125,7 @@ def extract_one(data: bytes, result: dict, out_dir: Path, label: str,
             manifest_rows.append(item)
             if len(chunk) >= 0x18 and chunk[0x10:0x14] == b"EPOC":
                 uid1, uid2, uid3 = struct.unpack_from("<III", chunk, 0)
-                cpu = struct.unpack_from("<I", chunk, 0x14)[0]
+                header_crc = struct.unpack_from("<I", chunk, 0x14)[0]
                 e32_rows.append({
                     "image": label,
                     "path": row["path"],
@@ -134,7 +134,7 @@ def extract_one(data: bytes, result: dict, out_dir: Path, label: str,
                     "uid1": f"0x{uid1:08X}",
                     "uid2": f"0x{uid2:08X}",
                     "uid3": f"0x{uid3:08X}",
-                    "cpu": f"0x{cpu:08X}",
+                    "header_crc": f"0x{header_crc:08X}",
                 })
         stage.rename(final_root)
     except Exception:
@@ -192,7 +192,7 @@ def write_reports(results: list[dict], report_dir: Path) -> None:
     (report_dir / "STEP108_LOCAL_FILE_MANIFEST.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )
-    fields = ("image", "path", "size", "sha256", "uid1", "uid2", "uid3", "cpu")
+    fields = ("image", "path", "size", "sha256", "uid1", "uid2", "uid3", "header_crc")
     lines = ["\t".join(fields)]
     for result in results:
         for row in result["e32_candidates"]:

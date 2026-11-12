@@ -11,6 +11,7 @@ import csv
 import hashlib
 import json
 import struct
+import zlib
 from collections import Counter
 from pathlib import Path
 
@@ -19,6 +20,151 @@ EXE_UID = 0x1000007A
 MAX_EXPORTS = 131072
 MAX_DLL_REFS = 4096
 MAX_IMPORTS = 1_000_000
+DEFLATE_UID = 0x101F7AFC
+BYTEPAIR_UID = 0x102822AA
+MAX_DECOMPRESSED = 128 * 1024 * 1024
+
+
+def bytepair_decompress(src: bytes, dst_size: int) -> bytes:
+    if not src:
+        raise ValueError("empty BytePair input")
+    pos = 0
+    num_tokens = src[pos]
+    pos += 1
+    marker = 0xFFFFFFFF
+    lut0 = list(range(256))
+    lut1 = list(range(256))
+    if num_tokens:
+        if pos >= len(src):
+            raise ValueError("missing BytePair marker")
+        marker = src[pos]
+        pos += 1
+        lut0[marker] = (~marker) & 0xFF
+        if num_tokens < 32:
+            if pos + num_tokens * 3 > len(src):
+                raise ValueError("truncated BytePair token table")
+            for _ in range(num_tokens):
+                token, left, right = src[pos:pos + 3]
+                pos += 3
+                lut0[token] = left
+                lut1[token] = right
+        else:
+            if pos + 32 > len(src):
+                raise ValueError("truncated BytePair token mask")
+            mask = src[pos:pos + 32]
+            pos += 32
+            remaining = num_tokens
+            for token in range(256):
+                if mask[token >> 3] & (1 << (token & 7)):
+                    if pos + 2 > len(src):
+                        raise ValueError("truncated BytePair token pair")
+                    lut0[token] = src[pos]
+                    lut1[token] = src[pos + 1]
+                    pos += 2
+                    remaining -= 1
+            if remaining:
+                raise ValueError("BytePair token count/mask mismatch")
+
+    cache = {}
+    active = set()
+
+    def expand(token: int) -> bytes:
+        if lut0[token] == token:
+            return bytes((token,))
+        if token in cache:
+            return cache[token]
+        if token in active or len(active) > 256:
+            raise ValueError(f"recursive BytePair token 0x{token:02X}")
+        active.add(token)
+        value = expand(lut0[token]) + expand(lut1[token])
+        active.remove(token)
+        cache[token] = value
+        return value
+
+    out = bytearray()
+    while pos < len(src) and len(out) < dst_size:
+        token = src[pos]
+        pos += 1
+        if token == marker:
+            if pos >= len(src):
+                raise ValueError("truncated BytePair marker escape")
+            out.append(src[pos])
+            pos += 1
+        else:
+            out.extend(expand(token))
+        if len(out) > dst_size:
+            raise ValueError(f"BytePair output overflow: {len(out)} > {dst_size}")
+    if len(out) != dst_size:
+        raise ValueError(f"BytePair output short: {len(out)} != {dst_size}")
+    if pos != len(src):
+        raise ValueError(f"BytePair trailing input: {len(src) - pos} bytes")
+    return bytes(out)
+
+
+def inflate_e32(data: bytes) -> tuple[bytes, dict]:
+    if len(data) < 0x80:
+        raise ValueError("compressed E32 image is shorter than its 0x80-byte extended header")
+    compression = u32(data, 0x1C)
+    declared = u32(data, 0x7C)
+    if declared <= 0 or declared > MAX_DECOMPRESSED:
+        raise ValueError(f"uncompressedSize outside safety limit: 0x{declared:X}")
+    payload = data[0x80:]
+    if compression == DEFLATE_UID:
+        decoded = None
+        failures = []
+        for wbits in (zlib.MAX_WBITS, -zlib.MAX_WBITS):
+            try:
+                decoder = zlib.decompressobj(wbits)
+                out = decoder.decompress(payload, MAX_DECOMPRESSED + 1)
+                if len(out) > MAX_DECOMPRESSED or decoder.unconsumed_tail:
+                    raise ValueError("Deflate output exceeds safety limit")
+                out += decoder.flush()
+                if len(out) > MAX_DECOMPRESSED:
+                    raise ValueError("Deflate output exceeds safety limit")
+                if not decoder.eof:
+                    raise ValueError("Deflate stream did not reach EOF")
+                if decoder.unused_data:
+                    raise ValueError(f"Deflate stream has {len(decoder.unused_data)} trailing bytes")
+                decoded = out
+                break
+            except (zlib.error, ValueError) as exc:
+                failures.append(str(exc))
+        if decoded is None:
+            raise ValueError("Deflate decode failed: " + " | ".join(failures))
+        algorithm = "deflate"
+    elif compression == BYTEPAIR_UID:
+        decoded = None
+        failures = []
+        for size in dict.fromkeys((declared, declared - 0x80)):
+            if size < 0 or size > MAX_DECOMPRESSED:
+                continue
+            try:
+                decoded = bytepair_decompress(payload, size)
+                break
+            except ValueError as exc:
+                failures.append(str(exc))
+        if decoded is None:
+            raise ValueError("BytePair decode failed: " + " | ".join(failures))
+        algorithm = "bytepair"
+    else:
+        raise ValueError(f"unsupported E32 compression UID 0x{compression:08X}")
+
+    if len(decoded) == declared:
+        size_mode = "payload-size"
+    elif len(decoded) + 0x80 == declared:
+        size_mode = "whole-image-size"
+    else:
+        raise ValueError(
+            f"uncompressedSize mismatch: header=0x{declared:X}, decoded=0x{len(decoded):X}"
+        )
+    flat = bytearray(data[:0x80] + decoded)
+    flat[0x1C:0x20] = b"\0\0\0\0"
+    return bytes(flat), {
+        "algorithm": algorithm,
+        "declared_uncompressed_size": declared,
+        "decoded_payload_size": len(decoded),
+        "size_mode": size_mode,
+    }
 
 
 def u32(data: bytes, off: int) -> int:
@@ -50,6 +196,11 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         "kind": "",
         "flags": "",
         "compression_type": "",
+        "compression_algorithm": "none",
+        "uncompressed_size_field": 0,
+        "decompression_size_mode": "",
+        "decompressed": False,
+        "flat_size": len(data),
         "code_base": "",
         "code_size": 0,
         "data_size": 0,
@@ -85,6 +236,26 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         return row, exports, imports
     row["kind"] = "DLL" if uid1 == DLL_UID else "EXE"
 
+    original_compression = u32(data, 0x1C)
+    row["compression_type"] = f"0x{original_compression:08X}"
+    if original_compression:
+        try:
+            data, inflation = inflate_e32(data)
+        except (ValueError, zlib.error, struct.error) as exc:
+            row["status"] = "COMPRESSED_UNDECODED"
+            row["reason"] = str(exc)
+            row["compression_algorithm"] = {
+                DEFLATE_UID: "deflate",
+                BYTEPAIR_UID: "bytepair",
+            }.get(original_compression, "unknown")
+            row["uncompressed_size_field"] = u32(data, 0x7C) if len(data) >= 0x80 else 0
+            return row, exports, imports
+        row["compression_algorithm"] = inflation["algorithm"]
+        row["uncompressed_size_field"] = inflation["declared_uncompressed_size"]
+        row["decompression_size_mode"] = inflation["size_mode"]
+        row["decompressed"] = True
+        row["flat_size"] = len(data)
+
     try:
         fields = {
             "header_crc": u32(data, 0x14),
@@ -105,7 +276,7 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
             "code_reloc_offset": u32(data, 0x70),
             "data_reloc_offset": u32(data, 0x74),
             "code_base": u32(data, 0x4C),
-            "compression_type": u32(data, 0x1C),
+            "compression_type": original_compression,
         }
         row.update(fields)
         for key in ("header_crc", "module_version", "tools_version", "flags", "compression_type", "code_base", "entry_point", "data_base"):
@@ -121,7 +292,7 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         text_size = fields["text_size"]
         dll_count = fields["dll_ref_count"]
 
-        compressed = fields["compression_type"] != 0
+        compressed = fields["compression_type"] != 0 and not row["decompressed"]
         if compressed:
             row["iat_matches"] = None
         if code_size == 0 or code_off < 0x7C or code_off > len(data):
@@ -312,6 +483,28 @@ def write_tsv(path: Path, rows: list[dict], fields: list[str]) -> None:
 
 def self_test() -> None:
     good = synthetic_e32()
+
+    def compressed_fixture(compression_uid: int) -> bytes:
+        flat = bytearray(good[:0x7C] + b"\0\0\0\0" + good[0x7C:])
+        for offset in (0x58, 0x64, 0x6C, 0x70):
+            struct.pack_into("<I", flat, offset, u32(flat, offset) + 4)
+        payload = bytes(flat[0x80:])
+        struct.pack_into("<I", flat, 0x1C, compression_uid)
+        struct.pack_into("<I", flat, 0x7C, len(payload))
+        if compression_uid == DEFLATE_UID:
+            packed = zlib.compress(payload)
+        else:
+            packed = b"\0" + payload
+        return bytes(flat[:0x80]) + packed
+
+    for compression_uid in (DEFLATE_UID, BYTEPAIR_UID):
+        packed = compressed_fixture(compression_uid)
+        flat, meta = inflate_e32(packed)
+        assert flat[0x1C:0x20] == b"\0\0\0\0" and len(flat) == 0x80 + meta["decoded_payload_size"], meta
+        row, exp, imp = parse_candidate(packed, "TEST", "sys/bin/compressed.dll")
+        assert row["status"] == "PASS", row
+        assert row["decompressed"] is True and len(exp) == 1 and len(imp) == 1, row
+
     row, exports, imports = parse_candidate(good, "TEST", "sys/bin/test.dll")
     assert row["status"] == "PASS", row
     assert row["export_count"] == 1 and row["valid_exports"] == 1, row
@@ -337,7 +530,7 @@ def self_test() -> None:
     struct.pack_into("<I", false_positive, 0, 0x12345678)
     row, _, _ = parse_candidate(bytes(false_positive), "TEST", "sys/bin/not-e32.bin")
     assert row["status"] == "MAGIC_ONLY", row
-    print("Step109 E32 inventory self-tests: PASS (5/5)")
+    print("Step109 E32 inventory self-tests: PASS (7/7)")
 
 
 def main() -> int:
@@ -387,7 +580,8 @@ def main() -> int:
     module_fields = [
         "image", "path", "size", "sha256", "status", "reason", "uid1", "uid2", "uid3",
         "header_crc", "module_version", "tools_version", "kind", "flags", "compression_type",
-        "code_base", "entry_point", "data_base", "code_size", "data_size",
+        "compression_algorithm", "uncompressed_size_field", "decompression_size_mode",
+        "decompressed", "flat_size", "code_base", "entry_point", "data_base", "code_size", "data_size",
         "code_offset", "data_offset", "text_size", "import_offset", "import_size",
         "code_reloc_offset", "data_reloc_offset", "export_dir_offset", "export_count",
         "valid_exports", "zero_exports", "invalid_exports", "dll_ref_count", "import_count",
@@ -405,10 +599,14 @@ def main() -> int:
     write_tsv(args.out_dir / "STEP109_E32_IMPORTS.tsv", imports, import_fields)
 
     counts = Counter(row.get("status", "UNKNOWN") for row in rows)
+    compression_counts = Counter(row.get("compression_type", "unknown") for row in rows)
+    decompressed_count = sum(1 for row in rows if row.get("decompressed"))
     summary = {
         "format": "Step109 bounded ROFS/ROFx E32 inventory",
         "candidate_count": len(rows),
         "status_counts": dict(sorted(counts.items())),
+        "compression_type_counts": dict(sorted(compression_counts.items())),
+        "decompressed_modules": decompressed_count,
         "structurally_valid_modules": sum(1 for row in rows if row.get("status") == "PASS"),
         "export_rows": len(exports),
         "import_rows": len(imports),
@@ -431,6 +629,8 @@ def main() -> int:
         "",
         f"- EPOC-signature candidates: **{len(rows)}**",
         f"- Status counts: `{dict(sorted(counts.items()))}`",
+        f"- Compression UID counts: `{dict(sorted(compression_counts.items()))}`",
+        f"- Compressed modules successfully inflated: **{decompressed_count}**",
         f"- Structurally valid modules: **{summary['structurally_valid_modules']}**",
         f"- Decoded export rows: **{len(exports)}**",
         f"- Decoded import rows: **{len(imports)}**",

@@ -122,6 +122,8 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         dll_count = fields["dll_ref_count"]
 
         compressed = fields["compression_type"] != 0
+        if compressed:
+            row["iat_matches"] = None
         if code_size == 0 or code_off < 0x7C or code_off > len(data):
             errors.append("code segment is empty or its offset is outside file")
         elif not compressed and code_size > len(data) - code_off:
@@ -320,6 +322,13 @@ def self_test() -> None:
     row, _, _ = parse_candidate(bytes(bad_iat), "TEST", "sys/bin/bad.dll")
     assert row["status"] == "PARTIAL" and "IAT values differ" in row["reason"], row
 
+    compressed = bytearray(good)
+    struct.pack_into("<I", compressed, 0x1C, 1)
+    struct.pack_into("<I", compressed, 0x30, 0x1000)
+    row, _, imports = parse_candidate(bytes(compressed), "TEST", "sys/bin/compressed.dll")
+    assert row["status"] == "PARTIAL" and row["iat_matches"] is None, row
+    assert imports and imports[0]["iat_value_matches"] == "not-checked-compressed", imports
+
     truncated = good[:0x90]
     row, _, _ = parse_candidate(truncated, "TEST", "sys/bin/truncated.dll")
     assert row["status"] == "REJECTED", row
@@ -328,7 +337,7 @@ def self_test() -> None:
     struct.pack_into("<I", false_positive, 0, 0x12345678)
     row, _, _ = parse_candidate(bytes(false_positive), "TEST", "sys/bin/not-e32.bin")
     assert row["status"] == "MAGIC_ONLY", row
-    print("Step109 E32 inventory self-tests: PASS (4/4)")
+    print("Step109 E32 inventory self-tests: PASS (5/5)")
 
 
 def main() -> int:

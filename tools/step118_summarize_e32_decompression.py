@@ -96,7 +96,7 @@ def main() -> int:
               "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|"]
     for row in module_rows:
         lines.append(
-            f"| \`{row.get('path','')}\` | **{row.get('status','')}** | "
+            f"| `{row.get('path','')}` | **{row.get('status','')}** | "
             f"{row.get('uid3','')} | {row.get('code_size','')} | {row.get('text_size','')} | "
             f"{row.get('dll_ref_count','')} | {row.get('export_count','')} | "
             f"{row.get('valid_exports','')}/{row.get('zero_exports','')}/{row.get('invalid_exports','')} | "

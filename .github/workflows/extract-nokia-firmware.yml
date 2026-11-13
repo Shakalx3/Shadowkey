@@ -33,6 +33,8 @@ on:
       - "docs/STEP117_NATIVE_E32_DECOMPRESSION.md"
       - "tools/step118_summarize_e32_decompression.py"
       - "docs/STEP118_BULK_E32_VALIDATION.md"
+      - "tools/step119_audit_e32_iat_layout.py"
+      - "docs/STEP119_E32_IAT_LAYOUT_AUDIT.md"
       - "tools/step112_audit_uda_fat16.py"
       - "tools/step114_patch_uda_fpsx_unpacker.py"
       - "docs/STEP114_UDA_FPSX_FIELD_ORDER_CORRECTION.md"
@@ -589,6 +591,13 @@ jobs:
             --out firmware-input/STEP118_BULK_E32_VALIDATION.md
           cat firmware-input/STEP118_BULK_E32_VALIDATION.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP118_BULK_E32_VALIDATION.md
+          python3 -m py_compile tools/step119_audit_e32_iat_layout.py
+          python3 tools/step119_audit_e32_iat_layout.py \
+            --self-test \
+            --tree firmware-parsed/step117-native \
+            --out firmware-input/STEP119_E32_IAT_LAYOUT_AUDIT.md
+          cat firmware-input/STEP119_E32_IAT_LAYOUT_AUDIT.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP119_E32_IAT_LAYOUT_AUDIT.md
       - name: Build EKA2 RLibrary loader probe for the isolated TInt64 DLL
         id: step102-loader-probe
         run: |

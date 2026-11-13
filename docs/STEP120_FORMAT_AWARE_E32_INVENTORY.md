@@ -2,33 +2,21 @@
 
 Date: 2026-11-13
 
-## Baseline and finding
+## Verified result
 
-- Step117 decompressed all 135 compressed EPOC candidates (134 Deflate, one BytePair).
-- Step118 matched all 135 outputs to the independent Step109 scan with no missing/extra candidates.
-- Step109's blanket REJECTED result was a parser-format mismatch, not a decompression failure: it treated ELF-format imports as PE ordinals/IAT entries and ELF exports as code-relative offsets.
-- Step119 measured the symptom: all 135 had IAT overflow under the PE-style interpretation; 2,635/2,752 export values failed the PE-style code-offset test.
+- Workflow: [43416779432](https://github.com/Shakalx3/Shadowkey/actions/runs/43416779432), completed successfully.
+- Synthetic format tests: PASS 3/3 (ELF, PE and PE2).
+- EPOC candidates: 135.
+- Import-format distribution: ELF 135.
+- Module status: VALID 135.
+- Export rows: 2,752.
+- Import rows: 26,485.
+- ELF PE-style IAT check: NOT_APPLICABLE_ELF for every module.
 
-## Format evidence
+All modules use E32 flags with the ELF import-format nibble 0x10000000. The independent audit confirms that ELF import code offsets lie inside the code segment and that ELF export absolute addresses map inside the code range using code_base. The counts match the authoritative Step109 format-aware parser exactly.
 
-The pinned upstream elf2e32 header defines:
-- KImageImpFmtMask = 0xF0000000
-- KImageImpFmt_ELF = 0x10000000
-- KImageImpFmt_PE = 0x00000000
-- KImageImpFmt_PE2 = 0x20000000
+## Scope
 
-The same header explicitly states that E32ImportBlock::Imports() is a list of code-section offsets for ELF format, a list of imported ordinals for PE format, and absent for PE2. The upstream parser locates the PE-style IAT at iCodeOffset + iTextSize. It also derives ELF export-symbol-info addresses using code offset + absolute export address - code base, confirming that ELF export values are absolute runtime addresses.
+Step120 is an independent bounds/count cross-check. Step109 remains the more detailed inventory because it also decodes the relocation word at each ELF import place into its imported ordinal and addend, handles named-lookup slots, and emits the authoritative per-module/export/import TSV tables.
 
-Step120 uses the import-format nibble in iFlags to select the correct parser. It does not relax bounds or rewrite the images.
-
-## Acceptance boundary
-
-- ELF imports: validate each code-section patch offset against iCodeSize; do not demand a PE ordinal IAT.
-- ELF exports: validate absolute addresses against [iCodeBase, iCodeBase + iCodeSize), then translate to file offsets.
-- PE imports: parse ordinals and verify the IAT range and contents.
-- PE2 imports: parse descriptors without reading a nonexistent ordinal list; bounds-check the IAT.
-- PE/PE2 exports: validate code-relative offsets.
-
-A VALID result remains static structure only. It is not loader acceptance, ABI compatibility, or a real N95 launch.
-
-No firmware binaries, ROM pages or protected system DLLs are committed. No handset action is requested.
+A VALID result is static structure only; it is not a Symbian loader test, ABI compatibility result or real N95 launch. Decompressed binaries remain in the ephemeral workflow workspace and are not committed.

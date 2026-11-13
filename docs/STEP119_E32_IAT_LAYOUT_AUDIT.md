@@ -2,34 +2,27 @@
 
 Date: 2026-11-13
 
-## Baseline and result
+## Verified diagnostic result
 
-- Default branch: main
-- Workflow: [43416057247](https://github.com/Shakalx3/Shadowkey/actions/runs/43416057247), completed successfully.
-- Step117 decompressed all 135 EPOC candidates (134 Deflate, one BytePair).
-- Step118 matched all 135 outputs to the Step109 scan: zero missing, zero extra.
-- Step119's 2 synthetic absolute/relative offset tests passed.
-- The diagnostic classified all 135 files as NEEDS_LAYOUT_REVIEW under a PE-style IAT/export-value model. This was a useful failure signal, not a module-validity verdict.
+- Workflow: [43416779432](https://github.com/Shakalx3/Shadowkey/actions/runs/43416779432), completed successfully.
+- Step119's two synthetic absolute/relative offset tests passed.
+- The diagnostic reported 135/135 NEEDS_LAYOUT_REVIEW, 128 absolute import-table locations and seven modules with no imports.
+- This was a PE-style diagnostic assumption, not a firmware validity result. All 135 modules are ELF import format, confirmed by Step120 and the Step109 format-aware parser.
 
-## Root cause found in the format definitions
+## Correct interpretation
 
-The pinned upstream elf2e32 E32 header defines:
+The pinned upstream E32 header defines:
 - KImageImpFmtMask = 0xF0000000
 - KImageImpFmt_ELF = 0x10000000
 - KImageImpFmt_PE = 0x00000000
 - KImageImpFmt_PE2 = 0x20000000
 
-It explicitly documents that E32ImportBlock::Imports() contains code-section offsets for ELF format, imported ordinals for PE format, and no ordinal list for PE2. The upstream parser locates the PE-style IAT at iCodeOffset + iTextSize. It also resolves the ELF export-symbol-info address as code_offset + absolute_export_address - code_base, which is consistent with ELF export entries being absolute runtime addresses.
+For ELF format, E32ImportBlock::Imports() is a list of code-section relocation places, not imported ordinals. The loader resolves the import at each relocation place; there is no PE-style contiguous ordinal IAT to validate. The relocation word encodes the imported ordinal in its low 16 bits and addend in its high 16 bits. Named-lookup images may also carry a trailing zero slot.
 
-This explains the Step109/Step119 symptoms:
-- 128 modules had a parseable absolute import table, but Step119 incorrectly treated ELF code offsets as a PE ordinal list and demanded an IAT. Their iTextSize equalled iCodeSize, so the invented PE-style IAT overflowed the declared code segment.
-- Seven modules had no DLL references and are now represented as NO_IMPORTS rather than a failed import-offset parse.
-- Most export values failed the PE-style code-offset test because ELF exports use absolute runtime addresses.
+ELF export entries are absolute runtime addresses. They must be translated to code-relative/file offsets using iCodeBase and iCodeOffset. Treating them as small code-relative offsets caused Step119 to report 100 files with no valid export-offset interpretation.
 
-## Next step
+The format-aware Step109 parser now handles ELF, PE and PE2 formats, including the ELF relocation-site ordinal/addend and PE2's absent ordinal list. Its self-tests pass 7/7. Production result: all 135 modules PASS, 2,752 exports and 26,485 imports. Step120 independently reports all 135 VALID and the same export/import row counts; its format tests pass 3/3.
 
-Step120 parses import/export tables according to the import-format nibble in iFlags. It will validate ELF import patch offsets and absolute export addresses, while retaining the PE and PE2 IAT rules for those formats. No bounds are relaxed and no binary is rewritten.
+## Use of this checkpoint
 
-A format-aware VALID result remains static structure only; it is not loader acceptance, ABI compatibility, or a real N95 launch.
-
-No firmware binaries, ROM pages or protected system DLLs are committed. No handset action is requested.
+Keep Step119 as a diagnostic demonstrating why a PE-only parser is wrong for this firmware. Do not use its NEEDS_LAYOUT_REVIEW status as an acceptance gate. The authoritative static inventory is Step109, cross-checked by Step120. Neither proves device loader acceptance.

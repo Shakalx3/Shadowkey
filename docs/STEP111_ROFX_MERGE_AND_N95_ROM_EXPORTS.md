@@ -110,3 +110,18 @@ The 135 filesystem candidates are separate from the seven XIP ROM modules above.
 The firmware job's final diagnostic artifact upload was rejected because GitHub Actions storage quota was full. The job log and GitHub job summary preserve the text audit. The small Step102 prerelease ZIP was published separately at [shadowkey-step102-43210325818](https://github.com/Shakalx3/Shadowkey/releases/tag/shadowkey-step102-43210325818); its SHA-256 is `9b5b1ea9305e0a31ada1c6d3f96d8fefd8fdcf5fdc1ad67bf7a9926d5c5def21`. That package is only an EKA2 DLL loader/ABI probe, not a Shadowkey game build.
 
 No physical N95 test or Shadowkey launch has been performed. The user currently has no handset available. Do not request device actions, overwrite ROM DLLs, or flash firmware. The next useful gate is the Step111 E32-candidate validation followed by continued import/runtime analysis; a device test remains deferred until a concrete reversible package and rollback instructions exist.
+
+## 2026-11-13 update — firmware/E32 inventory completed
+
+The earlier historical run 42604419519 failed only because the final link could not find libunix++; later workflow revisions corrected the library path. The latest successful format-aware run is [43416779432](https://github.com/Shakalx3/Shadowkey/actions/runs/43416779432).
+
+- PPM/C0R extraction and ROFx merge remain verified: 1,441 external references resolved, 0 unresolved, merged tree 5,909 files / 40,035,661 bytes.
+- Step117 decompressed all 135 EPOC candidates: 134 Deflate and one BytePair.
+- The format-aware Step109 parser reports 135/135 PASS, 2,752 export entries and 26,485 imports. All exports are valid.
+- Step120 independently reports 135/135 VALID, all ELF import format, and the same export/import counts; synthetic tests PASS 3/3.
+- Step119's PE-style IAT diagnostic is retained as a negative control only. It is not a validity verdict for ELF-format images.
+- The seven requested XIP ROM modules remain separately inventoried above: EUSER has 2,229 exports (19 ROM-only), CONE 722 (1 ROM-only), GDI 348 (4), FBSCLI 241 (1), EIKCORE 590 (0), WS32 580 (2), and EFSRV 351 (16).
+- Target GCCE ABI validation passed: TInt64 is 8 bytes; TTrap is 76 bytes with offsets 0/64/68/72; Trap(TInt&) is an instance method and UnTrap() is static. The N95 EUSER DSO has no legacy TInt64::operator!= export, so do not guess an ordinal replacement.
+- The isolated E32 DLL and Step102 EKA2 loader-probe package were built. Release: [shadowkey-step102-43416779432](https://github.com/Shakalx3/Shadowkey/releases/tag/shadowkey-step102-43416779432), SHA-256 4f5f55f86cfe17c65e8e181f2a81c341e81b7d4900ae7e89ef31fe610d53aea3. This is not a game build and has not been loaded on a physical N95.
+- UDA remains unresolved at the filesystem level: sparse userarea.img is 41,206,272 bytes, no FAT16 volume was found, and the H2E/SOS-USER payload is 115,200 bytes at image offset 41,091,072. Its internal format is still unknown.
+- No firmware, ROM page or protected system DLL was committed. No handset action is requested; the user currently has no phone available.

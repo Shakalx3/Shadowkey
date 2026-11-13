@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "\${BASH_SOURCE[0]}")/.." && pwd)"
-OUT="\${1:-\${TMPDIR:-/tmp}/step116_e32inflate}"
-WORK="\${TMPDIR:-/tmp}/step117-elf2e32-next"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+OUT="${1:-${TMPDIR:-/tmp}/step116_e32inflate}"
+WORK="${TMPDIR:-/tmp}/step117-elf2e32-next"
 COMMIT="6a1d311f54098d2e41e43c2117bfbfe08ba00f11"
-BASE="https://raw.githubusercontent.com/fedor4ever/elf2e32_next/\${COMMIT}"
+BASE="https://raw.githubusercontent.com/fedor4ever/elf2e32_next/${COMMIT}"
 SRC="$WORK/src"
 
 mkdir -p "$WORK" "$(dirname "$OUT")"
@@ -36,11 +36,11 @@ SOURCE_FILES=(
   "lib/e32/farray.h"
   "lib/e32/deflatecompress.cpp"
 )
-for path in "\${SOURCE_FILES[@]}"; do
+for path in "${SOURCE_FILES[@]}"; do
   fetch_upstream "$path"
 done
 
-CXX="\${CXX:-g++}"
+CXX="${CXX:-g++}"
 "$CXX" -std=c++17 -O2 -Wall -Wextra \
   -Wno-unused-parameter -Wno-sign-compare -Wno-misleading-indentation -Wno-shadow \
   -I"$SRC/src" -I"$SRC/lib/e32" -I"$SRC/include" \
@@ -59,9 +59,9 @@ CXX="\${CXX:-g++}"
   printf 'upstream_commit=%s\n' "$COMMIT"
   printf 'compiler=%s\n' "$("$CXX" --version | head -n 1)"
   printf 'source_file_sha256s:\n'
-  (cd "$SRC" && sha256sum "\${SOURCE_FILES[@]}")
+  (cd "$SRC" && sha256sum "${SOURCE_FILES[@]}")
   printf 'binary_sha256=%s\n' "$(sha256sum "$OUT" | awk '{print $1}')"
   printf 'self_test=PASS\n'
-} | tee "\${OUT}.manifest.txt"
+} | tee "${OUT}.manifest.txt"
 
 printf 'Native E32 codec executable: %s\n' "$OUT"

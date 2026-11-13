@@ -15,7 +15,7 @@ from pathlib import Path
 
 def load_tsv(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as stream:
-        return list(csv.DictReader(stream, delimiter="\\t"))
+        return list(csv.DictReader(stream, delimiter="\t"))
 
 
 def main() -> int:
@@ -125,7 +125,7 @@ def main() -> int:
         "",
     ]
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text("\\n".join(lines), encoding="utf-8")
+    args.out.write_text("\n".join(lines), encoding="utf-8")
     print(args.out.read_text(encoding="utf-8"))
     return 0
 

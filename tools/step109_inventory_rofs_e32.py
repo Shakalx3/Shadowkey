@@ -24,6 +24,14 @@ DEFLATE_UID = 0x101F7AFC
 BYTEPAIR_UID = 0x102822AA
 MAX_DECOMPRESSED = 128 * 1024 * 1024
 
+# E32 import formats from E32ImageHeader::iFlags.
+IMPORT_FMT_MASK = 0xF0000000
+IMPORT_FMT_PE = 0x00000000
+IMPORT_FMT_ELF = 0x10000000
+IMPORT_FMT_PE2 = 0x20000000
+OLD_ELF_IMPORT_FLAG = 0x00000010
+IMAGE_NAMED_EXPORT_DATA = 0x00000400
+
 
 def bytepair_decompress(src: bytes, dst_size: int) -> bytes:
     if not src:
@@ -237,6 +245,9 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         "parsed_import_blocks": 0,
         "iat_matches": True,
         "import_trailing_bytes": 0,
+        "import_format": "unknown",
+        "named_lookup": "false",
+        "export_address_mode": "relative",
     }
     exports: list[dict] = []
     imports: list[dict] = []
@@ -321,47 +332,62 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         export_count = fields["export_count"]
         text_size = fields["text_size"]
         dll_count = fields["dll_ref_count"]
+        flags_value = fields["flags"]
 
-        compressed = fields["compression_type"] != 0 and not row["decompressed"]
-        if compressed:
-            row["iat_matches"] = None
+        # EKA2 V-format images carry the import format in the high flag nibble.
+        # Pre-V images use the historical ELF flag or the PE default.
+        if row["header_format"]:
+            import_format = flags_value & IMPORT_FMT_MASK
+        else:
+            import_format = IMPORT_FMT_ELF if flags_value & OLD_ELF_IMPORT_FLAG else IMPORT_FMT_PE
+        import_format_name = {
+            IMPORT_FMT_PE: "PE",
+            IMPORT_FMT_ELF: "ELF",
+            IMPORT_FMT_PE2: "PE2",
+        }.get(import_format, f"UNKNOWN_0x{import_format:08X}")
+        named_lookup = bool(flags_value & IMAGE_NAMED_EXPORT_DATA)
+        row["import_format"] = import_format_name
+        row["named_lookup"] = str(named_lookup).lower()
+        row["export_address_mode"] = "absolute" if import_format == IMPORT_FMT_ELF else "relative"
+
+        code_end = code_off + code_size
+        data_end = 0
         if code_size == 0 or code_off < 0x7C or code_off > len(data):
             errors.append("code segment is empty or its offset is outside file")
-        elif not compressed and code_size > len(data) - code_off:
+        elif code_size > len(data) - code_off:
             errors.append("uncompressed code segment is outside file")
-        if import_off < code_off or import_off > len(data) - 4:
-            errors.append("import offset is outside file/code region")
-        elif not compressed and code_off + code_size != import_off:
-            warnings.append("code segment does not end at import offset")
-        if compressed:
-            warnings.append("compressed image: code payload and IAT bytes are not decoded")
-        if fields["data_size"] and fields["data_offset"] >= len(data):
-            errors.append("data offset is outside file")
-        elif fields["data_size"] and not compressed and fields["data_size"] > len(data) - fields["data_offset"]:
-            errors.append("uncompressed data segment is outside file")
+        if text_size > code_size:
+            errors.append("text size exceeds code size")
+        if fields["data_size"]:
+            data_off = fields["data_offset"]
+            if data_off < code_end:
+                errors.append("data segment overlaps code segment")
+            elif data_off > len(data) or fields["data_size"] > len(data) - data_off:
+                errors.append("uncompressed data segment is outside file")
+            else:
+                data_end = data_off + fields["data_size"]
+        if dll_count > MAX_DLL_REFS:
+            errors.append(f"DLL reference count exceeds safety cap {MAX_DLL_REFS}")
+        if import_format not in (IMPORT_FMT_PE, IMPORT_FMT_ELF, IMPORT_FMT_PE2):
+            errors.append(f"unsupported E32 import format 0x{import_format:08X}")
         if export_count > MAX_EXPORTS:
             errors.append(f"export count exceeds safety cap {MAX_EXPORTS}")
+
         export_bytes = export_count * 4
         export_bounded = (
             (export_count == 0 and export_off == 0)
             or (
                 export_off >= code_off
+                and export_off <= code_end
+                and export_bytes <= code_end - export_off
                 and export_off <= len(data)
                 and export_bytes <= len(data) - export_off
             )
         )
         if not export_bounded:
-            errors.append("export table is outside file/code region")
-        elif export_count and import_off <= len(data) and export_off + export_bytes != import_off:
-            warnings.append("export table does not end at import offset")
-        if text_size > code_size:
-            errors.append("text size exceeds code size")
-        if dll_count > MAX_DLL_REFS:
-            errors.append(f"DLL reference count exceeds safety cap {MAX_DLL_REFS}")
-
-        if export_bounded:
+            errors.append("export table is outside the code segment")
+        elif export_count:
             valid = zero = invalid = 0
-            code_end = code_off + code_size
             code_base = fields["code_base"]
             for ordinal in range(1, export_count + 1):
                 raw = u32(data, export_off + (ordinal - 1) * 4)
@@ -374,9 +400,15 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
                         "valid_code_offset": "sentinel",
                     })
                     continue
-                code_rel = raw & ~1
-                file_off = code_off + code_rel
-                ok = code_rel < code_size and code_off <= file_off < code_end
+                if import_format == IMPORT_FMT_ELF:
+                    absolute = raw & ~1
+                    code_rel = absolute - code_base if absolute >= code_base else -1
+                    runtime_address = f"0x{raw:08X}"
+                else:
+                    code_rel = raw & ~1
+                    runtime_address = f"0x{(code_base + raw) & 0xFFFFFFFF:08X}"
+                ok = 0 <= code_rel < code_size
+                file_off = code_off + code_rel if code_rel >= 0 else -1
                 if ok:
                     valid += 1
                 else:
@@ -384,85 +416,145 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
                 exports.append({
                     "image": image, "path": path, "uid3": row["uid3"],
                     "ordinal": ordinal, "raw_offset": f"0x{raw:08X}",
-                    "runtime_address": f"0x{(code_base + raw) & 0xFFFFFFFF:08X}",
-                    "thumb": raw & 1, "code_file_offset": f"0x{file_off:08X}",
+                    "runtime_address": runtime_address,
+                    "thumb": raw & 1,
+                    "code_file_offset": f"0x{file_off:08X}" if file_off >= 0 else "",
                     "valid_code_offset": str(ok).lower(),
                 })
             row.update(valid_exports=valid, zero_exports=zero, invalid_exports=invalid)
 
         import_end = None
-        if not errors and import_off + 4 <= len(data):
-            import_size = u32(data, import_off)
-            row["import_size"] = import_size
-            if import_size < 4 or import_size > len(data) - import_off:
-                errors.append("import table size is outside file")
+        if dll_count:
+            import_floor = max(code_end, data_end)
+            if import_off < import_floor or import_off > len(data) - 4:
+                errors.append("import section is outside the post-code/data region")
             else:
-                import_end = import_off + import_size
-                code_reloc = fields["code_reloc_offset"]
-                data_reloc = fields["data_reloc_offset"]
-                if code_reloc and (code_reloc < import_end or code_reloc > len(data)):
-                    warnings.append("code relocation offset is outside post-import region")
-                if data_reloc and data_reloc > len(data):
-                    warnings.append("data relocation offset is outside file")
+                import_size = u32(data, import_off)
+                row["import_size"] = import_size
+                if import_size < 4 or import_size > len(data) - import_off:
+                    errors.append("import table size is outside file")
+                else:
+                    import_end = import_off + import_size
+                    code_reloc = fields["code_reloc_offset"]
+                    data_reloc = fields["data_reloc_offset"]
+                    if code_reloc and code_reloc < import_end:
+                        errors.append("code relocation section overlaps import section")
+                    if data_reloc and code_reloc and data_reloc < code_reloc:
+                        warnings.append("data relocation section precedes code relocation section")
 
-                pos = import_off + 4
-                total_imports = 0
-                parsed_blocks = 0
-                iat_matches = None if compressed else True
-                code_bytes = data[code_off:code_off + code_size] if not compressed else b""
-                for block_index in range(dll_count):
-                    if pos + 8 > import_end:
-                        errors.append(f"import descriptor {block_index} exceeds import table")
-                        break
-                    name_rel, count = struct.unpack_from("<II", data, pos)
-                    if count > MAX_IMPORTS or total_imports + count > MAX_IMPORTS:
-                        errors.append("import count exceeds safety cap")
-                        break
-                    ord_end = pos + 8 + count * 4
-                    if ord_end > import_end:
-                        errors.append(f"ordinal array {block_index} exceeds import table")
-                        break
-                    name_off = import_off + name_rel
-                    if name_off < import_off or name_off >= import_end:
-                        errors.append(f"DLL name offset {block_index} is outside import table")
-                        break
-                    name_end = data.find(b"\0", name_off, import_end)
-                    if name_end < 0:
-                        errors.append(f"DLL name {block_index} is unterminated")
-                        break
-                    name = data[name_off:name_end].decode("ascii", "replace")
-                    ordinals = struct.unpack_from("<" + "I" * count, data, pos + 8) if count else ()
-                    iat_off = text_size + total_imports * 4
-                    if compressed:
-                        block_match = None
-                    else:
-                        if iat_off > code_size or count * 4 > code_size - iat_off:
-                            errors.append(f"IAT block {block_index} exceeds code segment")
+                    pos = import_off + 4
+                    total_imports = 0
+                    parsed_blocks = 0
+                    iat_matches = "not-applicable-ELF-relocations" if import_format == IMPORT_FMT_ELF else True
+                    for block_index in range(dll_count):
+                        if pos + 8 > import_end:
+                            errors.append(f"import descriptor {block_index} exceeds import table")
                             break
-                        iat_values = struct.unpack_from("<" + "I" * count, code_bytes, iat_off) if count else ()
-                        block_match = tuple(iat_values) == tuple(ordinals)
-                        if not block_match:
-                            iat_matches = False
-                            warnings.append(f"IAT values differ from ordinal array for {name}")
-                    for index, ordinal in enumerate(ordinals):
-                        imports.append({
-                            "image": image, "path": path, "dependency": name,
-                            "ordinal": ordinal,
-                            "iat_file_offset": "" if compressed else f"0x{code_off + iat_off + index * 4:08X}",
-                            "iat_value_matches": "not-checked-compressed" if block_match is None else str(block_match).lower(),
-                        })
-                    total_imports += count
-                    parsed_blocks += 1
-                    pos = ord_end
-                row.update(
-                    import_count=total_imports,
-                    parsed_import_blocks=parsed_blocks,
-                    iat_matches=iat_matches,
-                    import_trailing_bytes=import_end - pos,
-                )
-                if parsed_blocks != dll_count:
-                    errors.append("not all DLL import descriptors were parsed")
+                        name_rel, count = struct.unpack_from("<II", data, pos)
+                        if count > MAX_IMPORTS or total_imports + count > MAX_IMPORTS:
+                            errors.append("import count exceeds safety cap")
+                            break
+                        array_bytes = 0 if import_format == IMPORT_FMT_PE2 else count * 4
+                        ord_end = pos + 8 + array_bytes
+                        if ord_end > import_end:
+                            errors.append(f"import list {block_index} exceeds import table")
+                            break
+                        name_off = import_off + name_rel
+                        if name_off < import_off + 4 or name_off >= import_end:
+                            errors.append(f"DLL name offset {block_index} is outside import table")
+                            break
+                        name_end = data.find(b"\0", name_off, import_end)
+                        if name_end < 0:
+                            errors.append(f"DLL name {block_index} is unterminated")
+                            break
+                        name = data[name_off:name_end].decode("ascii", "replace")
 
+                        if import_format == IMPORT_FMT_PE:
+                            ordinals = struct.unpack_from("<" + "I" * count, data, pos + 8) if count else ()
+                            iat_off = text_size + total_imports * 4
+                            if iat_off > code_size or count * 4 > code_size - iat_off:
+                                errors.append(f"PE IAT block {block_index} exceeds code segment")
+                                break
+                            iat_values = struct.unpack_from("<" + "I" * count, data, code_off + iat_off) if count else ()
+                            block_match = tuple(iat_values) == tuple(ordinals)
+                            if not block_match:
+                                iat_matches = False
+                                warnings.append(f"IAT values differ from ordinal array for {name}")
+                            for index, ordinal_value in enumerate(ordinals):
+                                imports.append({
+                                    "image": image, "path": path, "dependency": name,
+                                    "ordinal": ordinal_value,
+                                    "iat_file_offset": f"0x{code_off + iat_off + index * 4:08X}",
+                                    "iat_value_matches": str(block_match).lower(),
+                                    "import_kind": "PE ordinal/IAT",
+                                    "relocation_offset": "",
+                                    "addend": "",
+                                })
+                            total_imports += count
+
+                        elif import_format == IMPORT_FMT_PE2:
+                            iat_off = text_size + total_imports * 4
+                            if iat_off > code_size or count * 4 > code_size - iat_off:
+                                errors.append(f"PE2 IAT block {block_index} exceeds code segment")
+                                break
+                            ordinals = struct.unpack_from("<" + "I" * count, data, code_off + iat_off) if count else ()
+                            for index, ordinal_value in enumerate(ordinals):
+                                imports.append({
+                                    "image": image, "path": path, "dependency": name,
+                                    "ordinal": ordinal_value,
+                                    "iat_file_offset": f"0x{code_off + iat_off + index * 4:08X}",
+                                    "iat_value_matches": "PE2-IAT",
+                                    "import_kind": "PE2 IAT",
+                                    "relocation_offset": "",
+                                    "addend": "",
+                                })
+                            total_imports += count
+
+                        else:  # KImageImpFmt_ELF: list contains code-relative relocation places.
+                            relocation_offsets = list(
+                                struct.unpack_from("<" + "I" * count, data, pos + 8)
+                            ) if count else []
+                            if named_lookup:
+                                if relocation_offsets and relocation_offsets[-1] == 0:
+                                    relocation_offsets = relocation_offsets[:-1]
+                                else:
+                                    warnings.append(
+                                        f"named-lookup import block {block_index} lacks its trailing zero-ordinal slot"
+                                    )
+                            for index, relocation_offset in enumerate(relocation_offsets):
+                                if relocation_offset > code_size - 4:
+                                    errors.append(
+                                        f"ELF relocation place {block_index}:{index} is outside code segment"
+                                    )
+                                    break
+                                if relocation_offset & 3:
+                                    warnings.append(
+                                        f"ELF relocation place {block_index}:{index} is not word-aligned"
+                                    )
+                                encoded = u32(data, code_off + relocation_offset)
+                                ordinal_value = encoded & 0xFFFF
+                                addend_value = (encoded >> 16) & 0xFFFF
+                                imports.append({
+                                    "image": image, "path": path, "dependency": name,
+                                    "ordinal": ordinal_value,
+                                    "iat_file_offset": f"0x{code_off + relocation_offset:08X}",
+                                    "iat_value_matches": "ELF-relocation-slot",
+                                    "import_kind": "ELF relocation",
+                                    "relocation_offset": f"0x{relocation_offset:08X}",
+                                    "addend": f"0x{addend_value:04X}",
+                                })
+                            total_imports += len(relocation_offsets)
+
+                        parsed_blocks += 1
+                        pos = ord_end
+                    row.update(
+                        import_count=total_imports,
+                        parsed_import_blocks=parsed_blocks,
+                        iat_matches=iat_matches,
+                        import_trailing_bytes=import_end - pos,
+                    )
+                    if parsed_blocks != dll_count:
+                        errors.append("not all DLL import descriptors were parsed")
         if errors:
             row["status"] = "REJECTED"
             row["reason"] = "; ".join(errors + warnings)
@@ -553,6 +645,61 @@ def self_test() -> None:
     assert row["export_count"] == 1 and row["valid_exports"] == 1, row
     assert len(exports) == 1 and len(imports) == 1, (exports, imports)
 
+    def v_format_fixture(import_format: int, named_lookup: bool = False) -> bytes:
+        header_size = 0xA0
+        code_size = 0x20
+        code_offset = header_size
+        import_offset = code_offset + code_size
+        if import_format == IMPORT_FMT_ELF:
+            count = 2 if named_lookup else 1
+            name_rel = 4 + 8 + count * 4
+            import_size = (name_rel + len(b"euser.dll\0") + 3) & ~3
+        elif import_format == IMPORT_FMT_PE2:
+            count = 1
+            name_rel = 4 + 8
+            import_size = (name_rel + len(b"euser.dll\0") + 3) & ~3
+        else:
+            raise AssertionError("unsupported synthetic format")
+        image = bytearray(import_offset + import_size)
+        struct.pack_into("<III", image, 0, DLL_UID, 0x1000008D, 0xE0001190)
+        image[0x10:0x14] = b"EPOC"
+        struct.pack_into("<I", image, 0x1C, 0)
+        flags = 0x02000000 | 0x00000020 | 0x00000008 | 0x00000001 | import_format
+        if named_lookup:
+            flags |= IMAGE_NAMED_EXPORT_DATA
+        struct.pack_into("<I", image, 0x2C, flags)
+        struct.pack_into("<II", image, 0x30, code_size, 0)
+        struct.pack_into("<I", image, 0x4C, 0x10000000)
+        struct.pack_into("<I", image, 0x54, 1)
+        struct.pack_into("<II", image, 0x58, code_offset + 0x1C, 1)
+        struct.pack_into("<I", image, 0x60, 0x10 if import_format == IMPORT_FMT_PE2 else code_size)
+        struct.pack_into("<III", image, 0x64, code_offset, 0, import_offset)
+        struct.pack_into("<I", image, import_offset, import_size)
+        struct.pack_into("<II", image, import_offset + 4, name_rel, count)
+        if import_format == IMPORT_FMT_ELF:
+            struct.pack_into("<I", image, code_offset + 8, (3 << 16) | 7)
+            struct.pack_into("<I", image, import_offset + 12, 8)
+            if named_lookup:
+                struct.pack_into("<I", image, import_offset + 16, 0)
+            struct.pack_into("<I", image, code_offset + 0x1C, 0x10000004)
+        else:
+            struct.pack_into("<I", image, code_offset + 0x10, 7)
+            struct.pack_into("<I", image, code_offset + 0x1C, 4)
+        image[import_offset + name_rel:import_offset + name_rel + len(b"euser.dll\0")] = b"euser.dll\0"
+        return bytes(image)
+
+    elf = v_format_fixture(IMPORT_FMT_ELF, named_lookup=True)
+    row, exports, imports = parse_candidate(elf, "TEST", "sys/bin/elf.dll")
+    assert row["status"] == "PASS" and row["import_format"] == "ELF", row
+    assert row["export_address_mode"] == "absolute" and row["valid_exports"] == 1, row
+    assert row["import_count"] == 1 and len(imports) == 1, (row, imports)
+    assert imports[0]["ordinal"] == 7 and imports[0]["addend"] == "0x0003", imports
+
+    pe2 = v_format_fixture(IMPORT_FMT_PE2)
+    row, _, imports = parse_candidate(pe2, "TEST", "sys/bin/pe2.dll")
+    assert row["status"] == "PASS" and row["import_format"] == "PE2", row
+    assert row["import_count"] == 1 and imports[0]["ordinal"] == 7, (row, imports)
+
     bad_iat = bytearray(good)
     struct.pack_into("<I", bad_iat, 0x8C, 9)
     row, _, _ = parse_candidate(bytes(bad_iat), "TEST", "sys/bin/bad.dll")
@@ -628,6 +775,7 @@ def main() -> int:
         "code_reloc_offset", "data_reloc_offset", "export_dir_offset", "export_count",
         "valid_exports", "zero_exports", "invalid_exports", "dll_ref_count", "import_count",
         "parsed_import_blocks", "iat_matches", "import_trailing_bytes",
+        "import_format", "named_lookup", "export_address_mode",
     ]
     export_fields = [
         "image", "path", "uid3", "ordinal", "raw_offset", "runtime_address", "thumb",
@@ -635,6 +783,7 @@ def main() -> int:
     ]
     import_fields = [
         "image", "path", "dependency", "ordinal", "iat_file_offset", "iat_value_matches",
+        "import_kind", "relocation_offset", "addend",
     ]
     write_tsv(args.out_dir / "STEP109_E32_MODULES.tsv", rows, module_fields)
     write_tsv(args.out_dir / "STEP109_E32_EXPORTS.tsv", exports, export_fields)

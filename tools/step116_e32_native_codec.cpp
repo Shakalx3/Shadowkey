@@ -24,7 +24,7 @@ extern uint32_t DecompressBPE(const char* source, char* destination);
 extern uint32_t CompressBPE(const char* source, uint32_t sourceSize,
                             char* destination, uint32_t destinationSize);
 extern size_t CompressDeflate(const char* source, int sourceSize,
-                              char* destination, int destinationSize);
+                              const char* destination, int destinationSize);
 
 void ReportError(const ErrorCodes err, const std::string& message,
                  const std::string& detail, int) {

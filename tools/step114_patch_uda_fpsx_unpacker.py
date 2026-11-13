@@ -42,7 +42,7 @@ def patch_source(source: str) -> str:
         '        cout << indent << "Offset: " << offset << endl;\n'
         '        cout << indent << "Unknown: " << unsigned(unknown) << endl;\n'
         '        \n'
-        '        is.extract(path+\'/\'+ "userarea.img", offset, length);'
+        '        is.extract(path+\'/\'+"userarea.img", offset, length);'
     )
     new_output = (
         '        cout << indent << "Destination offset: " << offset << endl;\n'
@@ -51,7 +51,7 @@ def patch_source(source: str) -> str:
         '        cout << indent << "Unknown: " << unsigned(unknown) << endl;\n'
         '        if (length > is.available())\n'
         '            throw "SOS-USER payload length exceeds remaining FPSX bytes";\n'
-        '        is.extract(path+\'/\'+ "userarea.img", offset, length, true);'
+        '        is.extract(path+\'/\'+"userarea.img", offset, length, true);'
     )
     if block.count(old_output) != 1:
         raise ValueError("expected original H2E output/extract sequence exactly once")
@@ -68,14 +68,14 @@ def self_test() -> None:
         '        cout << indent << "Offset: " << offset << endl;\n'
         '        cout << indent << "Unknown: " << unsigned(unknown) << endl;\n'
         "        \n"
-        '        is.extract(path+\'/\'+ "userarea.img", offset, length);\n'
+        '        is.extract(path+\'/\'+"userarea.img", offset, length);\n'
         + END
     )
     patched = patch_source(sample)
     assert "uint32_t offset=wis.readInt();\n        uint32_t length=wis.readInt();" in patched
     assert "Destination offset:" in patched and "Payload length:" in patched
     assert "length > is.available()" in patched
-    assert 'is.extract(path+\'/\'+ "userarea.img", offset, length, true);' in patched
+    assert 'is.extract(path+\'/\'+"userarea.img", offset, length, true);' in patched
     assert "uint32_t length=wis.readInt();\n        uint32_t offset=wis.readInt();" not in patched
     print("Step114 H2E field-order patch self-test: PASS")
 

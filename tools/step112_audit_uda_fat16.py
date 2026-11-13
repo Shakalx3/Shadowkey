@@ -394,7 +394,7 @@ def self_test() -> None:
 
     # A valid BPB may live well beyond the old 2 MiB scan window.
     late_offset = 3 * 1024 * 1024
-    late_image = b"\\0" * late_offset + image
+    late_image = b"\0" * late_offset + image
     assert late_offset in candidate_offsets(late_image)
     late_bpb = parse_bpb(late_image, late_offset)
     assert late_bpb and inspect_volume(late_image, late_bpb)["sys_bin_present"]

@@ -15,7 +15,8 @@ from pathlib import Path
 
 FAT16_MIN_CLUSTERS = 4085
 FAT16_MAX_CLUSTERS = 65524
-MAX_SCAN_BYTES = 2 * 1024 * 1024
+# Search the complete expected RM-320 UDA image, with a bounded 128 MiB cap.
+MAX_SCAN_BYTES = 128 * 1024 * 1024
 MAX_DIRECTORY_DEPTH = 32
 
 
@@ -390,7 +391,14 @@ def self_test() -> None:
     assert 512 in offsets, offsets
     bpb2 = parse_bpb(bytes(mbr), 512)
     assert bpb2 and inspect_volume(bytes(mbr), bpb2)["sys_bin_present"]
-    print("Step112 UDA FAT16 self-tests: PASS (2/2)")
+
+    # A valid BPB may live well beyond the old 2 MiB scan window.
+    late_offset = 3 * 1024 * 1024
+    late_image = b"\\0" * late_offset + image
+    assert late_offset in candidate_offsets(late_image)
+    late_bpb = parse_bpb(late_image, late_offset)
+    assert late_bpb and inspect_volume(late_image, late_bpb)["sys_bin_present"]
+    print("Step112 UDA FAT16 self-tests: PASS (3/3)")
 
 
 def main() -> int:
@@ -443,7 +451,7 @@ def main() -> int:
     else:
         lines += [
             "",
-            "No valid FAT16 BPB was found at offset zero, an MBR FAT16 partition start, or a 512-byte-aligned offset within the first 2 MiB.",
+            f"No valid FAT16 BPB was found at offset zero, an MBR FAT16 partition start, or a 512-byte-aligned offset within the first {result['scan_limit_bytes']:,} bytes.",
             "This is not proof that the UDA container is corrupt; it may use a different volume layout or filesystem.",
         ]
     report = "\n".join(lines) + "\n"

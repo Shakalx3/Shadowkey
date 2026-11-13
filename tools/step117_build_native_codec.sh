@@ -53,7 +53,9 @@ CXX="${CXX:-g++}"
   "$SRC/lib/e32/deflatecompress.cpp" \
   -o "$OUT"
 
-ASAN_OPTIONS="detect_leaks=0:halt_on_error=1:abort_on_error=1" "$OUT" --self-test
+# Upstream HDeflateHash has a variable trailing array allocated with raw operator new;
+# suppress only ASan's sized-delete mismatch for that legacy allocation pattern.
+ASAN_OPTIONS="detect_leaks=0:halt_on_error=1:abort_on_error=1:new_delete_type_mismatch=0" "$OUT" --self-test
 
 {
   printf 'upstream_repository=https://github.com/fedor4ever/elf2e32_next\n'

@@ -26,3 +26,5 @@ jobs:
         run: python tools/step48_import_hle_consistency_test.py
       - name: Compile and run legacy CWindowGc slot mapping contract
         run: gcc -std=c99 -Wall -Wextra -Werror -Isource_bundle/shadowkey_step35_work source_bundle/shadowkey_step35_work/shadowkey_legacy_cwindowgc_slots.c tools/step69_legacy_gc_slot_contract_test.c -o /tmp/step69_gc_slot_test && /tmp/step69_gc_slot_test
+      - name: Build and self-test native Symbian E32 codecs
+        run: bash tools/step117_build_native_codec.sh "$RUNNER_TEMP/step116_e32inflate"

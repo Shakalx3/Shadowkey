@@ -31,6 +31,8 @@ on:
       - "tools/step109_inventory_rofs_e32.py"
       - "tools/step117_native_e32_decompress.py"
       - "docs/STEP117_NATIVE_E32_DECOMPRESSION.md"
+      - "tools/step118_summarize_e32_decompression.py"
+      - "docs/STEP118_BULK_E32_VALIDATION.md"
       - "tools/step112_audit_uda_fat16.py"
       - "tools/step114_patch_uda_fpsx_unpacker.py"
       - "docs/STEP114_UDA_FPSX_FIELD_ORDER_CORRECTION.md"
@@ -570,7 +572,7 @@ jobs:
             --tree PPM_OVER_C0R=firmware-parsed/step109-merged/PPM_OVER_C0R \
             --out-root firmware-parsed/step117-native \
             --report firmware-input/STEP117_NATIVE_E32_DECOMPRESSION.md \
-            --limit-per-compression 1
+            --limit-per-compression 0
           cat firmware-input/STEP117_NATIVE_E32_DECOMPRESSION.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP117_NATIVE_E32_DECOMPRESSION.md
           python3 tools/step109_inventory_rofs_e32.py \
@@ -578,6 +580,15 @@ jobs:
             --out-dir firmware-input/STEP117_NATIVE_PARSED
           cat firmware-input/STEP117_NATIVE_PARSED/STEP109_E32_INVENTORY.md >> "$GITHUB_STEP_SUMMARY"
           cat firmware-input/STEP117_NATIVE_PARSED/STEP109_E32_INVENTORY.md
+          python3 -m py_compile tools/step118_summarize_e32_decompression.py
+          python3 tools/step118_summarize_e32_decompression.py \
+            --step117-json firmware-input/STEP117_NATIVE_E32_DECOMPRESSION.json \
+            --modules firmware-input/STEP117_NATIVE_PARSED/STEP109_E32_MODULES.tsv \
+            --exports firmware-input/STEP117_NATIVE_PARSED/STEP109_E32_EXPORTS.tsv \
+            --imports firmware-input/STEP117_NATIVE_PARSED/STEP109_E32_IMPORTS.tsv \
+            --out firmware-input/STEP118_BULK_E32_VALIDATION.md
+          cat firmware-input/STEP118_BULK_E32_VALIDATION.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP118_BULK_E32_VALIDATION.md
       - name: Build EKA2 RLibrary loader probe for the isolated TInt64 DLL
         id: step102-loader-probe
         run: |

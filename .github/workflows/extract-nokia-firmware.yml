@@ -36,7 +36,9 @@ on:
       - "tools/step119_audit_e32_iat_layout.py"
       - "docs/STEP119_E32_IAT_LAYOUT_AUDIT.md"
       - "tools/step120_inventory_e32_import_formats.py"
+      - "tools/step121_package_e32_metadata.py"
       - "docs/STEP120_FORMAT_AWARE_E32_INVENTORY.md"
+      - "docs/STEP121_N95_E32_METADATA_INVENTORY.md"
       - "tools/step112_audit_uda_fat16.py"
       - "tools/step114_patch_uda_fpsx_unpacker.py"
       - "docs/STEP114_UDA_FPSX_FIELD_ORDER_CORRECTION.md"
@@ -828,6 +830,7 @@ jobs:
           raw_files=$(find firmware-input -type f \( -iname '*.dll' -o -iname '*.c0r' -o -iname '*.fpsx' -o -iname '*.rofs' -o -iname '*.img' -o -iname '*.bin' \) ! -path 'firmware-input/STEP99_TINT64_E32_DLL/ShadowkeyCompat.dll' -print)
           if [ -n "$raw_files" ]; then printf '%s\n' "$raw_files"; exit 1; fi
       - name: Package and publish reversible Step102 first-device test
+        id: step102-release
         if: always() && steps.step99-e32-dll.outcome == 'success' && steps.step102-loader-probe.outcome == 'success' && steps.cleanup-firmware.outcome == 'success'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -851,6 +854,32 @@ jobs:
               --notes "Reversible EKA2 loader test only; not a Shadowkey game build. No ROM or firmware files are included." \
               --prerelease
           fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url,name,isDraft,isPrerelease,assets
+      - name: Package and publish metadata-only N95 E32 inventory
+        id: step121-metadata
+        if: always() && steps.step117-native-e32.outcome == 'success' && steps.step102-loader-probe.outcome == 'success' && steps.cleanup-firmware.outcome == 'success' && steps.step102-release.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          OUT=firmware-input/STEP121_N95_E32_METADATA
+          python3 -m py_compile tools/step121_package_e32_metadata.py
+          python3 tools/step121_package_e32_metadata.py --self-test
+          python3 tools/step121_package_e32_metadata.py \
+            --step109-dir firmware-input/STEP117_NATIVE_PARSED \
+            --step120-dir firmware-input/STEP120_E32_FORMAT_AWARE \
+            --step117-report firmware-input/STEP117_NATIVE_E32_DECOMPRESSION.md \
+            --step118-report firmware-input/STEP118_BULK_E32_VALIDATION.md \
+            --step119-report firmware-input/STEP119_E32_IAT_LAYOUT_AUDIT.md \
+            --step120-report firmware-input/STEP120_E32_FORMAT_AWARE/STEP120_E32_FORMAT_AWARE_INVENTORY.md \
+            --out "$OUT/Shadowkey-N95-E32-Metadata.zip" \
+            --manifest "$OUT/manifest.json" \
+            --sha256-file "$OUT/SHA256SUMS.txt" \
+            --run-id "$GITHUB_RUN_ID" --commit "$GITHUB_SHA"
+          cat "$OUT/manifest.json" >> "$GITHUB_STEP_SUMMARY"
+          cat "$OUT/SHA256SUMS.txt"
+          TAG="shadowkey-step102-${GITHUB_RUN_ID}"
+          gh release upload "$TAG" "$OUT/Shadowkey-N95-E32-Metadata.zip" "$OUT/SHA256SUMS.txt" --repo "$GITHUB_REPOSITORY" --clobber
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url,name,isDraft,isPrerelease,assets
       - name: Upload compact diagnostic artifact
         id: upload-diagnostics

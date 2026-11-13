@@ -102,13 +102,35 @@ def bytepair_decompress(src: bytes, dst_size: int) -> bytes:
 
 
 def inflate_e32(data: bytes) -> tuple[bytes, dict]:
+    """Inflate an EKA2 V-format E32 image using its declared header size.
+
+    Symbian's f32image.h defines iCodeOffset as both the code-section offset
+    and total header size. iUncompressedSize at 0x7C is the byte count after
+    that header, not a fixed 0x80-byte payload offset.
+    """
     if len(data) < 0x80:
-        raise ValueError("compressed E32 image is shorter than its 0x80-byte extended header")
+        raise ValueError("compressed E32 image is shorter than the compression header")
     compression = u32(data, 0x1C)
+    flags = u32(data, 0x2C)
+    header_format = (flags & 0x0F000000) >> 24
+    header_size = u32(data, 0x64)
     declared = u32(data, 0x7C)
+    if header_format != 2:
+        raise ValueError(f"unsupported compressed E32 header format {header_format}; expected V-format 2")
+    if header_size < 0x9C or header_size > len(data):
+        raise ValueError(
+            f"V-format iCodeOffset/header size outside file: 0x{header_size:X}"
+        )
+    export_desc_size = struct.unpack_from("<H", data, 0x98)[0]
+    min_header_size = (0x9B + export_desc_size + 3) & ~3
+    if header_size < min_header_size:
+        raise ValueError(
+            f"iCodeOffset 0x{header_size:X} truncates V-header export descriptor "
+            f"(minimum 0x{min_header_size:X})"
+        )
     if declared <= 0 or declared > MAX_DECOMPRESSED:
         raise ValueError(f"uncompressedSize outside safety limit: 0x{declared:X}")
-    payload = data[0x80:]
+    payload = data[header_size:]
     if compression == DEFLATE_UID:
         decoded = None
         failures = []
@@ -133,37 +155,27 @@ def inflate_e32(data: bytes) -> tuple[bytes, dict]:
             raise ValueError("Deflate decode failed: " + " | ".join(failures))
         algorithm = "deflate"
     elif compression == BYTEPAIR_UID:
-        decoded = None
-        failures = []
-        for size in dict.fromkeys((declared, declared - 0x80)):
-            if size < 0 or size > MAX_DECOMPRESSED:
-                continue
-            try:
-                decoded = bytepair_decompress(payload, size)
-                break
-            except ValueError as exc:
-                failures.append(str(exc))
-        if decoded is None:
-            raise ValueError("BytePair decode failed: " + " | ".join(failures))
+        try:
+            decoded = bytepair_decompress(payload, declared)
+        except ValueError as exc:
+            raise ValueError(f"BytePair decode failed: {exc}") from exc
         algorithm = "bytepair"
     else:
         raise ValueError(f"unsupported E32 compression UID 0x{compression:08X}")
 
-    if len(decoded) == declared:
-        size_mode = "payload-size"
-    elif len(decoded) + 0x80 == declared:
-        size_mode = "whole-image-size"
-    else:
+    if len(decoded) != declared:
         raise ValueError(
             f"uncompressedSize mismatch: header=0x{declared:X}, decoded=0x{len(decoded):X}"
         )
-    flat = bytearray(data[:0x80] + decoded)
+    flat = bytearray(data[:header_size] + decoded)
     flat[0x1C:0x20] = b"\0\0\0\0"
     return bytes(flat), {
         "algorithm": algorithm,
+        "header_format": header_format,
+        "header_size": header_size,
         "declared_uncompressed_size": declared,
         "decoded_payload_size": len(decoded),
-        "size_mode": size_mode,
+        "size_mode": "post-header-size",
     }
 
 
@@ -198,6 +210,8 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
         "compression_type": "",
         "compression_header_hex": "",
         "compressed_payload_prefix_hex": "",
+        "header_format": "",
+        "header_size": 0,
         "compression_algorithm": "none",
         "uncompressed_size_field": 0,
         "decompression_size_mode": "",
@@ -240,10 +254,19 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
 
     original_compression = u32(data, 0x1C)
     row["compression_type"] = f"0x{original_compression:08X}"
+    if len(data) >= 0x68:
+        flags = u32(data, 0x2C)
+        row["header_format"] = (flags & 0x0F000000) >> 24
+        row["header_size"] = u32(data, 0x64)
+        row["flags"] = f"0x{flags:08X}"
+        row["code_offset"] = row["header_size"]
     if original_compression:
-        # Preserve only a short header/payload prefix for diagnosis; never emit module code.
-        row["compression_header_hex"] = data[0x7C:min(len(data), 0x90)].hex()
-        row["compressed_payload_prefix_hex"] = data[0x80:min(len(data), 0xA0)].hex()
+        # Preserve only header metadata and a short payload prefix; never emit module code.
+        row["compression_header_hex"] = data[0x7C:min(len(data), 0xA0)].hex()
+        row["uncompressed_size_field"] = u32(data, 0x7C) if len(data) >= 0x80 else 0
+        header_size = row.get("header_size", 0)
+        if 0 < header_size <= len(data):
+            row["compressed_payload_prefix_hex"] = data[header_size:min(len(data), header_size + 0x40)].hex()
         try:
             data, inflation = inflate_e32(data)
         except (ValueError, zlib.error, struct.error) as exc:
@@ -254,9 +277,10 @@ def parse_candidate(data: bytes, image: str, path: str) -> tuple[dict, list[dict
                 DEFLATE_UID: "deflate",
                 BYTEPAIR_UID: "bytepair",
             }.get(original_compression, "unknown")
-            row["uncompressed_size_field"] = u32(data, 0x7C) if len(data) >= 0x80 else 0
             return row, exports, imports
         row["compression_algorithm"] = inflation["algorithm"]
+        row["header_format"] = inflation["header_format"]
+        row["header_size"] = inflation["header_size"]
         row["uncompressed_size_field"] = inflation["declared_uncompressed_size"]
         row["decompression_size_mode"] = inflation["size_mode"]
         row["decompressed"] = True
@@ -491,22 +515,35 @@ def self_test() -> None:
     good = synthetic_e32()
 
     def compressed_fixture(compression_uid: int) -> bytes:
-        flat = bytearray(good[:0x7C] + b"\0\0\0\0" + good[0x7C:])
+        # Model an EKA2 V-format image with a 0xA0-byte header. The compressed
+        # payload begins at iCodeOffset, not at the fixed 0x80-byte J-header.
+        header_size = 0xA0
+        delta = header_size - 0x7C
+        flat = bytearray(good[:0x7C] + bytes(delta) + good[0x7C:])
         for offset in (0x58, 0x64, 0x6C, 0x70):
-            struct.pack_into("<I", flat, offset, u32(flat, offset) + 4)
-        payload = bytes(flat[0x80:])
+            struct.pack_into("<I", flat, offset, u32(flat, offset) + delta)
+        struct.pack_into("<I", flat, 0x2C, 0x02000001)  # V header format + DLL
+        struct.pack_into("<I", flat, 0x64, header_size)
+        struct.pack_into("<I", flat, 0x80, u32(flat, 0x08))  # secure ID
+        struct.pack_into("<I", flat, 0x84, 0x101FB657)       # vendor ID
+        struct.pack_into("<II", flat, 0x88, 0, 0)            # capabilities
+        struct.pack_into("<I", flat, 0x90, 0)                # exception descriptor
+        struct.pack_into("<I", flat, 0x94, 0)                # spare2
+        struct.pack_into("<HBB", flat, 0x98, 0, 0, 0)         # no export description
+        payload = bytes(flat[header_size:])
         struct.pack_into("<I", flat, 0x1C, compression_uid)
         struct.pack_into("<I", flat, 0x7C, len(payload))
         if compression_uid == DEFLATE_UID:
             packed = zlib.compress(payload)
         else:
             packed = b"\0" + payload
-        return bytes(flat[:0x80]) + packed
+        return bytes(flat[:header_size]) + packed
 
     for compression_uid in (DEFLATE_UID, BYTEPAIR_UID):
         packed = compressed_fixture(compression_uid)
         flat, meta = inflate_e32(packed)
-        assert flat[0x1C:0x20] == b"\0\0\0\0" and len(flat) == 0x80 + meta["decoded_payload_size"], meta
+        assert flat[0x1C:0x20] == b"\0\0\0\0" and len(flat) == 0xA0 + meta["decoded_payload_size"], meta
+        assert meta["header_format"] == 2 and meta["header_size"] == 0xA0, meta
         row, exp, imp = parse_candidate(packed, "TEST", "sys/bin/compressed.dll")
         assert row["status"] == "PASS", row
         assert row["decompressed"] is True and len(exp) == 1 and len(imp) == 1, row
@@ -584,7 +621,7 @@ def main() -> int:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     module_fields = [
         "image", "path", "size", "sha256", "status", "reason", "uid1", "uid2", "uid3",
-        "header_crc", "module_version", "tools_version", "kind", "flags", "compression_type",
+        "header_crc", "module_version", "tools_version", "kind", "flags", "header_format", "header_size", "compression_type",
         "compression_header_hex", "compressed_payload_prefix_hex", "compression_algorithm", "uncompressed_size_field", "decompression_size_mode",
         "decompressed", "flat_size", "code_base", "entry_point", "data_base", "code_size", "data_size",
         "code_offset", "data_offset", "text_size", "import_offset", "import_size",

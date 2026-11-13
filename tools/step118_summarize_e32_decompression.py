@@ -41,17 +41,24 @@ def main() -> int:
             reason = row.get("reason") or "(no reason recorded)"
             reason_groups[reason].append(row.get("path", "(unknown path)"))
 
-    parsed_by_path = {row.get("path", ""): row for row in module_rows}
+    def normalize_path(value: str) -> str:
+        parts = Path(value).parts
+        if parts and parts[0] == "PPM_OVER_C0R":
+            parts = parts[1:]
+        return Path(*parts).as_posix() if parts else ""
+
+    parsed_by_path = {normalize_path(row.get("path", "")): row for row in module_rows}
+    decompressed_paths = {normalize_path(item.get("path", "")) for item in decompression_rows}
     missing = [
         row.get("path", "(unknown path)")
         for row in decompression_rows
         if row.get("status") == "DECOMPRESSED"
-        and row.get("path", "") not in parsed_by_path
+        and normalize_path(row.get("path", "")) not in parsed_by_path
     ]
     unparsed = [
         row.get("path", "(unknown path)")
         for row in module_rows
-        if row.get("path", "") not in {item.get("path", "") for item in decompression_rows}
+        if normalize_path(row.get("path", "")) not in decompressed_paths
     ]
     valid_exports = sum(int(row.get("valid_exports") or 0) for row in module_rows)
     zero_exports = sum(int(row.get("zero_exports") or 0) for row in module_rows)
@@ -85,14 +92,16 @@ def main() -> int:
         )
 
     lines += ["", "## Flat-image structural results", "",
-              "| Path | Status | UID3 | Exports valid/zero/invalid | Imports | Reason |",
-              "|---|---|---:|---:|---:|---|"]
+              "| Path | Status | UID3 | Code size | Text size | DLL refs | Export count | Exports valid/zero/invalid | Imports | Import offset | Export offset | Reason |",
+              "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|"]
     for row in module_rows:
         lines.append(
-            f"| `{row.get('path','')}` | **{row.get('status','')}** | "
-            f"{row.get('uid3','')} | "
+            f"| \`{row.get('path','')}\` | **{row.get('status','')}** | "
+            f"{row.get('uid3','')} | {row.get('code_size','')} | {row.get('text_size','')} | "
+            f"{row.get('dll_ref_count','')} | {row.get('export_count','')} | "
             f"{row.get('valid_exports','')}/{row.get('zero_exports','')}/{row.get('invalid_exports','')} | "
-            f"{row.get('import_count','')} | {row.get('reason','')} |"
+            f"{row.get('import_count','')} | {row.get('import_offset','')} | "
+            f"{row.get('export_dir_offset','')} | {row.get('reason','')} |"
         )
 
     lines += ["", "## Aggregated parse issues", ""]

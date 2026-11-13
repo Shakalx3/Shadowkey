@@ -29,6 +29,8 @@ on:
       - "tools/step108_extract_rofs_local_files.py"
       - "tools/step109_resolve_rofx_base_references.py"
       - "tools/step109_inventory_rofs_e32.py"
+      - "tools/step117_native_e32_decompress.py"
+      - "docs/STEP117_NATIVE_E32_DECOMPRESSION.md"
       - "tools/step112_audit_uda_fat16.py"
       - "tools/step114_patch_uda_fpsx_unpacker.py"
       - "docs/STEP114_UDA_FPSX_FIELD_ORDER_CORRECTION.md"
@@ -474,22 +476,20 @@ jobs:
           mkdir -p "$WORK"
           # Keep diagnostics when any network/build substep fails.
           trap 'rc=$?; echo "Step99 failed (exit $rc)"; for f in "$OUT/elf2e32-clone.log" "$OUT/elf2e32-download.log" "$OUT/converter-cmake.log" "$OUT/elf2e32.log"; do if [ -f "$f" ]; then echo "===== $f ====="; tail -n 100 "$f"; fi; done; exit "$rc"' ERR
+          ELF2E32_REF=ecfc39742dce03f3a5f4d83db18e8c1f395f3c47
           if [ ! -f "$WORK/src/CMakeLists.txt" ]; then
             rm -rf "$WORK/src"
             mkdir -p "$WORK/src"
-            if ! git -c http.version=HTTP/1.1 clone --depth 1 https://github.com/fedor4ever/elf2e32.git "$WORK/src" 2>"$OUT/elf2e32-clone.log"; then
-              rm -rf "$WORK/src"
-              mkdir -p "$WORK/src"
-              if ! curl --fail --location --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 \
-                https://api.github.com/repos/fedor4ever/elf2e32/tarball/master \
-                -o "$WORK/elf2e32-source.tar.gz" 2>"$OUT/elf2e32-download.log"; then
-                curl --fail --location --retry 2 --retry-delay 2 --connect-timeout 15 --max-time 120 \
-                  https://codeload.github.com/fedor4ever/elf2e32/tar.gz/refs/heads/master \
-                  -o "$WORK/elf2e32-source.tar.gz" 2>>"$OUT/elf2e32-download.log"
-              fi
-              tar -xzf "$WORK/elf2e32-source.tar.gz" --strip-components=1 -C "$WORK/src"
+            if ! curl --fail --location --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 \
+              "https://codeload.github.com/fedor4ever/elf2e32/tar.gz/$ELF2E32_REF" \
+              -o "$WORK/elf2e32-source.tar.gz" 2>"$OUT/elf2e32-download.log"; then
+              curl --fail --location --retry 2 --retry-delay 2 --connect-timeout 15 --max-time 120 \
+                "https://api.github.com/repos/fedor4ever/elf2e32/tarball/$ELF2E32_REF" \
+                -o "$WORK/elf2e32-source.tar.gz" 2>>"$OUT/elf2e32-download.log"
             fi
+            tar -xzf "$WORK/elf2e32-source.tar.gz" --strip-components=1 -C "$WORK/src"
           fi
+          echo "$ELF2E32_REF" > "$OUT/elf2e32-source-commit.txt"
           test -f "$WORK/src/CMakeLists.txt"
           cmake -S "$WORK/src" -B "$WORK/build" \
             -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
@@ -556,6 +556,28 @@ jobs:
           cat "$OUT/e32-header.json"
           cat "$OUT/e32-dump.txt"
           cat "$OUT/STEP99_STATUS.txt"
+      - name: Probe Symbian-native E32 Deflate and BytePair decoders
+        id: step117-native-e32
+        run: |
+          set -euo pipefail
+          ELF2E32=$(find "$RUNNER_TEMP/step99-elf2e32/build" -type f -name elf2e32 -perm -111 | head -n1)
+          test -n "$ELF2E32" && test -x "$ELF2E32"
+          python3 -m py_compile tools/step117_native_e32_decompress.py
+          python3 tools/step117_native_e32_decompress.py --self-test
+          python3 tools/step117_native_e32_decompress.py \
+            --elf2e32 "$ELF2E32" \
+            --modules-tsv firmware-input/STEP109_E32_MODULES.tsv \
+            --tree PPM_OVER_C0R=firmware-parsed/step109-merged/PPM_OVER_C0R \
+            --out-root firmware-parsed/step117-native \
+            --report firmware-input/STEP117_NATIVE_E32_DECOMPRESSION.md \
+            --limit-per-compression 1
+          cat firmware-input/STEP117_NATIVE_E32_DECOMPRESSION.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP117_NATIVE_E32_DECOMPRESSION.md
+          python3 tools/step109_inventory_rofs_e32.py \
+            --tree STEP117_NATIVE=firmware-parsed/step117-native \
+            --out-dir firmware-input/STEP117_NATIVE_PARSED
+          cat firmware-input/STEP117_NATIVE_PARSED/STEP109_E32_INVENTORY.md >> "$GITHUB_STEP_SUMMARY"
+          cat firmware-input/STEP117_NATIVE_PARSED/STEP109_E32_INVENTORY.md
       - name: Build EKA2 RLibrary loader probe for the isolated TInt64 DLL
         id: step102-loader-probe
         run: |

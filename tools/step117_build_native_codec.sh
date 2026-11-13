@@ -43,6 +43,7 @@ done
 CXX="${CXX:-g++}"
 "$CXX" -std=c++17 -O2 -Wall -Wextra \
   -Wno-unused-parameter -Wno-sign-compare -Wno-misleading-indentation -Wno-shadow \
+  -include cstdint \
   -I"$SRC/src" -I"$SRC/lib/e32" -I"$SRC/include" \
   "$ROOT/tools/step116_e32_native_codec.cpp" \
   "$SRC/lib/e32/bpe_manager.cpp" \

@@ -41,7 +41,7 @@ for path in "${SOURCE_FILES[@]}"; do
 done
 
 CXX="${CXX:-g++}"
-"$CXX" -std=c++17 -O2 -Wall -Wextra \
+"$CXX" -std=c++17 -O1 -g -Wall -Wextra -fsanitize=address,undefined -fno-omit-frame-pointer \
   -Wno-unused-parameter -Wno-sign-compare -Wno-misleading-indentation -Wno-shadow \
   -include cstdint \
   -I"$SRC/src" -I"$SRC/lib/e32" -I"$SRC/include" \
@@ -53,7 +53,7 @@ CXX="${CXX:-g++}"
   "$SRC/lib/e32/deflatecompress.cpp" \
   -o "$OUT"
 
-"$OUT" --self-test
+ASAN_OPTIONS="detect_leaks=0:halt_on_error=1:abort_on_error=1" "$OUT" --self-test
 
 {
   printf 'upstream_repository=https://github.com/fedor4ever/elf2e32_next\n'

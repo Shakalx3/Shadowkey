@@ -212,6 +212,7 @@ std::vector<char> make_v_header(uint32_t compression, uint32_t codeSize,
 }
 
 void self_test() {
+    std::cout << "Step116 Deflate test: start\n" << std::flush;
     std::vector<char> deflatePayload(8192);
     const std::string pattern = "Shadowkey-N95-Symbian-E32-native-deflate/";
     for (size_t i = 0; i < deflatePayload.size(); ++i)
@@ -232,6 +233,9 @@ void self_test() {
                     deflateFlat.begin() + 0x9C))
         throw std::runtime_error("Symbian Deflate self-test roundtrip mismatch");
 
+    std::cout << "Step116 Deflate test: PASS\n" << std::flush;
+
+    std::cout << "Step116 BytePair test: start\n" << std::flush;
     std::vector<char> code(5000);
     std::vector<char> data(3000);
     for (size_t i = 0; i < code.size(); ++i) code[i] = static_cast<char>((i / 17) & 0xFF);
@@ -258,6 +262,7 @@ void self_test() {
         !std::equal(data.begin(), data.end(), bpeFlat.begin() + 0x9C + code.size()))
         throw std::runtime_error("Symbian BytePair self-test roundtrip mismatch");
 
+    std::cout << "Step116 BytePair test: PASS\n" << std::flush;
     std::cout << "Step116 native Symbian E32 codec self-tests: PASS (Deflate + BytePair)\n";
 }
 

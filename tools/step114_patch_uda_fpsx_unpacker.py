@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Patch only the Nokia FPSX H2E (SOS-USER) field order in the CI unpacker clone.
+"""Historical Step114 field-order experiment; rejected by RM-320 run 43409312931.
+
+Do not use this patch in the firmware workflow. Step115 preserves semantics and
+instruments the raw header before any new field interpretation is attempted.
+
+Original experiment: patch only the Nokia FPSX H2E (SOS-USER) field order in the CI unpacker clone.
 
 The upstream parser's H2E branch labels the first 32-bit value as length and
 the second as offset. BinaryReader::extract(destination, offset, length)

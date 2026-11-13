@@ -32,6 +32,8 @@ on:
       - "tools/step112_audit_uda_fat16.py"
       - "tools/step114_patch_uda_fpsx_unpacker.py"
       - "docs/STEP114_UDA_FPSX_FIELD_ORDER_CORRECTION.md"
+      - "tools/step115_instrument_uda_h2e.py"
+      - "docs/STEP115_UDA_H2E_RAW_HEADER.md"
       - "docs/STEP111_ROFX_MERGE_AND_N95_ROM_EXPORTS.md"
       - "docs/STEP113_FIRMWARE_AUDIT_DIAGNOSTICS.md"
   workflow_dispatch:
@@ -81,11 +83,11 @@ jobs:
           sudo mkdir -p /usr/local/lib64
           sudo make -C /tmp/libunixpp install
           git clone --depth 1 https://github.com/saur0n/unpacker.git /tmp/nokia-unpacker
-          python3 tools/step114_patch_uda_fpsx_unpacker.py \
+          python3 tools/step115_instrument_uda_h2e.py \
             --self-test \
             --source /tmp/nokia-unpacker/fpsx.cpp \
-            --report firmware-input/STEP114_UDA_FPSX_FIELD_ORDER_PATCH.txt
-          cat firmware-input/STEP114_UDA_FPSX_FIELD_ORDER_PATCH.txt >> "$GITHUB_STEP_SUMMARY"
+            --report firmware-input/STEP115_UDA_H2E_RAW_HEADER.txt
+          cat firmware-input/STEP115_UDA_H2E_RAW_HEADER.txt >> "$GITHUB_STEP_SUMMARY"
           make -C /tmp/nokia-unpacker LIBRARIES="-L/usr/local/lib64 -lstdc++ -lunix++ -lcrypto -lz"
           mkdir -p firmware-parsed/uda firmware-parsed/ppm firmware-parsed/core firmware-parsed/ppm-rofs firmware-parsed/core-rofs
           set +e

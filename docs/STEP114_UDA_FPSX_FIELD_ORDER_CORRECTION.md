@@ -1,66 +1,37 @@
-# Step114 — RM-320 UDA FPSX H2E field-order correction probe
+# Step114 — RM-320 UDA FPSX H2E field-order experiment (not validated)
 
 Date: 2026-11-13
 
-## Baseline inspected
+## Baseline
 
 - Default branch: main
-- Baseline commit: 7d0fad184270e7bf37b33091ff34565ad2193bdf
-- Latest firmware run before this checkpoint: [43220074735](https://github.com/Shakalx3/Shadowkey/actions/runs/43220074735), completed successfully.
-- Historical requested run [42604419519](https://github.com/Shakalx3/Shadowkey/actions/runs/42604419519) failed while linking the unpacker because ld.bfd could not find -lunix++. Later workflow revisions fixed the library search path. That historical failure was not evidence of malformed UDA/PPM/C0R firmware.
+- Original baseline commit: 7d0fad184270e7bf37b33091ff34565ad2193bdf
+- First experiment commit: 0b001ccabaf46a74ee67abb2252e382a22a882d6
+- Follow-up implementation-fix commit: 4268c11c033d53b5c92c966ea72602e93177f2f3
+- Validation run: [43409312931](https://github.com/Shakalx3/Shadowkey/actions/runs/43409312931), overall workflow completed successfully.
 
-## Current UDA result and discrepancy
+## Hypothesis and why it was tried
 
-The successful run 43220074735 extracted the UDA FPSX to userarea.img (41,206,272 bytes), but Step112 reported NO_FAT16_VOLUME_FOUND. Its earlier search window was limited to the first 2 MiB.
+The upstream FPSX H2E branch reads two 32-bit values as length then offset and calls BinaryReader::extract(destination, offset, length). BinaryReader::extract seeks the output to offset, then copies length bytes from the current source cursor. The original parser log showed Length=115,200 and Offset=41,091,072, while the resulting sparse file size was 41,206,272 (= 41,091,072 + 115,200). Swapping the field interpretation appeared arithmetically plausible, but that alone was not proof of the actual H2E layout.
 
-The UDA FPSX log reports an H2E block named SOS-USER with two 32-bit values:
+## Actual result — hypothesis rejected
 
-- First value printed as Length: 115,200
-- Second value printed as Offset: 41,091,072
-- Output file size: 41,206,272 bytes
+The field-swap experiment did not produce a usable UDA image:
 
-Inspection of the upstream parser shows the H2E branch reads the first value into length, the second into offset, then calls BinaryReader::extract(destination, offset, length). In the upstream BinaryReader::extract implementation, the output file is positioned at offset, then length bytes are read from the current source cursor and written. The resulting output length is therefore offset + length.
+- The patched parser reported Destination offset=196,608, Payload length=0, Payload available=41,212,542 and Unknown=196.
+- The UDA parser then encountered block type 0x90 and exited with an unknown-block-type error.
+- The generated userarea.img was 0 bytes.
+- Step112 reported NO_FAT16_VOLUME_FOUND on a 0-byte image.
+- The complete workflow itself finished successfully, but that success only means the diagnostic pipeline completed; it does not mean UDA extraction succeeded.
 
-The observed file size is exactly:
+Therefore the proposed first-field=destination-offset / second-field=payload-length interpretation is NOT accepted. The earlier arithmetic match was insufficient and may have been coincidental or affected by a header-boundary misunderstanding.
 
-41,091,072 + 115,200 = 41,206,272
+## Follow-up
 
-The input UDA FPSX is 41,212,787 bytes. The alternative interpretation — destination offset 115,200 and payload length 41,091,072 — is consistent with the remaining input payload size and would place the user-area bytes near the start of the extracted image instead of at a sparse tail. This is strong format-consistency evidence, but remains a hypothesis until the corrected output passes the FAT16 BPB, FAT-chain and directory-tree checks.
+Step115 supersedes this experiment. It restores the upstream H2E read/extract semantics and instruments the raw header bytes, the source cursor at payload start, the available payload length and the first 64 payload bytes. No further field-order changes should be made until those bytes are inspected.
 
-Source inspected:
-- [unpacker FPSX parser](https://github.com/saur0n/unpacker/blob/master/fpsx.cpp)
-- [unpacker BinaryReader implementation](https://github.com/saur0n/unpacker/blob/master/REUtils.cpp)
+The Step112 scanner now checks up to 128 MiB and its synthetic late-BPB test passes (3/3); the real UDA result remains unresolved.
 
-## Step114 implementation
+## Safety
 
-Added tools/step114_patch_uda_fpsx_unpacker.py. It patches only the BLOCK_TYPE_H2E / SOS-USER branch in the ephemeral CI clone:
-
-1. Swap the two H2E 32-bit fields so the first is treated as destination offset and the second as payload length.
-2. Require the payload length not to exceed the remaining FPSX input bytes.
-3. Extract userarea.img with truncation enabled.
-4. Leave all other FPSX block types unchanged.
-5. Fail closed if the upstream source anchors or expected code sequence have changed.
-
-The firmware workflow applies this patch before compiling the unpacker. PPM and C0R extraction use the same parser build, but their block type is unchanged by this patch.
-
-Step112 now scans up to 128 MiB for a FAT16 BPB and adds a synthetic regression test with the BPB at 3 MiB. This avoids mistaking an arbitrary 2 MiB search cutoff for proof that no filesystem exists.
-
-## Acceptance criteria
-
-The field-order hypothesis is accepted only if the next firmware workflow reports all of the following from the corrected UDA image:
-
-- A structurally valid FAT16 BPB
-- Valid FAT16 geometry and bounded FAT table
-- No FAT-chain or directory traversal errors
-- A SYS/BIN directory
-- A reproducible file/directory count and UDA image SHA-256
-
-If those checks fail, retain both field interpretations as unresolved and inspect the actual H2E header bytes and payload boundary before changing the parser again.
-
-## Safety and scope
-
-- Firmware inputs remain read-only.
-- Extracted UDA data is ephemeral CI output; no firmware image or protected DLL is committed.
-- This is user-area extraction only, not ROM reconstruction.
-- No firmware flashing or handset modification is involved.
-- Step96 target GCCE checks remain compile-time ABI evidence: TTrap is 76 bytes with offsets 0/64/68/72; TTrap::Trap(TInt&) is an instance method and TTrap::UnTrap() is static. Step100 confirms target TInt64 is a signed built-in type, explaining why legacy N-Gage EUSER 1575 has no direct N95 signature.
+No firmware image or protected system DLL is committed. The field-swap script remains in the repository as a historical experiment only and is no longer invoked by the firmware workflow. No handset or flashing operation is involved.

@@ -240,8 +240,10 @@ void self_test() {
     std::vector<char> data(3000);
     for (size_t i = 0; i < code.size(); ++i) code[i] = static_cast<char>((i / 17) & 0xFF);
     for (size_t i = 0; i < data.size(); ++i) data[i] = static_cast<char>((i / 11) & 0x7F);
-    std::vector<char> packedCode(code.size() * 2 + 1024);
-    std::vector<char> packedData(data.size() * 2 + 1024);
+    // Upstream Pak() uses two 2*page-size scratch regions before finalizing each page.
+    // Reserve 4*input-size plus metadata headroom; 2*input-size is not safe.
+    std::vector<char> packedCode(code.size() * 4 + 4096);
+    std::vector<char> packedData(data.size() * 4 + 4096);
     const uint32_t packedCodeSize = CompressBPE(
         code.data(), static_cast<uint32_t>(code.size()),
         packedCode.data(), static_cast<uint32_t>(packedCode.size()));

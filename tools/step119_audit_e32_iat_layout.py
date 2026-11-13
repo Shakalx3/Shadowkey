@@ -96,8 +96,15 @@ def inspect_image(data, path):
     if text_size > code_size: errors.append("text size exceeds code size")
     if f["data_size"] and (f["data_offset"] > len(data) or f["data_size"] > len(data)-f["data_offset"]):
         errors.append("data range exceeds file")
-    exports = resolve_modes(data, code_off, f["export_dir_offset"], parse_export_table, f["export_count"], code_size)
-    imports = resolve_modes(data, code_off, f["import_offset"], parse_import_table, f["dll_ref_count"])
+    empty_table = {"valid": True, "total_imports": 0, "names": [], "ordinals": [], "size": 0, "error": ""}
+    if f["export_count"] == 0 and f["export_dir_offset"] == 0:
+        exports = {"preferred": "NO_EXPORTS", "results": {"absolute": dict(empty_table), "code_relative": dict(empty_table)}}
+    else:
+        exports = resolve_modes(data, code_off, f["export_dir_offset"], parse_export_table, f["export_count"], code_size)
+    if f["dll_ref_count"] == 0 and f["import_offset"] == 0:
+        imports = {"preferred": "NO_IMPORTS", "results": {"absolute": dict(empty_table), "code_relative": dict(empty_table)}}
+    else:
+        imports = resolve_modes(data, code_off, f["import_offset"], parse_import_table, f["dll_ref_count"])
     imp = imports["results"].get(imports["preferred"], imports["results"]["absolute"])
     total = imp.get("total_imports", 0)
     iat_start, iat_end = text_size, text_size + total * 4
@@ -105,7 +112,7 @@ def inspect_image(data, path):
     iat_file_start, iat_file_end = code_off + iat_start, code_off + iat_end
     iat_file_bounded = iat_file_start <= len(data) and iat_file_end <= len(data)
     iat_match = None
-    if imports["preferred"] not in ("NONE","AMBIGUOUS") and iat_fits and iat_file_bounded:
+    if imports["preferred"] not in ("NONE","AMBIGUOUS","NO_IMPORTS") and iat_fits and iat_file_bounded:
         expected = imp.get("ordinals", [])
         actual = list(struct.unpack_from("<" + "I"*len(expected), data, iat_file_start)) if expected else []
         iat_match = actual == expected

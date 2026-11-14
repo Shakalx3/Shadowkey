@@ -152,7 +152,7 @@ jobs:
         shell: pwsh
         run: |
           @(
-            '#{"Shadowkey ABI Loader Probe"},(0xE000BEF0),1,0,0,TYPE=SA'
+            '#{"Shadowkey ABI Loader Probe"},(0xE000BEF0),1,1,0,TYPE=SA'
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'

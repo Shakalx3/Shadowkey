@@ -198,7 +198,7 @@ done
 # filename alias for every such SDK DSO.
 for dso in "$LIB"/*.dso; do
   [ -f "$dso" ] || continue
-  version_name=$("$READELF" --wide -Ws "$dso" | sed -n 's/.*@@\([^ ]*\)$/\1/p' | head -n1)
+  version_name=$("$READELF" --wide -Ws "$dso" | sed -n 's/.*@@\([^ ]*\)$/\1/p' | awk 'NR==1 {first=$0} END {print first}')
   [ -n "$version_name" ] || continue
   if [ ! -e "$LIB/$version_name" ]; then
     ln -s "$(basename "$dso")" "$LIB/$version_name"

@@ -79,7 +79,6 @@ jobs:
             -DSYMBIAN_SDK_PREFIX="$MODERN_ROOT" \
             -DSYMBIAN_TARGET_ARCH=armv5t \
             -DSYMBIAN_RUNTIME_LEGACY_EKA2=ON \
-            -DSYMBIAN_IMPORT_PROXIES="$S60_LIB/euser.dso" \
             -DCMAKE_BUILD_TYPE=Release
           cmake --build build/step103 --target ShadowkeyAbiProbe_e32 ShadowkeyCompat --parallel 2
 

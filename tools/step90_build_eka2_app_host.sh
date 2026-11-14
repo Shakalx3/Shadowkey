@@ -44,7 +44,7 @@ for name in euser eikcore avkon; do
   if [ -z "$existing_soname" ]; then
     version_name=$("$READELF" --wide -Ws "$dso" | sed -n 's/.*@@\([^ ]*\)$/\1/p' | awk 'NR==1 {first=$0} END {print first}')
     [ -n "$version_name" ] || { echo "cannot derive E32 DLL name for $dso"; exit 3; }
-    module_base="${version_name%%\\[*}"
+    module_base="${version_name%%\[*}"
     dso_soname="${module_base}.dso"
     patchelf --set-soname "$dso_soname" "$dso"
     echo "Added temporary SONAME $dso_soname to $name.dso" | tee -a "$OUT/build.log"
@@ -216,7 +216,7 @@ for dso in "$LIB"/*.dso; do
   [ -f "$dso" ] || continue
   version_name=$("$READELF" --wide -Ws "$dso" | sed -n 's/.*@@\([^ ]*\)$/\1/p' | awk 'NR==1 {first=$0} END {print first}')
   [ -n "$version_name" ] || continue
-  module_base="${version_name%%\\[*}"
+  module_base="${version_name%%\[*}"
   dso_alias="${module_base}.dso"
   if [ ! -e "$LIB/$dso_alias" ]; then
     ln -s "$(basename "$dso")" "$LIB/$dso_alias"

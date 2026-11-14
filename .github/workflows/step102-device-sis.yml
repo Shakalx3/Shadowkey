@@ -1,0 +1,98 @@
+name: Step102 registered-device-test SIS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/step102-sis.trigger"
+      - ".github/workflows/step102-device-sis.yml"
+      - "source_bundle/host/step102/ShadowkeyAbiProbe_reg.rss"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package-sis:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download S60 3.1 FP1 SDK tools
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
+          tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
+          $sdk = Join-Path (Get-Location) "sdk"
+          $rcomp = Get-ChildItem $sdk -Recurse -File -Filter rcomp.exe | Select-Object -First 1
+          $makesis = Get-ChildItem $sdk -Recurse -File -Filter makesis.exe | Select-Object -First 1
+          $epocrc = Get-ChildItem $sdk -Recurse -File -Filter epocrc.bat | Select-Object -First 1
+          if (!$rcomp -or !$makesis -or !$epocrc) { throw "Required SDK tools missing: rcomp=$rcomp makesis=$makesis epocrc=$epocrc" }
+          "SDK_ROOT=$sdk" >> $env:GITHUB_ENV
+          "RCOMP=$($rcomp.FullName)" >> $env:GITHUB_ENV
+          "MAKESIS=$($makesis.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC=$($epocrc.FullName)" >> $env:GITHUB_ENV
+          "EPOCROOT=$($sdk.TrimEnd('\') + '\')" >> $env:GITHUB_ENV
+          "Found rcomp: $($rcomp.FullName)"
+          "Found makesis: $($makesis.FullName)"
+          "Found epocrc: $($epocrc.FullName)"
+
+      - name: Download Step102 probe binaries
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          New-Item -ItemType Directory -Force stage | Out-Null
+          gh release download shadowkey-step102-43200930107 --repo $env:GITHUB_REPOSITORY --pattern Shadowkey-Step102-FirstDeviceTest.zip --dir stage
+          Expand-Archive stage/Shadowkey-Step102-FirstDeviceTest.zip -DestinationPath stage/probe -Force
+          Copy-Item stage/probe/ShadowkeyAbiProbe.exe stage/ShadowkeyAbiProbe.exe
+          Copy-Item stage/probe/ShadowkeyCompat.dll stage/ShadowkeyCompat.dll
+          if ((Get-Item stage/ShadowkeyAbiProbe.exe).Length -ne 667) { throw "Unexpected probe EXE size" }
+          if ((Get-Item stage/ShadowkeyCompat.dll).Length -ne 244) { throw "Unexpected compatibility DLL size" }
+
+      - name: Compile application registration resource
+        shell: pwsh
+        run: |
+          $out = Join-Path (Get-Location) "stage"
+          $rss = Join-Path (Get-Location) "source_bundle/host/step102/ShadowkeyAbiProbe_reg.rss"
+          $rpp = Join-Path $out "ShadowkeyAbiProbe_reg.rpp"
+          $rsc = Join-Path $out "ShadowkeyAbiProbe_reg.rsc"
+          $rsg = Join-Path $out "ShadowkeyAbiProbe_reg.rsg"
+          $include = Join-Path $env:SDK_ROOT "Epoc32/include"
+          $cpp = Get-Command cpp.exe -ErrorAction SilentlyContinue
+          if (!$cpp) { $cpp = Get-Command clang.exe -ErrorAction SilentlyContinue }
+          if (!$cpp) { throw "No C preprocessor found on runner" }
+          & $cpp.Source -E -P -x c -I $include $rss -o $rpp
+          if ($LASTEXITCODE -ne 0) { throw "Resource preprocessing failed" }
+          & $env:RCOMP "-u" "-o$rsc" "-h$rsg" "-s$rpp"
+          if ($LASTEXITCODE -ne 0) { throw "rcomp failed" }
+          if (!(Test-Path $rsc)) { throw "Registration RSC was not generated" }
+          "Registration RSC size: $((Get-Item $rsc).Length)"
+
+      - name: Create SIS package
+        shell: pwsh
+        run: |
+          @(
+            '#{"Shadowkey ABI Loader Probe"},(0xE000BEF0),1,0,0,TYPE=SA'
+            '%{"OpenAI"}'
+            ':"OpenAI"'
+            '"stage/ShadowkeyAbiProbe.exe" - "!:\sys\bin\ShadowkeyAbiProbe.exe"'
+            '"stage/ShadowkeyCompat.dll" - "!:\sys\bin\ShadowkeyCompat.dll"'
+            '"stage/ShadowkeyAbiProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyAbiProbe_reg.rsc"'
+          ) | Set-Content stage/ShadowkeyAbiProbe.pkg -Encoding ascii
+          & $env:MAKESIS -v stage/ShadowkeyAbiProbe.pkg stage/ShadowkeyAbiProbe.sis
+          if ($LASTEXITCODE -ne 0) { throw "makesis failed" }
+          if (!(Test-Path stage/ShadowkeyAbiProbe.sis)) { throw "SIS was not generated" }
+          Get-FileHash stage/ShadowkeyAbiProbe.sis -Algorithm SHA256 | Format-List | Out-String | Tee-Object -FilePath stage/SHA256.txt
+          Get-Item stage/ShadowkeyAbiProbe.sis | Select-Object Name,Length | Format-List
+
+      - name: Upload SIS package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Shadowkey-Step102-Registered-SIS
+          path: stage/ShadowkeyAbiProbe.sis
+          if-no-files-found: error
+          retention-days: 90

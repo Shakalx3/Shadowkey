@@ -41,6 +41,12 @@ file "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" "$LIB/avkon.dso" > "$
 {
   echo "Target AVKON exports relevant to application construction/destruction:"
   readelf --wide -Ws "$LIB/avkon.dso" | c++filt | grep -E 'CAknAppUi::(CAknAppUi|~CAknAppUi)|CAknApplication::(CAknApplication|~CAknApplication)|CAknDocument::(CAknDocument|~CAknDocument)' || true
+  echo "DSO files containing raw CAknAppUi ctor/dtor ABI names:"
+  for symbol in _ZN9CAknAppUiC1Ev _ZN9CAknAppUiC2Ev _ZN9CAknAppUiD0Ev _ZN9CAknAppUiD1Ev _ZN9CAknAppUiD2Ev; do
+    printf '%s: ' "$symbol"
+    grep -a -l -F "$symbol" "$LIB"/*.dso 2>/dev/null | sed "s#$LIB/##g" | tr '\n' ' '
+    echo
+  done
 } >> "$OUT/build.log"
 
 SRC="${STEP90_SOURCE:-${GITHUB_WORKSPACE}/source_bundle/host/legacy_app_host.cpp}"

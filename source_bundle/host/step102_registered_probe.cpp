@@ -44,8 +44,6 @@ public:
         {
         BaseConstructL();
         User::InfoPrint(Step102RunLoaderProbe());
-        User::After(3000000);
-        Exit();
         }
     };
 
@@ -65,11 +63,7 @@ private:
 
     CEikAppUi* CreateAppUiL()
         {
-        CStep102AppUi* appUi = new (ELeave) CStep102AppUi;
-        CleanupStack::PushL(appUi);
-        appUi->ConstructL();
-        CleanupStack::Pop(appUi);
-        return appUi;
+        return new (ELeave) CStep102AppUi;
         }
     };
 

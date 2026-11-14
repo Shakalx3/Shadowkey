@@ -37,9 +37,11 @@ jobs:
 
           toolchain_file=$(find modern -path '*/cmake/symbian-arm.cmake' -print -quit)
           test -n "$toolchain_file"
+          toolchain_file=$(realpath "$toolchain_file")
           modern_root=$(dirname "$(dirname "$toolchain_file")")
           epocroot=$(find s60 -type d -name Epoc32 -print -quit)
           test -n "$epocroot"
+          epocroot=$(realpath "$epocroot")
           s60_lib="$epocroot/release/armv5/lib"
           for lib in euser estlib drtaeabi; do
             test -s "$s60_lib/$lib.dso" || {
@@ -67,6 +69,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+          ninja --version
           cmake -S source_bundle/host/step103 -B build/step103 -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
             -DSYMBIAN_SDK_PREFIX="$MODERN_ROOT" \

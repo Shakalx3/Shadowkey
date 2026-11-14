@@ -1,4 +1,4 @@
-name: Step102 registered-device-test SIS
+name: Step102 registered S60 FP1 DLL-loader probe
 
 on:
   push:
@@ -7,13 +7,91 @@ on:
       - ".github/step102-sis.trigger"
       - ".github/workflows/step102-device-sis.yml"
       - "source_bundle/host/step102/ShadowkeyAbiProbe_reg.rss"
+      - "source_bundle/host/step102_registered_probe.cpp"
+      - "tools/step90_build_eka2_app_host.sh"
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
+  build-host:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install EABI4 toolchain and pinned S60 FP1 SDK
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libc6-i386 lib32stdc++6 lib32gcc-s1 lib32z1 gcc-multilib g++-multilib cmake git curl
+          mkdir -p /tmp/s60-devkit "${RUNNER_TEMP}/step82-gcce/root" stage
+          curl -fL --retry 3 \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/octet-stream" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/assets/723972349" \
+            -o /tmp/s60-sdk-devkit-core.tar.gz
+          echo "7ed8b62b15f191ca47d2f6ca97ee5ce74cd02ce3e42b74bc7b1f9513d7df87b5  /tmp/s60-sdk-devkit-core.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/s60-sdk-devkit-core.tar.gz -C /tmp/s60-devkit
+          TOOLCHAIN_URL="https://www.martin.st/symbian/gnu-csl-arm-2005Q1C-arm-none-symbianelf-i686-pc-linux-gnu.tar.bz2"
+          curl -fL --retry 3 "$TOOLCHAIN_URL" -o /tmp/gcce-2005Q1c.tar.bz2
+          test "$(stat -c '%s' /tmp/gcce-2005Q1c.tar.bz2)" = "10896869"
+          test "$(md5sum /tmp/gcce-2005Q1c.tar.bz2 | awk '{print $1}')" = "622e4db70cfae6a9eec26892a9932633"
+          sha256sum /tmp/gcce-2005Q1c.tar.bz2 | tee stage/gcce-toolchain.sha256
+          tar -xjf /tmp/gcce-2005Q1c.tar.bz2 -C "${RUNNER_TEMP}/step82-gcce/root"
+          test -f /tmp/s60-devkit/Epoc32/release/armv5/lib/euser.dso
+          test -f /tmp/s60-devkit/Epoc32/release/armv5/lib/apparc.dso
+          test -f /tmp/s60-devkit/Epoc32/release/armv5/lib/eikcore.dso
+          echo "Pinned S60 FP1 SDK and GCCE 2005Q1C toolchain verified."
+
+      - name: Build registered GUI probe as EKA2 E32 EXE
+        shell: bash
+        run: |
+          set -euo pipefail
+          STEP90_SOURCE="$GITHUB_WORKSPACE/source_bundle/host/step102_registered_probe.cpp" \
+          STEP90_UID3=0xE000BEF0 \
+          STEP90_OUTPUT_NAME=ShadowkeyAbiProbe.exe \
+            bash tools/step90_build_eka2_app_host.sh
+          mkdir -p stage
+          cp firmware-input/STEP90_LEGACY_APP_HOST/ShadowkeyAbiProbe.exe stage/
+          test -s stage/ShadowkeyAbiProbe.exe
+          sha256sum stage/ShadowkeyAbiProbe.exe | tee stage/ShadowkeyAbiProbe.exe.sha256
+          python3 - <<'PY'
+          import struct
+          from pathlib import Path
+          p=Path("stage/ShadowkeyAbiProbe.exe")
+          d=p.read_bytes()
+          assert d[0x10:0x14] == b"EPOC"
+          u=lambda o: struct.unpack_from("<I",d,o)[0]
+          assert u(0x00)==0x1000007A, hex(u(0x00))
+          assert u(0x04)==0x100039CE, hex(u(0x04))
+          assert u(0x08)==0xE000BEF0, hex(u(0x08))
+          assert u(0x30)>0
+          assert u(0x54)>=3
+          print("PASS: registered S60 GUI E32 EXE header and framework imports")
+          print(f"size={len(d)} code={u(0x30)} dll_refs={u(0x54)}")
+          PY
+
+      - name: Publish intermediate E32 EXE for SIS packaging
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="shadowkey-step102-registered-${GITHUB_RUN_ID}"
+          echo "STEP102_TAG=$tag" >> "$GITHUB_ENV"
+          gh release create "$tag" stage/ShadowkeyAbiProbe.exe stage/ShadowkeyAbiProbe.exe.sha256 stage/gcce-toolchain.sha256 \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "Step102 registered S60 FP1 probe build" \
+            --notes "Intermediate EKA2 GUI executable. The final SIS is added after Windows SDK resource compilation and makesis packaging. Diagnostic only; not the Shadowkey game."
+
   package-sis:
+    needs: build-host
     runs-on: windows-latest
     timeout-minutes: 25
     steps:
@@ -27,35 +105,31 @@ jobs:
           gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
           tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
           $sdk = Join-Path (Get-Location) "sdk"
-          $rcomp = Get-ChildItem $sdk -Recurse -File -Filter rcomp.exe | Select-Object -First 1
           $makesis = Get-ChildItem $sdk -Recurse -File -Filter makesis.exe | Select-Object -First 1
           $epocrc = Get-ChildItem $sdk -Recurse -File -Filter epocrc.bat | Select-Object -First 1
           $epocrcScript = Get-ChildItem $sdk -Recurse -File -Filter epocrc.pl | Select-Object -First 1
-          if (!$rcomp -or !$makesis -or !$epocrc -or !$epocrcScript) { throw "Required SDK tools missing: rcomp=$rcomp makesis=$makesis epocrc=$epocrc epocrc.pl=$epocrcScript" }
+          if (!$makesis -or !$epocrc -or !$epocrcScript) { throw "Required SDK tools missing: makesis=$makesis epocrc=$epocrc epocrc.pl=$epocrcScript" }
           "SDK_ROOT=$sdk" >> $env:GITHUB_ENV
-          "RCOMP=$($rcomp.FullName)" >> $env:GITHUB_ENV
           "MAKESIS=$($makesis.FullName)" >> $env:GITHUB_ENV
           "EPOCRC=$($epocrc.FullName)" >> $env:GITHUB_ENV
           "EPOCRC_DIR=$($epocrcScript.DirectoryName)" >> $env:GITHUB_ENV
           "EPOCROOT=$($sdk.TrimEnd('\') + '\')" >> $env:GITHUB_ENV
-          "Found rcomp: $($rcomp.FullName)"
-          "Found makesis: $($makesis.FullName)"
-          "Found epocrc: $($epocrc.FullName)"
 
-      - name: Download Step102 probe binaries
+      - name: Download new GUI executable and compatibility DLL
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          $tag = "shadowkey-step102-registered-$env:GITHUB_RUN_ID"
           New-Item -ItemType Directory -Force stage | Out-Null
+          gh release download $tag --repo $env:GITHUB_REPOSITORY --pattern ShadowkeyAbiProbe.exe --dir stage
           gh release download shadowkey-step102-43200930107 --repo $env:GITHUB_REPOSITORY --pattern Shadowkey-Step102-FirstDeviceTest.zip --dir stage
           Expand-Archive stage/Shadowkey-Step102-FirstDeviceTest.zip -DestinationPath stage/probe -Force
-          Copy-Item stage/probe/ShadowkeyAbiProbe.exe stage/ShadowkeyAbiProbe.exe
           Copy-Item stage/probe/ShadowkeyCompat.dll stage/ShadowkeyCompat.dll
-          if ((Get-Item stage/ShadowkeyAbiProbe.exe).Length -ne 667) { throw "Unexpected probe EXE size" }
+          if ((Get-Item stage/ShadowkeyAbiProbe.exe).Length -lt 500) { throw "Registered probe EXE is unexpectedly small" }
           if ((Get-Item stage/ShadowkeyCompat.dll).Length -ne 244) { throw "Unexpected compatibility DLL size" }
 
-      - name: Compile application registration resource
+      - name: Compile S60 application registration resource
         shell: pwsh
         run: |
           $out = Join-Path (Get-Location) "stage"
@@ -63,28 +137,23 @@ jobs:
           $include = Join-Path $env:SDK_ROOT "Epoc32/include"
           $rsc = Join-Path $out "ShadowkeyAbiProbe_reg.rsc"
           $rsg = Join-Path $out "ShadowkeyAbiProbe_reg.rsg"
-          # Use the SDK's canonical epocrc wrapper instead of manually
-          # reproducing its preprocessor/rcomp pipeline.
           $env:PATH = "$env:EPOCRC_DIR;$env:PATH"
           Push-Location $out
           try {
             & $env:EPOCRC -v -u "-I$include" "-t$out" $rss "-oShadowkeyAbiProbe_reg.rsc" "-hShadowkeyAbiProbe_reg.rsg" 2>&1 | Tee-Object -FilePath epocrc.log
             $epocrcExit = $LASTEXITCODE
-            "epocrc_exit=$epocrcExit"
             if ($epocrcExit -ne 0) { throw "epocrc failed with exit code $epocrcExit" }
           } finally {
             Pop-Location
           }
-          if (!(Test-Path $rsc)) { throw "Registration RSC was not generated" }
-          if (!(Test-Path $rsg)) { throw "Registration RSG was not generated" }
-          "Registration RSC size: $((Get-Item $rsc).Length)"
-          "Registration RSG size: $((Get-Item $rsg).Length)"
+          if (!(Test-Path $rsc) -or (Get-Item $rsc).Length -eq 0) { throw "Registration RSC missing or empty" }
 
-      - name: Create SIS package
+      - name: Create S60 FP1 compatible SIS
         shell: pwsh
         run: |
           @(
             '#{"Shadowkey ABI Loader Probe"},(0xE000BEF0),1,0,0,TYPE=SA'
+            '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'
             '"stage/ShadowkeyAbiProbe.exe" - "!:\sys\bin\ShadowkeyAbiProbe.exe"'
@@ -94,16 +163,18 @@ jobs:
           & $env:MAKESIS -v stage/ShadowkeyAbiProbe.pkg stage/ShadowkeyAbiProbe.sis
           if ($LASTEXITCODE -ne 0) { throw "makesis failed" }
           if (!(Test-Path stage/ShadowkeyAbiProbe.sis)) { throw "SIS was not generated" }
-          Get-FileHash stage/ShadowkeyAbiProbe.sis -Algorithm SHA256 | Format-List | Out-String | Tee-Object -FilePath stage/SHA256.txt
+          $hash = (Get-FileHash stage/ShadowkeyAbiProbe.sis -Algorithm SHA256).Hash
+          "SHA256: $hash"
+          "SIS_SHA256=$hash" >> $env:GITHUB_ENV
           Get-Item stage/ShadowkeyAbiProbe.sis | Select-Object Name,Length | Format-List
 
-      - name: Publish SIS as a GitHub release asset
-        if: success()
+      - name: Publish final SIS asset
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = "shadowkey-step102-sis-$env:GITHUB_RUN_ID"
-          $hash = (Get-FileHash stage/ShadowkeyAbiProbe.sis -Algorithm SHA256).Hash
-          gh release create $tag stage/ShadowkeyAbiProbe.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step102 registered device probe" --notes "Diagnostic EKA2 loader/DLL probe only; not the Shadowkey game port.`nSHA256: $hash"
-          if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }
+          $tag = "shadowkey-step102-registered-$env:GITHUB_RUN_ID"
+          gh release upload $tag stage/ShadowkeyAbiProbe.sis --repo $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE -ne 0) { throw "SIS release upload failed" }
+          gh release edit $tag --repo $env:GITHUB_REPOSITORY --title "Step102 registered S60 FP1 DLL loader probe" --notes "S60 3rd Edition FP1 compatible diagnostic GUI app. On launch it loads ShadowkeyCompat.dll, resolves ordinal 1, runs three TInt64 comparison checks and shows SK DLL PASS or a specific failure message. This is not the Shadowkey game port.\nSHA256: $env:SIS_SHA256"
+          if ($LASTEXITCODE -ne 0) { throw "Release metadata update failed" }

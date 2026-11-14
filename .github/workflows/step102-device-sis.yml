@@ -69,8 +69,12 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Resource preprocessing failed" }
           Push-Location $out
           try {
-            & $env:RCOMP -u "-oShadowkeyAbiProbe_reg.rsc" "-hShadowkeyAbiProbe_reg.rsg" "-sShadowkeyAbiProbe_reg.rpp" "-iShadowkeyAbiProbe_reg.rss" 2>&1 | Tee-Object -FilePath rcomp.log
-            if ($LASTEXITCODE -ne 0) { throw "rcomp failed; see stage/rcomp.log" }
+            "=== rcomp executable ===" | Set-Content rcomp.log
+            & $env:RCOMP -v -u "-oShadowkeyAbiProbe_reg.rsc" "-hShadowkeyAbiProbe_reg.rsg" "-sShadowkeyAbiProbe_reg.rpp" "-iShadowkeyAbiProbe_reg.rss" *>> rcomp.log
+            $rcompExit = $LASTEXITCODE
+            "rcomp_exit=$rcompExit" | Add-Content rcomp.log
+            Get-Content rcomp.log
+            if ($rcompExit -ne 0) { throw "rcomp failed with exit code $rcompExit; debug files will be uploaded" }
           } finally {
             Pop-Location
           }
@@ -95,9 +99,23 @@ jobs:
           Get-Item stage/ShadowkeyAbiProbe.sis | Select-Object Name,Length | Format-List
 
       - name: Upload SIS package
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Shadowkey-Step102-Registered-SIS
           path: stage/ShadowkeyAbiProbe.sis
           if-no-files-found: error
           retention-days: 90
+
+      - name: Upload resource compiler diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Shadowkey-Step102-rcomp-diagnostics
+          path: |
+            stage/ShadowkeyAbiProbe_reg.rpp
+            stage/rcomp.log
+            stage/ShadowkeyAbiProbe_reg.rsc
+            stage/ShadowkeyAbiProbe_reg.rsg
+          if-no-files-found: warn
+          retention-days: 30

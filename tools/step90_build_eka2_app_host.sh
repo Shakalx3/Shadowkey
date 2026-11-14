@@ -3,6 +3,8 @@ set -euo pipefail
 
 WORK="${RUNNER_TEMP:-/tmp}/step90-eka2-host"
 OUT="${GITHUB_WORKSPACE}/firmware-input/STEP90_LEGACY_APP_HOST"
+E32_UID3="${STEP90_UID3:-0xE000BEEF}"
+E32_OUTPUT="${STEP90_OUTPUT_NAME:-6R51Host.exe}"
 SDK_ROOT="/tmp/s60-devkit"
 TOOLCHAIN_ROOT="${RUNNER_TEMP:-/tmp}/step82-gcce/root"
 ELF2E32_SRC="$WORK/elf2e32-src"
@@ -37,7 +39,7 @@ echo "GCCE compiler: $CXX" | tee "$OUT/build.log"
 "$CXX" --version >> "$OUT/build.log" 2>&1
 file "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" > "$OUT/import-library-file-types.txt"
 
-SRC="${GITHUB_WORKSPACE}/source_bundle/host/legacy_app_host.cpp"
+SRC="${STEP90_SOURCE:-${GITHUB_WORKSPACE}/source_bundle/host/legacy_app_host.cpp}"
 GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"
 VARIANT_DIR="$SDK_ROOT/Epoc32/include/variant"
 test -f "$GCCE_HEADER"
@@ -116,17 +118,17 @@ done
 
 echo "Convert EKA2 host ELF to E32 EXE" | tee -a "$OUT/build.log"
 "$ELF2E32" --elfinput="$OUT/legacy_app_host.elf" \
-  --output="$OUT/6R51Host.exe" \
+  --output="$OUT/$E32_OUTPUT" \
   --targettype=EXE \
-  --uid1=0x1000007A --uid2=0x100039CE --uid3=0xE000BEEF \
-  --sid=0xE000BEEF --capability=none --version=1.0 \
+  --uid1=0x1000007A --uid2=0x100039CE --uid3="$E32_UID3" \
+  --sid="$E32_UID3" --capability=none --version=1.0 \
   --stack=8192 --heap=4096,1048576 --libpath="$LIB" \
   > "$OUT/elf2e32-conversion.log" 2>&1
 
-test -s "$OUT/6R51Host.exe"
-"$ELF2E32" --dump=hi --e32input="$OUT/6R51Host.exe" > "$OUT/host-e32-dump.txt" 2>&1
+test -s "$OUT/$E32_OUTPUT"
+"$ELF2E32" --dump=hi --e32input="$OUT/$E32_OUTPUT" > "$OUT/host-e32-dump.txt" 2>&1
 
-python3 - "$OUT/6R51Host.exe" "$OUT/host-e32-header.json" "$OUT/legacy_app_host.elf" "$OUT/host-e32-dump.txt" "$OUT/host-e32-validated.txt" <<'PY'
+python3 - "$OUT/$E32_OUTPUT" "$OUT/host-e32-header.json" "$OUT/legacy_app_host.elf" "$OUT/host-e32-dump.txt" "$OUT/host-e32-validated.txt" "$E32_UID3" <<'PY'
 import json, struct, sys
 from pathlib import Path
 p=Path(sys.argv[1]); d=p.read_bytes()
@@ -163,7 +165,8 @@ h={
 Path(sys.argv[2]).write_text(json.dumps(h,indent=2)+"\n")
 assert h["uid1"]=="0x1000007A", h
 assert h["uid2"]=="0x100039CE", h
-assert h["uid3"]=="0xE000BEEF", h
+expected_uid3 = "0x" + f"{int(sys.argv[6], 0):08X}"
+assert h["uid3"] == expected_uid3, h
 assert code_size>0 and code_base!=0, h
 assert code_base <= entry_va < code_base+code_size, h
 assert entry_va==elf_entry, h
@@ -196,4 +199,4 @@ The host dynamically loads \`6R51\`, looks up ordinal 1, wraps it in \`TApaAppli
 This verifies the EKA2 host build path only. It does not prove that the original APP DLL or its dependencies load successfully on the N95.
 EOF
 
-echo "Step90 host build completed: $OUT/6R51Host.exe"
+echo "Step90 host build completed: $OUT/$E32_OUTPUT"

@@ -1,0 +1,215 @@
+name: Step103 Legacy EKA2 registered DLL loader probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/step103-modern-sis.yml"
+      - "source_bundle/host/step103/**"
+      - "source_bundle/host/step102/ShadowkeyAbiProbe_reg.rss"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-modern:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      e32_tag: ${{ steps.publish.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download modern EKA2 toolchain and S60 3.1 FP1 import SDK
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p downloads modern s60
+          gh release download v0.3.0 --repo hpnkv/symbian-platform \
+            --pattern symbian-sdk-0.3.0-linux-x86_64.tar.gz --dir downloads
+          gh release download s60-sdk-3.1-fp1-20261108 --repo "$GITHUB_REPOSITORY" \
+            --pattern s60-sdk-devkit-core.tar.gz --dir downloads
+          tar -xzf downloads/symbian-sdk-0.3.0-linux-x86_64.tar.gz -C modern
+          tar -xzf downloads/s60-sdk-devkit-core.tar.gz -C s60
+
+          toolchain_file=$(find modern -path '*/cmake/symbian-arm.cmake' -print -quit)
+          test -n "$toolchain_file"
+          modern_root=$(dirname "$(dirname "$toolchain_file")")
+          epocroot=$(find s60 -type d -name Epoc32 -print -quit)
+          test -n "$epocroot"
+          s60_lib="$epocroot/release/armv5/lib"
+          for lib in euser estlib drtaeabi; do
+            test -s "$s60_lib/$lib.dso" || {
+              echo "Required S60 3.1 FP1 import proxy missing: $s60_lib/$lib.dso"
+              exit 1
+            }
+          done
+
+          # Replace only temporary SDK import proxies with the exact S60 3.1 FP1
+          # export tables. The Legacy EKA2 runtime then targets the N95-era ABI.
+          mkdir -p "$modern_root/proxies/euser" \
+                   "$modern_root/proxies/estlib-legacy" \
+                   "$modern_root/proxies/drtaeabi"
+          cp "$s60_lib/euser.dso" "$modern_root/proxies/euser/euser.dso"
+          cp "$s60_lib/estlib.dso" "$modern_root/proxies/estlib-legacy/estlib.dso"
+          cp "$s60_lib/drtaeabi.dso" "$modern_root/proxies/drtaeabi/drtaeabi.dso"
+
+          echo "MODERN_ROOT=$modern_root" >> "$GITHUB_ENV"
+          echo "TOOLCHAIN_FILE=$toolchain_file" >> "$GITHUB_ENV"
+          echo "S60_LIB=$s60_lib" >> "$GITHUB_ENV"
+          echo "Modern SDK root: $modern_root"
+          echo "S60 import library directory: $s60_lib"
+
+      - name: Configure and build EKA2 EXE and DLL
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S source_bundle/host/step103 -B build/step103 -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
+            -DSYMBIAN_SDK_PREFIX="$MODERN_ROOT" \
+            -DSYMBIAN_TARGET_ARCH=armv5t \
+            -DSYMBIAN_RUNTIME_LEGACY_EKA2=ON \
+            -DSYMBIAN_IMPORT_PROXIES="$S60_LIB/euser.dso" \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/step103 --target ShadowkeyAbiProbe_e32 ShadowkeyCompat --parallel 2
+
+          exe=$(find build/step103 -type f -name ShadowkeyAbiProbe.exe -print -quit)
+          dll=$(find build/step103 -type f -name ShadowkeyCompat.dll -print -quit)
+          test -s "$exe"
+          test -s "$dll"
+          mkdir -p stage
+          cp "$exe" stage/ShadowkeyAbiProbe.exe
+          cp "$dll" stage/ShadowkeyCompat.dll
+
+          python3 - <<'PY'
+          import json, struct
+          from pathlib import Path
+
+          def inspect(path, expected):
+              data = Path(path).read_bytes()
+              if len(data) < 0x7c or data[0x10:0x14] != b"EPOC":
+                  raise SystemExit(f"{path}: not a valid E32 image")
+              u = lambda off: struct.unpack_from("<I", data, off)[0]
+              header = {
+                  "file": path,
+                  "size": len(data),
+                  "uid1": f"0x{u(0):08X}",
+                  "uid2": f"0x{u(4):08X}",
+                  "uid3": f"0x{u(8):08X}",
+                  "code_size": u(0x30),
+                  "dll_ref_count": u(0x54),
+                  "export_count": u(0x5c),
+              }
+              for key, value in expected.items():
+                  if header[key] != value:
+                      raise SystemExit(f"{path}: {key}={header[key]}, expected {value}")
+              if header["code_size"] <= 0:
+                  raise SystemExit(f"{path}: empty code segment")
+              print(json.dumps(header, indent=2))
+              return header
+
+          inspect("stage/ShadowkeyAbiProbe.exe", {
+              "uid1": "0x1000007A",
+              "uid2": "0x100039CE",
+              "uid3": "0xE000BEF0",
+          })
+          inspect("stage/ShadowkeyCompat.dll", {
+              "uid1": "0x10000079",
+              "uid2": "0x1000008D",
+              "uid3": "0xE000BEEF",
+              "export_count": 1,
+          })
+          PY
+
+      - name: Publish intermediate E32 images
+        id: publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="shadowkey-step103-e32-$GITHUB_RUN_ID"
+          gh release create "$tag" stage/ShadowkeyAbiProbe.exe stage/ShadowkeyCompat.dll \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Shadowkey Step103 Legacy EKA2 probe binaries" \
+            --notes "Intermediate E32 images for the N95/S60 3rd FP1 loader probe. Not the Shadowkey game port."
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  package-sis:
+    runs-on: windows-latest
+    needs: build-modern
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download E32 images and S60 3.1 FP1 SIS tools
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          E32_TAG: ${{ needs.build-modern.outputs.e32_tag }}
+        run: |
+          New-Item -ItemType Directory -Force stage,sdk | Out-Null
+          gh release download $env:E32_TAG --repo $env:GITHUB_REPOSITORY --pattern ShadowkeyAbiProbe.exe --pattern ShadowkeyCompat.dll --dir stage
+          gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
+          tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
+
+          $sdkRoot = Join-Path (Get-Location) "sdk"
+          $rcomp = Get-ChildItem $sdkRoot -Recurse -File -Filter rcomp.exe | Select-Object -First 1
+          $makesis = Get-ChildItem $sdkRoot -Recurse -File -Filter makesis.exe | Select-Object -First 1
+          $epocrc = Get-ChildItem $sdkRoot -Recurse -File -Filter epocrc.bat | Select-Object -First 1
+          $epocrcScript = Get-ChildItem $sdkRoot -Recurse -File -Filter epocrc.pl | Select-Object -First 1
+          if (!$rcomp -or !$makesis -or !$epocrc -or !$epocrcScript) { throw "Required S60 SDK tools missing" }
+
+          "MAKESIS=$($makesis.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC=$($epocrc.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC_DIR=$($epocrcScript.DirectoryName)" >> $env:GITHUB_ENV
+          "EPOCROOT=$($sdkRoot.TrimEnd('\') + '\')" >> $env:GITHUB_ENV
+
+      - name: Compile S60 application registration resource
+        shell: pwsh
+        run: |
+          $out = Join-Path (Get-Location) "stage"
+          $rss = Join-Path (Get-Location) "source_bundle/host/step102/ShadowkeyAbiProbe_reg.rss"
+          $include = Join-Path (Get-Location) "sdk/Epoc32/include"
+          $env:PATH = "$env:EPOCRC_DIR;$env:PATH"
+          Push-Location $out
+          try {
+            & $env:EPOCRC -v -u "-I$include" "-t$out" $rss "-oShadowkeyAbiProbe_reg.rsc" "-hShadowkeyAbiProbe_reg.rsg" 2>&1 | Tee-Object -FilePath epocrc.log
+            if ($LASTEXITCODE -ne 0) { throw "epocrc failed with exit code $LASTEXITCODE" }
+          } finally {
+            Pop-Location
+          }
+          if (!(Test-Path stage/ShadowkeyAbiProbe_reg.rsc)) { throw "Registration RSC missing" }
+
+      - name: Create S60 3rd Edition FP1 SIS
+        shell: pwsh
+        run: |
+          @(
+            '#{"Shadowkey ABI Loader Probe"},(0xE000BEF0),1,1,0,TYPE=SA'
+            '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
+            '%{"OpenAI"}'
+            ':"OpenAI"'
+            '"stage/ShadowkeyAbiProbe.exe" - "!:\sys\bin\ShadowkeyAbiProbe.exe"'
+            '"stage/ShadowkeyCompat.dll" - "!:\sys\bin\ShadowkeyCompat.dll"'
+            '"stage/ShadowkeyAbiProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyAbiProbe_reg.rsc"'
+          ) | Set-Content stage/ShadowkeyAbiProbe.pkg -Encoding ascii
+          & $env:MAKESIS -v stage/ShadowkeyAbiProbe.pkg stage/ShadowkeyAbiProbe.sis
+          if ($LASTEXITCODE -ne 0) { throw "makesis failed" }
+          if (!(Test-Path stage/ShadowkeyAbiProbe.sis)) { throw "SIS was not generated" }
+          $hash = (Get-FileHash stage/ShadowkeyAbiProbe.sis -Algorithm SHA256).Hash
+          "SIS SHA256: $hash"
+          "SIS size: $((Get-Item stage/ShadowkeyAbiProbe.sis).Length)"
+
+      - name: Publish registered SIS
+        if: success()
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "shadowkey-step103-sis-$env:GITHUB_RUN_ID"
+          $hash = (Get-FileHash stage/ShadowkeyAbiProbe.sis -Algorithm SHA256).Hash
+          gh release create $tag stage/ShadowkeyAbiProbe.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step103 registered Legacy EKA2 device probe" --notes "Registered S60 3rd Edition FP1 diagnostic loader/DLL probe only; not the Shadowkey game port. SHA256: $hash"
+          if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }

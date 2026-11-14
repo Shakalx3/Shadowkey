@@ -40,7 +40,9 @@ echo "GCCE compiler: $CXX" | tee "$OUT/build.log"
 "$CXX" --version >> "$OUT/build.log" 2>&1
 file "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" "$LIB/avkon.dso" > "$OUT/import-library-file-types.txt"
 {
-  echo "Target AVKON exports relevant to application construction/destruction:"
+  echo "Target AVKON raw exports relevant to application construction/destruction:"
+  readelf --wide -Ws "$LIB/avkon.dso" | grep -E 'CAknAppUi|CAknApplication|CAknDocument' || true
+  echo "Target AVKON demangled exports:"
   readelf --wide -Ws "$LIB/avkon.dso" | c++filt | grep -E 'CAknAppUi::(CAknAppUi|~CAknAppUi)|CAknApplication::(CAknApplication|~CAknApplication)|CAknDocument::(CAknDocument|~CAknDocument)' || true
   echo "DSO files containing raw CAknAppUi ctor/dtor ABI names:"
   for symbol in _ZN9CAknAppUiC1Ev _ZN9CAknAppUiC2Ev _ZN9CAknAppUiD0Ev _ZN9CAknAppUiD1Ev _ZN9CAknAppUiD2Ev; do

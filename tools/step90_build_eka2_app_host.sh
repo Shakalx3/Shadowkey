@@ -48,35 +48,68 @@ test -f "$SDK_ROOT/Epoc32/include/symcpp.h"
 test -f "$SDK_ROOT/Epoc32/include/apparc.h"
 test -f "$SDK_ROOT/Epoc32/include/eikstart.h"
 # The original Windows SDK was extracted on a case-sensitive Linux filesystem.
-# Normalize two case-insensitive SDK include paths inside this disposable copy.
+# Symbian's SDK was authored for Windows and contains mixed-case include paths.
+# Build temporary aliases for every referenced include whose path differs only
+# by case; this changes only the disposable SDK extraction on the CI runner.
 python3 - "$SDK_ROOT/Epoc32/include" <<'PY'
 from pathlib import Path
 import os
+import re
 import sys
 
 root = Path(sys.argv[1])
 
-def find_casefold(name):
-    matches = [p for p in root.rglob("*") if p.is_file() and p.name.casefold() == name.casefold()]
-    if not matches:
-        raise SystemExit(f"Required SDK header not found case-insensitively: {name}")
-    return matches[0]
+# The ECom include is referenced with an uppercase directory name on Linux.
+ecom_candidates = [p for p in root.iterdir() if p.is_dir() and p.name.casefold() == "ecom"]
+if ecom_candidates and not (root / "Ecom").exists():
+    (root / "Ecom").symlink_to(ecom_candidates[0], target_is_directory=True)
 
-ecom_header = find_casefold("Ecom.h")
-ecom_dir = root / "Ecom"
-if not ecom_dir.exists():
-    ecom_dir.symlink_to(ecom_header.parent, target_is_directory=True)
-ecom_alias = ecom_dir / "Ecom.h"
-if not ecom_alias.exists():
-    ecom_alias.symlink_to(os.path.relpath(ecom_header, ecom_dir))
+def resolve_casefold(base, include):
+    current = base
+    for part in include.replace(chr(92), "/").split("/"):
+        if part in ("", "."):
+            continue
+        if part == "..":
+            current = current.parent
+            continue
+        direct = current / part
+        if direct.exists():
+            current = direct
+            continue
+        try:
+            matches = [p for p in current.iterdir() if p.name.casefold() == part.casefold()]
+        except (FileNotFoundError, NotADirectoryError):
+            return None
+        if not matches:
+            return None
+        current = matches[0]
+    return current if current.exists() else None
 
-fbs_header = find_casefold("FbsMessage.h")
-fbs_alias = root / "FbsMessage.h"
-if not fbs_alias.exists():
-    fbs_alias.symlink_to(os.path.relpath(fbs_header, root))
-
-print(f"SDK include alias: {ecom_alias} -> {ecom_header}")
-print(f"SDK include alias: {fbs_alias} -> {fbs_header}")
+include_re = re.compile(r'^\s*#\s*include\s*[<"]([^>"]+)[>"]', re.M)
+headers = list(root.rglob("*.h")) + list(root.rglob("*.hrh")) + list(root.rglob("*.inl"))
+aliases = 0
+for header in headers:
+    try:
+        content = header.read_text(encoding="latin-1")
+    except OSError:
+        continue
+    for include in include_re.findall(content):
+        if include.startswith(("/", "\\", "$")):
+            continue
+        bases = [header.parent, root]
+        for base in bases:
+            expected = base / include.replace(chr(92), "/")
+            if expected.exists():
+                break
+            target = resolve_casefold(base, include)
+            if target is None or target == expected:
+                continue
+            expected.parent.mkdir(parents=True, exist_ok=True)
+            if not expected.exists():
+                expected.symlink_to(os.path.relpath(target, expected.parent))
+                aliases += 1
+            break
+print(f"Created {aliases} case-normalized SDK include aliases from {len(headers)} headers.")
 PY
 # The legacy SDK gcce.h uses Windows-style relative include separators.
 # Normalize only the temporary extracted SDK copy for Linux GCC preprocessing.

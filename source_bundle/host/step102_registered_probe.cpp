@@ -62,12 +62,6 @@ public:
         User::InfoPrint(result);
         }
 
-    // Symbian interface reserve slots: preserve the S60 vtable shape.
-    void MCoeMessageObserver_Reserved_2() {}
-    void MObjectProvider_Reserved1() {}
-    void MObjectProvider_Reserved2() {}
-    void MCoeViewDeactivationObserver_Reserved_1() {}
-    void MCoeViewDeactivationObserver_Reserved_2() {}
     };
 
 class CStep102Document : public CAknDocument
@@ -115,6 +109,16 @@ GLDEF_C TInt E32Main()
     return EikStart::RunApplication(factory);
     }
 
+
+
+// S60 interface reserve slots are deliberately no-op. Some SDK EABI import
+// DSOs omit these compatibility stubs even though their vtables reference
+// them; define the exact base-interface symbols locally.
+void MCoeMessageObserver::MCoeMessageObserver_Reserved_2() {}
+void MObjectProvider::MObjectProvider_Reserved1() {}
+void MObjectProvider::MObjectProvider_Reserved2() {}
+void MCoeViewDeactivationObserver::MCoeViewDeactivationObserver_Reserved_1() {}
+void MCoeViewDeactivationObserver::MCoeViewDeactivationObserver_Reserved_2() {}
 
 // EKA2/GCCE uses the Symbian heap for C++ object deletion.
 void operator delete(void* aPtr)

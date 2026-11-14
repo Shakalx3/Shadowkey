@@ -34,10 +34,10 @@ jobs:
           curl -fL --retry 3 \
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "Accept: application/octet-stream" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/assets/723972349" \
-            -o /tmp/s60-sdk-devkit-core.tar.gz
-          echo "7ed8b62b15f191ca47d2f6ca97ee5ce74cd02ce3e42b74bc7b1f9513d7df87b5  /tmp/s60-sdk-devkit-core.tar.gz" | sha256sum -c -
-          tar -xzf /tmp/s60-sdk-devkit-core.tar.gz -C /tmp/s60-devkit
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/assets/723972337" \
+            -o /tmp/s60-sdk-full-extracted.tar.gz
+          echo "1fd530c76d9ad70d0215ad085a7875c1c0fe90ecbb520880af166a433c150b5f  /tmp/s60-sdk-full-extracted.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/s60-sdk-full-extracted.tar.gz -C /tmp/s60-devkit
           TOOLCHAIN_URL="https://www.martin.st/symbian/gnu-csl-arm-2005Q1C-arm-none-symbianelf-i686-pc-linux-gnu.tar.bz2"
           curl -fL --retry 3 "$TOOLCHAIN_URL" -o /tmp/gcce-2005Q1c.tar.bz2
           test "$(stat -c '%s' /tmp/gcce-2005Q1c.tar.bz2)" = "10896869"
@@ -47,7 +47,7 @@ jobs:
           test -f /tmp/s60-devkit/Epoc32/release/armv5/lib/euser.dso
           test -f /tmp/s60-devkit/Epoc32/release/armv5/lib/apparc.dso
           test -f /tmp/s60-devkit/Epoc32/release/armv5/lib/eikcore.dso
-          echo "Pinned S60 FP1 SDK and GCCE 2005Q1C toolchain verified."
+          echo "Full S60 FP1 SDK and GCCE 2005Q1C toolchain verified."
 
       - name: Build registered GUI probe as EKA2 E32 EXE
         shell: bash
@@ -102,8 +102,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
-          tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
+          gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-full-extracted.tar.gz --dir sdk
+          tar -xzf sdk/s60-sdk-full-extracted.tar.gz -C sdk
           $sdk = Join-Path (Get-Location) "sdk"
           $makesis = Get-ChildItem $sdk -Recurse -File -Filter makesis.exe | Select-Object -First 1
           $epocrc = Get-ChildItem $sdk -Recurse -File -Filter epocrc.bat | Select-Object -First 1

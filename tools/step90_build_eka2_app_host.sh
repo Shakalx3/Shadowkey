@@ -64,7 +64,8 @@ def find_casefold(name):
 
 ecom_header = find_casefold("Ecom.h")
 ecom_dir = root / "Ecom"
-ecom_dir.mkdir(exist_ok=True)
+if not ecom_dir.exists():
+    ecom_dir.symlink_to(ecom_header.parent, target_is_directory=True)
 ecom_alias = ecom_dir / "Ecom.h"
 if not ecom_alias.exists():
     ecom_alias.symlink_to(os.path.relpath(ecom_header, ecom_dir))

@@ -5,6 +5,9 @@ WORK="${RUNNER_TEMP:-/tmp}/step90-eka2-host"
 OUT="${GITHUB_WORKSPACE}/firmware-input/STEP90_LEGACY_APP_HOST"
 E32_UID3="${STEP90_UID3:-0xE000BEEF}"
 E32_OUTPUT="${STEP90_OUTPUT_NAME:-6R51Host.exe}"
+E32_BASENAME="${E32_OUTPUT%.exe}"
+E32_UID3_HEX="${E32_UID3#0x}"
+E32_LINKAS="${STEP90_LINKAS:-${E32_BASENAME}{000a0000}[${E32_UID3_HEX}].exe}"
 SDK_ROOT="/tmp/s60-devkit"
 TOOLCHAIN_ROOT="${RUNNER_TEMP:-/tmp}/step82-gcce/root"
 ELF2E32_SRC="$WORK/elf2e32-src"
@@ -241,6 +244,7 @@ echo "Convert EKA2 host ELF to E32 EXE" | tee -a "$OUT/build.log"
   --targettype=EXE \
   --uid1=0x1000007A --uid2=0x100039CE --uid3="$E32_UID3" \
   --sid="$E32_UID3" --capability=none --version=1.0 \
+  --linkas="$E32_LINKAS" --fpu=softvfp \
   --stack=8192 --heap=4096,1048576 --libpath="$LIB" \
   > "$OUT/elf2e32-conversion.log" 2>&1
 

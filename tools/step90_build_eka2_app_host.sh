@@ -158,7 +158,7 @@ PY
   echo "GCCE preinclude: $GCCE_HEADER"
   echo "Platform defines: __SYMBIAN32__ __EPOC32__ __GCCE__ __MARM__ __EABI__ __EXE__ __S60_3X__"
 } >> "$OUT/build.log"
-"$CXX" -march=armv5te -marm -O1 -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
+"$CXX" -march=armv5te -marm -O1 -fPIC -fno-exceptions -fno-rtti -fno-builtin -fshort-wchar \
   -D__SYMBIAN32__ -D__EPOC32__ -D__GCCE__ -D__MARM__ -D__MARM_ARMV5__ \
   -D__MARM_THUMB__ -D__MARM_INTERWORK__ -D__EABI__ -D__EXE__ -D_UNICODE \
   -D__S60_3X__ -D__SERIES60_3X__ -D__S60_31__ \
@@ -168,12 +168,12 @@ PY
 
 echo "Linking host ELF against EUSER, APPARC, EIKCORE and AVKON import DSOs" | tee -a "$OUT/build.log"
 LINK_MODE="direct-import-dso"
-if ! "$LD" --no-as-needed -e E32Main -Ttext 0x10000 -o "$OUT/legacy_app_host.elf" \
+if ! "$LD" -pie --no-as-needed -e E32Main -Ttext 0x10000 -o "$OUT/legacy_app_host.elf" \
     "$OUT/legacy_app_host.o" "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" "$LIB/avkon.dso" \
     >> "$OUT/build.log" 2>&1; then
   echo "Direct DSO link failed; retrying with unresolved symbols for elf2e32 import resolution" | tee -a "$OUT/build.log"
   LINK_MODE="elf2e32-libpath"
-  "$LD" --no-as-needed -e E32Main -Ttext 0x10000 --unresolved-symbols=ignore-all \
+  "$LD" -pie --no-as-needed -e E32Main -Ttext 0x10000 --unresolved-symbols=ignore-all \
     -o "$OUT/legacy_app_host.elf" "$OUT/legacy_app_host.o" >> "$OUT/build.log" 2>&1
 fi
 "$READELF" -h "$OUT/legacy_app_host.elf" > "$OUT/host-elf-header.txt"

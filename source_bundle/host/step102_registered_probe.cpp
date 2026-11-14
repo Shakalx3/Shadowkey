@@ -1,9 +1,9 @@
 #include <e32base.h>
 #include <e32std.h>
 #include <apparc.h>
-#include <eikapp.h>
-#include <eikdoc.h>
-#include <eikappui.h>
+#include <aknapp.h>
+#include <akndoc.h>
+#include <aknappui.h>
 #include <eikstart.h>
 
 static const TUint32 KStep102SameA[2] = {0x11223344u, 0x55667788u};
@@ -50,7 +50,7 @@ static void Step102RunLoaderProbe(TDes& aMessage)
         aMessage.Copy(KStep102CallFail);
     }
 
-class CStep102AppUi : public CEikAppUi
+class CStep102AppUi : public CAknAppUi
     {
 public:
     void ConstructL()
@@ -62,7 +62,7 @@ public:
         }
     };
 
-class CStep102Document : public CEikDocument
+class CStep102Document : public CAknDocument
     {
 public:
     static CStep102Document* NewL(CEikApplication& aApplication)
@@ -72,7 +72,7 @@ public:
 
 private:
     explicit CStep102Document(CEikApplication& aApplication)
-        : CEikDocument(aApplication)
+        : CAknDocument(aApplication)
         {
         }
 
@@ -82,7 +82,7 @@ private:
         }
     };
 
-class CStep102Application : public CEikApplication
+class CStep102Application : public CAknApplication
     {
 private:
     TUid AppDllUid() const

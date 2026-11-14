@@ -16,6 +16,7 @@ _LIT(KStep102LoadFail, "SK DLL LOAD FAIL");
 _LIT(KStep102LookupFail, "SK DLL LOOKUP FAIL");
 _LIT(KStep102CallFail, "SK DLL CALL FAIL");
 _LIT(KStep102Pass, "SK DLL PASS");
+_LIT(KStep102PanicCategory, "SKProbe");
 
 typedef TInt (*TStep102CompareFn)(const TUint32*, const TUint32*);
 
@@ -60,6 +61,13 @@ public:
         Step102RunLoaderProbe(result);
         User::InfoPrint(result);
         }
+
+    // Symbian interface reserve slots: preserve the S60 vtable shape.
+    void MCoeMessageObserver_Reserved_2() {}
+    void MObjectProvider_Reserved1() {}
+    void MObjectProvider_Reserved2() {}
+    void MCoeViewDeactivationObserver_Reserved_1() {}
+    void MCoeViewDeactivationObserver_Reserved_2() {}
     };
 
 class CStep102Document : public CAknDocument
@@ -105,4 +113,23 @@ GLDEF_C TInt E32Main()
     {
     TApaApplicationFactory factory(&NewApplication);
     return EikStart::RunApplication(factory);
+    }
+
+
+// EKA2/GCCE uses the Symbian heap for C++ object deletion.
+void operator delete(void* aPtr)
+    {
+    User::Free(aPtr);
+    }
+
+void operator delete[](void* aPtr)
+    {
+    User::Free(aPtr);
+    }
+
+// A pure virtual call is a programming error; keep a deterministic panic
+// target for the interface reserve slots in the target SDK vtables.
+extern "C" void __cxa_pure_virtual()
+    {
+    User::Panic(KStep102PanicCategory, KErrNotSupported);
     }

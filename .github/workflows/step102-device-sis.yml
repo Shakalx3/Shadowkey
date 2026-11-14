@@ -75,7 +75,7 @@ jobs:
           if (!(Test-Path $rsc)) { throw "Registration RSC was not generated" }
           if (!(Test-Path $rsg)) { throw "Registration RSG was not generated" }
           "Registration RSC size: $((Get-Item $rsc).Length)"
-          "Registration RSG size: $((Get-Item $rsg).Length)
+          "Registration RSG size: $((Get-Item $rsg).Length)"
 
       - name: Create SIS package
         shell: pwsh

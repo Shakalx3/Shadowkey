@@ -44,7 +44,10 @@ static void Step102RunLoaderProbe(TDes& aMessage)
         compare(KStep102SameA, KStep102HighDiff) != 0;
     library.Close();
 
-    aMessage.Copy(pass ? KStep102Pass : KStep102CallFail);
+    if (pass)
+        aMessage.Copy(KStep102Pass);
+    else
+        aMessage.Copy(KStep102CallFail);
     }
 
 class CStep102AppUi : public CEikAppUi

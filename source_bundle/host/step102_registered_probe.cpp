@@ -95,7 +95,7 @@ private:
 
 LOCAL_C CApaApplication* NewApplication()
     {
-    return new (ELeave) CStep102Application;
+    return new CStep102Application;
     }
 
 GLDEF_C TInt E32Main()

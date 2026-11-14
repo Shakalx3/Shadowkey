@@ -20,7 +20,7 @@ on_error() {
 }
 trap on_error ERR
 sudo apt-get update -qq
-sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386
+sudo apt-get install -y -qq gcc-multilib g++-multilib libc6-dev-i386 patchelf
 
 CXX=$(find "$TOOLCHAIN_ROOT" -type f -name arm-none-symbianelf-g++ | head -n1)
 LD=$(find "$TOOLCHAIN_ROOT" -type f -name arm-none-symbianelf-ld | head -n1)
@@ -33,6 +33,20 @@ export LD_LIBRARY_PATH="$BIN_DIR/../lib:$BIN_DIR/../lib32:${LD_LIBRARY_PATH:-}"
 LIB="$SDK_ROOT/Epoc32/release/armv5/lib"
 for name in euser apparc eikcore avkon; do
   test -f "$LIB/$name.dso" || { echo "missing target import library: $LIB/$name.dso"; exit 2; }
+done
+# These S60 SDK DSOs often omit DT_SONAME even though their symbol-version
+# strings carry the actual E32 DLL identity. Add that identity to the
+# disposable SDK copies so GNU ld records DT_NEEDED and elf2e32 can associate
+# undefined C++ symbols with the correct E32 import library.
+for name in euser eikcore avkon; do
+  dso="$LIB/$name.dso"
+  existing_soname=$("$READELF" -d "$dso" | sed -n 's/.*Library soname: \[\(.*\)\].*/\1/p' | awk 'NR==1 {first=$0} END {print first}')
+  if [ -z "$existing_soname" ]; then
+    version_name=$("$READELF" --wide -Ws "$dso" | sed -n 's/.*@@\([^ ]*\)$/\1/p' | awk 'NR==1 {first=$0} END {print first}')
+    [ -n "$version_name" ] || { echo "cannot derive E32 DLL name for $dso"; exit 3; }
+    patchelf --set-soname "$version_name" "$dso"
+    echo "Added temporary SONAME $version_name to $name.dso" | tee -a "$OUT/build.log"
+  fi
 done
 find "$SDK_ROOT/Epoc32/include" -iname 'eikstart.h' -o -iname 'apparc.h' > "$OUT/host-sdk-headers.txt"
 

@@ -13,18 +13,22 @@ static const TUint32 KStep102HighDiff[2] = {0x11223344u, 0x55667789u};
 
 typedef TInt (*TStep102CompareFn)(const TUint32*, const TUint32*);
 
-static const TDesC& Step102RunLoaderProbe()
+static void Step102RunLoaderProbe(TDes& aMessage)
     {
     RLibrary library;
     const TInt loadError = library.Load(_L("ShadowkeyCompat.dll"));
     if (loadError != KErrNone)
-        return _L("SK DLL LOAD FAIL");
+        {
+        aMessage.Copy(_L("SK DLL LOAD FAIL"));
+        return;
+        }
 
     TLibraryFunction raw = library.Lookup(1);
     if (!raw)
         {
         library.Close();
-        return _L("SK DLL LOOKUP FAIL");
+        aMessage.Copy(_L("SK DLL LOOKUP FAIL"));
+        return;
         }
 
     TStep102CompareFn compare = reinterpret_cast<TStep102CompareFn>(raw);
@@ -34,7 +38,7 @@ static const TDesC& Step102RunLoaderProbe()
         compare(KStep102SameA, KStep102HighDiff) != 0;
     library.Close();
 
-    return pass ? _L("SK DLL PASS") : _L("SK DLL CALL FAIL");
+    aMessage.Copy(pass ? _L("SK DLL PASS") : _L("SK DLL CALL FAIL"));
     }
 
 class CStep102AppUi : public CEikAppUi
@@ -43,7 +47,9 @@ public:
     void ConstructL()
         {
         BaseConstructL();
-        User::InfoPrint(Step102RunLoaderProbe());
+        TBuf<32> result;
+        Step102RunLoaderProbe(result);
+        User::InfoPrint(result);
         }
     };
 

@@ -14,6 +14,7 @@ on_error() {
   status=$?
   echo "Step90 failed (exit=$status, line=${BASH_LINENO[0]:-unknown}); build log follows:" >&2
   [ ! -f "$OUT/build.log" ] || tail -n 100 "$OUT/build.log" >&2
+  [ ! -f "$OUT/build.log" ] || grep -E 'Target AVKON exports|CAknAppUi|CAknApplication|CAknDocument|DSO files containing|_ZN9CAknAppUi' "$OUT/build.log" >&2 || true
   [ ! -f "$OUT/elf2e32-conversion.log" ] || tail -n 100 "$OUT/elf2e32-conversion.log" >&2
   exit "$status"
 }

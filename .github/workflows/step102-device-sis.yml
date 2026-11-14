@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   package-sis:
@@ -97,11 +97,13 @@ jobs:
           Get-FileHash stage/ShadowkeyAbiProbe.sis -Algorithm SHA256 | Format-List | Out-String | Tee-Object -FilePath stage/SHA256.txt
           Get-Item stage/ShadowkeyAbiProbe.sis | Select-Object Name,Length | Format-List
 
-      - name: Upload SIS package
+      - name: Publish SIS as a GitHub release asset
         if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Shadowkey-Step102-Registered-SIS
-          path: stage/ShadowkeyAbiProbe.sis
-          if-no-files-found: error
-          retention-days: 90
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "shadowkey-step102-sis-$env:GITHUB_RUN_ID"
+          $hash = (Get-FileHash stage/ShadowkeyAbiProbe.sis -Algorithm SHA256).Hash
+          gh release create $tag stage/ShadowkeyAbiProbe.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step102 registered device probe" --notes "Diagnostic EKA2 loader/DLL probe only; not the Shadowkey game port.`nSHA256: $hash"
+          if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }

@@ -192,6 +192,19 @@ for dso in "$LIB"/*.dso; do
     printf '%s -> %s\n' "$soname" "$(basename "$dso")" >> "$OUT/soname-aliases.txt"
   fi
 done
+# Several S60 EABI DSOs carry their E32 DLL identity only in ELF symbol
+# version strings (e.g. @@avkon{000a0000}[100056c6].dll), not DT_SONAME.
+# elf2e32 searches by that E32 module name, so expose a matching temporary
+# filename alias for every such SDK DSO.
+for dso in "$LIB"/*.dso; do
+  [ -f "$dso" ] || continue
+  version_name=$("$READELF" --wide -Ws "$dso" | sed -n 's/.*@@\([^ ]*\)$/\1/p' | head -n1)
+  [ -n "$version_name" ] || continue
+  if [ ! -e "$LIB/$version_name" ]; then
+    ln -s "$(basename "$dso")" "$LIB/$version_name"
+    printf 'E32 version alias: %s -> %s\n' "$version_name" "$(basename "$dso")" >> "$OUT/soname-aliases.txt"
+  fi
+done
 {
   echo "Host ELF DT_NEEDED entries:"
   "$READELF" -d "$OUT/legacy_app_host.elf" | grep -E 'NEEDED|SONAME' || true

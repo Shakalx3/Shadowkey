@@ -11,15 +11,21 @@ static const TUint32 KStep102SameB[2] = {0x11223344u, 0x55667788u};
 static const TUint32 KStep102LowDiff[2] = {0x11223345u, 0x55667788u};
 static const TUint32 KStep102HighDiff[2] = {0x11223344u, 0x55667789u};
 
+_LIT(KStep102DllName, "ShadowkeyCompat.dll");
+_LIT(KStep102LoadFail, "SK DLL LOAD FAIL");
+_LIT(KStep102LookupFail, "SK DLL LOOKUP FAIL");
+_LIT(KStep102CallFail, "SK DLL CALL FAIL");
+_LIT(KStep102Pass, "SK DLL PASS");
+
 typedef TInt (*TStep102CompareFn)(const TUint32*, const TUint32*);
 
 static void Step102RunLoaderProbe(TDes& aMessage)
     {
     RLibrary library;
-    const TInt loadError = library.Load(_L("ShadowkeyCompat.dll"));
+    const TInt loadError = library.Load(KStep102DllName);
     if (loadError != KErrNone)
         {
-        aMessage.Copy(_L("SK DLL LOAD FAIL"));
+        aMessage.Copy(KStep102LoadFail);
         return;
         }
 
@@ -27,7 +33,7 @@ static void Step102RunLoaderProbe(TDes& aMessage)
     if (!raw)
         {
         library.Close();
-        aMessage.Copy(_L("SK DLL LOOKUP FAIL"));
+        aMessage.Copy(KStep102LookupFail);
         return;
         }
 
@@ -38,7 +44,7 @@ static void Step102RunLoaderProbe(TDes& aMessage)
         compare(KStep102SameA, KStep102HighDiff) != 0;
     library.Close();
 
-    aMessage.Copy(pass ? _L("SK DLL PASS") : _L("SK DLL CALL FAIL"));
+    aMessage.Copy(pass ? KStep102Pass : KStep102CallFail);
     }
 
 class CStep102AppUi : public CEikAppUi

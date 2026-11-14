@@ -101,7 +101,7 @@ jobs:
 
           inspect("stage/ShadowkeyAbiProbe.exe", {
               "uid1": "0x1000007A",
-              "uid2": "0x100039CE",
+              "uid2": "0x00000000",
               "uid3": "0xE000BEF0",
           })
           inspect("stage/ShadowkeyCompat.dll", {

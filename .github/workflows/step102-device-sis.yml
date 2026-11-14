@@ -67,8 +67,13 @@ jobs:
           if (!$cpp) { throw "No C preprocessor found on runner" }
           & $cpp.Source -E -P -x c -I $include $rss -o $rpp
           if ($LASTEXITCODE -ne 0) { throw "Resource preprocessing failed" }
-          & $env:RCOMP "-u" "-o$rsc" "-h$rsg" "-s$rpp"
-          if ($LASTEXITCODE -ne 0) { throw "rcomp failed" }
+          Push-Location $out
+          try {
+            & $env:RCOMP -u "-oShadowkeyAbiProbe_reg.rsc" "-hShadowkeyAbiProbe_reg.rsg" "-sShadowkeyAbiProbe_reg.rpp" "-iShadowkeyAbiProbe_reg.rss" 2>&1 | Tee-Object -FilePath rcomp.log
+            if ($LASTEXITCODE -ne 0) { throw "rcomp failed; see stage/rcomp.log" }
+          } finally {
+            Pop-Location
+          }
           if (!(Test-Path $rsc)) { throw "Registration RSC was not generated" }
           "Registration RSC size: $((Get-Item $rsc).Length)"
 

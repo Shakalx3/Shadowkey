@@ -47,7 +47,7 @@ file "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" "$LIB/avkon.dso" > "$
   echo "DSO files containing raw CAknAppUi ctor/dtor ABI names:"
   for symbol in _ZN9CAknAppUiC1Ev _ZN9CAknAppUiC2Ev _ZN9CAknAppUiD0Ev _ZN9CAknAppUiD1Ev _ZN9CAknAppUiD2Ev; do
     printf '%s: ' "$symbol"
-    grep -a -l -F "$symbol" "$LIB"/*.dso 2>/dev/null | sed "s#$LIB/##g" | tr '\n' ' '
+    grep -a -l -F "$symbol" "$LIB"/*.dso 2>/dev/null | sed "s#$LIB/##g" | tr '\n' ' ' || true
     echo
   done
 } >> "$OUT/build.log"

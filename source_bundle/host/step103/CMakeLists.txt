@@ -6,7 +6,6 @@ include(SymbianApp)
 # A normal EKA2 executable. The workflow selects the older-EKA2 runtime
 # profile and replaces its import proxies with the S60 3.1 FP1 SDK DSOs.
 symbian_add_executable(ShadowkeyAbiProbe main.cpp)
-target_link_libraries(ShadowkeyAbiProbe PRIVATE Symbian::EUser)
 target_compile_options(ShadowkeyAbiProbe PRIVATE -fno-exceptions -fno-rtti -fno-builtin)
 symbian_publish_executable(ShadowkeyAbiProbe UID3 0xE000BEF0)
 

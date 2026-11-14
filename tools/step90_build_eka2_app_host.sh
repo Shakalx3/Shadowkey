@@ -38,6 +38,10 @@ find "$SDK_ROOT/Epoc32/include" -iname 'eikstart.h' -o -iname 'apparc.h' > "$OUT
 echo "GCCE compiler: $CXX" | tee "$OUT/build.log"
 "$CXX" --version >> "$OUT/build.log" 2>&1
 file "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" "$LIB/avkon.dso" > "$OUT/import-library-file-types.txt"
+{
+  echo "Target AVKON exports relevant to application construction/destruction:"
+  readelf --wide -Ws "$LIB/avkon.dso" | c++filt | grep -E 'CAknAppUi::(CAknAppUi|~CAknAppUi)|CAknApplication::(CAknApplication|~CAknApplication)|CAknDocument::(CAknDocument|~CAknDocument)' || true
+} >> "$OUT/build.log"
 
 SRC="${STEP90_SOURCE:-${GITHUB_WORKSPACE}/source_bundle/host/legacy_app_host.cpp}"
 GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"

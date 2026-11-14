@@ -58,28 +58,24 @@ jobs:
         run: |
           $out = Join-Path (Get-Location) "stage"
           $rss = Join-Path (Get-Location) "source_bundle/host/step102/ShadowkeyAbiProbe_reg.rss"
-          $rpp = Join-Path $out "ShadowkeyAbiProbe_reg.rpp"
+          $include = Join-Path $env:SDK_ROOT "Epoc32/include"
           $rsc = Join-Path $out "ShadowkeyAbiProbe_reg.rsc"
           $rsg = Join-Path $out "ShadowkeyAbiProbe_reg.rsg"
-          $include = Join-Path $env:SDK_ROOT "Epoc32/include"
-          $cpp = Get-Command cpp.exe -ErrorAction SilentlyContinue
-          if (!$cpp) { $cpp = Get-Command clang.exe -ErrorAction SilentlyContinue }
-          if (!$cpp) { throw "No C preprocessor found on runner" }
-          & $cpp.Source -E -P -x c -I $include $rss -o $rpp
-          if ($LASTEXITCODE -ne 0) { throw "Resource preprocessing failed" }
+          # Use the SDK's canonical epocrc wrapper instead of manually
+          # reproducing its preprocessor/rcomp pipeline.
           Push-Location $out
           try {
-            "=== rcomp executable ===" | Set-Content rcomp.log
-            & $env:RCOMP -v -u "-oShadowkeyAbiProbe_reg.rsc" "-hShadowkeyAbiProbe_reg.rsg" "-sShadowkeyAbiProbe_reg.rpp" "-iShadowkeyAbiProbe_reg.rss" *>> rcomp.log
-            $rcompExit = $LASTEXITCODE
-            "rcomp_exit=$rcompExit" | Add-Content rcomp.log
-            Get-Content rcomp.log
-            if ($rcompExit -ne 0) { throw "rcomp failed with exit code $rcompExit; debug files will be uploaded" }
+            & $env:EPOCRC -v -u "-I$include" "-t$out" $rss "-oShadowkeyAbiProbe_reg.rsc" "-hShadowkeyAbiProbe_reg.rsg" 2>&1 | Tee-Object -FilePath epocrc.log
+            $epocrcExit = $LASTEXITCODE
+            "epocrc_exit=$epocrcExit"
+            if ($epocrcExit -ne 0) { throw "epocrc failed with exit code $epocrcExit" }
           } finally {
             Pop-Location
           }
           if (!(Test-Path $rsc)) { throw "Registration RSC was not generated" }
+          if (!(Test-Path $rsg)) { throw "Registration RSG was not generated" }
           "Registration RSC size: $((Get-Item $rsc).Length)"
+          "Registration RSG size: $((Get-Item $rsg).Length)
 
       - name: Create SIS package
         shell: pwsh
@@ -106,16 +102,3 @@ jobs:
           path: stage/ShadowkeyAbiProbe.sis
           if-no-files-found: error
           retention-days: 90
-
-      - name: Upload resource compiler diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Shadowkey-Step102-rcomp-diagnostics
-          path: |
-            stage/ShadowkeyAbiProbe_reg.rpp
-            stage/rcomp.log
-            stage/ShadowkeyAbiProbe_reg.rsc
-            stage/ShadowkeyAbiProbe_reg.rsg
-          if-no-files-found: warn
-          retention-days: 30

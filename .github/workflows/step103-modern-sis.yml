@@ -43,7 +43,7 @@ jobs:
           test -n "$epocroot"
           epocroot=$(realpath "$epocroot")
           s60_lib="$epocroot/release/armv5/lib"
-          for lib in euser estlib drtaeabi; do
+          for lib in euser drtaeabi; do
             test -s "$s60_lib/$lib.dso" || {
               echo "Required S60 3.1 FP1 import proxy missing: $s60_lib/$lib.dso"
               exit 1
@@ -52,12 +52,14 @@ jobs:
 
           # Replace only temporary SDK import proxies with the exact S60 3.1 FP1
           # export tables. The Legacy EKA2 runtime then targets the N95-era ABI.
-          mkdir -p "$modern_root/proxies/euser" \
-                   "$modern_root/proxies/estlib-legacy" \
-                   "$modern_root/proxies/drtaeabi"
+          mkdir -p "$modern_root/proxies/euser" "$modern_root/proxies/drtaeabi"
+          test -s "$modern_root/proxies/estlib-legacy/estlib.dso" || {
+            echo "Legacy EKA2 ESTLIB proxy missing from modern SDK"
+            exit 1
+          }
           cp "$s60_lib/euser.dso" "$modern_root/proxies/euser/euser.dso"
-          cp "$s60_lib/estlib.dso" "$modern_root/proxies/estlib-legacy/estlib.dso"
           cp "$s60_lib/drtaeabi.dso" "$modern_root/proxies/drtaeabi/drtaeabi.dso"
+          echo "Keeping the SDK's validated estlib-legacy proxy; raw S60 ESTLIB DSO has an LLD-invalid string table."
 
           echo "MODERN_ROOT=$modern_root" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_FILE=$toolchain_file" >> "$GITHUB_ENV"

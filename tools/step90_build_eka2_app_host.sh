@@ -199,9 +199,10 @@ test -x "$ELF2E32"
 # the SDK archive's short on-disk filename (e.g. APPARC{000a0000}.dso vs
 # apparc.dso). Create temporary aliases inside the extracted SDK tree.
 : > "$OUT/soname-aliases.txt"
-for dso in "$LIB"/*.dso; do
+for name in euser apparc eikcore avkon; do
+  dso="$LIB/$name.dso"
   [ -f "$dso" ] || continue
-  soname=$("$READELF" -d "$dso" | sed -n 's/.*Library soname: \[\(.*\)\].*/\1/p' | head -n1)
+  soname=$("$READELF" -d "$dso" | sed -n 's/.*Library soname: \[\(.*\)\].*/\1/p' | awk 'NR==1 {first=$0} END {print first}')
   [ -n "$soname" ] || continue
   if [ ! -e "$LIB/$soname" ]; then
     ln -s "$(basename "$dso")" "$LIB/$soname"
@@ -212,7 +213,8 @@ done
 # version strings (e.g. @@avkon{000a0000}[100056c6].dll), not DT_SONAME.
 # elf2e32 searches by that E32 module name, so expose a matching temporary
 # filename alias for every such SDK DSO.
-for dso in "$LIB"/*.dso; do
+for name in euser apparc eikcore avkon; do
+  dso="$LIB/$name.dso"
   [ -f "$dso" ] || continue
   version_name=$("$READELF" --wide -Ws "$dso" | sed -n 's/.*@@\([^ ]*\)$/\1/p' | awk 'NR==1 {first=$0} END {print first}')
   [ -n "$version_name" ] || continue

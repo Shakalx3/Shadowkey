@@ -30,11 +30,13 @@ jobs:
           $rcomp = Get-ChildItem $sdk -Recurse -File -Filter rcomp.exe | Select-Object -First 1
           $makesis = Get-ChildItem $sdk -Recurse -File -Filter makesis.exe | Select-Object -First 1
           $epocrc = Get-ChildItem $sdk -Recurse -File -Filter epocrc.bat | Select-Object -First 1
-          if (!$rcomp -or !$makesis -or !$epocrc) { throw "Required SDK tools missing: rcomp=$rcomp makesis=$makesis epocrc=$epocrc" }
+          $epocrcScript = Get-ChildItem $sdk -Recurse -File -Filter epocrc.pl | Select-Object -First 1
+          if (!$rcomp -or !$makesis -or !$epocrc -or !$epocrcScript) { throw "Required SDK tools missing: rcomp=$rcomp makesis=$makesis epocrc=$epocrc epocrc.pl=$epocrcScript" }
           "SDK_ROOT=$sdk" >> $env:GITHUB_ENV
           "RCOMP=$($rcomp.FullName)" >> $env:GITHUB_ENV
           "MAKESIS=$($makesis.FullName)" >> $env:GITHUB_ENV
           "EPOCRC=$($epocrc.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC_DIR=$($epocrcScript.DirectoryName)" >> $env:GITHUB_ENV
           "EPOCROOT=$($sdk.TrimEnd('\') + '\')" >> $env:GITHUB_ENV
           "Found rcomp: $($rcomp.FullName)"
           "Found makesis: $($makesis.FullName)"
@@ -63,6 +65,7 @@ jobs:
           $rsg = Join-Path $out "ShadowkeyAbiProbe_reg.rsg"
           # Use the SDK's canonical epocrc wrapper instead of manually
           # reproducing its preprocessor/rcomp pipeline.
+          $env:PATH = "$env:EPOCRC_DIR;$env:PATH"
           Push-Location $out
           try {
             & $env:EPOCRC -v -u "-I$include" "-t$out" $rss "-oShadowkeyAbiProbe_reg.rsc" "-hShadowkeyAbiProbe_reg.rsg" 2>&1 | Tee-Object -FilePath epocrc.log

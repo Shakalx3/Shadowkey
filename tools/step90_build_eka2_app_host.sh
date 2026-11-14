@@ -47,6 +47,36 @@ test -d "$VARIANT_DIR"
 test -f "$SDK_ROOT/Epoc32/include/symcpp.h"
 test -f "$SDK_ROOT/Epoc32/include/apparc.h"
 test -f "$SDK_ROOT/Epoc32/include/eikstart.h"
+# The original Windows SDK was extracted on a case-sensitive Linux filesystem.
+# Normalize two case-insensitive SDK include paths inside this disposable copy.
+python3 - "$SDK_ROOT/Epoc32/include" <<'PY'
+from pathlib import Path
+import os
+import sys
+
+root = Path(sys.argv[1])
+
+def find_casefold(name):
+    matches = [p for p in root.rglob("*") if p.is_file() and p.name.casefold() == name.casefold()]
+    if not matches:
+        raise SystemExit(f"Required SDK header not found case-insensitively: {name}")
+    return matches[0]
+
+ecom_header = find_casefold("Ecom.h")
+ecom_dir = root / "Ecom"
+ecom_dir.mkdir(exist_ok=True)
+ecom_alias = ecom_dir / "Ecom.h"
+if not ecom_alias.exists():
+    ecom_alias.symlink_to(os.path.relpath(ecom_header, ecom_dir))
+
+fbs_header = find_casefold("FbsMessage.h")
+fbs_alias = root / "FbsMessage.h"
+if not fbs_alias.exists():
+    fbs_alias.symlink_to(os.path.relpath(fbs_header, root))
+
+print(f"SDK include alias: {ecom_alias} -> {ecom_header}")
+print(f"SDK include alias: {fbs_alias} -> {fbs_header}")
+PY
 # The legacy SDK gcce.h uses Windows-style relative include separators.
 # Normalize only the temporary extracted SDK copy for Linux GCC preprocessing.
 python3 - "$GCCE_HEADER" <<'PY'

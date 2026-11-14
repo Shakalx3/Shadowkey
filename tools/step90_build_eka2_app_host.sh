@@ -30,14 +30,14 @@ export PATH="$BIN_DIR:$PATH"
 export LD_LIBRARY_PATH="$BIN_DIR/../lib:$BIN_DIR/../lib32:${LD_LIBRARY_PATH:-}"
 
 LIB="$SDK_ROOT/Epoc32/release/armv5/lib"
-for name in euser apparc eikcore; do
+for name in euser apparc eikcore avkon; do
   test -f "$LIB/$name.dso" || { echo "missing target import library: $LIB/$name.dso"; exit 2; }
 done
 find "$SDK_ROOT/Epoc32/include" -iname 'eikstart.h' -o -iname 'apparc.h' > "$OUT/host-sdk-headers.txt"
 
 echo "GCCE compiler: $CXX" | tee "$OUT/build.log"
 "$CXX" --version >> "$OUT/build.log" 2>&1
-file "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" > "$OUT/import-library-file-types.txt"
+file "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" "$LIB/avkon.dso" > "$OUT/import-library-file-types.txt"
 
 SRC="${STEP90_SOURCE:-${GITHUB_WORKSPACE}/source_bundle/host/legacy_app_host.cpp}"
 GCCE_HEADER="$SDK_ROOT/Epoc32/include/gcce/gcce.h"
@@ -132,7 +132,7 @@ PY
   -include "$GCCE_HEADER" \
   -c "$SRC" -o "$OUT/legacy_app_host.o" >> "$OUT/build.log" 2>&1
 
-echo "Linking host ELF against EUSER, APPARC and EIKCORE import DSOs" | tee -a "$OUT/build.log"
+echo "Linking host ELF against EUSER, APPARC, EIKCORE and AVKON import DSOs" | tee -a "$OUT/build.log"
 LINK_MODE="direct-import-dso"
 if ! "$LD" --no-as-needed -e E32Main -Ttext 0x10000 -o "$OUT/legacy_app_host.elf" \
     "$OUT/legacy_app_host.o" "$LIB/euser.dso" "$LIB/apparc.dso" "$LIB/eikcore.dso" \
@@ -234,7 +234,7 @@ assert h["uid3"] == expected_uid3, h
 assert code_size>0 and code_base!=0, h
 assert code_base <= entry_va < code_base+code_size, h
 assert entry_va==elf_entry, h
-assert u(0x54)==3, h
+assert u(0x54)>=4, h
 assert len(dump.strip())>0, "elf2e32 did not produce a header/import dump"
 Path(sys.argv[5]).write_text(
     "PASS\n"
@@ -253,7 +253,7 @@ cat > "$OUT/STEP90_BUILD_REPORT.md" <<EOF
 - Compiler: $CXX
 - Link mode: $LINK_MODE
 - Target SDK: $SDK_ROOT
-- Target import libraries: EUSER, APPARC, EIKCORE
+- Target import libraries: EUSER, APPARC, EIKCORE, AVKON
 - Host source: source_bundle/host/legacy_app_host.cpp
 - E32 output: 6R51Host.exe
 - UID3/SID: 0xE000BEEF (development prototype; capability set is currently none)

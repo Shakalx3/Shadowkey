@@ -1,0 +1,10 @@
+// Minimal S60 3rd Edition application registration for the Step102 probe.
+#include <appinfo.rh>
+
+UID2 KUidAppRegistrationResourceFile
+UID3 0xE000BEF0
+
+RESOURCE APP_REGISTRATION_INFO
+{
+    app_file = "ShadowkeyAbiProbe";
+}

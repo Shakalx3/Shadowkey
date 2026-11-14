@@ -1,0 +1,16 @@
+[project]
+name = "ShadowkeyAbiProbe"
+uid3 = 0xE000BEF0
+architecture = "armv5t"
+
+[package]
+uid = 0xE000BEF1
+name = "Shadowkey ABI Loader Probe"
+vendor = "OpenAI"
+executable_name = "ShadowkeyAbiProbe.exe"
+version = [1, 1, 0]
+
+[application]
+caption = "Shadowkey ABI Loader Probe"
+short_caption = "Shadowkey Probe"
+icon = "icon.svg"

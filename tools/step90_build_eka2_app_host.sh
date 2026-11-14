@@ -192,6 +192,12 @@ for dso in "$LIB"/*.dso; do
     printf '%s -> %s\n' "$soname" "$(basename "$dso")" >> "$OUT/soname-aliases.txt"
   fi
 done
+{
+  echo "Host ELF DT_NEEDED entries:"
+  "$READELF" -d "$OUT/legacy_app_host.elf" | grep -E 'NEEDED|SONAME' || true
+  echo "Relevant SDK SONAME aliases:"
+  grep -E 'avkon|eikcore|apparc|euser' "$OUT/soname-aliases.txt" || true
+} >> "$OUT/build.log"
 
 echo "Convert EKA2 host ELF to E32 EXE" | tee -a "$OUT/build.log"
 "$ELF2E32" --elfinput="$OUT/legacy_app_host.elf" \

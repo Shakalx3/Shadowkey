@@ -1,4 +1,4 @@
-// Minimal S60 3rd Edition application registration for the Step102 probe.
+// S60 3rd Edition FP1 application registration for the Step102 loader probe.
 #include <appinfo.rh>
 
 UID2 KUidAppRegistrationResourceFile

@@ -44,8 +44,9 @@ for name in euser eikcore avkon; do
   if [ -z "$existing_soname" ]; then
     version_name=$("$READELF" --wide -Ws "$dso" | sed -n 's/.*@@\([^ ]*\)$/\1/p' | awk 'NR==1 {first=$0} END {print first}')
     [ -n "$version_name" ] || { echo "cannot derive E32 DLL name for $dso"; exit 3; }
-    patchelf --set-soname "$version_name" "$dso"
-    echo "Added temporary SONAME $version_name to $name.dso" | tee -a "$OUT/build.log"
+    dso_soname="${version_name%%[*}.dso"
+    patchelf --set-soname "$dso_soname" "$dso"
+    echo "Added temporary SONAME $dso_soname to $name.dso" | tee -a "$OUT/build.log"
   fi
 done
 find "$SDK_ROOT/Epoc32/include" -iname 'eikstart.h' -o -iname 'apparc.h' > "$OUT/host-sdk-headers.txt"
@@ -214,9 +215,10 @@ for dso in "$LIB"/*.dso; do
   [ -f "$dso" ] || continue
   version_name=$("$READELF" --wide -Ws "$dso" | sed -n 's/.*@@\([^ ]*\)$/\1/p' | awk 'NR==1 {first=$0} END {print first}')
   [ -n "$version_name" ] || continue
-  if [ ! -e "$LIB/$version_name" ]; then
-    ln -s "$(basename "$dso")" "$LIB/$version_name"
-    printf 'E32 version alias: %s -> %s\n' "$version_name" "$(basename "$dso")" >> "$OUT/soname-aliases.txt"
+  dso_alias="${version_name%%[*}.dso"
+  if [ ! -e "$LIB/$dso_alias" ]; then
+    ln -s "$(basename "$dso")" "$LIB/$dso_alias"
+    printf 'E32 DSO alias: %s -> %s\n' "$dso_alias" "$(basename "$dso")" >> "$OUT/soname-aliases.txt"
   fi
 done
 {

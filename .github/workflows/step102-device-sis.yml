@@ -72,7 +72,7 @@ jobs:
           assert u(0x04)==0x100039CE, hex(u(0x04))
           assert u(0x08)==0xE000BEF0, hex(u(0x08))
           assert u(0x30)>0
-          assert u(0x54)>=3
+          assert u(0x54)>=4
           print("PASS: registered S60 GUI E32 EXE header and framework imports")
           print(f"size={len(d)} code={u(0x30)} dll_refs={u(0x54)}")
           PY

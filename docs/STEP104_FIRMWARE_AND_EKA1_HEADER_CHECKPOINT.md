@@ -141,3 +141,27 @@ The checksum gate was aligned with the actual PETRAN implementation, and the aud
 The audited source SHA-256 is `3c3376945f6798a17bd4972f17a3f5c8ba1b9515386acc1c86f9ab1f9e07e98e`, exactly matching the original-input hash recorded by the earlier Step35 structural patch test. Thus the current tracked game image is byte-identical to that earlier test input; the checksum discrepancy is not explained by an accidental switch to a different archive copy.
 
 PETRAN's implementation-range sum remains `0x6387532B`, while the stored `iCheckSumCode` remains `0x67F7151E`. Both the code-size and text-size raw sums fail to match the stored field. The source image identity is now verified, but the reason this original image carries the differing checksum remains unresolved. Do not "repair" the header by simply replacing its value: first establish whether the target N-Gage loader accepts this image as-is and whether any format-specific transform is applied before the checksum check.
+
+
+## Step126 — visible device test for the TInt64 shim
+
+Date: 2026-11-16
+
+The Step105 EKA2 probe now combines the already device-verified Window Server/GDI drawing path with an actual `RLibrary` load and ordinal-1 call into a uniquely named test DLL. It uses a separate filename (`ShadowkeyCompat105.dll`) so it does not collide with the Step104-installed `ShadowkeyCompat.dll`.
+
+The DLL entry point implements the legacy member-function register ABI: `r0 = this`, `r1 = const TInt64&`, result in `r0`. The N-Gage SDK's `TInt64` declaration has `iLow` followed by `iHigh`, both 32-bit words; `operator!=` returns `TInt`. The shim compares both words and returns 0 for equality, nonzero for inequality. The visible probe checks an equal pair, a low-word difference, and a high-word difference.
+
+Build and package completed successfully in [Step105 Actions run 43851158583](https://github.com/Shakalx3/Shadowkey/actions/runs/43851158583). Both the EKA2 EXE/DLL validation and S60 3.1 FP1 SIS packaging passed.
+
+- SIS: [ShadowkeyShimProbe.sis](https://github.com/Shakalx3/Shadowkey/releases/download/shadowkey-step105-sis-43851158583/ShadowkeyShimProbe.sis)
+- Size: 50,720 bytes
+- SHA-256: `7c82e70de41c0b4d4b015550e30bd5ecd228d9f0ff074ec18084ecc8a5163fc8`
+- Test app UID3: `0xE000BEF1`; package UID: `0xE000BEF2`; test DLL UID3: `0xE000BEEF`.
+
+Visible result on the N95 for approximately eight seconds:
+
+- **Green field + white cross:** DLL loaded, ordinal 1 resolved, equality returned zero, and both low-word/high-word inequality checks returned nonzero.
+- **Amber field:** DLL load failed.
+- **Red field:** ordinal lookup failed or at least one comparison returned an unexpected value.
+
+This is a real-device test of the standalone compatibility DLL and its call ABI. It is not yet a patched Shadowkey binary and does not prove that the original EKA1 image can be loaded by EKA2.

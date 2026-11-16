@@ -56,14 +56,14 @@ jobs:
             -DSYMBIAN_TARGET_ARCH=armv5t \
             -DSYMBIAN_RUNTIME_LEGACY_EKA2=ON \
             -DCMAKE_BUILD_TYPE=Release
-          cmake --build build/step105 --target ShadowkeyShimProbe_e32 ShadowkeyCompat --parallel 2
+          cmake --build build/step105 --target ShadowkeyShimProbe_e32 ShadowkeyCompat105 --parallel 2
           exe=$(find build/step105 -type f -name ShadowkeyShimProbe.exe -print -quit)
-          dll=$(find build/step105 -type f -name ShadowkeyCompat.dll -print -quit)
+          dll=$(find build/step105 -type f -name ShadowkeyCompat105.dll -print -quit)
           test -s "$exe"
           test -s "$dll"
           mkdir -p stage
           cp "$exe" stage/ShadowkeyShimProbe.exe
-          cp "$dll" stage/ShadowkeyCompat.dll
+          cp "$dll" stage/ShadowkeyCompat105.dll
           python3 - <<'PY'
           import json, struct
           from pathlib import Path
@@ -82,7 +82,7 @@ jobs:
               print(json.dumps(header, indent=2))
           inspect("stage/ShadowkeyShimProbe.exe", {
               "uid1": "0x1000007A", "uid2": "0x00000000", "uid3": "0xE000BEF1"})
-          inspect("stage/ShadowkeyCompat.dll", {
+          inspect("stage/ShadowkeyCompat105.dll", {
               "uid1": "0x10000079", "uid2": "0x1000008D",
               "uid3": "0xE000BEEF", "export_count": 1})
           PY

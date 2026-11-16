@@ -97,16 +97,16 @@ Step105 performs a reversible magic-only test on a temporary copy of the carved 
 
 Date: 2026-11-16
 
-A review against the PETRAN/E32 header definition found that `iCheckSumCode` is defined as the additive sum of 32-bit words in the **text section**, not the complete code segment. The earlier Step103 audit computed both ranges but used the `iCodeSize` sum for its pass/fail gate. That gate was incorrect and has been corrected in `tools/step103_analyze_local_shim_patch.py` (commit `a680069108a9abaf1a4bb835786a9a5aba063959`).
+The PETRAN header comment describes `iCheckSumCode` as the sum over `.text`, but inspection of the actual PETRAN implementation (`E32ImageFile::CheckSumCode()` in `PEFILE/PE_IMG.CPP`) shows it passes `iHeader->iCodeSize` to `HMem::CheckSum()`. `HMem::CheckSum()` divides the byte count by four and adds each 32-bit word. For this legacy PETRAN image, the implementation is the stronger evidence: the acceptance candidate is the little-endian sum over `iCodeSize`, not just `iTextSize`. The audit was first changed to the header comment, then corrected again after this source inspection; the current gate uses `iCodeSize`.
 
-The authoritative header definition lays out `iCheckSumCode` at 0x18, `iTextSize` at 0x60, `iCodeRelocOffset` at 0x70, `iDataRelocOffset` at 0x74, and `iPriority` at 0x78. The header comment explicitly describes the code checksum as the sum of all 32-bit words in `.text`.
+The authoritative header definition lays out `iCheckSumCode` at 0x18, `iTextSize` at 0x60, `iCodeRelocOffset` at 0x70, `iDataRelocOffset` at 0x74, and `iPriority` at 0x78. The header comment and implementation differ on the checksum range; the implementation uses `iCodeSize`.
 
 For the current recorded 6R51.APP measurements:
 
 - Stored code checksum: `0x67F7151E`.
-- Little-endian sum over `iTextSize`: `0x63829213` — **does not match**.
-- Little-endian sum over `iCodeSize`: `0x6387532B` — diagnostic only; not the checksum acceptance range.
-- The checksum discrepancy therefore remains real and unresolved; it is not explained by choosing the correct section boundary.
+- Little-endian sum over `iCodeSize`: `0x6387532B` — the range used by PETRAN's implementation, and it **does not match**.
+- Little-endian sum over `iTextSize`: `0x63829213` — the narrower header-comment interpretation, also does not match.
+- The checksum discrepancy therefore remains real and unresolved under both documented interpretations.
 
 No executable bytes were changed and no patched game image was produced. The next investigation must establish whether the measured source image is the exact uncompressed E32 byte stream expected by the header checksum routine, and whether the checksum uses a preprocessing/relocation convention not represented by the simple raw-file sum. Until that is resolved, no import-patched binary should be released.
 
@@ -129,4 +129,4 @@ Verified results:
 - All 415 IAT slots have at least one detected reference. The import-table rewrite candidate therefore has a complete relocation map for rebasing the IAT pointer literals.
 - The data relocation offset is zero; the value at `0x78` remains process priority 350.
 
-This closes the relocation-table parsing and aligned IAT-reference-coverage gates for the proposed import-table edit. It does **not** close the checksum gate: the stored checksum `0x67F7151E` still differs from the required little-endian `.text` sum `0x63829213`. Therefore no patch has been written. The next task is to determine the exact checksum input/format variant for this legacy image, then add a byte-for-byte patch verifier before touching the import table.
+This closes the relocation-table parsing and aligned IAT-reference-coverage gates for the proposed import-table edit. It does **not** close the checksum gate: the stored checksum `0x67F7151E` still differs from the PETRAN implementation's little-endian `iCodeSize` sum `0x6387532B` (and also from the narrower `.text` sum `0x63829213`). Therefore no patch has been written. The next task is to determine the exact checksum input/format variant for this legacy image, then add a byte-for-byte patch verifier before touching the import table.

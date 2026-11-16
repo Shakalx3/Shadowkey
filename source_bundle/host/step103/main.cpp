@@ -1,45 +1,92 @@
-#include <e32std.h>
-#include <e32ldr.h>
+#include <e32base.h>
+#include <gdi.h>
+#include <w32std.h>
 
-typedef TInt (*TStep102CompareFn)(const TUint32*, const TUint32*);
-
-static TInt Step103Report(const TDesC& aMessage, TInt aResult)
+// Step104 is a visible Window Server startup probe. It deliberately avoids
+// AVKON/EIKCORE so that a successful launch proves only the EKA2 process,
+// Window Server session, GDI drawing and foreground-window path.
+int main()
     {
-    User::InfoPrint(aMessage);
-    User::After(3000000);
-    return aResult;
-    }
+    CTrapCleanup* cleanup = CTrapCleanup::New();
+    if (!cleanup)
+        return KErrNoMemory;
 
-int main(int, char**)
-    {
-    RLibrary library;
-    TInt error = library.Load(_L("ShadowkeyCompat.dll"));
+    RWsSession session;
+    TInt error = session.Connect();
     if (error != KErrNone)
-        return Step103Report(_L("SK DLL LOAD FAIL"), error);
-
-    TLibraryFunction raw = library.Lookup(1);
-    if (!raw)
         {
-        library.Close();
-        return Step103Report(_L("SK DLL LOOKUP FAIL"), KErrNotFound);
+        delete cleanup;
+        return error;
         }
 
-    TStep102CompareFn compare = reinterpret_cast<TStep102CompareFn>(raw);
+    {
+    CWsScreenDevice screen(session);
+    error = screen.Construct();
+    if (error == KErrNone)
+        {
+        CWindowGc gc(&screen);
+        error = gc.Construct();
+        if (error == KErrNone)
+            {
+            const TSize size = screen.SizeInPixels();
+            if (size.iWidth < 120 || size.iHeight < 160 ||
+                size.iWidth > 8192 || size.iHeight > 8192)
+                {
+                error = KErrNotSupported;
+                }
+            else
+                {
+                RWindowGroup group(session);
+                error = group.Construct(1, ETrue);
+                if (error == KErrNone)
+                    {
+                    RWindow window(session);
+                    error = window.Construct(group, 2);
+                    if (error == KErrNone)
+                        {
+                        group.SetOrdinalPosition(0);
+                        window.SetExtent(TPoint(0, 0), size);
+                        window.SetBackgroundColor(TRgb(0, 0, 0));
+                        window.SetVisible(ETrue);
+                        window.Activate();
 
-    const TUint32 sameA[2] = {0x11223344u, 0x55667788u};
-    const TUint32 sameB[2] = {0x11223344u, 0x55667788u};
-    const TUint32 lowDiff[2] = {0x11223345u, 0x55667788u};
-    const TUint32 highDiff[2] = {0x11223344u, 0x55667789u};
+                        const TRect full(0, 0, size.iWidth, size.iHeight);
+                        window.BeginRedraw(full);
+                        gc.Activate(window);
+                        gc.SetPenStyle(CGraphicsContext::ENullPen);
+                        gc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+                        gc.SetBrushColor(TRgb(0, 0, 0));
+                        gc.DrawRect(full);
 
-    const TBool pass =
-        compare(sameA, sameB) == 0 &&
-        compare(sameA, lowDiff) != 0 &&
-        compare(sameA, highDiff) != 0;
+                        // A high-contrast green field with a white cross is
+                        // unmistakable on the N95 display and needs no font.
+                        const TInt left = size.iWidth / 8;
+                        const TInt top = size.iHeight / 8;
+                        const TInt right = size.iWidth * 7 / 8;
+                        const TInt bottom = size.iHeight * 7 / 8;
+                        gc.SetBrushColor(TRgb(0, 160, 72));
+                        gc.DrawRect(TRect(left, top, right, bottom));
+                        gc.SetBrushColor(TRgb(255, 255, 255));
+                        gc.DrawRect(TRect(size.iWidth / 2 - 5, top + 12,
+                                          size.iWidth / 2 + 5, bottom - 12));
+                        gc.DrawRect(TRect(left + 12, size.iHeight / 2 - 5,
+                                          right - 12, size.iHeight / 2 + 5));
+                        gc.Deactivate();
+                        window.EndRedraw();
+                        session.Flush();
 
-    library.Close();
-
-    if (!pass)
-        return Step103Report(_L("SK DLL CALL FAIL"), KErrGeneral);
-
-    return Step103Report(_L("SK DLL PASS"), KErrNone);
+                        // Keep the visible proof on screen long enough to
+                        // observe, then close cleanly without user input.
+                        User::After(8000000);
+                        window.Close();
+                        }
+                    group.Close();
+                    }
+                }
+            }
+        }
+    }
+    session.Close();
+    delete cleanup;
+    return error;
     }

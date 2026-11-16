@@ -11,7 +11,7 @@ target_link_libraries(ShadowkeyShimProbe PRIVATE
 symbian_publish_executable(ShadowkeyShimProbe UID3 0xE000BEF1)
 
 symbian_add_dynamic_library(
-    ShadowkeyCompat
+    ShadowkeyCompat105
     SOURCES compat.cpp
     UID3 0xE000BEEF
     EXPORT_DEFINITION "${CMAKE_CURRENT_SOURCE_DIR}/compat.def"

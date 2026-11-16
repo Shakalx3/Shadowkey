@@ -130,3 +130,14 @@ Verified results:
 - The data relocation offset is zero; the value at `0x78` remains process priority 350.
 
 This closes the relocation-table parsing and aligned IAT-reference-coverage gates for the proposed import-table edit. It does **not** close the checksum gate: the stored checksum `0x67F7151E` still differs from the PETRAN implementation's little-endian `iCodeSize` sum `0x6387532B` (and also from the narrower `.text` sum `0x63829213`). Therefore no patch has been written. The next task is to determine the exact checksum input/format variant for this legacy image, then add a byte-for-byte patch verifier before touching the import table.
+
+
+## Step125 — source identity and repeatable audit
+
+Date: 2026-11-16
+
+The checksum gate was aligned with the actual PETRAN implementation, and the audit was rerun successfully in [GitHub Actions run 43850653405](https://github.com/Shakalx3/Shadowkey/actions/runs/43850653405). Python syntax, the read-only parser, and report publication to the workflow summary all passed; this run avoids the exhausted artifact-storage quota.
+
+The audited source SHA-256 is `3c3376945f6798a17bd4972f17a3f5c8ba1b9515386acc1c86f9ab1f9e07e98e`, exactly matching the original-input hash recorded by the earlier Step35 structural patch test. Thus the current tracked game image is byte-identical to that earlier test input; the checksum discrepancy is not explained by an accidental switch to a different archive copy.
+
+PETRAN's implementation-range sum remains `0x6387532B`, while the stored `iCheckSumCode` remains `0x67F7151E`. Both the code-size and text-size raw sums fail to match the stored field. The source image identity is now verified, but the reason this original image carries the differing checksum remains unresolved. Do not "repair" the header by simply replacing its value: first establish whether the target N-Gage loader accepts this image as-is and whether any format-specific transform is applied before the checksum check.

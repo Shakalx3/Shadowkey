@@ -32,11 +32,8 @@ jobs:
             --dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
             --out-dir build/step123
 
-      - name: Upload audit report
-        uses: actions/upload-artifact@v4
-        with:
-          name: step123-e32-audit
-          path: |
-            build/step123/STEP103_LOCAL_SHIM_PATCH_FEASIBILITY.json
-            build/step123/STEP103_LOCAL_SHIM_PATCH_FEASIBILITY.md
-          if-no-files-found: error
+      - name: Publish report in workflow summary
+        run: |
+          cat build/step123/STEP103_LOCAL_SHIM_PATCH_FEASIBILITY.md >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Full machine-readable JSON was printed in the audit step log." >> "$GITHUB_STEP_SUMMARY"

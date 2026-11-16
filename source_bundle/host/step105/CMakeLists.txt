@@ -4,7 +4,7 @@ project(ShadowkeyShimProbe LANGUAGES CXX ASM)
 include(SymbianApp)
 
 symbian_add_executable(ShadowkeyShimProbe main.cpp)
-target_compile_options(ShadowkeyProbe PRIVATE -fno-exceptions -fno-rtti -fno-builtin)
+target_compile_options(ShadowkeyShimProbe PRIVATE -fno-exceptions -fno-rtti -fno-builtin)
 target_link_libraries(ShadowkeyShimProbe PRIVATE
     Symbian::WindowServer
     Symbian::Gdi)

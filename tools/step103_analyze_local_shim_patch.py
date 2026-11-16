@@ -136,8 +136,8 @@ def main() -> None:
     legacy_header_layout_match = (
         word14 in cpu_names and code_off == 0x7C and code_off + code_size == import_off
     )
-    legacy_code_checksum_matches = word18 == code_checksum_code
-    legacy_code_checksum_matches_big_endian = word18 == code_checksum_code_big
+    legacy_code_checksum_matches_text = word18 == code_checksum_text
+    legacy_code_checksum_matches_text_big_endian = word18 == code_checksum_text_big
 
     # Recover the exact import-descriptor byte range and all DLL-name offsets.
     pos = import_off + 4
@@ -276,8 +276,8 @@ def main() -> None:
             "legacy_code_checksum_code_size": f"0x{code_checksum_code:08X}",
             "legacy_code_checksum_text_big_endian": f"0x{code_checksum_text_big:08X}",
             "legacy_code_checksum_code_big_endian": f"0x{code_checksum_code_big:08X}",
-            "legacy_code_checksum_matches_code_size": legacy_code_checksum_matches,
-            "legacy_code_checksum_matches_big_endian_code_size": legacy_code_checksum_matches_big_endian,
+            "legacy_code_checksum_matches_text_size": legacy_code_checksum_matches_text,
+            "legacy_code_checksum_matches_big_endian_text_size": legacy_code_checksum_matches_text_big_endian,
             "legacy_data_checksum_computed": f"0x{data_checksum:08X}",
             "legacy_eka1_header_layout_matches": legacy_header_layout_match,
             "legacy_priority_at_0x78": priority,
@@ -342,12 +342,12 @@ def main() -> None:
         },
         "safety_gates": [
             "The EKA1 layout is structurally consistent, but this does not make the legacy image loadable by the N95 EKA2 loader.",
-            ("The stored code checksum matches the ARM little-endian word sum over iCodeSize."
-             if legacy_code_checksum_matches else
-             "The stored code checksum does not match the ARM little-endian word sum over iCodeSize; resolve this before modifying code bytes."),
-            ("The big-endian diagnostic word sum matches the stored checksum; this is not accepted as an ARM checksum."
-             if legacy_code_checksum_matches_big_endian else
-             "The big-endian diagnostic word sum does not match the stored checksum."),
+            ("The stored code checksum matches the ARM little-endian word sum over iTextSize."
+             if legacy_code_checksum_matches_text else
+             "The stored code checksum does not match the ARM little-endian word sum over iTextSize; resolve this before modifying code bytes."),
+            ("The big-endian diagnostic text word sum matches the stored checksum; this is not accepted as an ARM checksum."
+             if legacy_code_checksum_matches_text_big_endian else
+             "The big-endian diagnostic text word sum does not match the stored checksum."),
             "Use EKA1 relocation offsets at 0x70 and 0x74; 0x78 is process priority, not a relocation offset or size.",
             "The code relocation section follows the import table; update iCodeRelocOffset by the import-table growth.",
             "Verify parsed relocation blocks and word-aligned IAT-literal coverage before any patch.",
@@ -371,7 +371,7 @@ def main() -> None:
         f"- CPU at 0x14: {result['header_words_after_epoc']['offset_0x14']} ({result['header_words_after_epoc']['legacy_cpu_guess']})",
         f"- Code checksum stored: {result['header_words_after_epoc']['offset_0x18']}; little-endian text/code sums: {result['header_words_after_epoc']['legacy_code_checksum_text_size']} / {result['header_words_after_epoc']['legacy_code_checksum_code_size']}; big-endian text/code sums: {result['header_words_after_epoc']['legacy_code_checksum_text_big_endian']} / {result['header_words_after_epoc']['legacy_code_checksum_code_big_endian']}",
         f"- Data checksum stored/computed: {result['header_words_after_epoc']['offset_0x1C']} / {result['header_words_after_epoc']['legacy_data_checksum_computed']}",
-        f"- EKA1 layout structural match: **{legacy_header_layout_match}**; code checksum match: **{legacy_code_checksum_matches}**",
+        f"- EKA1 layout structural match: **{legacy_header_layout_match}**; text checksum match: **{legacy_code_checksum_matches_text}**",
         f"- EKA1 priority at 0x78: {priority}",
         "",
         "## Exact import and thunk",

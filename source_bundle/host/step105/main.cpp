@@ -10,7 +10,7 @@ typedef TInt (*TInt64NotEqualFn)(const TUint32*, const TUint32*);
 static TRgb ProbeColor()
     {
     RLibrary library;
-    TInt error = library.Load(_L("ShadowkeyCompat.dll"));
+    TInt error = library.Load(_L("ShadowkeyCompat105.dll"));
     if (error != KErrNone)
         return TRgb(220, 160, 0); // amber: DLL load failed
 

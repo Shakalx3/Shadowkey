@@ -111,3 +111,22 @@ For the current recorded 6R51.APP measurements:
 No executable bytes were changed and no patched game image was produced. The next investigation must establish whether the measured source image is the exact uncompressed E32 byte stream expected by the header checksum routine, and whether the checksum uses a preprocessing/relocation convention not represented by the simple raw-file sum. Until that is resolved, no import-patched binary should be released.
 
 Reference: [PETRAN E32ImageHeader definition](https://github.com/loociano/symbian-build-tools/blob/master/e32tools/INC/E32IMAGE.H); [E32 format checksum description](https://www.virusbulletin.com/virusbulletin/2005/09/symbian-os-mysterious-playground-new-malware).
+
+
+## Step124 — relocation section fully parsed; IAT coverage verified
+
+Date: 2026-11-16
+
+The corrected Step123 audit was run against the repository's exact tracked `6R51.APP` and generated import-dispatch registry in GitHub Actions run [43850421108](https://github.com/Shakalx3/Shadowkey/actions/runs/43850421108). Python syntax validation passed and the read-only audit completed. The job was marked failed only because GitHub Actions artifact storage quota prevented the final report upload; the full JSON report was emitted in the job log.
+
+Verified results:
+
+- EKA1 header structural discriminator: **true**; CPU marker is ARM; `iCodeSize` ends exactly at the import-table offset.
+- Code relocation section starts at file offset `0x00101308`; the size field is `0x54E0` (21,728 bytes), and the count field is 10,104.
+- The correct section-size convention is **size excludes the 8-byte relocation-section header**. Parsing 168 blocks consumes 21,736 bytes total and ends exactly at EOF (1,075,184); all 10,104 relocation entries are accounted for, with zero invalid relocation types and zero unaligned page offsets. The alternative convention fails before the last block.
+- The 415 word-aligned IAT pointer references are all covered by relocation entries: 415/415 matched, none missing. The 40 additional bytewise matches are unaligned coincidences and are excluded from the pointer count.
+- The EUSER!1575 thunk literal at file offset `0x0009F2C8` is itself relocation-backed.
+- All 415 IAT slots have at least one detected reference. The import-table rewrite candidate therefore has a complete relocation map for rebasing the IAT pointer literals.
+- The data relocation offset is zero; the value at `0x78` remains process priority 350.
+
+This closes the relocation-table parsing and aligned IAT-reference-coverage gates for the proposed import-table edit. It does **not** close the checksum gate: the stored checksum `0x67F7151E` still differs from the required little-endian `.text` sum `0x63829213`. Therefore no patch has been written. The next task is to determine the exact checksum input/format variant for this legacy image, then add a byte-for-byte patch verifier before touching the import table.

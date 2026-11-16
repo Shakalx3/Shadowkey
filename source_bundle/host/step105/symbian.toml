@@ -1,0 +1,11 @@
+[project]
+name = "ShadowkeyShimProbe"
+uid3 = 0xE000BEF1
+architecture = "armv5t"
+
+[package]
+uid = 0xE000BEF2
+name = "Shadowkey TInt64 Shim Probe"
+vendor = "OpenAI"
+executable_name = "ShadowkeyShimProbe.exe"
+version = [1, 0, 0]

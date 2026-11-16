@@ -95,7 +95,7 @@ jobs:
         run: |
           set -euo pipefail
           tag="shadowkey-step105-e32-$GITHUB_RUN_ID"
-          gh release create "$tag" stage/ShadowkeyShimProbe.exe stage/ShadowkeyCompat.dll \
+          gh release create "$tag" stage/ShadowkeyShimProbe.exe stage/ShadowkeyCompat105.dll \
             --repo "$GITHUB_REPOSITORY" \
             --title "Shadowkey Step105 TInt64 shim probe E32 images" \
             --notes "Visible EKA2 Window Server probe that loads ShadowkeyCompat ordinal 1 and tests 64-bit inequality. Not the game port."
@@ -115,7 +115,7 @@ jobs:
           E32_TAG: ${{ needs.build-modern.outputs.e32_tag }}
         run: |
           New-Item -ItemType Directory -Force stage,sdk | Out-Null
-          gh release download $env:E32_TAG --repo $env:GITHUB_REPOSITORY --pattern ShadowkeyShimProbe.exe --pattern ShadowkeyCompat.dll --dir stage
+          gh release download $env:E32_TAG --repo $env:GITHUB_REPOSITORY --pattern ShadowkeyShimProbe.exe --pattern ShadowkeyCompat105.dll --dir stage
           gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
           tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
           $sdkRoot = Join-Path (Get-Location) "sdk"
@@ -151,7 +151,7 @@ jobs:
             '%{"OpenAI"}'
             ':"OpenAI"'
             '"stage/ShadowkeyShimProbe.exe" - "!:\sys\bin\ShadowkeyShimProbe.exe"'
-            '"stage/ShadowkeyCompat.dll" - "!:\sys\bin\ShadowkeyCompat.dll"'
+            '"stage/ShadowkeyCompat105.dll" - "!:\sys\bin\ShadowkeyCompat105.dll"'
             '"stage/ShadowkeyShimProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyShimProbe_reg.rsc"'
           ) | Set-Content stage/ShadowkeyShimProbe.pkg -Encoding ascii
           & $env:MAKESIS -v stage/ShadowkeyShimProbe.pkg stage/ShadowkeyShimProbe.sis

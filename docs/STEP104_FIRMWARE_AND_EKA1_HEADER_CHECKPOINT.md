@@ -91,3 +91,23 @@ Step105 performs a reversible magic-only test on a temporary copy of the carved 
 3. Resolve the stored code-checksum mismatch before any binary rewrite.
 4. Keep C0R SOS+ROFS completeness as a separate parser task.
 5. No phone is currently available; keep the Step102 package staged and do not request device actions.
+
+
+## Step123 — correction to the code-checksum audit
+
+Date: 2026-11-16
+
+A review against the PETRAN/E32 header definition found that `iCheckSumCode` is defined as the additive sum of 32-bit words in the **text section**, not the complete code segment. The earlier Step103 audit computed both ranges but used the `iCodeSize` sum for its pass/fail gate. That gate was incorrect and has been corrected in `tools/step103_analyze_local_shim_patch.py` (commit `a680069108a9abaf1a4bb835786a9a5aba063959`).
+
+The authoritative header definition lays out `iCheckSumCode` at 0x18, `iTextSize` at 0x60, `iCodeRelocOffset` at 0x70, `iDataRelocOffset` at 0x74, and `iPriority` at 0x78. The header comment explicitly describes the code checksum as the sum of all 32-bit words in `.text`.
+
+For the current recorded 6R51.APP measurements:
+
+- Stored code checksum: `0x67F7151E`.
+- Little-endian sum over `iTextSize`: `0x63829213` — **does not match**.
+- Little-endian sum over `iCodeSize`: `0x6387532B` — diagnostic only; not the checksum acceptance range.
+- The checksum discrepancy therefore remains real and unresolved; it is not explained by choosing the correct section boundary.
+
+No executable bytes were changed and no patched game image was produced. The next investigation must establish whether the measured source image is the exact uncompressed E32 byte stream expected by the header checksum routine, and whether the checksum uses a preprocessing/relocation convention not represented by the simple raw-file sum. Until that is resolved, no import-patched binary should be released.
+
+Reference: [PETRAN E32ImageHeader definition](https://github.com/loociano/symbian-build-tools/blob/master/e32tools/INC/E32IMAGE.H); [E32 format checksum description](https://www.virusbulletin.com/virusbulletin/2005/09/symbian-os-mysterious-playground-new-malware).

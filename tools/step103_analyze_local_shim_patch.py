@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import struct
@@ -266,6 +267,7 @@ def main() -> None:
         "format": "read-only feasibility audit; original binary not modified",
         "game_file": str(args.game),
         "file_size": len(data),
+        "game_sha256": hashlib.sha256(data).hexdigest(),
         "header_words_after_epoc": {
             "offset_0x14": f"0x{word14:08X}",
             "offset_0x18": f"0x{word18:08X}",
@@ -365,6 +367,7 @@ def main() -> None:
         "# Step103 — EUSER!1575 local-shim patch feasibility",
         "",
         "Read-only analysis. The original 6R51.APP is not modified.",
+        f"- Input SHA-256: `{hashlib.sha256(data).hexdigest()}`",
         "",
         "## Header-format discriminator",
         "",

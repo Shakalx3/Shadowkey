@@ -1,0 +1,42 @@
+name: Step123 E32 checksum and relocation audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tools/step103_analyze_local_shim_patch.py"
+      - "tools/step86_inspect_game_e32_header.py"
+      - "source_bundle/shadowkey_step35_work/6R51.APP"
+      - "source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c"
+      - ".github/workflows/step123-e32-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Python syntax
+        run: python3 -m py_compile tools/step103_analyze_local_shim_patch.py tools/step86_inspect_game_e32_header.py
+
+      - name: Run read-only E32 import, checksum, and relocation audit
+        run: |
+          set -euo pipefail
+          python3 tools/step103_analyze_local_shim_patch.py \
+            --game source_bundle/shadowkey_step35_work/6R51.APP \
+            --dispatch source_bundle/shadowkey_step35_work/shadowkey_import_dispatch.c \
+            --out-dir build/step123
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: step123-e32-audit
+          path: |
+            build/step123/STEP103_LOCAL_SHIM_PATCH_FEASIBILITY.json
+            build/step123/STEP103_LOCAL_SHIM_PATCH_FEASIBILITY.md
+          if-no-files-found: error

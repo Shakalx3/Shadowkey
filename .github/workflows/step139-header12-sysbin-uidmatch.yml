@@ -129,3 +129,5 @@ jobs:
           $hash = (Get-FileHash stage/ShadowkeyLegacyLoadProbe_Step139.sis -Algorithm SHA256).Hash
           gh release create $tag stage/ShadowkeyLegacyLoadProbe_Step139.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step139 12-byte-header matched-UID installer control" --notes "INSTALLATION CONTROL ONLY. Zero-filled 1,075,184-byte inert payload installed as a DLL candidate under !:\sys\bin. SIS SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }
+
+# Trigger workflow after adding the workflow definition.

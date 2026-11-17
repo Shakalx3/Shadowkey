@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step136-magic-only-control.yml"
+      - ".github/workflows/step136-header-8byte-control.yml"
       - "source_bundle/host/step128/**"
   workflow_dispatch:
 

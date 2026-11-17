@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step134-magic-only-control.yml"
+      - ".github/workflows/step134-header-core-control.yml"
       - "source_bundle/host/step128/**"
   workflow_dispatch:
 

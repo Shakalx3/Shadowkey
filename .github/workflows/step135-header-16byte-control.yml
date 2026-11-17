@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step135-header-core-control.yml"
+      - ".github/workflows/step135-header-16byte-control.yml"
       - "source_bundle/host/step128/**"
   workflow_dispatch:
 

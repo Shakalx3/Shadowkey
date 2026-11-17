@@ -103,8 +103,8 @@ jobs:
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'
-            '"stage/ShadowkeyInstallControl.exe" - "!:\\sys\\bin\\ShadowkeyInstallControl.exe"'
-            '"stage/ShadowkeyLegacyLoadProbe_reg.rsc" - "!:\\private\\10003a3f\\import\\apps\\ShadowkeyLegacyLoadProbe_reg.rsc"'
+            '"stage/ShadowkeyInstallControl.exe" - "!:\sys\bin\ShadowkeyInstallControl.exe"'
+            '"stage/ShadowkeyLegacyLoadProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyLegacyLoadProbe_reg.rsc"'
           ) | Set-Content stage/ShadowkeyInstallControl.pkg -Encoding ascii
           & $env:MAKESIS -v stage/ShadowkeyInstallControl.pkg stage/ShadowkeyInstallControl.sis
           if ($LASTEXITCODE -ne 0) { throw "makesis failed" }

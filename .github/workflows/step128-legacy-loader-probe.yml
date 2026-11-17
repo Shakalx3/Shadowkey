@@ -155,7 +155,7 @@ jobs:
             '%{"OpenAI"}'
             ':"OpenAI"'
             '"stage/ShadowkeyLegacyLoadProbe.exe" - "!:\sys\bin\ShadowkeyLegacyLoadProbe.exe"'
-            '"stage/ShadowkeyLegacyProbe.dll" - "!:\sys\bin\ShadowkeyLegacyProbe.dll"'
+            '"stage/ShadowkeyLegacyProbe.dll" - "!:\\data\\ShadowkeyLegacyProbe.bin"'
             '"stage/ShadowkeyLegacyLoadProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyLegacyLoadProbe_reg.rsc"'
           ) | Set-Content stage/ShadowkeyLegacyLoadProbe.pkg -Encoding ascii
           & $env:MAKESIS -v stage/ShadowkeyLegacyLoadProbe.pkg stage/ShadowkeyLegacyLoadProbe.sis
@@ -171,7 +171,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = "shadowkey-step128-sis-$env:GITHUB_RUN_ID"
+          $tag = "shadowkey-step130-sis-$env:GITHUB_RUN_ID"
           $hash = (Get-FileHash stage/ShadowkeyLegacyLoadProbe.sis -Algorithm SHA256).Hash
-          gh release create $tag stage/ShadowkeyLegacyLoadProbe.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step128 original legacy DLL loader probe" --notes "Install and run the probe on the N95. Green field + white cross means the original unmodified 6R51.APP loaded through RLibrary and export 1 resolved; red field + a 32-bit grid encodes the Symbian error. The game factory is never called. SIS SHA256: $hash"
+          gh release create $tag stage/ShadowkeyLegacyLoadProbe.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step130 legacy payload install-location control" --notes "INSTALLATION CONTROL ONLY. The unmodified original 6R51.APP bytes are installed as a non-executable .bin file under !:\\data, not into sys\\bin. This isolates whether Symbian Installer rejects the legacy E32 image specifically when placed in sys\\bin. Do not interpret launching the probe as a loader test: it still searches sys\\bin and should report KErrNotFound. SIS SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }

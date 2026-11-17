@@ -1,5 +1,5 @@
 name: Step137 E32-header-stripped payload control
-# Trigger follow-up commit for the newly added workflow.
+# Step137: preserve bytes 0-11; zero bytes 12-255. Verification length is 244 bytes.
 
 on:
   push:

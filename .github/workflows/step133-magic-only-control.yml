@@ -1,0 +1,130 @@
+name: Step133 E32-header-stripped payload control
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/step133-header-strip-control.yml"
+      - "source_bundle/host/step128/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-modern:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      e32_tag: ${{ steps.publish.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download modern EKA2 toolchain
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p downloads modern
+          gh release download v0.3.0 --repo hpnkv/symbian-platform --pattern symbian-sdk-0.3.0-linux-x86_64.tar.gz --dir downloads
+          tar -xzf downloads/symbian-sdk-0.3.0-linux-x86_64.tar.gz -C modern
+          toolchain_file=$(find modern -path '*/cmake/symbian-arm.cmake' -print -quit)
+          test -n "$toolchain_file"
+          toolchain_file=$(realpath "$toolchain_file")
+          modern_root=$(dirname "$(dirname "$toolchain_file")")
+          echo "MODERN_ROOT=$modern_root" >> "$GITHUB_ENV"
+          echo "TOOLCHAIN_FILE=$toolchain_file" >> "$GITHUB_ENV"
+      - name: Build probe and stage original payload preserving only E32 magic
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+          cmake -S source_bundle/host/step128 -B build/step133 -G Ninja -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" -DSYMBIAN_SDK_PREFIX="$MODERN_ROOT" -DSYMBIAN_TARGET_ARCH=armv5t -DSYMBIAN_RUNTIME_LEGACY_EKA2=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/step133 --target ShadowkeyLegacyLoadProbe_e32 --parallel 2
+          exe=$(find build/step133 -type f -name ShadowkeyLegacyLoadProbe.exe -print -quit)
+          test -s "$exe"
+          mkdir -p stage
+          cp "$exe" stage/ShadowkeyLegacyLoadProbe.exe
+          head -c 4 source_bundle/shadowkey_step35_work/6R51.APP > stage/ShadowkeyLegacyProbe.dll
+          head -c 252 /dev/zero >> stage/ShadowkeyLegacyProbe.dll
+          tail -c +257 source_bundle/shadowkey_step35_work/6R51.APP >> stage/ShadowkeyLegacyProbe.dll
+          test "$(wc -c < stage/ShadowkeyLegacyProbe.dll)" -eq 1075184
+          cmp -n 4 source_bundle/shadowkey_step35_work/6R51.APP stage/ShadowkeyLegacyProbe.dll
+          test "$(dd if=stage/ShadowkeyLegacyProbe.dll bs=1 skip=4 count=252 2>/dev/null | od -An -tx1 | tr -d ' \\n')" = "$(head -c 252 /dev/zero | od -An -tx1 | tr -d ' \\n')"
+      - name: Publish intermediate E32 images
+        id: publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="shadowkey-step133-e32-$GITHUB_RUN_ID"
+          gh release create "$tag" stage/ShadowkeyLegacyLoadProbe.exe stage/ShadowkeyLegacyProbe.dll --repo "$GITHUB_REPOSITORY" --title "Shadowkey Step133 original payload preserving first 4 magic bytes only" --notes "EKA2 probe plus original 6R51.APP with first 4 bytes preserved, bytes 4-255 zeroed, remaining bytes unchanged."
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  package-sis:
+    runs-on: windows-latest
+    needs: build-modern
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download E32 images and S60 SIS tools
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          E32_TAG: ${{ needs.build-modern.outputs.e32_tag }}
+        run: |
+          New-Item -ItemType Directory -Force stage,sdk | Out-Null
+          gh release download $env:E32_TAG --repo $env:GITHUB_REPOSITORY --pattern ShadowkeyLegacyLoadProbe.exe --pattern ShadowkeyLegacyProbe.dll --dir stage
+          gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
+          tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
+          $sdkRoot = Join-Path (Get-Location) "sdk"
+          $makesis = Get-ChildItem $sdkRoot -Recurse -File -Filter makesis.exe | Select-Object -First 1
+          $epocrc = Get-ChildItem $sdkRoot -Recurse -File -Filter epocrc.bat | Select-Object -First 1
+          $epocrcScript = Get-ChildItem $sdkRoot -Recurse -File -Filter epocrc.pl | Select-Object -First 1
+          if (!$makesis -or !$epocrc -or !$epocrcScript) { throw "Required S60 SDK tools missing" }
+          "MAKESIS=$($makesis.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC=$($epocrc.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC_DIR=$($epocrcScript.DirectoryName)" >> $env:GITHUB_ENV
+          "EPOCROOT=$($sdkRoot.TrimEnd('\') + '\')" >> $env:GITHUB_ENV
+      - name: Compile application registration resource
+        shell: pwsh
+        run: |
+          $out = Join-Path (Get-Location) "stage"
+          $rss = Join-Path (Get-Location) "source_bundle/host/step128/ShadowkeyLegacyLoadProbe_reg.rss"
+          $include = Join-Path (Get-Location) "sdk/Epoc32/include"
+          $env:PATH = "$env:EPOCRC_DIR;$env:PATH"
+          Push-Location $out
+          try {
+            & $env:EPOCRC -v -u "-I$include" "-t$out" $rss "-oShadowkeyLegacyLoadProbe_reg.rsc" "-hShadowkeyLegacyLoadProbe_reg.rsg" 2>&1 | Tee-Object -FilePath epocrc.log
+            if ($LASTEXITCODE -ne 0) { throw "epocrc failed with exit code $LASTEXITCODE" }
+          } finally { Pop-Location }
+          if (!(Test-Path stage/ShadowkeyLegacyLoadProbe_reg.rsc)) { throw "Registration RSC missing" }
+      - name: Create SIS with only E32 magic preserved in original data payload
+        shell: pwsh
+        run: |
+          @(
+            '#{"Shadowkey Legacy Loader Probe"},(0xE000BEF9),1,0,0,TYPE=SA'
+            '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
+            '%{"OpenAI"}'
+            ':"OpenAI"'
+            '"stage/ShadowkeyLegacyLoadProbe.exe" - "!:\sys\bin\ShadowkeyLegacyLoadProbe.exe"'
+            '"stage/ShadowkeyLegacyProbe.dll" - "!:\data\ShadowkeyLegacyProbe.bin"'
+            '"stage/ShadowkeyLegacyLoadProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyLegacyLoadProbe_reg.rsc"'
+          ) | Set-Content stage/ShadowkeyLegacyLoadProbe.pkg -Encoding ascii
+          & $env:MAKESIS -v stage/ShadowkeyLegacyLoadProbe.pkg stage/ShadowkeyLegacyLoadProbe.sis
+          if ($LASTEXITCODE -ne 0) { throw "makesis failed" }
+          if (!(Test-Path stage/ShadowkeyLegacyLoadProbe.sis)) { throw "SIS was not generated" }
+          $hash = (Get-FileHash stage/ShadowkeyLegacyLoadProbe.sis -Algorithm SHA256).Hash
+          "SIS SHA256: $hash"
+          "SIS size: $((Get-Item stage/ShadowkeyLegacyLoadProbe.sis).Length)"
+      - name: Publish SIS package
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "shadowkey-step133-sis-$env:GITHUB_RUN_ID"
+          $hash = (Get-FileHash stage/ShadowkeyLegacyLoadProbe.sis -Algorithm SHA256).Hash
+          gh release create $tag stage/ShadowkeyLegacyLoadProbe.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step133 E32-magic-only payload installer control" --notes "INSTALLATION CONTROL ONLY. Zero-filled 1,075,184-byte inert payload installed as a non-executable .bin file under !:\data. SIS SHA256: $hash"
+          if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }

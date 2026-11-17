@@ -1,5 +1,4 @@
-name: Step131 same-size inert payload installer control
-# The executable filename intentionally matches app_file in the registration RSS.
+name: Step131 payload-size installer control v3
 
 on:
   push:
@@ -7,7 +6,6 @@ on:
     paths:
       - ".github/workflows/step131-payload-size-control.yml"
       - "source_bundle/host/step128/**"
-      - "source_bundle/shadowkey_step35_work/6R51.APP"
   workflow_dispatch:
 
 permissions:
@@ -21,59 +19,35 @@ jobs:
       e32_tag: ${{ steps.publish.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Download modern EKA2 toolchain and S60 3.1 FP1 import SDK
+      - name: Download modern EKA2 toolchain
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           mkdir -p downloads modern
-          gh release download v0.3.0 --repo hpnkv/symbian-platform \
-            --pattern symbian-sdk-0.3.0-linux-x86_64.tar.gz --dir downloads
+          gh release download v0.3.0 --repo hpnkv/symbian-platform --pattern symbian-sdk-0.3.0-linux-x86_64.tar.gz --dir downloads
           tar -xzf downloads/symbian-sdk-0.3.0-linux-x86_64.tar.gz -C modern
           toolchain_file=$(find modern -path '*/cmake/symbian-arm.cmake' -print -quit)
           test -n "$toolchain_file"
           toolchain_file=$(realpath "$toolchain_file")
           modern_root=$(dirname "$(dirname "$toolchain_file")")
-          for proxy in euser/euser.dso estlib-legacy/estlib.dso drtaeabi/drtaeabi.dso; do
-            test -s "$modern_root/proxies/$proxy" || {
-              echo "Required Legacy EKA2 ordinal proxy missing: $modern_root/proxies/$proxy"
-              exit 1
-            }
-          done
           echo "MODERN_ROOT=$modern_root" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_FILE=$toolchain_file" >> "$GITHUB_ENV"
-
-      - name: Build EKA2 probe and stage same-size inert data
+      - name: Build probe and stage same-size inert payload
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y ninja-build
-          cmake -S source_bundle/host/step128 -B build/step128 -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
-            -DSYMBIAN_SDK_PREFIX="$MODERN_ROOT" \
-            -DSYMBIAN_TARGET_ARCH=armv5t \
-            -DSYMBIAN_RUNTIME_LEGACY_EKA2=ON \
-            -DCMAKE_BUILD_TYPE=Release
-          cmake --build build/step128 --target ShadowkeyLegacyLoadProbe_e32 --parallel 2
-          exe=$(find build/step128 -type f -name ShadowkeyLegacyLoadProbe.exe -print -quit)
+          cmake -S source_bundle/host/step128 -B build/step131 -G Ninja -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" -DSYMBIAN_SDK_PREFIX="$MODERN_ROOT" -DSYMBIAN_TARGET_ARCH=armv5t -DSYMBIAN_RUNTIME_LEGACY_EKA2=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/step131 --target ShadowkeyLegacyLoadProbe_e32 --parallel 2
+          exe=$(find build/step131 -type f -name ShadowkeyLegacyLoadProbe.exe -print -quit)
           test -s "$exe"
           mkdir -p stage
           cp "$exe" stage/ShadowkeyLegacyLoadProbe.exe
-          python3 - <<'PY'
-from pathlib import Path
-Path("stage/ShadowkeyLegacyProbe.dll").write_bytes(bytes(1075184))
-PY
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path("stage/ShadowkeyLegacyProbe.dll")
-          print({"file": str(p), "size": p.stat().st_size})
-          if p.stat().st_size != 1075184:
-              raise SystemExit("Inert payload size mismatch")
-          PY
-
+          head -c 1075184 /dev/zero > stage/ShadowkeyLegacyProbe.dll
+          test "$(wc -c < stage/ShadowkeyLegacyProbe.dll)" -eq 1075184
       - name: Publish intermediate E32 images
         id: publish
         shell: bash
@@ -81,11 +55,8 @@ PY
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          tag="shadowkey-step131-e32-$GITHUB_RUN_ID"
-          gh release create "$tag" stage/ShadowkeyLegacyLoadProbe.exe stage/ShadowkeyLegacyProbe.dll \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "Shadowkey Step131 inert payload control images" \
-            --notes "EKA2 probe EXE plus a zero-filled inert file exactly matching the original 6R51.APP byte length. This is an installer control only."
+          tag="shadowkey-step131v3-e32-$GITHUB_RUN_ID"
+          gh release create "$tag" stage/ShadowkeyLegacyLoadProbe.exe stage/ShadowkeyLegacyProbe.dll --repo "$GITHUB_REPOSITORY" --title "Shadowkey Step131 v3 inert payload control images" --notes "EKA2 probe plus zero-filled inert file of 1,075,184 bytes."
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
   package-sis:
@@ -94,8 +65,7 @@ PY
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-
-      - name: Download E32 images and S60 3.1 FP1 SIS tools
+      - name: Download E32 images and S60 SIS tools
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -114,7 +84,6 @@ PY
           "EPOCRC=$($epocrc.FullName)" >> $env:GITHUB_ENV
           "EPOCRC_DIR=$($epocrcScript.DirectoryName)" >> $env:GITHUB_ENV
           "EPOCROOT=$($sdkRoot.TrimEnd('\') + '\')" >> $env:GITHUB_ENV
-
       - name: Compile application registration resource
         shell: pwsh
         run: |
@@ -128,12 +97,11 @@ PY
             if ($LASTEXITCODE -ne 0) { throw "epocrc failed with exit code $LASTEXITCODE" }
           } finally { Pop-Location }
           if (!(Test-Path stage/ShadowkeyLegacyLoadProbe_reg.rsc)) { throw "Registration RSC missing" }
-
-      - name: Create S60 3rd Edition FP1 SIS
+      - name: Create SIS with inert data payload
         shell: pwsh
         run: |
           @(
-            '#{"Shadowkey Legacy Loader Probe"},(0xE000BEF5),1,0,0,TYPE=SA'
+            '#{"Shadowkey Legacy Loader Probe"},(0xE000BEF6),1,0,0,TYPE=SA'
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'
@@ -147,14 +115,12 @@ PY
           $hash = (Get-FileHash stage/ShadowkeyLegacyLoadProbe.sis -Algorithm SHA256).Hash
           "SIS SHA256: $hash"
           "SIS size: $((Get-Item stage/ShadowkeyLegacyLoadProbe.sis).Length)"
-
       - name: Publish SIS package
-        if: success()
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = "shadowkey-step131-sis-$env:GITHUB_RUN_ID"
+          $tag = "shadowkey-step131v3-sis-$env:GITHUB_RUN_ID"
           $hash = (Get-FileHash stage/ShadowkeyLegacyLoadProbe.sis -Algorithm SHA256).Hash
-          gh release create $tag stage/ShadowkeyLegacyLoadProbe.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step131 same-size inert payload installer control" --notes "INSTALLATION CONTROL ONLY. A zero-filled inert payload of 1,075,184 bytes is installed as a non-executable .bin file under !:\data. This tests whether a same-size arbitrary data payload can be installed. Do not interpret launching the probe as a loader test. SIS SHA256: $hash"
+          gh release create $tag stage/ShadowkeyLegacyLoadProbe.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step131 v3 inert payload installer control" --notes "INSTALLATION CONTROL ONLY. Zero-filled 1,075,184-byte inert payload installed as a non-executable .bin file under !:\data. SIS SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }

@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step138-header-12byte-control.yml"
+      - ".github/workflows/step138-header12-sysbin-loader.yml"
       - "source_bundle/host/step128/**"
   workflow_dispatch:
 

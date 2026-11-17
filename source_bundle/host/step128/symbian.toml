@@ -1,0 +1,11 @@
+[project]
+name = "ShadowkeyLegacyLoadProbe"
+uid3 = 0xE000BEF4
+architecture = "armv5t"
+
+[package]
+uid = 0xE000BEF5
+name = "Shadowkey Legacy Loader Probe"
+vendor = "OpenAI"
+executable_name = "ShadowkeyLegacyLoadProbe.exe"
+version = [1, 0, 0]

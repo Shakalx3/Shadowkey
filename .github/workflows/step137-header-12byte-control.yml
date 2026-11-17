@@ -52,7 +52,7 @@ jobs:
           tail -c +257 source_bundle/shadowkey_step35_work/6R51.APP >> stage/ShadowkeyLegacyProbe.dll
           test "$(wc -c < stage/ShadowkeyLegacyProbe.dll)" -eq 1075184
           cmp -n 12 source_bundle/shadowkey_step35_work/6R51.APP stage/ShadowkeyLegacyProbe.dll
-          test "$(dd if=stage/ShadowkeyLegacyProbe.dll bs=1 skip=12 count=244 2>/dev/null | od -An -tx1 | tr -d ' \\n')" = "$(head -c 248 /dev/zero | od -An -tx1 | tr -d ' \\n')"
+          test "$(dd if=stage/ShadowkeyLegacyProbe.dll bs=1 skip=12 count=244 2>/dev/null | od -An -tx1 | tr -d ' \\n')" = "$(head -c 244 /dev/zero | od -An -tx1 | tr -d ' \\n')"
       - name: Publish intermediate E32 images
         id: publish
         shell: bash
@@ -102,7 +102,7 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "epocrc failed with exit code $LASTEXITCODE" }
           } finally { Pop-Location }
           if (!(Test-Path stage/ShadowkeyLegacyLoadProbe_reg.rsc)) { throw "Registration RSC missing" }
-      - name: Create SIS with only E32 magic preserved in original data payload
+      - name: Create SIS with first 12 header bytes preserved in original data payload
         shell: pwsh
         run: |
           @(

@@ -45,7 +45,7 @@ jobs:
           exe=$(find build/step129 -type f -name ShadowkeyLegacyLoadProbe.exe -print -quit)
           test -s "$exe"
           mkdir -p stage
-          cp "$exe" stage/ShadowkeyInstallControl.exe
+          cp "$exe" stage/ShadowkeyLegacyLoadProbe.exe
       - name: Publish E32 image
         id: publish
         shell: bash
@@ -54,7 +54,7 @@ jobs:
         run: |
           set -euo pipefail
           tag="shadowkey-step129-e32-$GITHUB_RUN_ID"
-          gh release create "$tag" stage/ShadowkeyInstallControl.exe --repo "$GITHUB_REPOSITORY" --title "Shadowkey Step129 install control E32" --notes "Same EKA2 probe executable, packaged without the original 6R51.APP payload."
+          gh release create "$tag" stage/ShadowkeyLegacyLoadProbe.exe --repo "$GITHUB_REPOSITORY" --title "Shadowkey Step129 install control E32" --notes "Same EKA2 probe executable, packaged without the original 6R51.APP payload."
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
   package-sis:
@@ -70,7 +70,7 @@ jobs:
           E32_TAG: ${{ needs.build-modern.outputs.e32_tag }}
         run: |
           New-Item -ItemType Directory -Force stage,sdk | Out-Null
-          gh release download $env:E32_TAG --repo $env:GITHUB_REPOSITORY --pattern ShadowkeyInstallControl.exe --dir stage
+          gh release download $env:E32_TAG --repo $env:GITHUB_REPOSITORY --pattern ShadowkeyLegacyLoadProbe.exe --dir stage
           gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
           tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
           $sdkRoot = Join-Path (Get-Location) "sdk"
@@ -103,7 +103,7 @@ jobs:
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'
-            '"stage/ShadowkeyInstallControl.exe" - "!:\sys\bin\ShadowkeyInstallControl.exe"'
+            '"stage/ShadowkeyLegacyLoadProbe.exe" - "!:\sys\bin\ShadowkeyLegacyLoadProbe.exe"'
             '"stage/ShadowkeyLegacyLoadProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyLegacyLoadProbe_reg.rsc"'
           ) | Set-Content stage/ShadowkeyInstallControl.pkg -Encoding ascii
           & $env:MAKESIS -v stage/ShadowkeyInstallControl.pkg stage/ShadowkeyInstallControl.sis

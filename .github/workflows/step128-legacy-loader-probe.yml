@@ -1,4 +1,5 @@
 name: Step128 original legacy E32 DLL loader acceptance probe
+# The executable filename intentionally matches app_file in the registration RSS.
 
 on:
   push:

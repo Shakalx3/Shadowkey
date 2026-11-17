@@ -1,0 +1,10 @@
+// S60 3rd Edition FP1 registration for the Step128 loader probe.
+#include <appinfo.rh>
+
+UID2 KUidAppRegistrationResourceFile
+UID3 0xE000BEF4
+
+RESOURCE APP_REGISTRATION_INFO
+{
+    app_file = "ShadowkeyLegacyLoadProbe";
+}

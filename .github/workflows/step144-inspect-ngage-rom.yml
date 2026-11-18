@@ -54,5 +54,28 @@ jobs:
             echo "Embedded EIKCORE strings:"
             strings -a "$f" | grep -i -m 10 'eikcore' || true
           done
+          echo "=== E32 image header scan in MCU image ==="
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          p=Path("/tmp/ngage-extracted/RH-029.v.04.10.N-GAGE.QD/RH2941.0C1")
+          b=p.read_bytes()
+          marker=b"EPOC"
+          pos=0
+          count=0
+          while True:
+              pos=b.find(marker,pos)
+              if pos<0: break
+              h=pos-0x10
+              if h>=0 and h+0x40<=len(b):
+                  uid1,uid2,uid3=struct.unpack_from("<III",b,h)
+                  vals=struct.unpack_from("<8I",b,h+0x10)
+                  print(f"EPOC@0x{pos:08x} header@0x{h:08x} UID={uid1:08x}/{uid2:08x}/{uid3:08x} header_words={[hex(x) for x in vals]}")
+                  if uid3==0x10004892:
+                      print("FOUND EIKCORE candidate; surrounding bytes:",b[h:h+96].hex())
+              count+=1
+              pos+=4
+          print(f"Total EPOC markers: {count}")
+          PY
           echo "=== EIKCORE candidates ==="
           find /tmp/ngage-extracted -type f -iname 'eikcore.dll' -o -iname 'eikcore' | while read -r f; do file "$f"; sha256sum "$f"; done

@@ -26,22 +26,22 @@ void ngage_runtime_guest_function_enter(uint32_t address){
  if(!active_cpu)return;
  if(address==0x100298a4u){
   uint32_t self=active_cpu->r[0],source=ngage_r32(active_cpu,self+20u);
-  fprintf(stderr,"STEP143 CTOR sub_100298a4 this=%08x source_slot=%08x source=%08x source_field=%08x lr=%08x sp=%08x\\n",
+  fprintf(stderr,"STEP143 CTOR sub_100298a4 this=%08x source_slot=%08x source=%08x source_field=%08x lr=%08x sp=%08x\n",
    self,self+20u,source,source?ngage_r32(active_cpu,source+0x14a3cu):0u,active_cpu->r[14],active_cpu->r[13]);
  }
  if(address==0x1001f9acu){
   uint32_t obj=active_cpu->r[0],source=active_cpu->r[1];
-  fprintf(stderr,"STEP143 CTOR sub_1001f9ac obj=%08x source=%08x source_field=%08x lr=%08x sp=%08x\\n",
+  fprintf(stderr,"STEP143 CTOR sub_1001f9ac obj=%08x source=%08x source_field=%08x lr=%08x sp=%08x\n",
    obj,source,source?ngage_r32(active_cpu,source+0x14a3cu):0u,active_cpu->r[14],active_cpu->r[13]);
  }
  if(address==0x1009eda0u)
-  fprintf(stderr,"STEP143 ALLOC size=%u lr=%08x sp=%08x\\n",active_cpu->r[0],active_cpu->r[14],active_cpu->r[13]);
+  fprintf(stderr,"STEP143 ALLOC size=%u lr=%08x sp=%08x\n",active_cpu->r[0],active_cpu->r[14],active_cpu->r[13]);
 }
 void ngage_runtime_guest_function_exit(void){
  if(!guest_function_depth)return;
  uint32_t address=guest_function_stack[guest_function_depth-1u];
  if(active_cpu && (address==0x100298a4u || address==0x1001f9acu || address==0x1009eda0u))
-  fprintf(stderr,"STEP143 RETURN fn=%08x r0=%08x r1=%08x r2=%08x lr=%08x sp=%08x\\n",
+  fprintf(stderr,"STEP143 RETURN fn=%08x r0=%08x r1=%08x r2=%08x lr=%08x sp=%08x\n",
    address,active_cpu->r[0],active_cpu->r[1],active_cpu->r[2],active_cpu->r[14],active_cpu->r[13]);
  guest_function_depth--;
 }
@@ -96,8 +96,8 @@ void ngage_runtime_note_bitmap_host_write(ngage_cpu_t*c,uint32_t dst,uint32_t sr
   fputc('\n',stderr);
  }
 }
-uint32_t ngage_r32(ngage_cpu_t*c,uint32_t a){uint8_t*p=ptr(c,a,4);uint32_t v=p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);if(watch_hi&&a<watch_hi&&(uint64_t)a+4u>watch_lo)fprintf(stderr,"WATCH RANGE READ32 addr=%08x value=%08x lr=%08x sp=%08x\\n",a,v,c->r[14],c->r[13]);if(a==0x10125c44u||a==0x10125cc4u)fprintf(stderr,"STEP143 FIELD READ addr=%08x value=%08x pc=%08x lr=%08x fn=%08x\\n",a,v,c->r[15],c->r[14],guest_function_depth?guest_function_stack[guest_function_depth-1u]:0u);return v;}
-void ngage_w32(ngage_cpu_t*c,uint32_t a,uint32_t v){bitmap_write_note(c,a,v,4);uint8_t*p=ptr(c,a,4);if(watch_hi&&a<watch_hi&&(uint64_t)a+4u>watch_lo)fprintf(stderr,"WATCH RANGE WRITE32 addr=%08x value=%08x lr=%08x sp=%08x\\n",a,v,c->r[14],c->r[13]);if(v==0x10111208u||v==0x10111288u)fprintf(stderr,"STEP143 SOURCE POINTER STORE addr=%08x value=%08x pc=%08x lr=%08x sp=%08x fn=%08x\\n",a,v,c->r[15],c->r[14],c->r[13],guest_function_depth?guest_function_stack[guest_function_depth-1u]:0u);if(a==0x10125c44u||a==0x10125cc4u)fprintf(stderr,"STEP143 FIELD WRITE addr=%08x value=%08x pc=%08x lr=%08x sp=%08x fn=%08x\\n",a,v,c->r[15],c->r[14],c->r[13],guest_function_depth?guest_function_stack[guest_function_depth-1u]:0u);p[0]=v;p[1]=v>>8;p[2]=v>>16;p[3]=v>>24;memory_writes++;}
+uint32_t ngage_r32(ngage_cpu_t*c,uint32_t a){uint8_t*p=ptr(c,a,4);uint32_t v=p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);if(watch_hi&&a<watch_hi&&(uint64_t)a+4u>watch_lo)fprintf(stderr,"WATCH RANGE READ32 addr=%08x value=%08x lr=%08x sp=%08x\n",a,v,c->r[14],c->r[13]);if(a==0x10125c44u||a==0x10125cc4u)fprintf(stderr,"STEP143 FIELD READ addr=%08x value=%08x pc=%08x lr=%08x fn=%08x\n",a,v,c->r[15],c->r[14],guest_function_depth?guest_function_stack[guest_function_depth-1u]:0u);return v;}
+void ngage_w32(ngage_cpu_t*c,uint32_t a,uint32_t v){bitmap_write_note(c,a,v,4);uint8_t*p=ptr(c,a,4);if(watch_hi&&a<watch_hi&&(uint64_t)a+4u>watch_lo)fprintf(stderr,"WATCH RANGE WRITE32 addr=%08x value=%08x lr=%08x sp=%08x\n",a,v,c->r[14],c->r[13]);if(v==0x10111208u||v==0x10111288u)fprintf(stderr,"STEP143 SOURCE POINTER STORE addr=%08x value=%08x pc=%08x lr=%08x sp=%08x fn=%08x\n",a,v,c->r[15],c->r[14],c->r[13],guest_function_depth?guest_function_stack[guest_function_depth-1u]:0u);if(a==0x10125c44u||a==0x10125cc4u)fprintf(stderr,"STEP143 FIELD WRITE addr=%08x value=%08x pc=%08x lr=%08x sp=%08x fn=%08x\n",a,v,c->r[15],c->r[14],c->r[13],guest_function_depth?guest_function_stack[guest_function_depth-1u]:0u);p[0]=v;p[1]=v>>8;p[2]=v>>16;p[3]=v>>24;memory_writes++;}
 uint32_t ngage_r16(ngage_cpu_t*c,uint32_t a){uint8_t*p=ptr(c,a,2);return p[0]|((uint32_t)p[1]<<8);}
 void ngage_w16(ngage_cpu_t*c,uint32_t a,uint16_t v){bitmap_write_note(c,a,v,2);uint8_t*p=ptr(c,a,2);if(watch_hi&&a<watch_hi&&(uint64_t)a+2u>watch_lo)fprintf(stderr,"WATCH RANGE WRITE16 addr=%08x value=%04x lr=%08x sp=%08x\n",a,v,c->r[14],c->r[13]);p[0]=v;p[1]=v>>8;if(a<=0x10125c44u && (uint64_t)a+2u>0x10125c44u)fprintf(stderr,"WATCH source+14a3c WRITE16 at=%08x value=%04x\n",a,v);}
 uint32_t ngage_r8(ngage_cpu_t*c,uint32_t a){return *ptr(c,a,1);}

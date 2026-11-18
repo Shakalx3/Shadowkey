@@ -198,11 +198,16 @@ static int vfs_case_resolve(const char*root,const char*rel,char*out,size_t cap){
     if(!root||!rel||!out||!cap)return 0;
     int n=snprintf(out,cap,"%s",root);if(n<=0||(size_t)n>=cap)return 0;
     char copy[768];size_t rn=strlen(rel);if(rn>=sizeof(copy))return 0;memcpy(copy,rel,rn+1u);
-    char*save=NULL;for(char*part=strtok_r(copy,"/",&save);part;part=strtok_r(NULL,"/",&save)){
-        DIR*d=opendir(out);if(!d)return 0;const char*found=NULL;struct dirent*de;
-        while((de=readdir(d)))if(!strcasecmp(de->d_name,part)){found=de->d_name;break;}
-        char name[256];if(found){size_t z=strlen(found);if(z>=sizeof(name)){closedir(d);return 0;}memcpy(name,found,z+1u);}else{closedir(d);return 0;}
-        closedir(d);size_t used=strlen(out);n=snprintf(out+used,cap-used,"/%s",name);if(n<=0||(size_t)n>=cap-used)return 0;
+    char*cursor=copy;
+    while(*cursor){
+        while(*cursor=='/')cursor++;
+        if(!*cursor)break;
+        char*part=cursor;char*slash=strchr(cursor,'/');if(slash)*slash=0;
+        DIR*d=opendir(out);if(!d)return 0;char name[256];int found=0;struct dirent*de;
+        while((de=readdir(d)))if(!strcasecmp(de->d_name,part)){size_t z=strlen(de->d_name);if(z<sizeof(name)){memcpy(name,de->d_name,z+1u);found=1;}break;}
+        closedir(d);if(!found)return 0;
+        size_t used=strlen(out);n=snprintf(out+used,cap-used,"/%s",name);if(n<=0||(size_t)n>=cap-used)return 0;
+        if(!slash)break;cursor=slash+1;
     }
     return 1;
 }

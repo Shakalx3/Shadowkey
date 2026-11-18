@@ -100,9 +100,9 @@ jobs:
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'
-            '"stage/ShadowkeyDataPathProbe.exe" - "!:\\sys\\bin\\ShadowkeyDataPathProbe.exe"'
-            '"stage/ShadowkeyLegacyProbe.dll" - "!:\\data\\ShadowkeyLegacyProbe.dll"'
-            '"stage/ShadowkeyDataPathProbe_reg.rsc" - "!:\\private\\10003a3f\\import\\apps\\ShadowkeyDataPathProbe_reg.rsc"'
+            '"stage/ShadowkeyDataPathProbe.exe" - "!:\sys\bin\ShadowkeyDataPathProbe.exe"'
+            '"stage/ShadowkeyLegacyProbe.dll" - "!:\data\ShadowkeyLegacyProbe.dll"'
+            '"stage/ShadowkeyDataPathProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyDataPathProbe_reg.rsc"'
           ) | Set-Content stage/ShadowkeyDataPathProbe.pkg -Encoding ascii
           & $env:MAKESIS -v stage/ShadowkeyDataPathProbe.pkg stage/ShadowkeyDataPathProbe_Step144.sis
           if ($LASTEXITCODE -ne 0) { throw "makesis failed" }
@@ -116,5 +116,5 @@ jobs:
         run: |
           $tag = "shadowkey-step144-sis-$env:GITHUB_RUN_ID"
           $hash = (Get-FileHash stage/ShadowkeyDataPathProbe_Step144.sis -Algorithm SHA256).Hash
-          gh release create $tag stage/ShadowkeyDataPathProbe_Step144.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step144 data-path loader architecture probe" --notes "Tests RLibrary::Load using C:\\data\\ShadowkeyLegacyProbe.dll; the one-byte candidate module is installed under !:\\data, not sys\\bin. SHA256: $hash"
+          gh release create $tag stage/ShadowkeyDataPathProbe_Step144.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step144 data-path loader architecture probe" --notes "Tests RLibrary::Load using C:\\data\\ShadowkeyLegacyProbe.dll; the one-byte candidate module is installed under !:\data, not sys\bin. SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }

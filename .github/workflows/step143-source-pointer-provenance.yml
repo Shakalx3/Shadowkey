@@ -41,7 +41,7 @@ jobs:
           echo "Live trace exit code: $rc (diagnostic continuation enabled; not a full-initialization result)"
           if [ -f .build/live_hal_vfs_trace.log ]; then
             echo "=== Step143 source-pointer provenance ==="
-            grep -E "STEP143|DIAGNOSTIC NO-OP|sub_100298a4|sub_1001f9ac|FIELD WRITE|SOURCE POINTER STORE|HLE EUSER1431|HLE EUSER85|HLE ESTLIB315|HLE ESTLIB316|HLE ESTLIB317|HLE ESTLIB342|OOB|HALT|UNIMPLEMENTED" .build/live_hal_vfs_trace.log | tail -n 250 || true
+            grep -E "STEP143|DIAGNOSTIC NO-OP|sub_100298a4|sub_1001f9ac|FIELD WRITE|SOURCE POINTER STORE|HLE EUSER1283|HLE EUSER1431|HLE EUSER85|HLE EUSER89|HLE EUSER172|HLE ESTLIB315|HLE ESTLIB316|HLE ESTLIB317|HLE ESTLIB342|HLE EFSRV18|HLE EFSRV86|HLE EFSRV106|HLE EFSRV21|OOB|HALT|UNIMPLEMENTED" .build/live_hal_vfs_trace.log | tail -n 250 || true
           else
             echo "Live trace log was not created"
           fi

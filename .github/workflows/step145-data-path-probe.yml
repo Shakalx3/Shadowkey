@@ -1,4 +1,4 @@
-name: Step145 data-path filesystem visibility probe
+name: Step145 data-path filesystem visibility probe (trigger refresh)
 on:
   push:
     branches: [main]

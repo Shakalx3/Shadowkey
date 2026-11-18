@@ -1,0 +1,53 @@
+name: Step145 inspect original EIKCORE ordinal 224 implementation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/step145-eikcore224-disassembly.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  disassemble:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout original N-Gage SDK binaries
+        run: |
+          git clone --depth 1 https://github.com/ngagesdk/sdk.git /tmp/ngagesdk-sdk
+      - name: Install PE inspection tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y binutils python3-pip
+          python3 -m pip install --break-system-packages pefile
+      - name: Resolve and disassemble EIKCORE ordinal 224
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pefile, subprocess
+          from pathlib import Path
+          root=Path("/tmp/ngagesdk-sdk/6.1/Series60/Epoc32/Release/wins")
+          for variant in ("udeb","urel"):
+              path=root/variant/"eikcore.dll"
+              pe=pefile.PE(str(path), fast_load=True)
+              pe.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_EXPORT"]])
+              exports=pe.DIRECTORY_ENTRY_EXPORT.symbols
+              matches=[e for e in exports if e.ordinal==224]
+              print(f"=== {variant} EIKCORE ordinal 224 ===")
+              print(f"file={path} size={path.stat().st_size} image_base=0x{pe.OPTIONAL_HEADER.ImageBase:08X}")
+              if not matches:
+                  print("ordinal 224 absent")
+                  continue
+              e=matches[0]
+              va=pe.OPTIONAL_HEADER.ImageBase+e.address
+              print(f"ordinal={e.ordinal} rva=0x{e.address:08X} va=0x{va:08X} name={e.name!r}")
+              start=va
+              stop=va+0x300
+              p=subprocess.run(["objdump","-d","-Mintel",f"--start-address=0x{start:x}",f"--stop-address=0x{stop:x}",str(path)],
+                               text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+              print(p.stdout)
+          PY

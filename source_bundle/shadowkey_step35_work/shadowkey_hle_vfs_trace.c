@@ -502,6 +502,13 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         c->r[0]=ptr;
         fprintf(stderr,"  HLE ARM EUSER1582 CBase::operator new size=%u -> %08x\n",size,ptr);
         return;
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==1505u || ordinal==35u)){
+        uint32_t size=c->r[0],ptr=shadowkey_heap_alloc(c,size);
+        if(!ptr){fprintf(stderr,"  HALT EUSER operator new allocation failed ordinal=%u size=%u\\n",ordinal,size);exit(95);}
+        c->r[0]=ptr;
+        fprintf(stderr,"  HLE ARM EUSER%u operator new size=%u -> %08x\\n",ordinal,size,ptr);
+        return;
+    }
     }
     if(!strcmp(dll,"EIKCORE[10004892].DLL") && ordinal==219u){
         uint32_t self=c->r[0],app=c->r[1];

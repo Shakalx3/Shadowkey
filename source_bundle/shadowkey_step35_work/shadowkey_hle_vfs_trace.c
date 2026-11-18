@@ -522,6 +522,11 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         fprintf(stderr,"  HLE ARM EIKCORE222 CEikApplication this=%08x caption=TBuf<256> size=556\n",self);
         return;
     }
+    if(!strcmp(dll,"EIKCORE[10004892].DLL") && ordinal==224u){
+        /* Trace-only bypass: base fields/side effects are deliberately not initialized. */
+        fprintf(stderr,"DIAGNOSTIC NO-OP EIKCORE224 CEikAppUi constructor (not full initialization)\\n");
+        return;
+    }
     if(shadowkey_bitgdi_import(c,dll,ordinal)) return;
     if(!strcmp(dll,"FBSCLI[10003a15].DLL") && shadowkey_fbs_import(c->r,c->mem,ordinal)) return;
     fprintf(stderr,"HALT UNIMPLEMENTED Shadowkey import: %s ordinal=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x\n",

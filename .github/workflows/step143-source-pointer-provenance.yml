@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "source_bundle/shadowkey_step35_work/shadowkey_engine_init_live_test.c"
+      - "source_bundle/shadowkey_step35_work/shadowkey_hle_vfs_trace.c"
       - ".github/workflows/step143-source-pointer-provenance.yml"
   workflow_dispatch:
 
@@ -39,7 +40,7 @@ jobs:
           echo "Live trace exit code: $rc"
           if [ -f .build/live_hal_vfs_trace.log ]; then
             echo "=== Step143 source-pointer provenance ==="
-            grep -E "STEP143|sub_100298a4|sub_1001f9ac|FIELD WRITE|SOURCE POINTER STORE|OOB|HALT|UNIMPLEMENTED" .build/live_hal_vfs_trace.log | tail -n 250 || true
+            grep -E "STEP143|DIAGNOSTIC NO-OP|sub_100298a4|sub_1001f9ac|FIELD WRITE|SOURCE POINTER STORE|OOB|HALT|UNIMPLEMENTED" .build/live_hal_vfs_trace.log | tail -n 250 || true
           else
             echo "Live trace log was not created"
           fi

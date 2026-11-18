@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step143-sysbin-inert-bin-control.yml"
+      - ".github/workflows/step143-sysbin-onebyte-control.yml"
   workflow_dispatch:
 
 permissions:

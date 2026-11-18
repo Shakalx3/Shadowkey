@@ -226,22 +226,16 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1431u){
-        /* Call-site contract: r0 is a writable stack buffer, r1 is its byte
-           length (256 and 50 at the observed sites). The caller consumes the
-           cleared buffer as a descriptor/string workspace. This is the
-           Mem::FillZ-shaped two-argument operation; reject invalid ranges. */
-        uint32_t dst=c->r[0], n=c->r[1];
-        if(dst<0x10000000u || n>0x100000u ||
-           (uint64_t)dst+n>0x12000000ull){
-            fprintf(stderr,"  HLE EUSER1431 rejected dst=%08x length=%u\n",dst,n);
-            c->r[0]=(uint32_t)-6; return;
+        /* ARM UREL EUSER1431 is TBufBase8::TBufBase8(TInt), not Mem::FillZ. */
+        uint32_t self=c->r[0],max=c->r[1];
+        if(max>0x100000u || !guest_ptr(c,self,8u+max)){
+            fprintf(stderr,"  HALT EUSER1431 invalid TBufBase8 this=%08x max=%u\\n",self,max);
+            c->r[0]=(uint32_t)-6;return;
         }
-        uint8_t *p=guest_ptr(c,dst,n);
-        if(n && !p){c->r[0]=(uint32_t)-6;return;}
-        if(n) memset(p,0,n);
-        if(n && ngage_runtime_note_bitmap_host_write) ngage_runtime_note_bitmap_host_write(c,dst,0,n,1u,0u);
-        c->r[0]=dst;
-        fprintf(stderr,"  HLE EUSER1431 zero-fill dst=%08x length=%u\n",dst,n);
+        wr32(c,self,0x30000000u); /* EBuf descriptor, zero length. */
+        wr32(c,self+4u,max);       /* Inline buffer begins at this+8. */
+        c->r[0]=self;
+        fprintf(stderr,"  HLE EUSER1431 TBufBase8 ctor this=%08x max=%u data=%08x\\n",self,max,self+8u);
         return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1u){

@@ -32,13 +32,15 @@ jobs:
           SHADOWKEY_HLE_FREE_RAM_BYTES: "33554432"
         run: |
           set -euo pipefail
+          set +e
           bash trace_asset_loader_live_vfs.sh
-          grep -E "STEP143|sub_100298a4|sub_1001f9ac|FIELD WRITE|SOURCE POINTER STORE" .build/live_hal_vfs_trace.log || true
-      - name: Upload provenance trace
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: shadowkey-step143-source-pointer-provenance
-          path: source_bundle/shadowkey_step35_work/.build/live_hal_vfs_trace.log
-          if-no-files-found: warn
-          retention-days: 30
+          rc=$?
+          set -e
+          echo "Live trace exit code: $rc"
+          if [ -f .build/live_hal_vfs_trace.log ]; then
+            echo "=== Step143 source-pointer provenance ==="
+            grep -E "STEP143|sub_100298a4|sub_1001f9ac|FIELD WRITE|SOURCE POINTER STORE|OOB|HALT|UNIMPLEMENTED" .build/live_hal_vfs_trace.log | tail -n 250 || true
+          else
+            echo "Live trace log was not created"
+          fi
+          exit "$rc"

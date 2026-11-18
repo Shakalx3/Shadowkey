@@ -75,7 +75,7 @@ Live trace exit code: 95. Exit 95 is an intentional fail-closed stop.
   HLE ARM EUSER858 CleanupStack::PushL ptr=10110230 depth=1
   HLE ARM EUSER828 CleanupStack::Pop depth=0
   HLE ARM EUSER3 CBase::newL size=108 -> 10110258
-HALT UNIMPLEMENTED Shadowkey import: EIKCORE[10004892].DLL ordinal=224 r0=10110258 r1=10110000 r2=00000000 r3=100fd828 sp=102feff0 lr=10021144
+HALT UNIMPLEMENTED Shadowkey import: AVKON[100056c6].DLL ordinal=63 r0=10110258 r1=00000000 r2=100fff34 r3=100fc4d8 sp=102fefe4 lr=100211d4
 
 ## ARM callsite context
 

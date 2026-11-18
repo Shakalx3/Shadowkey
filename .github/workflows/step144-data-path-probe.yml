@@ -96,7 +96,7 @@ jobs:
         shell: pwsh
         run: |
           @(
-            '#{"Shadowkey Data Path Probe"},(0xE000BEFE),1,0,C,TYPE=SA'
+            '#{"Shadowkey Data Path Probe"},(0xE000BEFE),1,0,0,TYPE=SA'
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'

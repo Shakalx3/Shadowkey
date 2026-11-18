@@ -1,5 +1,3 @@
-typedef struct { uint32_t object; uint32_t fs_object; } vfileman_t;
-static vfileman_t vfilemans[16];
 /* Observed-call-site HLE bootstrap for Shadowkey; unresolved imports remain explicit diagnostic stubs. */
 #include <stdint.h>
 #include <stdio.h>
@@ -13,6 +11,8 @@ static vfileman_t vfilemans[16];
 #include "shadowkey_fbs_hle.h"
 #include "shadowkey_bitgdi_hle.h"
 typedef struct { uint32_t object; FILE *fp; char path[1024]; } vfile_t;
+typedef struct { uint32_t object; uint32_t fs_object; } vfileman_t;
+static vfileman_t vfilemans[16];
 static vfile_t vfiles[32];
 static uint32_t next_rfs_handle=1u;
 static vfileman_t *vfileman_for(uint32_t object,int create){
@@ -205,7 +205,7 @@ static int vfs_host_full_path(ngage_cpu_t*c,uint32_t desc,char*out,size_t cap,ch
     }else{
         root=getenv("SHADOWKEY_VFS_ROOT");if(!root||!*root)root=".build/vfs";
         char drive_root[1024];int m=snprintf(drive_root,sizeof(drive_root),"%s/%c",root,drive);if(m<=0||(size_t)m>=sizeof(drive_root))return 0;
-        if(!vfs_mkdir_p(drive_root)&&errno!=EEXIST)return 0;
+        if(vfs_mkdir_p(drive_root)<0)return 0;
         int z=snprintf(out,cap,"%s/%s",drive_root,rel);return z>0&&(size_t)z<cap;
     }
     int z=snprintf(out,cap,"%s/%s",root,rel);return z>0&&(size_t)z<cap;

@@ -126,3 +126,5 @@ jobs:
           $hash = (Get-FileHash stage/ShadowkeyLegacyLoadProbe_Step142.sis -Algorithm SHA256).Hash
           gh release create $tag stage/ShadowkeyLegacyLoadProbe_Step142.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step142 sysbin inert-BIN installer control" --notes "INSTALLATION CONTROL ONLY. Zero-filled 1,075,184-byte .bin payload installed under !:\\sys\\bin. SIS SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }
+
+# Corrected destination-path rebuild: ensure the run uses single-backslash SIS targets.

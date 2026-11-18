@@ -353,14 +353,26 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         wr32(c,self+24u,0x30000000u);wr32(c,self+28u,256u);
         memset(p+32u,0,512u);return;
     }
-    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==185u){
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==183u){
         uint32_t self=c->r[0],name=c->r[1],related=c->r[2],def=c->r[3];
-        int rc=tparse_set(c,self,name,related,def);
-        c->r[0]=(uint32_t)rc;
-        fprintf(stderr,"  HLE SDK EFSRV185 TParse::Set this=%08x name=%08x related=%08x default=%08x rc=%d\n",self,name,related,def,rc);
-        return;
+        int rc=tparse_set(c,self,name,related,def);c->r[0]=(uint32_t)rc;
+        fprintf(stderr,"  HLE EFSRV183 TParse::Set this=%08x name=%08x related=%08x default=%08x rc=%d\\n",self,name,related,def,rc);return;
+    }
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==185u){
+        uint32_t self=c->r[0],out=c->r[1];
+        int parseRc=tparse_set(c,self,out,c->r[2],c->r[3]);
+        if(parseRc==0){c->r[0]=0;fprintf(stderr,"  HLE EFSRV185 TParse::Set compatibility this=%08x name=%08x\\n",self,out);return;}
+        vfile_t*vf=vfile_for(self,0);if(!vf||!vf->fp){c->r[0]=(uint32_t)parseRc;return;}
+        uint8_t*p=guest_ptr(c,out,4u);if(!p){c->r[0]=(uint32_t)-6;return;}
+        long here=ftell(vf->fp);if(fseek(vf->fp,0,SEEK_END)!=0){c->r[0]=(uint32_t)-2;return;}long size=ftell(vf->fp);if(here>=0)fseek(vf->fp,here,SEEK_SET);
+        if(size<0){c->r[0]=(uint32_t)-2;return;}wr32(c,out,(uint32_t)size);c->r[0]=0;
+        fprintf(stderr,"  HLE EFSRV185 RFile::Size this=%08x -> %ld\\n",self,size);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==121u){
+        if(c->r[2]==0u&&c->r[3]==0u){
+            uint32_t parse=c->r[0];uint8_t*p=guest_ptr(c,parse+14u,1u);c->r[0]=(p&&*p)?1u:0u;
+            fprintf(stderr,"  HLE EFSRV121 TParseBase::NamePresent compatibility this=%08x -> %u\\n",parse,c->r[0]);return;
+        }
         /* ARM UREL EFSRV121 is RFile::Open(RFs&,TDesC16&,TUint). */
         uint32_t self=c->r[0],fs=c->r[1],desc=c->r[2],mode=c->r[3];
         char display[520]={0},host[1024]={0};
@@ -382,6 +394,10 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         fprintf(stderr,"  HLE EFSRV136 RFile::Read this=%08x desc=%08x max=%u got=%u\\n",self,desc,max,(uint32_t)got);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==146u){
+        if(c->r[1]==0u&&c->r[2]==0u){
+            uint32_t parse=c->r[0];uint8_t*p=guest_ptr(c,parse+14u,1u);c->r[0]=(p&&*p)?1u:0u;
+            fprintf(stderr,"  HLE EFSRV146 TParseBase::PathPresent compatibility this=%08x -> %u\\n",parse,c->r[0]);return;
+        }
         uint32_t self=c->r[0];uint8_t*p=guest_ptr(c,self+14u,1u);
         c->r[0]=(p&&*p)?1u:0u;
         fprintf(stderr,"  HLE SDK EFSRV146 TParseBase::PathPresent this=%08x -> %u\n",self,c->r[0]);return;
@@ -396,6 +412,12 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         fprintf(stderr,"  HLE EFSRV86 RFs::MkDir path='%s' host='%s' rc=%d\\n",display,host,(int32_t)c->r[0]);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==162u){
+        uint32_t fileObject=c->r[0];vfile_t*openFile=vfile_for(fileObject,0);
+        if(openFile&&openFile->fp){
+            uint32_t mode=c->r[1],posPtr=c->r[2];int32_t offset=(int32_t)rd32(c,posPtr);int origin=(mode==0u)?SEEK_SET:((mode==1u)?SEEK_CUR:SEEK_END);
+            if(fseek(openFile->fp,(long)offset,origin)!=0){c->r[0]=(uint32_t)-6;return;}long pos=ftell(openFile->fp);if(pos<0){c->r[0]=(uint32_t)-2;return;}wr32(c,posPtr,(uint32_t)pos);c->r[0]=0;
+            fprintf(stderr,"  HLE EFSRV162 RFile::Seek this=%08x mode=%u pos=%ld\\n",fileObject,mode,pos);return;
+        }
         uint32_t path_desc=c->r[1],offset=c->r[2],out_desc=c->r[3];
         uint32_t out_len=0,out_max=0,out_data=0;
         char display[520]={0},host_path[1024]={0};

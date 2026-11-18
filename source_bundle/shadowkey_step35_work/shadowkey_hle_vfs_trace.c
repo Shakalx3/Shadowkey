@@ -338,20 +338,37 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(vf && vf->fp){fclose(vf->fp);vf->fp=NULL;vf->object=0;}
         fprintf(stderr,"  HLE SDK EFSRV15 CFileBase destructor this=%08x\n",c->r[0]);return;
     }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==85u){
+        /* ARM UREL EUSER85: TDes8::Append(TChar). */
+        uint32_t self=c->r[0],ch=c->r[1],len=0,max=0,data=0;
+        if(!descriptor_info(c,self,&len,&max,&data) || (rd32(c,self)>>28)==1u || (rd32(c,self)>>28)==4u || len>=max || ch>0xffu){
+            fprintf(stderr,"  HALT EUSER85 invalid/overflow TDes8 append this=%08x ch=%08x len=%u max=%u\\n",self,ch,len,max);
+            c->r[0]=(uint32_t)-6;return;
+        }
+        uint8_t*d=guest_ptr(c,data+len,1u);if(!d){c->r[0]=(uint32_t)-6;return;}*d=(uint8_t)ch;
+        uint32_t h=rd32(c,self);wr32(c,self,(h&0xf0000000u)|(len+1u));
+        if(len<64u)fprintf(stderr,"  HLE EUSER85 TDes8::Append this=%08x char=%02x newLen=%u data=%08x\\n",self,ch,len+1u,data);
+        return;
+    }
     if (!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==89u || ordinal==1359u || ordinal==35u || ordinal==90u)) { uint32_t a=c->r[0]; if(a>=0x10000000u && a<0x12000000u){uint8_t *p=c->mem+(a-0x10000000u); fprintf(stderr,"  MEM r0: %08x %08x %08x %08x %08x %08x\n",*(uint32_t*)(p),*(uint32_t*)(p+4),*(uint32_t*)(p+8),*(uint32_t*)(p+12),*(uint32_t*)(p+16),*(uint32_t*)(p+20));}}
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==315u){
-        fprintf(stderr,"  HLE ESTLIB315 _wclosedir handle=%08x\n",c->r[0]);c->r[0]=0;return;
+        /* ARM UREL ordinal 315 is wcscat (do not use the WINS UDEB name). */
+        uint32_t dst=c->r[0],src=c->r[1],dl=guest_wstr_len(c,dst,0x10000u),sl=guest_wstr_len(c,src,0x10000u);
+        if(dl+sl+1u>0x10000u){c->r[0]=0;return;}
+        for(uint32_t k=0;k<=sl;k++){uint8_t*s=guest_ptr(c,src+k*2u,2u),*d=guest_ptr(c,dst+(dl+k)*2u,2u);if(!s||!d){c->r[0]=0;return;}d[0]=s[0];d[1]=s[1];}
+        c->r[0]=dst;fprintf(stderr,"  HLE ESTLIB315 wcscat dst=%08x src=%08x oldLen=%u addLen=%u\\n",dst,src,dl,sl);return;
     }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==316u){
-        uint32_t dst=c->r[0],src=c->r[1],dl=guest_wstr_len(c,dst,0x10000u),sl=guest_wstr_len(c,src,0x10000u);
-        if(dl+sl+1u>0x10000u){c->r[0]=(uint32_t)-6;return;}
-        for(uint32_t i=0;i<=sl;i++){uint8_t*s=guest_ptr(c,src+i*2u,2u),*d=guest_ptr(c,dst+(dl+i)*2u,2u);if(!s||!d){c->r[0]=(uint32_t)-6;return;}d[0]=s[0];d[1]=s[1];}
-        c->r[0]=dst;return;
+        /* ARM UREL ordinal 316 is wcscmp. */
+        uint32_t a=c->r[0],b=c->r[1];int32_t result=0;
+        for(uint32_t k=0;k<0x10000u;k++){uint8_t*x=guest_ptr(c,a+k*2u,2u),*y=guest_ptr(c,b+k*2u,2u);if(!x||!y){result=x?1:(y?-1:0);break;}uint16_t xv=(uint16_t)x[0]|((uint16_t)x[1]<<8),yv=(uint16_t)y[0]|((uint16_t)y[1]<<8);if(xv!=yv){result=(int32_t)xv-(int32_t)yv;break;}if(!xv)break;}
+        c->r[0]=(uint32_t)result;return;
     }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==317u){
-        uint32_t a=c->r[0],b=c->r[1];int result=0;
-        for(uint32_t i=0;i<0x10000u;i++){uint8_t*x=guest_ptr(c,a+i*2u,2u),*y=guest_ptr(c,b+i*2u,2u);if(!x||!y){result=x?1:(y?-1:0);break;}uint16_t xv=(uint16_t)x[0]|((uint16_t)x[1]<<8),yv=(uint16_t)y[0]|((uint16_t)y[1]<<8);if(xv!=yv){result=xv<yv?-1:1;break;}if(!xv)break;}
-        c->r[0]=(uint32_t)result;return;
+        /* ARM UREL ordinal 317 is wcscpy. */
+        uint32_t dst=c->r[0],src=c->r[1];
+        for(uint32_t k=0;k<0x10000u;k++){uint8_t*s=guest_ptr(c,src+k*2u,2u),*d=guest_ptr(c,dst+k*2u,2u);if(!s||!d){c->r[0]=0;return;}d[0]=s[0];d[1]=s[1];if(!s[0]&&!s[1]){c->r[0]=dst;fprintf(stderr,"  HLE ESTLIB317 wcscpy dst=%08x src=%08x len=%u\\n",dst,src,k);return;}}
+        c->r[0]=0;return;
     }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==58u){
         char display[1024]={0},host[2048]={0},mode[16]="rb";
@@ -412,14 +429,9 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         wr32(c,self,value);wr32(c,self+4u,(value&0x80000000u)?0xffffffffu:0u);return;
     }
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==342u){
-        /* _wcsdup(const wchar_t*): allocate a guest UTF-16 copy and return it. */
+        /* ARM UREL ordinal 342 is wcslen; return UTF-16 code-unit count. */
         uint32_t src=c->r[0],n=guest_wstr_len(c,src,0x10000u);
-        if(n>=0x10000u){c->r[0]=0;return;}
-        uint32_t dst=shadowkey_heap_alloc(c,(n+1u)*2u);
-        if(!dst){c->r[0]=0;return;}
-        uint8_t*sp=guest_ptr(c,src,(n+1u)*2u),*dp=guest_ptr(c,dst,(n+1u)*2u);
-        if(!sp||!dp){c->r[0]=0;return;}
-        memcpy(dp,sp,(n+1u)*2u);c->r[0]=dst;return;
+        c->r[0]=n;fprintf(stderr,"  HLE ESTLIB342 wcslen src=%08x -> %u\\n",src,n);return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1373u){
         uint32_t self=c->r[0],sp=c->r[13];

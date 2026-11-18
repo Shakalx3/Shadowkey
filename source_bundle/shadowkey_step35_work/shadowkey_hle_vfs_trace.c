@@ -5,6 +5,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <dirent.h>
+#include <strings.h>
 #include <sys/stat.h>
 #include "shadowkey_cone_gc_hle.h"
 #include "shadowkey_symbian61_hle.h"
@@ -191,24 +193,37 @@ static int vfs_mkdir_p(const char*path){
     for(char*p=tmp+1;*p;p++){if(*p=='/'){*p=0;if(mkdir(tmp,0777)!=0&&errno!=EEXIST){*p='/';return -1;}*p='/';}}
     if(mkdir(tmp,0777)==0)return 0;if(errno==EEXIST){struct stat st;if(stat(tmp,&st)==0&&S_ISDIR(st.st_mode))return 1;}return -1;
 }
+static int vfs_case_resolve(const char*root,const char*rel,char*out,size_t cap){
+    if(!root||!rel||!out||!cap)return 0;
+    int n=snprintf(out,cap,"%s",root);if(n<=0||(size_t)n>=cap)return 0;
+    char copy[768];size_t rn=strlen(rel);if(rn>=sizeof(copy))return 0;memcpy(copy,rel,rn+1u);
+    char*save=NULL;for(char*part=strtok_r(copy,"/",&save);part;part=strtok_r(NULL,"/",&save)){
+        DIR*d=opendir(out);if(!d)return 0;const char*found=NULL;struct dirent*de;
+        while((de=readdir(d)))if(!strcasecmp(de->d_name,part)){found=de->d_name;break;}
+        char name[256];if(found){size_t z=strlen(found);if(z>=sizeof(name)){closedir(d);return 0;}memcpy(name,found,z+1u);}else{closedir(d);return 0;}
+        closedir(d);size_t used=strlen(out);n=snprintf(out+used,cap-used,"/%s",name);if(n<=0||(size_t)n>=cap-used)return 0;
+    }
+    return 1;
+}
 static int vfs_host_full_path(ngage_cpu_t*c,uint32_t desc,char*out,size_t cap,char*display,size_t display_cap){
     uint32_t chars=0;if(!guest_utf16_desc_to_ascii(c,desc,display,display_cap,&chars)||chars<3u||display[1]!=':')return 0;
     char drive=(char)((display[0]>='a'&&display[0]<='z')?display[0]-'a'+'A':display[0]);
     char rel[768];size_t n=0;for(size_t i=2;display[i]&&n+1<sizeof(rel);i++){char ch=display[i];if(ch=='\\')ch='/';if(ch==':'||ch=='*'||ch=='?'||ch=='<'||ch=='>'||ch=='|'||ch=='"')return 0;rel[n++]=ch;}rel[n]=0;
     while(rel[0]=='/')memmove(rel,rel+1,strlen(rel));
     if(strstr(rel,"../")||!strcmp(rel,"..")||strstr(rel,"/.."))return 0;
-    const char*root=NULL;
-    if(drive=='Z'){
-        root=getenv("SHADOWKEY_ASSET_ROOT");if(!root||!*root)return 0;
-        const char*prefix="system/apps/6R51";size_t plen=strlen(prefix);
-        if(!strncmp(rel,prefix,plen)&&(rel[plen]==0||rel[plen]=='/')){memmove(rel,rel+plen+(rel[plen]=='/'),strlen(rel+plen+(rel[plen]=='/'))+1u);}
-    }else{
-        root=getenv("SHADOWKEY_VFS_ROOT");if(!root||!*root)root=".build/vfs";
-        char drive_root[1024];int m=snprintf(drive_root,sizeof(drive_root),"%s/%c",root,drive);if(m<=0||(size_t)m>=sizeof(drive_root))return 0;
-        if(vfs_mkdir_p(drive_root)<0)return 0;
-        int z=snprintf(out,cap,"%s/%s",drive_root,rel);return z>0&&(size_t)z<cap;
+    const char*asset=getenv("SHADOWKEY_ASSET_ROOT");
+    const char*prefix="system/apps/6R51";size_t plen=strlen(prefix);
+    if((drive=='Z'||drive=='E')&&asset&&*asset&& !strncmp(rel,prefix,plen)&&(rel[plen]==0||rel[plen]=='/')){
+        char assetRel[768];const char*tail=rel+plen+(rel[plen]=='/');snprintf(assetRel,sizeof(assetRel),"%s",tail);
+        if(vfs_case_resolve(asset,assetRel,out,cap))return 1;
+        if(drive=='Z')return 0;
+    }else if(drive=='Z'){
+        if(!asset||!*asset)return 0;
+        if(vfs_case_resolve(asset,rel,out,cap))return 1;
+        return 0;
     }
-    int z=snprintf(out,cap,"%s/%s",root,rel);return z>0&&(size_t)z<cap;
+    const char*root=getenv("SHADOWKEY_VFS_ROOT");if(!root||!*root)root=".build/vfs";
+    int m=snprintf(out,cap,"%s/%c/%s",root,drive,rel);return m>0&&(size_t)m<cap;
 }
 static int vfs_copy_file(const char*src,const char*dst,int overwrite){
     struct stat st;if(stat(dst,&st)==0&&!overwrite)return -11;

@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step140-header12-sysbin-uidmatch.yml"
+      - ".github/workflows/step140-sysbin-inert-control.yml"
       - "source_bundle/host/step128/**"
   workflow_dispatch:
 

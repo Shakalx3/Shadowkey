@@ -31,13 +31,14 @@ jobs:
         working-directory: source_bundle/shadowkey_step35_work
         env:
           SHADOWKEY_HLE_FREE_RAM_BYTES: "33554432"
+          SHADOWKEY_DIAGNOSTIC_CONTINUE_UNIMPLEMENTED: "1"
         run: |
           set -euo pipefail
           set +e
           bash trace_asset_loader_live_vfs.sh
           rc=$?
           set -e
-          echo "Live trace exit code: $rc"
+          echo "Live trace exit code: $rc (diagnostic continuation enabled; not a full-initialization result)"
           if [ -f .build/live_hal_vfs_trace.log ]; then
             echo "=== Step143 source-pointer provenance ==="
             grep -E "STEP143|DIAGNOSTIC NO-OP|sub_100298a4|sub_1001f9ac|FIELD WRITE|SOURCE POINTER STORE|OOB|HALT|UNIMPLEMENTED" .build/live_hal_vfs_trace.log | tail -n 250 || true

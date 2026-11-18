@@ -107,9 +107,9 @@ jobs:
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'
-            '"stage/ShadowkeyLegacyLoadProbe.exe" - "!:\\sys\\bin\\ShadowkeyLegacyLoadProbe.exe"'
-            '"stage/ShadowkeyLegacyProbe.bin" - "!:\\sys\\bin\\ShadowkeyLegacyProbe.bin"'
-            '"stage/ShadowkeyLegacyLoadProbe_reg.rsc" - "!:\\private\\10003a3f\\import\\apps\\ShadowkeyLegacyLoadProbe_reg.rsc"'
+            '"stage/ShadowkeyLegacyLoadProbe.exe" - "!:\sys\bin\ShadowkeyLegacyLoadProbe.exe"'
+            '"stage/ShadowkeyLegacyProbe.bin" - "!:\sys\bin\ShadowkeyLegacyProbe.bin"'
+            '"stage/ShadowkeyLegacyLoadProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyLegacyLoadProbe_reg.rsc"'
           ) | Set-Content stage/ShadowkeyLegacyLoadProbe.pkg -Encoding ascii
           & $env:MAKESIS -v stage/ShadowkeyLegacyLoadProbe.pkg stage/ShadowkeyLegacyLoadProbe_Step142.sis
           if ($LASTEXITCODE -ne 0) { throw "makesis failed" }

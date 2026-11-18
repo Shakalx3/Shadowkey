@@ -1,3 +1,5 @@
+typedef struct { uint32_t object; uint32_t fs_object; } vfileman_t;
+static vfileman_t vfilemans[16];
 /* Observed-call-site HLE bootstrap for Shadowkey; unresolved imports remain explicit diagnostic stubs. */
 #include <stdint.h>
 #include <stdio.h>
@@ -13,6 +15,11 @@
 typedef struct { uint32_t object; FILE *fp; char path[1024]; } vfile_t;
 static vfile_t vfiles[32];
 static uint32_t next_rfs_handle=1u;
+static vfileman_t *vfileman_for(uint32_t object,int create){
+    for(size_t i=0;i<sizeof(vfilemans)/sizeof(vfilemans[0]);i++)if(vfilemans[i].object==object&&object)return &vfilemans[i];
+    if(create)for(size_t i=0;i<sizeof(vfilemans)/sizeof(vfilemans[0]);i++)if(!vfilemans[i].object){vfilemans[i].object=object;return &vfilemans[i];}
+    return NULL;
+}
 static vfile_t *vfile_for(uint32_t object, int create){
     vfile_t *empty=NULL;
     for(size_t i=0;i<sizeof(vfiles)/sizeof(vfiles[0]);i++){
@@ -184,6 +191,33 @@ static int vfs_mkdir_p(const char*path){
     for(char*p=tmp+1;*p;p++){if(*p=='/'){*p=0;if(mkdir(tmp,0777)!=0&&errno!=EEXIST){*p='/';return -1;}*p='/';}}
     if(mkdir(tmp,0777)==0)return 0;if(errno==EEXIST){struct stat st;if(stat(tmp,&st)==0&&S_ISDIR(st.st_mode))return 1;}return -1;
 }
+static int vfs_host_full_path(ngage_cpu_t*c,uint32_t desc,char*out,size_t cap,char*display,size_t display_cap){
+    uint32_t chars=0;if(!guest_utf16_desc_to_ascii(c,desc,display,display_cap,&chars)||chars<3u||display[1]!=':')return 0;
+    char drive=(char)((display[0]>='a'&&display[0]<='z')?display[0]-'a'+'A':display[0]);
+    char rel[768];size_t n=0;for(size_t i=2;display[i]&&n+1<sizeof(rel);i++){char ch=display[i];if(ch=='\\')ch='/';if(ch==':'||ch=='*'||ch=='?'||ch=='<'||ch=='>'||ch=='|'||ch=='"')return 0;rel[n++]=ch;}rel[n]=0;
+    while(rel[0]=='/')memmove(rel,rel+1,strlen(rel));
+    if(strstr(rel,"../")||!strcmp(rel,"..")||strstr(rel,"/.."))return 0;
+    const char*root=NULL;
+    if(drive=='Z'){
+        root=getenv("SHADOWKEY_ASSET_ROOT");if(!root||!*root)return 0;
+        const char*prefix="system/apps/6R51";size_t plen=strlen(prefix);
+        if(!strncmp(rel,prefix,plen)&&(rel[plen]==0||rel[plen]=='/')){memmove(rel,rel+plen+(rel[plen]=='/'),strlen(rel+plen+(rel[plen]=='/'))+1u);}
+    }else{
+        root=getenv("SHADOWKEY_VFS_ROOT");if(!root||!*root)root=".build/vfs";
+        char drive_root[1024];int m=snprintf(drive_root,sizeof(drive_root),"%s/%c",root,drive);if(m<=0||(size_t)m>=sizeof(drive_root))return 0;
+        if(!vfs_mkdir_p(drive_root)&&errno!=EEXIST)return 0;
+        int z=snprintf(out,cap,"%s/%s",drive_root,rel);return z>0&&(size_t)z<cap;
+    }
+    int z=snprintf(out,cap,"%s/%s",root,rel);return z>0&&(size_t)z<cap;
+}
+static int vfs_copy_file(const char*src,const char*dst,int overwrite){
+    struct stat st;if(stat(dst,&st)==0&&!overwrite)return -11;
+    FILE*in=fopen(src,"rb");if(!in)return errno==ENOENT?-1:-21;
+    char parent[1024];size_t n=strlen(dst);if(n>=sizeof(parent)){fclose(in);return -2;}memcpy(parent,dst,n+1u);char*slash=strrchr(parent,'/');if(slash){*slash=0;int mk=vfs_mkdir_p(parent);if(mk<0){fclose(in);return -21;}}
+    FILE*out=fopen(dst,"wb");if(!out){fclose(in);return errno==ENOENT?-12:-21;}
+    uint8_t buf[8192];size_t got;int rc=0;while((got=fread(buf,1,sizeof(buf),in))>0){if(fwrite(buf,1,got,out)!=got){rc=-2;break;}}
+    if(ferror(in))rc=-2;if(fclose(in)!=0)rc=-2;if(fclose(out)!=0)rc=-2;return rc;
+}
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     fprintf(stderr,"IMPORT dll=%s ord=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x cpsr=%08x\n",dll,ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14],c->cpsr);
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u){
@@ -346,6 +380,24 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         c->r[0]=0;
         fprintf(stderr,"  HLE SDK EFSRV162 RFs::ReadFileSection path='%s' offset=%u requested=%u got=%zu out=%08x data=%08x max=%u\n",display,offset,requested,got,out_desc,out_data,out_max);
         return;
+    }
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==106u){
+        /* ARM UREL EFSRV106 is CFileMan::NewL(RFs&). */
+        uint32_t fs=c->r[0];if(!rd32(c,fs)){c->r[0]=(uint32_t)-8;return;}
+        uint32_t obj=shadowkey_heap_alloc(c,0x400u);if(!obj){c->r[0]=(uint32_t)-4;return;}
+        uint8_t*p=guest_ptr(c,obj,0x400u);if(!p){c->r[0]=(uint32_t)-4;return;}memset(p,0,0x400u);wr32(c,obj,0x10000000u);wr32(c,obj+4u,fs);
+        vfileman_t*fm=vfileman_for(obj,1);if(!fm){c->r[0]=(uint32_t)-4;return;}fm->fs_object=fs;c->r[0]=obj;
+        fprintf(stderr,"  HLE EFSRV106 CFileMan::NewL fs=%08x -> this=%08x\\n",fs,obj);return;
+    }
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==21u){
+        /* ARM UREL EFSRV21 is CFileMan::Copy(old,new,switches). */
+        uint32_t self=c->r[0],srcDesc=c->r[1],dstDesc=c->r[2],flags=c->r[3];
+        vfileman_t*fm=vfileman_for(self,0);char srcDisplay[520]={0},dstDisplay[520]={0},src[1024]={0},dst[1024]={0};
+        if(!fm){c->r[0]=(uint32_t)-8;fprintf(stderr,"  HALT EFSRV21 CFileMan::Copy invalid this=%08x\\n",self);return;}
+        int sm=vfs_host_full_path(c,srcDesc,src,sizeof(src),srcDisplay,sizeof(srcDisplay));
+        int dm=vfs_host_full_path(c,dstDesc,dst,sizeof(dst),dstDisplay,sizeof(dstDisplay));
+        int rc=(sm&&dm)?vfs_copy_file(src,dst,(flags&1u)!=0u):-6;
+        c->r[0]=(uint32_t)rc;fprintf(stderr,"  HLE EFSRV21 CFileMan::Copy src='%s' dst='%s' flags=%08x rc=%d\\n",srcDisplay,dstDisplay,flags,rc);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==18u){
         /* ARM UREL EFSRV18 is RFs::Connect(TInt). */

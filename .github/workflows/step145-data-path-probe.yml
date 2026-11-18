@@ -118,3 +118,5 @@ jobs:
           $hash = (Get-FileHash stage/ShadowkeyDataPathProbe_Step145.sis -Algorithm SHA256).Hash
           gh release create $tag stage/ShadowkeyDataPathProbe_Step145.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step145 filesystem visibility probe" --notes "Checks RFs::Entry on C:\\data\\ShadowkeyLegacyProbe.dll, then RLibrary::Load only if found. SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }
+
+# Step145 rebuild after adding the Symbian::FileServer EFSRV import proxy.

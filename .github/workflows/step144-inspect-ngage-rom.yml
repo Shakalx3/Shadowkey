@@ -44,5 +44,15 @@ jobs:
           7z x /tmp/RH-029.v.04.10.N-GAGE.QD.rar -o/tmp/ngage-extracted -y || true
           echo "=== Extracted file inventory ==="
           find /tmp/ngage-extracted -type f -printf '%p %s bytes\n' | sort | head -n 300
+          echo "=== Firmware image signatures and EPOC markers ==="
+          find /tmp/ngage-extracted -type f -print0 | while IFS= read -r -d '' f; do
+            echo "--- $f ---"
+            file "$f"
+            xxd -l 128 "$f"
+            echo "EPOC marker offsets:"
+            grep -abo 'EPOC' "$f" | head -n 30 || true
+            echo "Embedded EIKCORE strings:"
+            strings -a "$f" | grep -i -m 10 'eikcore' || true
+          done
           echo "=== EIKCORE candidates ==="
           find /tmp/ngage-extracted -type f -iname 'eikcore.dll' -o -iname 'eikcore' | while read -r f; do file "$f"; sha256sum "$f"; done

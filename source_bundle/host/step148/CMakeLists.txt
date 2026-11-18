@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.28)
+project(ShadowkeyDataPathProbe LANGUAGES CXX ASM)
+include(SymbianApp)
+symbian_add_executable(ShadowkeyDataPathProbe main.cpp)
+target_compile_options(ShadowkeyDataPathProbe PRIVATE -fno-exceptions -fno-rtti -fno-builtin)
+target_link_libraries(ShadowkeyDataPathProbe PRIVATE Symbian::WindowServer Symbian::Gdi Symbian::C)
+symbian_publish_executable(ShadowkeyDataPathProbe UID3 0xE000BF03)

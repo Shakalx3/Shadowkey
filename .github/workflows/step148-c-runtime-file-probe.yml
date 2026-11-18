@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step148-rfs-connect-probe.yml"
+      - ".github/workflows/step148-c-runtime-file-probe.yml"
       - "source_bundle/host/step148/**"
   workflow_dispatch:
 permissions:

@@ -1,0 +1,8 @@
+// S60 3rd Edition FP1 application registration for Step142.
+#include <appinfo.rh>
+UID2 KUidAppRegistrationResourceFile
+UID3 0xE000BEFB
+RESOURCE APP_REGISTRATION_INFO
+{
+    app_file = "ShadowkeyInlineShimProbe";
+}

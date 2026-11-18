@@ -1,0 +1,40 @@
+name: Step144 inspect original N-Gage QD firmware contents
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/step144-inspect-ngage-rom.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install archive tools
+        run: sudo apt-get update && sudo apt-get install -y p7zip-full
+      - name: Download and inspect N-Gage QD firmware archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/octet-stream" "https://api.github.com/repos/Shakalx3/Shadowkey/releases/assets/727070110" -o /tmp/RH-029.v.04.10.N-GAGE.QD.rar
+          echo "8984bd63e50c00b0d70b9f60f4a9b548606dfad0ee957f55082a4a7378bcd640  /tmp/RH-029.v.04.10.N-GAGE.QD.rar" | sha256sum -c -
+          echo "=== Archive metadata ==="
+          stat -c '%n %s bytes' /tmp/RH-029.v.04.10.N-GAGE.QD.rar
+          echo "=== Archive listing ==="
+          7z l -slt /tmp/RH-029.v.04.10.N-GAGE.QD.rar > /tmp/ngage-list.txt
+          grep -Ei 'eikcore|system[/\\]libs|\.fpsx$|\.rofs$|\.bin$|\.img$|\.dfl$|\.uda$|\.core$' /tmp/ngage-list.txt | head -n 300 || true
+          echo "=== First 160 listing lines ==="
+          sed -n '1,160p' /tmp/ngage-list.txt
+          mkdir -p /tmp/ngage-extracted
+          7z x /tmp/RH-029.v.04.10.N-GAGE.QD.rar -o/tmp/ngage-extracted -y >/tmp/ngage-extract.log
+          echo "=== Extracted file inventory ==="
+          find /tmp/ngage-extracted -type f -printf '%p %s bytes\n' | sort | head -n 300
+          echo "=== EIKCORE candidates ==="
+          find /tmp/ngage-extracted -type f -iname 'eikcore.dll' -o -iname 'eikcore' | while read -r f; do file "$f"; sha256sum "$f"; done

@@ -1,0 +1,44 @@
+name: Step143 source-object provenance trace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "source_bundle/shadowkey_step35_work/shadowkey_engine_init_live_test.c"
+      - ".github/workflows/step143-source-pointer-provenance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  provenance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang
+      - name: Build and run existing regressions
+        working-directory: source_bundle/shadowkey_step35_work
+        run: |
+          set -euo pipefail
+          bash build_and_test.sh
+      - name: Run natural high-RAM VFS path with provenance watches
+        working-directory: source_bundle/shadowkey_step35_work
+        env:
+          SHADOWKEY_HLE_FREE_RAM_BYTES: "33554432"
+        run: |
+          set -euo pipefail
+          bash trace_asset_loader_live_vfs.sh
+          grep -E "STEP143|sub_100298a4|sub_1001f9ac|FIELD WRITE|SOURCE POINTER STORE" .build/live_hal_vfs_trace.log || true
+      - name: Upload provenance trace
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadowkey-step143-source-pointer-provenance
+          path: source_bundle/shadowkey_step35_work/.build/live_hal_vfs_trace.log
+          if-no-files-found: warn
+          retention-days: 30

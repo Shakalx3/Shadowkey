@@ -1,9 +1,9 @@
-name: Step147 data-path RFs Connect isolation probe (trigger refresh)
+name: Step147 RFs Connect-only isolation probe
 on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step147-data-path-probe.yml"
+      - ".github/workflows/step147-rfs-connect-probe.yml"
       - "source_bundle/host/step147/**"
   workflow_dispatch:
 permissions:
@@ -31,7 +31,7 @@ jobs:
           modern_root=$(dirname "$(dirname "$toolchain_file")")
           echo "MODERN_ROOT=$modern_root" >> "$GITHUB_ENV"
           echo "TOOLCHAIN_FILE=$toolchain_file" >> "$GITHUB_ENV"
-      - name: Build filesystem visibility probe
+      - name: Build RFs Connect-only probe
         shell: bash
         run: |
           set -euo pipefail
@@ -92,7 +92,7 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "epocrc failed with exit code $LASTEXITCODE" }
           } finally { Pop-Location }
           if (!(Test-Path stage/ShadowkeyDataPathProbe_reg.rsc)) { throw "Registration RSC missing" }
-      - name: Create SIS with module in data directory only
+      - name: Create SIS for RFs Connect-only probe
         shell: pwsh
         run: |
           @(

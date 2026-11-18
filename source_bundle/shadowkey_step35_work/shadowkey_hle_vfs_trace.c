@@ -17,6 +17,7 @@ typedef struct { uint32_t object; uint32_t fs_object; } vfileman_t;
 static vfileman_t vfilemans[16];
 static vfile_t vfiles[32];
 static uint32_t next_rfs_handle=1u;
+static uint32_t next_vfile_handle=1u;
 static vfileman_t *vfileman_for(uint32_t object,int create){
     for(size_t i=0;i<sizeof(vfilemans)/sizeof(vfilemans[0]);i++)if(vfilemans[i].object==object&&object)return &vfilemans[i];
     if(create)for(size_t i=0;i<sizeof(vfilemans)/sizeof(vfilemans[0]);i++)if(!vfilemans[i].object){vfilemans[i].object=object;return &vfilemans[i];}
@@ -355,9 +356,25 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==121u){
-        uint32_t self=c->r[0];uint8_t*p=guest_ptr(c,self+18u,1u);
-        c->r[0]=(p&&*p)?1u:0u;
-        fprintf(stderr,"  HLE SDK EFSRV121 TParseBase::NamePresent this=%08x -> %u\n",self,c->r[0]);return;
+        /* ARM UREL EFSRV121 is RFile::Open(RFs&,TDesC16&,TUint). */
+        uint32_t self=c->r[0],fs=c->r[1],desc=c->r[2],mode=c->r[3];
+        char display[520]={0},host[1024]={0};
+        if(!rd32(c,fs)){c->r[0]=(uint32_t)-8;return;}
+        if(!vfs_host_full_path(c,desc,host,sizeof(host),display,sizeof(display))){c->r[0]=(uint32_t)-1;fprintf(stderr,"  HALT EFSRV121 RFile::Open invalid path descriptor=%08x\\n",desc);return;}
+        vfile_t*vf=vfile_for(self,1);if(!vf){c->r[0]=(uint32_t)-4;return;}if(vf->fp){fclose(vf->fp);vf->fp=NULL;}
+        const char*fm=(mode&2u)?((mode&1u)?"r+b":"wb"):"rb";FILE*fp=fopen(host,fm);if(!fp&&(mode&2u)&&(mode&1u))fp=fopen(host,"w+b");
+        if(!fp){c->r[0]=(uint32_t)(errno==ENOENT?-1:-21);fprintf(stderr,"  HALT EFSRV121 RFile::Open path='%s' host='%s' mode=%08x errno=%d\\n",display,host,mode,errno);return;}
+        vf->object=self;vf->fp=fp;snprintf(vf->path,sizeof(vf->path),"%s",host);uint32_t handle=0x71000000u|(next_vfile_handle++&0x00ffffffu);wr32(c,self,handle);c->r[0]=0;
+        fprintf(stderr,"  HLE EFSRV121 RFile::Open path='%s' host='%s' mode=%08x handle=%08x\\n",display,host,mode,handle);return;
+    }
+    if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==136u){
+        /* ARM UREL EFSRV136 is RFile::Read(TDes8&). */
+        uint32_t self=c->r[0],desc=c->r[1],len=0,max=0,data=0;vfile_t*vf=vfile_for(self,0);
+        if(!vf||!vf->fp){c->r[0]=(uint32_t)-8;fprintf(stderr,"  HALT EFSRV136 RFile::Read bad handle this=%08x\\n",self);return;}
+        if(!descriptor_info(c,desc,&len,&max,&data)||(rd32(c,desc)>>28)==1u||(rd32(c,desc)>>28)==4u){c->r[0]=(uint32_t)-6;return;}
+        uint8_t*buf=guest_ptr(c,data,max);if(!buf&&max){c->r[0]=(uint32_t)-6;return;}
+        size_t got=fread(buf,1,max,vf->fp);uint32_t h=rd32(c,desc);wr32(c,desc,(h&0xf0000000u)|(uint32_t)got);c->r[0]=0;
+        fprintf(stderr,"  HLE EFSRV136 RFile::Read this=%08x desc=%08x max=%u got=%u\\n",self,desc,max,(uint32_t)got);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==146u){
         uint32_t self=c->r[0];uint8_t*p=guest_ptr(c,self+14u,1u);
@@ -434,7 +451,9 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         uint32_t h=rd32(c,self);wr32(c,self,(h&0xf0000000u)|(len+1u));if(len<64u)fprintf(stderr,"  HLE EUSER89 TDes16::Append this=%08x char=%04x newLen=%u\\n",self,ch,len+1u);return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==172u){
-        uint32_t self=c->r[0],handle=rd32(c,self);wr32(c,self,0u);c->r[0]=0;
+        uint32_t self=c->r[0],handle=rd32(c,self);vfile_t*vf=vfile_for(self,0);
+        if(vf&&vf->fp){fclose(vf->fp);vf->fp=NULL;vf->object=0;}
+        wr32(c,self,0u);c->r[0]=0;
         fprintf(stderr,"  HLE EUSER172 RHandleBase::Close this=%08x handle=%08x\\n",self,handle);return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==85u){

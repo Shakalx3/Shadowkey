@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install archive tools
-        run: sudo apt-get update && sudo apt-get install -y p7zip-full
+        run: sudo apt-get update && sudo apt-get install -y p7zip-full unrar-free unar libarchive-tools
       - name: Download and inspect N-Gage QD firmware archive
         env:
           GH_TOKEN: ${{ github.token }}
@@ -27,13 +27,21 @@ jobs:
           echo "8984bd63e50c00b0d70b9f60f4a9b548606dfad0ee957f55082a4a7378bcd640  /tmp/RH-029.v.04.10.N-GAGE.QD.rar" | sha256sum -c -
           echo "=== Archive metadata ==="
           stat -c '%n %s bytes' /tmp/RH-029.v.04.10.N-GAGE.QD.rar
-          echo "=== Archive listing ==="
-          7z l -slt /tmp/RH-029.v.04.10.N-GAGE.QD.rar > /tmp/ngage-list.txt
-          grep -Ei 'eikcore|system[/\\]libs|\.fpsx$|\.rofs$|\.bin$|\.img$|\.dfl$|\.uda$|\.core$' /tmp/ngage-list.txt | head -n 300 || true
-          echo "=== First 160 listing lines ==="
-          sed -n '1,160p' /tmp/ngage-list.txt
+          echo "=== Archive signature ==="
+          file /tmp/RH-029.v.04.10.N-GAGE.QD.rar
+          xxd -l 64 /tmp/RH-029.v.04.10.N-GAGE.QD.rar
+          echo "=== Independent archive listings ==="
+          unrar-free -l /tmp/RH-029.v.04.10.N-GAGE.QD.rar || true
+          unar -l /tmp/RH-029.v.04.10.N-GAGE.QD.rar || true
+          bsdtar -tf /tmp/RH-029.v.04.10.N-GAGE.QD.rar || true
+          7z l -slt /tmp/RH-029.v.04.10.N-GAGE.QD.rar || true
           mkdir -p /tmp/ngage-extracted
-          7z x /tmp/RH-029.v.04.10.N-GAGE.QD.rar -o/tmp/ngage-extracted -y >/tmp/ngage-extract.log
+          echo "=== Extract with unar ==="
+          unar -o /tmp/ngage-extracted -f /tmp/RH-029.v.04.10.N-GAGE.QD.rar || true
+          echo "=== Extract with bsdtar fallback ==="
+          bsdtar -xf /tmp/RH-029.v.04.10.N-GAGE.QD.rar -C /tmp/ngage-extracted || true
+          echo "=== Extract with 7z fallback ==="
+          7z x /tmp/RH-029.v.04.10.N-GAGE.QD.rar -o/tmp/ngage-extracted -y || true
           echo "=== Extracted file inventory ==="
           find /tmp/ngage-extracted -type f -printf '%p %s bytes\n' | sort | head -n 300
           echo "=== EIKCORE candidates ==="

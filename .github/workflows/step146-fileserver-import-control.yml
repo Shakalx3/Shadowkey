@@ -1,9 +1,9 @@
-name: Step146 data-path filesystem visibility probe (trigger refresh)
+name: Step146 FileServer import isolation control
 on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step146-data-path-probe.yml"
+      - ".github/workflows/step146-fileserver-import-control.yml"
       - "source_bundle/host/step146/**"
   workflow_dispatch:
 permissions:
@@ -52,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           tag="shadowkey-step146-e32-$GITHUB_RUN_ID"
-          gh release create "$tag" stage/ShadowkeyDataPathProbe.exe stage/ShadowkeyLegacyProbe.dll --repo "$GITHUB_REPOSITORY" --title "Shadowkey Step146 filesystem probe E32" --notes "Checks RFs::Entry before RLibrary::Load for the one-byte data-path module."
+          gh release create "$tag" stage/ShadowkeyDataPathProbe.exe stage/ShadowkeyLegacyProbe.dll --repo "$GITHUB_REPOSITORY" --title "Shadowkey Step146 filesystem probe E32" --notes "Checks whether linking the FileServer import proxy alone affects startup; no FileServer API is called."
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
   package-sis:
     runs-on: windows-latest
@@ -116,7 +116,7 @@ jobs:
         run: |
           $tag = "shadowkey-step146-sis-$env:GITHUB_RUN_ID"
           $hash = (Get-FileHash stage/ShadowkeyDataPathProbe_Step146.sis -Algorithm SHA256).Hash
-          gh release create $tag stage/ShadowkeyDataPathProbe_Step146.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step146 filesystem visibility probe" --notes "Checks RFs::Entry on C:\\data\\ShadowkeyLegacyProbe.dll, then RLibrary::Load only if found. SHA256: $hash"
+          gh release create $tag stage/ShadowkeyDataPathProbe_Step146.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step146 filesystem visibility probe" --notes "Tests launch with FileServer linked but unused. SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }
 
 # Step146 rebuild after adding the Symbian::FileServer EFSRV import proxy.

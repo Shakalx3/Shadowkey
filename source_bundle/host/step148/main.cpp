@@ -9,7 +9,7 @@
 // Step148 uses the Symbian C runtime instead of importing EFSRV directly.
 static TInt ProbeDataPath()
     {
-    FILE* file = fopen("C:\\\\data\\\\ShadowkeyLegacyProbe.dll", "rb");
+    FILE* file = fopen("C:\\data\\ShadowkeyLegacyProbe.dll", "rb");
     if (!file)
         return KErrNotFound;
     fclose(file);

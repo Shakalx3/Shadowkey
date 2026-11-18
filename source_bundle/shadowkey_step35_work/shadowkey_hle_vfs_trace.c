@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include "shadowkey_cone_gc_hle.h"
 #include "shadowkey_symbian61_hle.h"
@@ -11,6 +12,7 @@
 #include "shadowkey_bitgdi_hle.h"
 typedef struct { uint32_t object; FILE *fp; char path[1024]; } vfile_t;
 static vfile_t vfiles[32];
+static uint32_t next_rfs_handle=1u;
 static vfile_t *vfile_for(uint32_t object, int create){
     vfile_t *empty=NULL;
     for(size_t i=0;i<sizeof(vfiles)/sizeof(vfiles[0]);i++){
@@ -167,6 +169,21 @@ static int vfs_host_path(ngage_cpu_t*c,uint32_t path_desc,char*out,size_t cap,ch
     return n>0 && (size_t)n<cap;
 }
 
+static int vfs_host_dir_path(ngage_cpu_t*c,uint32_t desc,char*out,size_t cap,char*display,size_t display_cap){
+    uint32_t chars=0;if(!guest_utf16_desc_to_ascii(c,desc,display,display_cap,&chars)||chars<3u||display[1]!=':')return 0;
+    char drive=(char)((display[0]>='a'&&display[0]<='z')?display[0]-'a'+'A':display[0]);
+    if(drive=='Z')return -1; /* ROM drive is read-only. */
+    const char*root=getenv("SHADOWKEY_VFS_ROOT");if(!root||!*root)root=".build/vfs";
+    char rel[768];size_t n=0;for(size_t i=2;display[i]&&n+1<sizeof(rel);i++){char ch=display[i];if(ch=='\\')ch='/';if(ch==':'||ch=='*'||ch=='?'||ch=='<'||ch=='>'||ch=='|'||ch=='"')return 0;rel[n++]=ch;}rel[n]=0;
+    while(rel[0]=='/')memmove(rel,rel+1,strlen(rel));
+    if(strstr(rel,"../")||!strcmp(rel,"..")||strstr(rel,"/.."))return 0;
+    int m=snprintf(out,cap,"%s/%c/%s",root,drive,rel);return m>0&&(size_t)m<cap;
+}
+static int vfs_mkdir_p(const char*path){
+    char tmp[1024];size_t n=strlen(path);if(!n||n>=sizeof(tmp))return -1;memcpy(tmp,path,n+1u);
+    for(char*p=tmp+1;*p;p++){if(*p=='/'){*p=0;if(mkdir(tmp,0777)!=0&&errno!=EEXIST){*p='/';return -1;}*p='/';}}
+    if(mkdir(tmp,0777)==0)return 0;if(errno==EEXIST){struct stat st;if(stat(tmp,&st)==0&&S_ISDIR(st.st_mode))return 1;}return -1;
+}
 void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
     fprintf(stderr,"IMPORT dll=%s ord=%u r0=%08x r1=%08x r2=%08x r3=%08x sp=%08x lr=%08x cpsr=%08x\n",dll,ordinal,c->r[0],c->r[1],c->r[2],c->r[3],c->r[13],c->r[14],c->cpsr);
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1407u){
@@ -224,6 +241,12 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         wr32(c,out,free_ram); c->r[0]=0;
         fprintf(stderr,"  HLE HAL::Get EMemoryRAMFree=%u bytes (diagnostic model) -> %08x\n",free_ram,out);
         return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1283u){
+        /* ARM UREL EUSER1283 is TBufBase16::TBufBase16(TInt). */
+        uint32_t self=c->r[0],max=c->r[1];if(max>0x100000u||!guest_ptr(c,self,8u+max*2u)){c->r[0]=(uint32_t)-6;return;}
+        wr32(c,self,0x30000000u);wr32(c,self+4u,max);c->r[0]=self;
+        fprintf(stderr,"  HLE EUSER1283 TBufBase16 ctor this=%08x max=%u data=%08x\\n",self,max,self+8u);return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==1431u){
         /* ARM UREL EUSER1431 is TBufBase8::TBufBase8(TInt), not Mem::FillZ. */
@@ -293,8 +316,13 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         fprintf(stderr,"  HLE SDK EFSRV146 TParseBase::PathPresent this=%08x -> %u\n",self,c->r[0]);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==86u){
-        uint32_t self=c->r[0];c->r[0]=(rd32(c,self+4u)&0x02u)?1u:0u;
-        fprintf(stderr,"  HLE SDK EFSRV86 TParseBase::IsExtWild this=%08x -> %u\n",self,c->r[0]);return;
+        /* ARM UREL EFSRV86 is RFs::MkDir(const TDesC16&), not WINS IsExtWild. */
+        uint32_t self=c->r[0],desc=c->r[1];char display[520]={0},host[1024]={0};
+        if(!rd32(c,self)){c->r[0]=(uint32_t)-8;fprintf(stderr,"  HALT EFSRV86 MkDir on disconnected RFs this=%08x\\n",self);return;}
+        int mapped=vfs_host_dir_path(c,desc,host,sizeof(host),display,sizeof(display));
+        if(mapped<=0){c->r[0]=(uint32_t)(mapped<0?-21:-6);fprintf(stderr,"  HLE EFSRV86 RFs::MkDir path='%s' mapped=%d rc=%d\\n",display,mapped,(int32_t)c->r[0]);return;}
+        int rc=vfs_mkdir_p(host);c->r[0]=(uint32_t)(rc==0?0:(rc==1?-11:-21));
+        fprintf(stderr,"  HLE EFSRV86 RFs::MkDir path='%s' host='%s' rc=%d\\n",display,host,(int32_t)c->r[0]);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==162u){
         uint32_t path_desc=c->r[1],offset=c->r[2],out_desc=c->r[3];
@@ -320,17 +348,27 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==18u){
-        uint32_t self=c->r[0],index=c->r[1],array=rd32(c,self+4u);
-        fprintf(stderr,"  HALT SDK EFSRV18 CDir::operator[] this=%08x index=%u iArray=%08x",self,index,array);
-        if(array>=0x10000000u && array<0x12000000u)
-            fprintf(stderr," count=%u gran=%u rep=%08x base=%08x cacheIndex=%u cacheOffset=%u",
-                    rd32(c,array+4u),rd32(c,array+8u),rd32(c,array+12u),rd32(c,array+16u),rd32(c,array+20u),rd32(c,array+24u));
-        fputc('\n',stderr);exit(95);
+        /* ARM UREL EFSRV18 is RFs::Connect(TInt). */
+        uint32_t self=c->r[0],slots=c->r[1];uint8_t*p=guest_ptr(c,self,4u);
+        if(!p){c->r[0]=(uint32_t)-6;return;}
+        uint32_t handle=rd32(c,self);if(!handle){handle=0x70000000u|(next_rfs_handle++&0x0fffffffu);wr32(c,self,handle);}
+        c->r[0]=0;fprintf(stderr,"  HLE EFSRV18 RFs::Connect this=%08x slots=%u handle=%08x\\n",self,slots,handle);return;
     }
     if(!strcmp(dll,"EFSRV[100039e4].DLL") && ordinal==15u){
-        vfile_t *vf=vfile_for(c->r[0],0);
-        if(vf && vf->fp){fclose(vf->fp);vf->fp=NULL;vf->object=0;}
-        fprintf(stderr,"  HLE SDK EFSRV15 CFileBase destructor this=%08x\n",c->r[0]);return;
+        /* ARM UREL EFSRV15 is RFsBase::Close. */
+        uint32_t self=c->r[0],handle=rd32(c,self);wr32(c,self,0u);c->r[0]=0;
+        fprintf(stderr,"  HLE EFSRV15 RFsBase::Close this=%08x handle=%08x\\n",self,handle);return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==89u){
+        /* ARM UREL EUSER89 is TDes16::Append(TChar). */
+        uint32_t self=c->r[0],ch=c->r[1],len=0,max=0,data=0;
+        if(!descriptor_info(c,self,&len,&max,&data)||(rd32(c,self)>>28)==1u||(rd32(c,self)>>28)==4u||len>=max||ch>0xffffu){fprintf(stderr,"  HALT EUSER89 invalid/overflow TDes16 append this=%08x ch=%08x len=%u max=%u\\n",self,ch,len,max);c->r[0]=(uint32_t)-6;return;}
+        uint8_t*d=guest_ptr(c,data+len*2u,2u);if(!d){c->r[0]=(uint32_t)-6;return;}d[0]=(uint8_t)ch;d[1]=(uint8_t)(ch>>8);
+        uint32_t h=rd32(c,self);wr32(c,self,(h&0xf0000000u)|(len+1u));if(len<64u)fprintf(stderr,"  HLE EUSER89 TDes16::Append this=%08x char=%04x newLen=%u\\n",self,ch,len+1u);return;
+    }
+    if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==172u){
+        uint32_t self=c->r[0],handle=rd32(c,self);wr32(c,self,0u);c->r[0]=0;
+        fprintf(stderr,"  HLE EUSER172 RHandleBase::Close this=%08x handle=%08x\\n",self,handle);return;
     }
     if(!strcmp(dll,"EUSER[100039e5].DLL") && ordinal==85u){
         /* ARM UREL EUSER85: TDes8::Append(TChar). */
@@ -344,7 +382,6 @@ void shadowkey_hle_import(ngage_cpu_t*c,const char*dll,uint16_t ordinal){
         if(len<64u)fprintf(stderr,"  HLE EUSER85 TDes8::Append this=%08x char=%02x newLen=%u data=%08x\\n",self,ch,len+1u,data);
         return;
     }
-    if (!strcmp(dll,"EUSER[100039e5].DLL") && (ordinal==89u || ordinal==1359u || ordinal==35u || ordinal==90u)) { uint32_t a=c->r[0]; if(a>=0x10000000u && a<0x12000000u){uint8_t *p=c->mem+(a-0x10000000u); fprintf(stderr,"  MEM r0: %08x %08x %08x %08x %08x %08x\n",*(uint32_t*)(p),*(uint32_t*)(p+4),*(uint32_t*)(p+8),*(uint32_t*)(p+12),*(uint32_t*)(p+16),*(uint32_t*)(p+20));}}
     if(!strcmp(dll,"ESTLIB[10003b0b].DLL") && ordinal==315u){
         /* ARM UREL ordinal 315 is wcscat (do not use the WINS UDEB name). */
         uint32_t dst=c->r[0],src=c->r[1],dl=guest_wstr_len(c,dst,0x10000u),sl=guest_wstr_len(c,src,0x10000u);

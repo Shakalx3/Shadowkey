@@ -112,9 +112,9 @@ jobs:
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'
-            '"stage/ShadowkeyE32LoaderProbe.exe" - "!:\\sys\\bin\\ShadowkeyE32LoaderProbe.exe"'
-            '"stage/ShadowkeyValidProbe151.dll" - "!:\\data\\ShadowkeyValidProbe151.dll"'
-            '"stage/ShadowkeyE32LoaderProbe_reg.rsc" - "!:\\private\\10003a3f\\import\\apps\\ShadowkeyE32LoaderProbe_reg.rsc"'
+            '"stage/ShadowkeyE32LoaderProbe.exe" - "!:\sys\bin\ShadowkeyE32LoaderProbe.exe"'
+            '"stage/ShadowkeyValidProbe151.dll" - "!:\data\ShadowkeyValidProbe151.dll"'
+            '"stage/ShadowkeyE32LoaderProbe_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyE32LoaderProbe_reg.rsc"'
           ) | Set-Content stage/ShadowkeyE32LoaderProbe.pkg -Encoding ascii
           & $env:MAKESIS -v stage/ShadowkeyE32LoaderProbe.pkg stage/ShadowkeyE32LoaderProbe_Step151.sis
           if ($LASTEXITCODE -ne 0) { throw "makesis failed" }

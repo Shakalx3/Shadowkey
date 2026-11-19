@@ -1,0 +1,1 @@
+Step155 separates fopen presence from RLibrary::Load by basename and absolute path. The screen shows three 32-bit diagnostic blocks from top to bottom: fopen (1 means present), basename Load result, and absolute-path Load result. A zero Load result means success; a negative result is rendered as its 32-bit two's-complement pattern.

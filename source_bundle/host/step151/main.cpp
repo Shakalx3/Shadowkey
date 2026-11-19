@@ -1,4 +1,5 @@
 #include <e32base.h>
+#include <stdio.h>
 #include <gdi.h>
 #include <w32std.h>
 

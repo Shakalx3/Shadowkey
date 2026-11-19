@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.28)
+project(ShadowkeyFileAccessProbe157 LANGUAGES CXX ASM)
+include(SymbianApp)
+symbian_add_executable(ShadowkeyFileAccessProbe157 main.cpp)
+target_compile_options(ShadowkeyFileAccessProbe157 PRIVATE -fno-exceptions -fno-rtti -fno-builtin)
+target_link_libraries(ShadowkeyFileAccessProbe157 PRIVATE Symbian::WindowServer Symbian::Gdi Symbian::C)
+symbian_publish_executable(ShadowkeyFileAccessProbe157 UID3 0xE000BF2B)

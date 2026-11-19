@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.28)
+project(ShadowkeyEfsrvLoadProbe158 LANGUAGES CXX ASM)
+include(SymbianApp)
+symbian_add_executable(ShadowkeyEfsrvLoadProbe158 main.cpp)
+target_compile_options(ShadowkeyEfsrvLoadProbe158 PRIVATE -fno-exceptions -fno-rtti -fno-builtin)
+target_link_libraries(ShadowkeyEfsrvLoadProbe158 PRIVATE Symbian::WindowServer Symbian::Gdi Symbian::C)
+symbian_publish_executable(ShadowkeyEfsrvLoadProbe158 UID3 0xE000BF3B)

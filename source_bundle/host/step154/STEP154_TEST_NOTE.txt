@@ -1,0 +1,1 @@
+Step154 isolates the test DLL in a SymbianPic-only CMake project, deliberately omitting SymbianApp and the automatic EUser link. The expected DLL should have no ROM import-table dependencies. The EXE remains a normal SymbianApp application.

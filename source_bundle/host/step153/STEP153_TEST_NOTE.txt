@@ -1,0 +1,1 @@
+Step153 changes only the RLibrary::Load argument: it uses the DLL basename, allowing EKA2 to resolve the DLL from sys\\bin. The fopen check still uses the absolute C:\\sys\\bin path. The executable and DLL are otherwise the same minimal loader probe as Step152, with unique UIDs and export value 153.

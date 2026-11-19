@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step155-sysbin-dll-loader-probe.yml"
+      - ".github/workflows/step155-split-loader-diagnostics.yml"
       - "source_bundle/host/step155/**"
   workflow_dispatch:
 permissions:

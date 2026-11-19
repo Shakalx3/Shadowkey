@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 project(ShadowkeyFileServerHelper159 LANGUAGES CXX ASM)
 include(SymbianPic)
+include(SymbianApp)
 symbian_add_dynamic_library(
     ShadowkeyFileServerHelper159
     SOURCES probe.cpp

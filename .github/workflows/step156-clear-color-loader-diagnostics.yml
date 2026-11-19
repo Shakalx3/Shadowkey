@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step156-split-loader-diagnostics.yml"
+      - ".github/workflows/step156-clear-color-loader-diagnostics.yml"
       - "source_bundle/host/step156/**"
   workflow_dispatch:
 permissions:

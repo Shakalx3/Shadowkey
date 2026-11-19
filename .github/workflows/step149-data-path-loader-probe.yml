@@ -120,3 +120,5 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }
 
 # Step149 rebuild after adding the Symbian::FileServer EFSRV import proxy.
+
+# Trigger Step149 build after source and workflow publication.

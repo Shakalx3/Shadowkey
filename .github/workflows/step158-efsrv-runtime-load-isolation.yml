@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step158-file-server-access-diagnostics.yml"
+      - ".github/workflows/step158-efsrv-runtime-load-isolation.yml"
       - "source_bundle/host/step158/**"
   workflow_dispatch:
 permissions:
@@ -66,7 +66,7 @@ jobs:
         run: |
           set -euo pipefail
           tag="shadowkey-step158-e32-$GITHUB_RUN_ID"
-          gh release create "$tag" stage/ShadowkeyEfsrvLoadProbe158.exe stage/ShadowkeyValidProbe158.dll --repo "$GITHUB_REPOSITORY" --title "Shadowkey Step158 E32 images" --notes "Symbian file-server diagnostics with genuine E32 DLL."
+          gh release create "$tag" stage/ShadowkeyEfsrvLoadProbe158.exe stage/ShadowkeyValidProbe158.dll --repo "$GITHUB_REPOSITORY" --title "Shadowkey Step158 E32 images" --notes "Runtime load isolation: no static EFSRV import; efsrv.dll is loaded dynamically after app startup."
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
   package-sis:
     runs-on: windows-latest
@@ -110,7 +110,7 @@ jobs:
         shell: pwsh
         run: |
           @(
-            '#{"Shadowkey File Access Probe"},(0xE000BF3A),1,0,0,TYPE=SA'
+            '#{"Shadowkey EFSRV Load Probe"},(0xE000BF3A),1,0,0,TYPE=SA'
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'
@@ -130,5 +130,5 @@ jobs:
         run: |
           $tag = "shadowkey-step158-sis-$env:GITHUB_RUN_ID"
           $hash = (Get-FileHash stage/ShadowkeyEfsrvLoadProbe158_Step158.sis -Algorithm SHA256).Hash
-          gh release create $tag stage/ShadowkeyEfsrvLoadProbe158_Step158.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step158 file-server access probe" --notes "SIS tests C fopen, ordinary E32 DLL loading, and runtime loading of efsrv.dll without a static FileServer import. SHA256: $hash"
+          gh release create $tag stage/ShadowkeyEfsrvLoadProbe158_Step158.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step158 EFSRV runtime load probe" --notes "SIS tests C fopen, ordinary E32 DLL loading, and runtime loading of efsrv.dll without a static FileServer import. SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }

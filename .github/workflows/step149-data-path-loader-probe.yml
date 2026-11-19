@@ -1,9 +1,9 @@
-name: Step149 C runtime file-access probe
+name: Step149 data-path loader probe
 on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/step149-c-runtime-file-probe.yml"
+      - ".github/workflows/step149-data-path-loader-probe.yml"
       - "source_bundle/host/step149/**"
   workflow_dispatch:
 permissions:
@@ -92,7 +92,7 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "epocrc failed with exit code $LASTEXITCODE" }
           } finally { Pop-Location }
           if (!(Test-Path stage/ShadowkeyDataPathProbe_reg.rsc)) { throw "Registration RSC missing" }
-      - name: Create SIS for C runtime file-access probe
+      - name: Create SIS for Step149 data-path loader probe
         shell: pwsh
         run: |
           @(
@@ -119,6 +119,4 @@ jobs:
           gh release create $tag stage/ShadowkeyDataPathProbe_Step149.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step149 data-path loader probe" --notes "Tests fopen visibility followed by RLibrary::Load on an inert one-byte data-file payload. SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }
 
-# Step149 rebuild after adding the Symbian::FileServer EFSRV import proxy.
-
-# Trigger Step149 build after source and workflow publication.
+# Step149: libc path visibility followed by RLibrary loader attempt.

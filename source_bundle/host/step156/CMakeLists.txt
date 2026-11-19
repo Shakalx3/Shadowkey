@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.28)
+project(ShadowkeyE32LoaderProbe156 LANGUAGES CXX ASM)
+include(SymbianApp)
+symbian_add_executable(ShadowkeyE32LoaderProbe156 main.cpp)
+target_compile_options(ShadowkeyE32LoaderProbe156 PRIVATE -fno-exceptions -fno-rtti -fno-builtin)
+target_link_libraries(ShadowkeyE32LoaderProbe156 PRIVATE Symbian::WindowServer Symbian::Gdi Symbian::C)
+symbian_publish_executable(ShadowkeyE32LoaderProbe156 UID3 0xE000BF27)

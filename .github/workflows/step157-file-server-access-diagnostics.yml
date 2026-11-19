@@ -114,9 +114,9 @@ jobs:
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'
-            '"stage/ShadowkeyFileAccessProbe157.exe" - "!:\\sys\\bin\\ShadowkeyFileAccessProbe157.exe"'
-            '"stage/ShadowkeyValidProbe157.dll" - "!:\\sys\\bin\\ShadowkeyValidProbe157.dll"'
-            '"stage/ShadowkeyFileAccessProbe157_reg.rsc" - "!:\\private\\10003a3f\\import\\apps\\ShadowkeyFileAccessProbe157_reg.rsc"'
+            '"stage/ShadowkeyFileAccessProbe157.exe" - "!:\sys\bin\ShadowkeyFileAccessProbe157.exe"'
+            '"stage/ShadowkeyValidProbe157.dll" - "!:\sys\bin\ShadowkeyValidProbe157.dll"'
+            '"stage/ShadowkeyFileAccessProbe157_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyFileAccessProbe157_reg.rsc"'
           ) | Set-Content stage/ShadowkeyFileAccessProbe157.pkg -Encoding ascii
           & $env:MAKESIS -v stage/ShadowkeyFileAccessProbe157.pkg stage/ShadowkeyFileAccessProbe157_Step157.sis
           if ($LASTEXITCODE -ne 0) { throw "makesis failed" }

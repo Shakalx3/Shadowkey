@@ -110,7 +110,7 @@ jobs:
         shell: pwsh
         run: |
           @(
-            '#{"Shadowkey EFSRV Load Probe"},(0xE000BF5A),1,0,0,TYPE=SA'
+            '#{"Shadowkey EFSRV Load Probe"},(0xE000BF6A),1,0,0,TYPE=SA'
             '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
             '%{"OpenAI"}'
             ':"OpenAI"'

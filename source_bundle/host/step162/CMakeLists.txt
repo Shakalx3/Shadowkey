@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.28)
+project(ShadowkeyFileServerRuntimeHelper162 LANGUAGES CXX ASM)
+include(SymbianApp)
+symbian_add_executable(ShadowkeyFileServerRuntimeHelper162 main.cpp)
+target_compile_options(ShadowkeyFileServerRuntimeHelper162 PRIVATE -fno-exceptions -fno-rtti -fno-builtin)
+target_link_libraries(ShadowkeyFileServerRuntimeHelper162 PRIVATE Symbian::WindowServer Symbian::Gdi Symbian::C)
+symbian_publish_executable(ShadowkeyFileServerRuntimeHelper162 UID3 0xE000BF7B)

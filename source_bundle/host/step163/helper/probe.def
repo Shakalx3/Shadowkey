@@ -1,0 +1,4 @@
+EXPORTS
+    ShadowkeyConnectViaRfs163 @ 1 NONAME
+    ShadowkeyCreateSessionMinusOne163 @ 2 NONAME
+    ShadowkeyCreateSessionZeroSlots163 @ 3 NONAME

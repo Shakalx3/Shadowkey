@@ -1,0 +1,134 @@
+name: Step163 direct File Server session creation
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/step163-direct-session-create.yml"
+      - "source_bundle/host/step163/**"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build-modern:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      e32_tag: ${{ steps.publish.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download modern EKA2 toolchain
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p downloads modern
+          gh release download v0.3.0 --repo hpnkv/symbian-platform --pattern symbian-sdk-0.3.0-linux-x86_64.tar.gz --dir downloads
+          tar -xzf downloads/symbian-sdk-0.3.0-linux-x86_64.tar.gz -C modern
+          toolchain_file=$(find modern -path '*/cmake/symbian-arm.cmake' -print -quit)
+          test -n "$toolchain_file"
+          toolchain_file=$(realpath "$toolchain_file")
+          modern_root=$(dirname "$(dirname "$toolchain_file")")
+          echo "MODERN_ROOT=$modern_root" >> "$GITHUB_ENV"
+          echo "TOOLCHAIN_FILE=$toolchain_file" >> "$GITHUB_ENV"
+      - name: Build EXE and EFSRV-linked helper DLL
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+          cmake -S source_bundle/host/step163 -B build/step163 -G Ninja -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" -DSYMBIAN_SDK_PREFIX="$MODERN_ROOT" -DSYMBIAN_TARGET_ARCH=armv5t -DSYMBIAN_RUNTIME_LEGACY_EKA2=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/step163 --target ShadowkeyFileServerRuntimeHelper163_e32 --parallel 2
+          cmake -S source_bundle/host/step163/helper -B build/step163-dll -G Ninja -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" -DSYMBIAN_SDK_PREFIX="$MODERN_ROOT" -DSYMBIAN_TARGET_ARCH=armv5t -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/step163-dll --target ShadowkeyFileServerHelper163 --parallel 2
+          exe=$(find build/step163 -type f -name ShadowkeyFileServerRuntimeHelper163.exe -print -quit)
+          dll=$(find build/step163-dll -type f -name ShadowkeyFileServerHelper163.dll -print -quit)
+          test -s "$exe" && test -s "$dll"
+          mkdir -p stage
+          cp "$exe" stage/ShadowkeyFileServerRuntimeHelper163.exe
+          cp "$dll" stage/ShadowkeyFileServerHelper163.dll
+          python3 - <<'PY'
+          import struct
+          from pathlib import Path
+          p=Path("stage/ShadowkeyFileServerHelper163.dll")
+          d=p.read_bytes()
+          if len(d)<0x7c or d[0x10:0x14]!=b"EPOC": raise SystemExit("Not an E32 image")
+          u=lambda o:struct.unpack_from("<I",d,o)[0]
+          h={"size":len(d),"uid1":u(0),"uid2":u(4),"uid3":u(8),"export_count":u(0x5c)}
+          print(h)
+          assert h["uid1"]==0x10000079 and h["uid2"]==0x1000008D and h["uid3"]==0xE000BF89 and h["export_count"]>=3
+          PY
+      - name: Publish E32 images
+        id: publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="shadowkey-step163-e32-$GITHUB_RUN_ID"
+          gh release create "$tag" stage/ShadowkeyFileServerRuntimeHelper163.exe stage/ShadowkeyFileServerHelper163.dll --repo "$GITHUB_REPOSITORY" --title "Shadowkey Step163 E32 images" --notes "Compares RFs::Connect with direct EUSER RSessionBase::CreateSession calls to !FileServer using version 0.0.0. Blue=RFs::Connect, yellow=direct CreateSession(-1), purple=direct CreateSession(0)."
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+  package-sis:
+    runs-on: windows-latest
+    needs: build-modern
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download E32 images and S60 SIS tools
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          E32_TAG: ${{ needs.build-modern.outputs.e32_tag }}
+        run: |
+          New-Item -ItemType Directory -Force stage,sdk | Out-Null
+          gh release download $env:E32_TAG --repo $env:GITHUB_REPOSITORY --pattern ShadowkeyFileServerRuntimeHelper163.exe --pattern ShadowkeyFileServerHelper163.dll --dir stage
+          gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
+          tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
+          $sdkRoot = Join-Path (Get-Location) "sdk"
+          $makesis = Get-ChildItem $sdkRoot -Recurse -File -Filter makesis.exe | Select-Object -First 1
+          $epocrc = Get-ChildItem $sdkRoot -Recurse -File -Filter epocrc.bat | Select-Object -First 1
+          $epocrcScript = Get-ChildItem $sdkRoot -Recurse -File -Filter epocrc.pl | Select-Object -First 1
+          if (!$makesis -or !$epocrc -or !$epocrcScript) { throw "Required S60 SDK tools missing" }
+          "MAKESIS=$($makesis.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC=$($epocrc.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC_DIR=$($epocrcScript.DirectoryName)" >> $env:GITHUB_ENV
+          "EPOCROOT=$($sdkRoot.TrimEnd('\') + '\')" >> $env:GITHUB_ENV
+      - name: Compile registration resource
+        shell: pwsh
+        run: |
+          $out = Join-Path (Get-Location) "stage"
+          $rss = Join-Path (Get-Location) "source_bundle/host/step163/ShadowkeyFileServerRuntimeHelper163_reg.rss"
+          $include = Join-Path (Get-Location) "sdk/Epoc32/include"
+          $env:PATH = "$env:EPOCRC_DIR;$env:PATH"
+          Push-Location $out
+          try {
+            & $env:EPOCRC -v -u "-I$include" "-t$out" $rss "-oShadowkeyFileServerRuntimeHelper163_reg.rsc" "-hShadowkeyFileServerRuntimeHelper163_reg.rsg" 2>&1 | Tee-Object -FilePath epocrc.log
+            if ($LASTEXITCODE -ne 0) { throw "epocrc failed with exit code $LASTEXITCODE" }
+          } finally { Pop-Location }
+          if (!(Test-Path stage/ShadowkeyFileServerRuntimeHelper163_reg.rsc)) { throw "Registration RSC missing" }
+      - name: Create SIS
+        shell: pwsh
+        run: |
+          @(
+            '#{"Shadowkey Direct Session Probe"},(0xE000BF8A),1,0,0,TYPE=SA'
+            '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
+            '%{"OpenAI"}'
+            ':"OpenAI"'
+            '"stage/ShadowkeyFileServerRuntimeHelper163.exe" - "!:\sys\bin\ShadowkeyFileServerRuntimeHelper163.exe"'
+            '"stage/ShadowkeyFileServerHelper163.dll" - "!:\sys\bin\ShadowkeyFileServerHelper163.dll"'
+            '"stage/ShadowkeyFileServerRuntimeHelper163_reg.rsc" - "!:\private\10003a3f\import\apps\ShadowkeyFileServerRuntimeHelper163_reg.rsc"'
+          ) | Set-Content stage/ShadowkeyFileServerRuntimeHelper163.pkg -Encoding ascii
+          & $env:MAKESIS -v stage/ShadowkeyFileServerRuntimeHelper163.pkg stage/ShadowkeyFileServerRuntimeHelper163_Step163.sis
+          if ($LASTEXITCODE -ne 0) { throw "makesis failed" }
+          $hash = (Get-FileHash stage/ShadowkeyFileServerRuntimeHelper163_Step163.sis -Algorithm SHA256).Hash
+          "SIS SHA256: $hash"
+          "SIS size: $((Get-Item stage/ShadowkeyFileServerRuntimeHelper163_Step163.sis).Length)"
+      - name: Publish SIS package
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "shadowkey-step163-sis-$env:GITHUB_RUN_ID"
+          $hash = (Get-FileHash stage/ShadowkeyFileServerRuntimeHelper163_Step163.sis -Algorithm SHA256).Hash
+          gh release create $tag stage/ShadowkeyFileServerRuntimeHelper163_Step163.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step163 direct session creation" --notes "Blue=RFs::Connect; yellow=direct RSessionBase::CreateSession(-1); purple=direct RSessionBase::CreateSession(0), all targeting !FileServer with TVersion(0,0,0). SHA256: $hash"
+          if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }

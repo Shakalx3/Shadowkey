@@ -5,6 +5,8 @@
 #include <w32std.h>
 #include "model_data.h"
 
+// Textured multi-model validation build: bottle, barrel, and pine tree.
+
 struct TProjectedPoint
     {
     TPoint iPoint;

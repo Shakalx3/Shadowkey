@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'tools/inspect_crypt3_resources.py'
+      - 'tools/export_crypt3_texture.py'
       - 'source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/Crypt3.zmp'
       - '.github/workflows/crypt3-resource-inspection.yml'
   workflow_dispatch:
@@ -13,7 +14,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Decode and inspect Crypt3 resources
         run: |
-          python3 tools/inspect_crypt3_resources.py source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51
+          ZONE=source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51
+          python3 tools/inspect_crypt3_resources.py "$ZONE"
+          python3 tools/export_crypt3_texture.py "$ZONE"
       - name: Upload decoded resource payloads
         uses: actions/upload-artifact@v4
         with:
@@ -27,5 +30,6 @@ jobs:
             source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/Crypt3.sur
             source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/Crypt3_entities.csv
             source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/Crypt3_entities.json
+            source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/Crypt3_texture_atlas.bmp
           if-no-files-found: error
           retention-days: 14

@@ -224,21 +224,19 @@ static TInt RunViewer()
                         window.SetVisible(ETrue);
                         window.Activate();
                         const TRect full(0,0,size.iWidth,size.iHeight);
-                        for (TInt model=0; model<KModelCount; ++model)
-                            {
-                            window.BeginRedraw(full);
-                            gc.Activate(window);
-                            gc.Clear(full);
-                            gc.SetPenColor(TRgb(235,235,235));
-                            DrawWireframe(gc, KModels[model], size.iWidth, size.iHeight);
-                            TBuf<64> label;
-                            label.Copy(TPtrC8(reinterpret_cast<const TUint8*>(KModels[model].name)));
-                            gc.DrawText(label, TPoint(8,18));
-                            gc.Deactivate();
-                            window.EndRedraw();
-                            session.Flush();
-                            User::After(12000000);
-                            }
+                        // Isolation build: render only the known-good bottle.
+                        // No model switching, texture access, or dynamic label conversion.
+                        window.BeginRedraw(full);
+                        gc.Activate(window);
+                        gc.Clear(full);
+                        gc.SetPenColor(TRgb(210,220,235));
+                        DrawWireframe(gc, KModels[0], size.iWidth, size.iHeight);
+                        gc.Deactivate();
+                        window.EndRedraw();
+                        session.Flush();
+                        // Keep the process alive long enough to distinguish a renderer
+                        // fault from an immediate normal return.
+                        User::After(60000000);
                         window.Close();
                         }
                     group.Close();

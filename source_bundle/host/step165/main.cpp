@@ -143,12 +143,12 @@ static TInt RunViewer()
                     TProjectedPoint projected[KModelVertexCount];
                     const TRect full(0, 0, size.iWidth, size.iHeight);
                     TReal angle = 0.0;
-                    TReal tilt = 0.38;
+                    TReal angleX = 0.38;
 
                     // Automatic rotation for 72 seconds, then clean exit.
                     for (TInt frame = 0; frame < 1800; ++frame)
                         {
-                        ProjectModel(projected, angle, tilt, centerX, centerY,
+                        ProjectModel(projected, angle, angleX, centerX, centerY,
                                      centerZ, modelScale, size.iWidth, size.iHeight);
                         window.BeginRedraw(full);
                         gc.Activate(window);
@@ -161,8 +161,10 @@ static TInt RunViewer()
                         gc.Deactivate();
                         window.EndRedraw();
                         session.Flush();
-                        angle += 0.035;
+                        angle += 0.047;
+                        angleX += 0.031;
                         if (angle > 6.2831853) angle -= 6.2831853;
+                        if (angleX > 6.2831853) angleX -= 6.2831853;
                         User::After(40000);
                         }
 

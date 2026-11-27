@@ -43,24 +43,22 @@ def read_model(data, idx_data, slot):
     pixels = struct.unpack_from("<" + "H" * (width * height), data, p)
     if max(pixels) > 0xFFF:
         raise ValueError(f"slot {slot}: pixel data is not RGB444 candidate")
-    uv_pair_count = uv_count // 2
     faces = []
-    for uv, indices in ((uv_a, ix_a), (uv_b, ix_b)):
+    for indices in (ix_a, ix_b):
         for i in range(0, len(indices), 3):
             tri = indices[i:i+3]
-            if max(tri) >= uv_pair_count:
-                raise ValueError(f"slot {slot}: UV index outside UV-pair table")
-            pos = [v % vertex_count for v in tri]
+            if max(tri) >= uv_count:
+                raise ValueError(f"slot {slot}: index outside component tables")
             corners = []
-            for vi, ui in zip(pos, tri):
-                u, v = uv[ui*2:ui*2+2]
-                corners.extend((vi, u, v))
+            for ui in tri:
+                vi = ui % vertex_count
+                corners.extend((vi, uv_a[ui], uv_b[ui]))
             faces.append(corners)
     return {
         "slot": slot, "offset": offset, "size": size, "header": header,
         "vertices": [coords[i:i+3] for i in range(0, len(coords), 3)],
         "faces": faces, "texture_type": tex_type, "width": width,
-        "height": height, "pixels": pixels, "uv_max": [max(uv_a[::2]+uv_b[::2]), max(uv_a[1::2]+uv_b[1::2])], "uv_pairs": uv_pair_count, "uv_pairs": uv_pair_count, "uv_pairs": uv_pair_count
+        "height": height, "pixels": pixels, "uv_max": [max(uv_a), max(uv_b)], "uv_pairs": uv_pair_count, "uv_pairs": uv_pair_count
     }
 
 def emit_array(lines, ctype, name, values, per_line=12):
@@ -108,7 +106,7 @@ def main():
         "record_size": m["size"], "header_u16": list(m["header"]),
         "vertices": len(m["vertices"]), "faces_exported": len(m["faces"]),
         "texture": [m["width"], m["height"]], "texture_type": m["texture_type"],
-        "uv_max": m["uv_max"], "uv_pairs": m["uv_pairs"], "pixel_word_range": [min(m["pixels"]), max(m["pixels"])],
+        "uv_max": m["uv_max"], "pixel_word_range": [min(m["pixels"]), max(m["pixels"])],
         "index_remap": "index % vertex_count (candidate)"
     } for m in models]
     (out / "model_manifest.json").write_text(json.dumps(report, indent=2), encoding="utf-8")

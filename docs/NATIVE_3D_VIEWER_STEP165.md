@@ -63,3 +63,15 @@ Device-side:
 - no crash occurs during the viewing interval.
 
 The first device test will also validate whether the candidate index remapping produces a recognizable bottle. If it does not, the next task is to recover the exact vertex/index mapping before adding textures.
+
+
+## First successful SIS build — 2026-11-27
+
+GitHub Actions run: https://github.com/Shakalx3/Shadowkey/actions/runs/45986562367
+
+The ARMv5 E32 compile, S60 registration-resource compile, and `makesis` packaging stages all completed successfully. The resulting `Shadowkey3DViewer.sis` is 27,552 bytes and was identified by the host `file` utility as a Symbian OS 9.x installation file.
+
+SHA-256:
+`ced7d9e70453d3dcf9dbf1ebed09f0f88df99ddab16ff11e85b70162377d88be`
+
+This is a build/package verification only. It has not yet been installed or run on a physical Nokia N95. The first device test is required to validate launch, rendering, rotation, and the candidate mesh index remapping.

@@ -10,9 +10,6 @@
 struct TProjectedPoint
     {
     TPoint iPoint;
-    TReal iDepth;
-    TReal iU;
-    TReal iV;
     };
 
 static void CalculateModelBounds(const TModelData& aModel, TReal& aCenterX,
@@ -65,7 +62,6 @@ static void ProjectModel(const TModelData& aModel, TProjectedPoint* aOut,
         TReal f = focal / depth;
         aOut[i].iPoint = TPoint(aWidth / 2 + (TInt)(rx * f),
                                 aHeight / 2 - (TInt)(ry * f));
-        aOut[i].iDepth = depth;
         }
     }
 
@@ -129,8 +125,10 @@ static void DrawTexturedModel(CFbsBitmap& aBitmap, const TModelData& aModel,
     {
     TReal cx=0.0, cy=0.0, cz=0.0, scale=1.0;
     CalculateModelBounds(aModel, cx, cy, cz, scale);
-    TProjectedPoint projected[512];
-    if (aModel.vertexCount > 512) return;
+    if (aModel.vertexCount <= 0 || aModel.vertexCount > 2048) return;
+    TProjectedPoint* projected = static_cast<TProjectedPoint*>(
+        User::Alloc(sizeof(TProjectedPoint) * aModel.vertexCount));
+    if (!projected) return;
     ProjectModel(aModel, projected, cx, cy, cz, scale, aWidth, aHeight);
 
     TReal uvMaxU = 1.0, uvMaxV = 1.0;
@@ -142,6 +140,12 @@ static void DrawTexturedModel(CFbsBitmap& aBitmap, const TModelData& aModel,
         }
     aBitmap.LockHeap(ETrue);
     TUint16* pixels = reinterpret_cast<TUint16*>(aBitmap.DataAddress());
+    if (!pixels)
+        {
+        aBitmap.UnlockHeap(ETrue);
+        User::Free(projected);
+        return;
+        }
     TInt stride = CFbsBitmap::ScanLineLength(aWidth, EColor64K) / 2;
     for (TInt y=0; y<aHeight; ++y)
         for (TInt x=0; x<aWidth; ++x)
@@ -156,6 +160,7 @@ static void DrawTexturedModel(CFbsBitmap& aBitmap, const TModelData& aModel,
             aModel, uvMaxU, uvMaxV);
         }
     aBitmap.UnlockHeap(ETrue);
+    User::Free(projected);
     }
 
 static TInt RunViewer()

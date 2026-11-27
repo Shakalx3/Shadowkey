@@ -1,0 +1,174 @@
+name: Shadowkey native 3D viewer — ARMv5 SIS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/step165-native-3d-viewer.yml"
+      - "source_bundle/host/step165/**"
+      - "tools/export_native_viewer_mesh.py"
+      - "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/models.huge"
+      - "source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/models.idx"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-e32:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    outputs:
+      e32_tag: ${{ steps.publish.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download modern EKA2 toolchain
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p downloads modern
+          gh release download v0.3.0 --repo hpnkv/symbian-platform \
+            --pattern symbian-sdk-0.3.0-linux-x86_64.tar.gz --dir downloads
+          tar -xzf downloads/symbian-sdk-0.3.0-linux-x86_64.tar.gz -C modern
+          toolchain_file=$(find modern -path '*/cmake/symbian-arm.cmake' -print -quit)
+          test -n "$toolchain_file"
+          echo "TOOLCHAIN_FILE=$(realpath "$toolchain_file")" >> "$GITHUB_ENV"
+          echo "MODERN_ROOT=$(dirname "$(dirname "$(realpath "$toolchain_file")")")" >> "$GITHUB_ENV"
+
+      - name: Export the Shadowkey bottle mesh
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZONE=source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51
+          python3 tools/export_native_viewer_mesh.py "$ZONE" 4
+          test -s source_bundle/host/step165/model_data.h
+          cat source_bundle/host/step165/model_manifest.json
+
+      - name: Configure and compile ARMv5 E32 application
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+          cmake -S source_bundle/host/step165 -B build/step165 -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
+            -DSYMBIAN_SDK_PREFIX="$MODERN_ROOT" \
+            -DSYMBIAN_TARGET_ARCH=armv5t \
+            -DSYMBIAN_RUNTIME_LEGACY_EKA2=ON \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/step165 --target Shadowkey3DViewer_e32 --parallel 2
+          exe=$(find build/step165 -type f -name Shadowkey3DViewer.exe -print -quit)
+          test -s "$exe"
+          mkdir -p stage
+          cp "$exe" stage/Shadowkey3DViewer.exe
+          python3 - <<'PY'
+          import struct
+          from pathlib import Path
+          p=Path("stage/Shadowkey3DViewer.exe")
+          b=p.read_bytes()
+          assert b[0x10:0x14] == b"EPOC", "not an E32 image"
+          uid1,uid2,uid3=struct.unpack_from("<III",b)
+          assert uid1 == 0x1000007A, hex(uid1)
+          assert uid3 == 0xE000BEF1, hex(uid3)
+          print("E32 validation PASS:", len(b), "bytes", hex(uid3))
+          PY
+
+      - name: Publish intermediate E32 image
+        id: publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="shadowkey-step165-e32-$GITHUB_RUN_ID"
+          gh release create "$tag" stage/Shadowkey3DViewer.exe \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Shadowkey Step165 native 3D viewer E32" \
+            --notes "Native S60 3rd Edition FP1 viewer prototype. Game bottle mesh is an initial candidate reconstruction."
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  package-sis:
+    runs-on: windows-latest
+    needs: build-e32
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download E32 image and S60 FP1 SIS tools
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          E32_TAG: ${{ needs.build-e32.outputs.e32_tag }}
+        run: |
+          New-Item -ItemType Directory -Force stage,sdk | Out-Null
+          gh release download $env:E32_TAG --repo $env:GITHUB_REPOSITORY --pattern Shadowkey3DViewer.exe --dir stage
+          gh release download s60-sdk-3.1-fp1-20261108 --repo $env:GITHUB_REPOSITORY --pattern s60-sdk-devkit-core.tar.gz --dir sdk
+          tar -xzf sdk/s60-sdk-devkit-core.tar.gz -C sdk
+          $sdkRoot = Join-Path (Get-Location) "sdk"
+          $makesis = Get-ChildItem $sdkRoot -Recurse -File -Filter makesis.exe | Select-Object -First 1
+          $epocrc = Get-ChildItem $sdkRoot -Recurse -File -Filter epocrc.bat | Select-Object -First 1
+          $epocrcScript = Get-ChildItem $sdkRoot -Recurse -File -Filter epocrc.pl | Select-Object -First 1
+          if (!$makesis -or !$epocrc -or !$epocrcScript) { throw "Required S60 SDK tools missing" }
+          "MAKESIS=$($makesis.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC=$($epocrc.FullName)" >> $env:GITHUB_ENV
+          "EPOCRC_DIR=$($epocrcScript.DirectoryName)" >> $env:GITHUB_ENV
+          "EPOCROOT=$($sdkRoot.TrimEnd('\') + '\')" >> $env:GITHUB_ENV
+
+      - name: Compile application registration resource
+        shell: pwsh
+        run: |
+          $out = Join-Path (Get-Location) "stage"
+          $rss = Join-Path (Get-Location) "source_bundle/host/step165/Shadowkey3DViewer_reg.rss"
+          $include = Join-Path (Get-Location) "sdk/Epoc32/include"
+          $env:PATH = "$env:EPOCRC_DIR;$env:PATH"
+          Push-Location $out
+          try {
+            & $env:EPOCRC -v -u "-I$include" "-t$out" $rss "-oShadowkey3DViewer_reg.rsc" "-hShadowkey3DViewer_reg.rsg" 2>&1 | Tee-Object -FilePath epocrc.log
+            if ($LASTEXITCODE -ne 0) { throw "epocrc failed with exit code $LASTEXITCODE" }
+          } finally { Pop-Location }
+          if (!(Test-Path stage/Shadowkey3DViewer_reg.rsc)) { throw "Registration RSC missing" }
+
+      - name: Create S60 3rd Edition FP1 SIS
+        shell: pwsh
+        run: |
+          @(
+            '#{"Shadowkey 3D Viewer"},(0xE000BEF1),1,0,0,TYPE=SA'
+            '[0x102032BE], 0, 0, 0, {"S60 3rd Edition FP1"}'
+            '%{"OpenAI"}'
+            ':"OpenAI"'
+            '"stage/Shadowkey3DViewer.exe" - "!:\sys\bin\Shadowkey3DViewer.exe"'
+            '"stage/Shadowkey3DViewer_reg.rsc" - "!:\private\10003a3f\import\apps\Shadowkey3DViewer_reg.rsc"'
+          ) | Set-Content stage/Shadowkey3DViewer.pkg -Encoding ascii
+          & $env:MAKESIS -v stage/Shadowkey3DViewer.pkg stage/Shadowkey3DViewer.sis
+          if ($LASTEXITCODE -ne 0) { throw "makesis failed" }
+          if (!(Test-Path stage/Shadowkey3DViewer.sis)) { throw "SIS was not generated" }
+          $hash = (Get-FileHash stage/Shadowkey3DViewer.sis -Algorithm SHA256).Hash
+          "SIS SHA256: $hash"
+          "SIS bytes: $((Get-Item stage/Shadowkey3DViewer.sis).Length)"
+
+      - name: Publish test SIS
+        if: success()
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "shadowkey-step165-sis-$env:GITHUB_RUN_ID"
+          $hash = (Get-FileHash stage/Shadowkey3DViewer.sis -Algorithm SHA256).Hash
+          gh release create $tag stage/Shadowkey3DViewer.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step165 native 3D viewer SIS" --notes "Install on Nokia N95 / S60 3rd Edition FP1. Prototype shows a rotating wireframe model extracted from Shadowkey models.huge. SHA256: $hash"
+          if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }
+
+      - name: Publish SIS and build logs as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadowkey-step165-native-3d-viewer
+          path: |
+            stage/Shadowkey3DViewer.sis
+            stage/Shadowkey3DViewer.exe
+            stage/Shadowkey3DViewer.pkg
+            stage/epocrc.log
+          if-no-files-found: warn
+          retention-days: 90

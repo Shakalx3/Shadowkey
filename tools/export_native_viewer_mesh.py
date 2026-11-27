@@ -58,7 +58,7 @@ def read_model(data, idx_data, slot):
         "slot": slot, "offset": offset, "size": size, "header": header,
         "vertices": [coords[i:i+3] for i in range(0, len(coords), 3)],
         "faces": faces, "texture_type": tex_type, "width": width,
-        "height": height, "pixels": pixels, "uv_max": [max(uv_a), max(uv_b)], "uv_pairs": uv_pair_count, "uv_pairs": uv_pair_count
+        "height": height, "pixels": pixels, "uv_max": [max(uv_a), max(uv_b)]
     }
 
 def emit_array(lines, ctype, name, values, per_line=12):

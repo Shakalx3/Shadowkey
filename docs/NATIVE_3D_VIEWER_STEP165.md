@@ -89,3 +89,23 @@ The exporter now validates and embeds three records from the model index:
 All three records passed the exporter’s structural checks in CI: coordinate count, both component arrays, both triangle-index arrays, texture dimensions, texture payload bounds, and 12-bit pixel-word range. The two component arrays are currently interpreted as U and V channels; the triangle indices are used to look up those channels, while position indices use the same candidate modulo mapping that was visually validated for the bottle. This interpretation is still provisional.
 
 The native viewer now uses a software triangle rasterizer and converts candidate RGB444 texels to the N95-friendly RGB565 framebuffer. It displays the bottle, barrel, and pine tree sequentially. This build has not yet passed native compilation/package validation, and none of the new textured models has been tested on the phone. Treat UV scaling, channel order, transparency, depth ordering, and the position remap as hypotheses until the device output is inspected.
+
+
+## First textured multi-model SIS build — 2026-11-27
+
+GitHub Actions run: https://github.com/Shakalx3/Shadowkey/actions/runs/45993275987
+
+Both jobs completed successfully:
+- all three selected records exported with embedded texture data;
+- ARMv5 E32 executable compiled and passed UID/header validation;
+- S60 3rd Edition FP1 registration resource compiled;
+- `makesis` created and published the installable SIS.
+
+Release: https://github.com/Shakalx3/Shadowkey/releases/tag/shadowkey-step165-sis-45993275987
+
+Asset: `Shadowkey3DViewer.sis`, 35,604 bytes.
+
+SHA-256:
+`00e441bec901cd8d31b010af56104ff48d4b46f5a1e4fc0d3c51977df4a44320`
+
+This confirms the build and packaging pipeline only. It does not establish that all three models render correctly on the physical N95. Device testing must verify that each object appears, that the texture mapping is recognizable, and that the app remains stable while switching between the three models. The texture channel interpretation, UV normalization, transparency and depth sorting remain experimental.

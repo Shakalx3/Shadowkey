@@ -27,7 +27,7 @@ def read_model(data, idx_data, slot):
     coords = struct.unpack_from("<" + "h" * coord_count, data, p)
     p += coord_count * 2
     uv_a = struct.unpack_from(">" + "H" * uv_count, data, p)
-    p += uv_count * 4
+    p += uv_count * 2
     uv_b = struct.unpack_from(">" + "H" * uv_count, data, p)
     p += uv_count * 4
     ix_a = struct.unpack_from("<" + "H" * (triangle_count * 3), data, p)
@@ -59,7 +59,7 @@ def read_model(data, idx_data, slot):
         "slot": slot, "offset": offset, "size": size, "header": header,
         "vertices": [coords[i:i+3] for i in range(0, len(coords), 3)],
         "faces": faces, "texture_type": tex_type, "width": width,
-        "height": height, "pixels": pixels, "uv_max": [max(uv_a[::2]+uv_b[::2]), max(uv_a[1::2]+uv_b[1::2])], "uv_pairs": uv_pair_count
+        "height": height, "pixels": pixels, "uv_max": [max(uv_a[::2]+uv_b[::2]), max(uv_a[1::2]+uv_b[1::2])], "uv_pairs": uv_pair_count, "uv_pairs": uv_pair_count
     }
 
 def emit_array(lines, ctype, name, values, per_line=12):

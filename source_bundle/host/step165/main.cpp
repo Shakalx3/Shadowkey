@@ -185,7 +185,7 @@ static TInt RunViewer()
     return error;
     }
 
-GLDEF_C TInt E32Main()
+int main()
     {
     return RunViewer();
     }

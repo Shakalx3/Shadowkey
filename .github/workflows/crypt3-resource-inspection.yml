@@ -7,6 +7,7 @@ on:
       - 'tools/export_crypt3_map.py'
       - 'tools/probe_models_huge.py'
       - 'tools/inspect_models_huge_record0.py'
+      - 'tools/inspect_models_idx.py'
       - 'source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/Crypt3.zmp'
       - '.github/workflows/crypt3-resource-inspection.yml'
   workflow_dispatch:
@@ -23,6 +24,7 @@ jobs:
           python3 tools/export_crypt3_map.py "$ZONE"
           python3 tools/probe_models_huge.py "$ZONE"
           python3 tools/inspect_models_huge_record0.py "$ZONE"
+          python3 tools/inspect_models_idx.py "$ZONE"
       - name: Upload decoded resource payloads
         uses: actions/upload-artifact@v4
         with:

@@ -163,6 +163,30 @@ static void DrawTexturedModel(CFbsBitmap& aBitmap, const TModelData& aModel,
     User::Free(projected);
     }
 
+static void DrawWireframe(CWindowGc& aGc, const TModelData& aModel,
+                             TInt aWidth, TInt aHeight)
+    {
+    if (aModel.vertexCount <= 0 || aModel.vertexCount > 2048) return;
+    TReal cx=0.0, cy=0.0, cz=0.0, scale=1.0;
+    CalculateModelBounds(aModel, cx, cy, cz, scale);
+    TProjectedPoint* projected = static_cast<TProjectedPoint*>(
+        User::Alloc(sizeof(TProjectedPoint) * aModel.vertexCount));
+    if (!projected) return;
+    ProjectModel(aModel, projected, cx, cy, cz, scale, aWidth, aHeight);
+    aGc.SetPenColor(TRgb(210,220,235));
+    for (TInt i=0; i<aModel.faceCount; ++i)
+        {
+        const TModelFace& f = aModel.faces[i];
+        if (f.a < 0 || f.b < 0 || f.c < 0 ||
+            f.a >= aModel.vertexCount || f.b >= aModel.vertexCount ||
+            f.c >= aModel.vertexCount) continue;
+        aGc.DrawLine(projected[f.a].iPoint, projected[f.b].iPoint);
+        aGc.DrawLine(projected[f.b].iPoint, projected[f.c].iPoint);
+        aGc.DrawLine(projected[f.c].iPoint, projected[f.a].iPoint);
+        }
+    User::Free(projected);
+    }
+
 static TInt RunViewer()
     {
     CTrapCleanup* cleanup = CTrapCleanup::New();
@@ -202,11 +226,11 @@ static TInt RunViewer()
                         const TRect full(0,0,size.iWidth,size.iHeight);
                         for (TInt model=0; model<KModelCount; ++model)
                             {
-                            DrawTexturedModel(bitmap, KModels[model], size.iWidth, size.iHeight);
                             window.BeginRedraw(full);
                             gc.Activate(window);
-                            gc.BitBlt(TPoint(0,0), &bitmap);
+                            gc.Clear(full);
                             gc.SetPenColor(TRgb(235,235,235));
+                            DrawWireframe(gc, KModels[model], size.iWidth, size.iHeight);
                             TBuf<64> label;
                             label.Copy(TPtrC8(reinterpret_cast<const TUint8*>(KModels[model].name)));
                             gc.DrawText(label, TPoint(8,18));

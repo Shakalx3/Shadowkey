@@ -4,13 +4,6 @@
 #include <w32std.h>
 #include "model_data.h"
 
-struct TPoint3D
-    {
-    TReal iX;
-    TReal iY;
-    TReal iZ;
-    };
-
 struct TProjectedPoint
     {
     TPoint iPoint;

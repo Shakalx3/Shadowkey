@@ -1,6 +1,7 @@
 #include <e32base.h>
 #include <e32math.h>
 #include <gdi.h>
+#include <fbs.h>
 #include <w32std.h>
 #include "model_data.h"
 
@@ -8,112 +9,160 @@ struct TProjectedPoint
     {
     TPoint iPoint;
     TReal iDepth;
+    TReal iU;
+    TReal iV;
     };
 
-static TReal AbsReal(TReal aValue)
+static void CalculateModelBounds(const TModelData& aModel, TReal& aCenterX,
+                                 TReal& aCenterY, TReal& aCenterZ,
+                                 TReal& aScale)
     {
-    return aValue < 0.0 ? -aValue : aValue;
-    }
-
-static void CalculateModelBounds(TReal& aCenterX, TReal& aCenterY,
-                                 TReal& aCenterZ, TReal& aScale)
-    {
-    TInt minX = KModelVertices[0].x;
-    TInt maxX = KModelVertices[0].x;
-    TInt minY = KModelVertices[0].y;
-    TInt maxY = KModelVertices[0].y;
-    TInt minZ = KModelVertices[0].z;
-    TInt maxZ = KModelVertices[0].z;
-    for (TInt i = 1; i < KModelVertexCount; ++i)
+    TInt minX = aModel.vertices[0].x, maxX = minX;
+    TInt minY = aModel.vertices[0].y, maxY = minY;
+    TInt minZ = aModel.vertices[0].z, maxZ = minZ;
+    for (TInt i = 1; i < aModel.vertexCount; ++i)
         {
-        if (KModelVertices[i].x < minX) minX = KModelVertices[i].x;
-        if (KModelVertices[i].x > maxX) maxX = KModelVertices[i].x;
-        if (KModelVertices[i].y < minY) minY = KModelVertices[i].y;
-        if (KModelVertices[i].y > maxY) maxY = KModelVertices[i].y;
-        if (KModelVertices[i].z < minZ) minZ = KModelVertices[i].z;
-        if (KModelVertices[i].z > maxZ) maxZ = KModelVertices[i].z;
+        const TModelVertex& v = aModel.vertices[i];
+        if (v.x < minX) minX = v.x;
+        if (v.x > maxX) maxX = v.x;
+        if (v.y < minY) minY = v.y;
+        if (v.y > maxY) maxY = v.y;
+        if (v.z < minZ) minZ = v.z;
+        if (v.z > maxZ) maxZ = v.z;
         }
     aCenterX = (minX + maxX) / 512.0;
     aCenterY = (minY + maxY) / 512.0;
     aCenterZ = (minZ + maxZ) / 512.0;
-    TReal spanX = (maxX - minX) / 256.0;
-    TReal spanY = (maxY - minY) / 256.0;
-    TReal spanZ = (maxZ - minZ) / 256.0;
-    TReal span = spanX;
-    if (spanY > span) span = spanY;
-    if (spanZ > span) span = spanZ;
+    TReal sx = (maxX - minX) / 256.0;
+    TReal sy = (maxY - minY) / 256.0;
+    TReal sz = (maxZ - minZ) / 256.0;
+    TReal span = sx;
+    if (sy > span) span = sy;
+    if (sz > span) span = sz;
     if (span < 0.01) span = 1.0;
-    aScale = 1.7 / span;
+    aScale = 1.8 / span;
     }
 
-static void ProjectModel(TProjectedPoint* aOutput, TReal aAngleY,
-                         TReal aAngleX, TReal aCenterX, TReal aCenterY,
-                         TReal aCenterZ, TReal aModelScale,
-                         TInt aScreenWidth, TInt aScreenHeight)
+static void ProjectModel(const TModelData& aModel, TProjectedPoint* aOut,
+                         TReal aCX, TReal aCY, TReal aCZ, TReal aScale,
+                         TInt aWidth, TInt aHeight)
     {
-    TReal sinY = 0.0, cosY = 1.0, sinX = 0.0, cosX = 1.0;
-    Math::Sin(sinY, aAngleY);
-    Math::Cos(cosY, aAngleY);
-    Math::Sin(sinX, aAngleX);
-    Math::Cos(cosX, aAngleX);
-    TReal focal = (aScreenHeight < aScreenWidth ? aScreenHeight : aScreenWidth) * 0.92;
-    TReal screenX = aScreenWidth / 2.0;
-    TReal screenY = aScreenHeight / 2.0;
-
-    for (TInt i = 0; i < KModelVertexCount; ++i)
+    const TReal focal = (aWidth < aHeight ? aWidth : aHeight) * 1.05;
+    for (TInt i = 0; i < aModel.vertexCount; ++i)
         {
-        TReal x = (KModelVertices[i].x / 256.0 - aCenterX) * aModelScale;
-        TReal y = (KModelVertices[i].y / 256.0 - aCenterY) * aModelScale;
-        TReal z = (KModelVertices[i].z / 256.0 - aCenterZ) * aModelScale;
-
-        TReal rx = x * cosY + z * sinY;
-        TReal rz = -x * sinY + z * cosY;
-        TReal ry = y * cosX - rz * sinX;
-        TReal rz2 = y * sinX + rz * cosX;
-        TReal cameraZ = rz2 + 3.4;
-        if (cameraZ < 0.6) cameraZ = 0.6;
-        TReal factor = focal / cameraZ;
-        aOutput[i].iPoint = TPoint((TInt)(screenX + rx * factor),
-                                   (TInt)(screenY - ry * factor));
-        aOutput[i].iDepth = cameraZ;
+        TReal x = (aModel.vertices[i].x / 256.0 - aCX) * aScale;
+        TReal y = (aModel.vertices[i].y / 256.0 - aCY) * aScale;
+        TReal z = (aModel.vertices[i].z / 256.0 - aCZ) * aScale;
+        // A fixed three-quarter view; rotation is intentionally out of scope.
+        TReal rx = x * 0.8660254 + z * 0.5;
+        TReal rz = -x * 0.5 + z * 0.8660254;
+        TReal ry = y * 0.9063078 - rz * 0.4226183;
+        TReal rz2 = y * 0.4226183 + rz * 0.9063078;
+        TReal depth = rz2 + 3.6;
+        if (depth < 0.7) depth = 0.7;
+        TReal f = focal / depth;
+        aOut[i].iPoint = TPoint(aWidth / 2 + (TInt)(rx * f),
+                                aHeight / 2 - (TInt)(ry * f));
+        aOut[i].iDepth = depth;
         }
     }
 
-static void DrawModel(CWindowGc& aGc, const TProjectedPoint* aProjected)
+static TInt ClampInt(TInt aValue, TInt aMin, TInt aMax)
     {
-    for (TInt i = 0; i < KModelFaceCount; ++i)
-        {
-        const TModelFace& face = KModelFaces[i];
-        const TPoint& p0 = aProjected[face.a].iPoint;
-        const TPoint& p1 = aProjected[face.b].iPoint;
-        const TPoint& p2 = aProjected[face.c].iPoint;
+    if (aValue < aMin) return aMin;
+    if (aValue > aMax) return aMax;
+    return aValue;
+    }
 
-        TReal depth = (aProjected[face.a].iDepth +
-                       aProjected[face.b].iDepth +
-                       aProjected[face.c].iDepth) / 3.0;
-        TInt shade = 220 - (TInt)(depth * 22.0);
-        if (shade < 70) shade = 70;
-        if (shade > 210) shade = 210;
-        aGc.SetPenColor(TRgb(25, shade, 125 + shade / 3));
-        aGc.DrawLine(p0, p1);
-        aGc.DrawLine(p1, p2);
-        aGc.DrawLine(p2, p0);
+static TUint16 Convert444To565(TUint16 aPixel)
+    {
+    TInt r = (aPixel >> 8) & 15;
+    TInt g = (aPixel >> 4) & 15;
+    TInt b = aPixel & 15;
+    return (TUint16)(((r << 1 | r >> 3) << 11) |
+                     ((g << 2 | g >> 2) << 5) |
+                     (b << 1 | b >> 3));
+    }
+
+static void RasterTriangle(TUint16* aPixels, TInt aStridePixels,
+                           TInt aWidth, TInt aHeight,
+                           const TProjectedPoint& p0,
+                           const TProjectedPoint& p1,
+                           const TProjectedPoint& p2,
+                           TReal u0, TReal v0, TReal u1, TReal v1,
+                           TReal u2, TReal v2, const TModelData& aModel,
+                           TReal aUvMaxU, TReal aUvMaxV)
+    {
+    TInt minX = ClampInt(Min(Min(p0.iPoint.iX, p1.iPoint.iX), p2.iPoint.iX), 0, aWidth - 1);
+    TInt maxX = ClampInt(Max(Max(p0.iPoint.iX, p1.iPoint.iX), p2.iPoint.iX), 0, aWidth - 1);
+    TInt minY = ClampInt(Min(Min(p0.iPoint.iY, p1.iPoint.iY), p2.iPoint.iY), 0, aHeight - 1);
+    TInt maxY = ClampInt(Max(Max(p0.iPoint.iY, p1.iPoint.iY), p2.iPoint.iY), 0, aHeight - 1);
+    TReal x0 = p0.iPoint.iX, y0 = p0.iPoint.iY;
+    TReal x1 = p1.iPoint.iX, y1 = p1.iPoint.iY;
+    TReal x2 = p2.iPoint.iX, y2 = p2.iPoint.iY;
+    TReal denom = (y1-y2)*(x0-x2) + (x2-x1)*(y0-y2);
+    if (denom > -0.0001 && denom < 0.0001) return;
+    TReal inv = 1.0 / denom;
+    for (TInt y = minY; y <= maxY; ++y)
+        {
+        for (TInt x = minX; x <= maxX; ++x)
+            {
+            TReal px = x + 0.5, py = y + 0.5;
+            TReal w0 = ((y1-y2)*(px-x2) + (x2-x1)*(py-y2)) * inv;
+            TReal w1 = ((y2-y0)*(px-x2) + (x0-x2)*(py-y2)) * inv;
+            TReal w2 = 1.0 - w0 - w1;
+            if (w0 < 0.0 || w1 < 0.0 || w2 < 0.0) continue;
+            TReal uu = (w0*u0 + w1*u1 + w2*u2) / aUvMaxU;
+            TReal vv = (w0*v0 + w1*v1 + w2*v2) / aUvMaxV;
+            TInt tx = ClampInt((TInt)(uu * (aModel.textureWidth - 1)), 0, aModel.textureWidth - 1);
+            TInt ty = ClampInt((TInt)(vv * (aModel.textureHeight - 1)), 0, aModel.textureHeight - 1);
+            TUint16 source = aModel.texture[ty * aModel.textureWidth + tx];
+            aPixels[y * aStridePixels + x] = Convert444To565(source);
+            }
         }
+    }
+
+static void DrawTexturedModel(CFbsBitmap& aBitmap, const TModelData& aModel,
+                              TInt aWidth, TInt aHeight)
+    {
+    TReal cx=0.0, cy=0.0, cz=0.0, scale=1.0;
+    CalculateModelBounds(aModel, cx, cy, cz, scale);
+    TProjectedPoint projected[512];
+    if (aModel.vertexCount > 512) return;
+    ProjectModel(aModel, projected, cx, cy, cz, scale, aWidth, aHeight);
+
+    TReal uvMaxU = 1.0, uvMaxV = 1.0;
+    for (TInt i=0; i<aModel.faceCount; ++i)
+        {
+        const TModelFace& f = aModel.faces[i];
+        if (f.u0 > uvMaxU) uvMaxU=f.u0; if (f.u1 > uvMaxU) uvMaxU=f.u1; if (f.u2 > uvMaxU) uvMaxU=f.u2;
+        if (f.v0 > uvMaxV) uvMaxV=f.v0; if (f.v1 > uvMaxV) uvMaxV=f.v1; if (f.v2 > uvMaxV) uvMaxV=f.v2;
+        }
+    aBitmap.LockHeap(ETrue);
+    TUint16* pixels = reinterpret_cast<TUint16*>(aBitmap.DataAddress());
+    TInt stride = CFbsBitmap::ScanLineLength(aWidth, EColor64K) / 2;
+    for (TInt y=0; y<aHeight; ++y)
+        for (TInt x=0; x<aWidth; ++x)
+            pixels[y*stride+x] = 0x1082;
+    for (TInt i=0; i<aModel.faceCount; ++i)
+        {
+        const TModelFace& f = aModel.faces[i];
+        if (f.a >= aModel.vertexCount || f.b >= aModel.vertexCount || f.c >= aModel.vertexCount) continue;
+        RasterTriangle(pixels, stride, aWidth, aHeight,
+            projected[f.a], projected[f.b], projected[f.c],
+            f.u0, f.v0, f.u1, f.v1, f.u2, f.v2,
+            aModel, uvMaxU, uvMaxV);
+        }
+    aBitmap.UnlockHeap(ETrue);
     }
 
 static TInt RunViewer()
     {
     CTrapCleanup* cleanup = CTrapCleanup::New();
     if (!cleanup) return KErrNoMemory;
-
     RWsSession session;
     TInt error = session.Connect();
-    if (error != KErrNone)
-        {
-        delete cleanup;
-        return error;
-        }
-
+    if (error != KErrNone) { delete cleanup; return error; }
     {
     CWsScreenDevice screen(session);
     error = screen.Construct();
@@ -123,54 +172,46 @@ static TInt RunViewer()
         error = gc.Construct();
         if (error == KErrNone)
             {
-            const TSize size = screen.SizeInPixels();
-            RWindowGroup group(session);
-            error = group.Construct(1, ETrue);
+            TSize size = screen.SizeInPixels();
+            CFbsBitmap bitmap;
+            error = bitmap.Create(size, EColor64K);
             if (error == KErrNone)
                 {
-                RWindow window(session);
-                error = window.Construct(group, 2);
+                RWindowGroup group(session);
+                error = group.Construct(1, ETrue);
                 if (error == KErrNone)
                     {
-                    group.SetOrdinalPosition(0);
-                    window.SetExtent(TPoint(0, 0), size);
-                    window.SetBackgroundColor(TRgb(5, 9, 17));
-                    window.SetVisible(ETrue);
-                    window.Activate();
-
-                    TReal centerX = 0.0, centerY = 0.0, centerZ = 0.0, modelScale = 1.0;
-                    CalculateModelBounds(centerX, centerY, centerZ, modelScale);
-                    TProjectedPoint projected[KModelVertexCount];
-                    const TRect full(0, 0, size.iWidth, size.iHeight);
-                    TReal angle = 0.0;
-                    TReal angleX = 0.38;
-
-                    // Automatic rotation for 72 seconds, then clean exit.
-                    for (TInt frame = 0; frame < 1800; ++frame)
+                    RWindow window(session);
+                    error = window.Construct(group, 2);
+                    if (error == KErrNone)
                         {
-                        ProjectModel(projected, angle, angleX, centerX, centerY,
-                                     centerZ, modelScale, size.iWidth, size.iHeight);
-                        window.BeginRedraw(full);
-                        gc.Activate(window);
-                        gc.SetBrushStyle(CGraphicsContext::ESolidBrush);
-                        gc.SetBrushColor(TRgb(5, 9, 17));
-                        gc.SetPenStyle(CGraphicsContext::ESolidPen);
-                        gc.SetPenSize(TSize(1, 1));
-                        gc.DrawRect(full);
-                        DrawModel(gc, projected);
-                        gc.Deactivate();
-                        window.EndRedraw();
-                        session.Flush();
-                        angle += 0.047;
-                        angleX += 0.031;
-                        if (angle > 6.2831853) angle -= 6.2831853;
-                        if (angleX > 6.2831853) angleX -= 6.2831853;
-                        User::After(40000);
+                        group.SetOrdinalPosition(0);
+                        window.SetExtent(TPoint(0,0), size);
+                        window.SetBackgroundColor(TRgb(5,9,17));
+                        window.SetVisible(ETrue);
+                        window.Activate();
+                        const TRect full(0,0,size.iWidth,size.iHeight);
+                        for (TInt model=0; model<KModelCount; ++model)
+                            {
+                            DrawTexturedModel(bitmap, KModels[model], size.iWidth, size.iHeight);
+                            window.BeginRedraw(full);
+                            gc.Activate(window);
+                            gc.BitBlt(TPoint(0,0), &bitmap);
+                            gc.SetPenColor(TRgb(235,235,235));
+                            gc.UseFont(NULL);
+                            TBuf<64> label;
+                            label.Copy(TPtrC8(reinterpret_cast<const TUint8*>(KModels[model].name)));
+                            gc.DrawText(label, TPoint(8,18));
+                            gc.Deactivate();
+                            window.EndRedraw();
+                            session.Flush();
+                            User::After(12000000);
+                            }
+                        window.Close();
                         }
-
-                    window.Close();
+                    group.Close();
                     }
-                group.Close();
+                bitmap.Close();
                 }
             }
         }

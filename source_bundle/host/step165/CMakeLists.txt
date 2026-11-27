@@ -7,5 +7,7 @@ symbian_add_executable(Shadowkey3DViewer main.cpp)
 target_compile_options(Shadowkey3DViewer PRIVATE -fno-exceptions -fno-rtti -fno-builtin)
 target_link_libraries(Shadowkey3DViewer PRIVATE
     Symbian::WindowServer
-    Symbian::Gdi)
+    Symbian::Gdi
+    Symbian::BitmapGdi
+    Symbian::FontStore)
 symbian_publish_executable(Shadowkey3DViewer UID3 0xE000BEF1)

@@ -29,7 +29,7 @@ def read_model(data, idx_data, slot):
     uv_a = struct.unpack_from(">" + "H" * uv_count, data, p)
     p += uv_count * 2
     uv_b = struct.unpack_from(">" + "H" * uv_count, data, p)
-    p += uv_count * 4
+    p += uv_count * 2
     ix_a = struct.unpack_from("<" + "H" * (triangle_count * 3), data, p)
     p += triangle_count * 6
     ix_b = struct.unpack_from("<" + "H" * (triangle_count * 3), data, p)
@@ -43,12 +43,13 @@ def read_model(data, idx_data, slot):
     pixels = struct.unpack_from("<" + "H" * (width * height), data, p)
     if max(pixels) > 0xFFF:
         raise ValueError(f"slot {slot}: pixel data is not RGB444 candidate")
+    uv_pair_count = uv_count // 2
     faces = []
     for uv, indices in ((uv_a, ix_a), (uv_b, ix_b)):
         for i in range(0, len(indices), 3):
             tri = indices[i:i+3]
-            if max(tri) >= uv_count:
-                raise ValueError(f"slot {slot}: UV index outside table")
+            if max(tri) >= uv_pair_count:
+                raise ValueError(f"slot {slot}: UV index outside UV-pair table")
             pos = [v % vertex_count for v in tri]
             corners = []
             for vi, ui in zip(pos, tri):
@@ -59,7 +60,7 @@ def read_model(data, idx_data, slot):
         "slot": slot, "offset": offset, "size": size, "header": header,
         "vertices": [coords[i:i+3] for i in range(0, len(coords), 3)],
         "faces": faces, "texture_type": tex_type, "width": width,
-        "height": height, "pixels": pixels, "uv_max": [max(uv_a[::2]+uv_b[::2]), max(uv_a[1::2]+uv_b[1::2])], "uv_pairs": uv_pair_count, "uv_pairs": uv_pair_count
+        "height": height, "pixels": pixels, "uv_max": [max(uv_a[::2]+uv_b[::2]), max(uv_a[1::2]+uv_b[1::2])], "uv_pairs": uv_pair_count, "uv_pairs": uv_pair_count, "uv_pairs": uv_pair_count
     }
 
 def emit_array(lines, ctype, name, values, per_line=12):

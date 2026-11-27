@@ -210,7 +210,6 @@ static TInt RunViewer()
                         }
                     group.Close();
                     }
-                bitmap.Close();
                 }
             }
         }

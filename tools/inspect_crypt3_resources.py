@@ -111,7 +111,9 @@ def main():
         if p.exists(): inspect_companion(p)
         else: print(f"missing companion: {p}")
     ent=root/"Crypt3.ent"
-    if ent.exists():\n        inspect_entities(ent)\n        export_entity_table(ent)
+    if ent.exists():
+        inspect_entities(ent)
+        export_entity_table(ent)
     pth=root/"Crypt3.pth"
     if pth.exists(): inspect_path_table(pth)
 if __name__=="__main__": main()

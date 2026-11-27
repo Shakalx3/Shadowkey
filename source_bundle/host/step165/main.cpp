@@ -224,13 +224,13 @@ static TInt RunViewer()
                         window.SetVisible(ETrue);
                         window.Activate();
                         const TRect full(0,0,size.iWidth,size.iHeight);
-                        // Isolation build: render only the known-good bottle.
+                        // Isolation build: render only the barrel to test the second mesh independently.
                         // No model switching, texture access, or dynamic label conversion.
                         window.BeginRedraw(full);
                         gc.Activate(window);
                         gc.Clear(full);
                         gc.SetPenColor(TRgb(210,220,235));
-                        DrawWireframe(gc, KModels[0], size.iWidth, size.iHeight);
+                        DrawWireframe(gc, KModels[1], size.iWidth, size.iHeight);
                         gc.Deactivate();
                         window.EndRedraw();
                         session.Flush();

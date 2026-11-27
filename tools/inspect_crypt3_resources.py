@@ -42,6 +42,32 @@ def inspect_companion(path):
     if path.suffix==".zon":
         print("16-bit words:",[struct.unpack_from("<H",data,i)[0] for i in range(0,min(len(data),96),2)])
 
+
+def inspect_entities(path):
+    data=path.read_bytes()
+    if len(data)<4: return
+    count=struct.unpack_from("<I",data,0)[0]
+    print(f"\n=== entity table {path.name}: count={count}, bytes={len(data)} ===")
+    if count and 4+count*72==len(data):
+        print("Confirmed exact 72-byte record tiling.")
+        for i in range(count):
+            off=4+i*72
+            rec=data[off:off+72]
+            strings=runs(rec,3)
+            words=struct.unpack_from("<18I",rec,0)
+            floats=struct.unpack_from("<18f",rec,0)
+            print(f"ENT[{i:03d}] off={off:04d} u32={words[:8]} f32={[round(x,3) if abs(x)<1e7 else str(x) for x in floats[:8]]} strings={strings}")
+    else:
+        print("No exact 72-byte tiling; first bytes:",data[:128].hex(" "))
+
+def inspect_path_table(path):
+    data=path.read_bytes()
+    print(f"\n=== path table {path.name}: bytes={len(data)} ===")
+    if len(data)>=2:
+        print("leading u16:",struct.unpack_from("<H",data,0)[0])
+    print("ASCII runs:",json.dumps(runs(data,3),ensure_ascii=True))
+    print("u32 words:",[hex(x) for x in struct.unpack_from("<"+"I"*(len(data)//4),data,0)[:64]])
+
 def main():
     import argparse
     ap=argparse.ArgumentParser()
@@ -55,4 +81,8 @@ def main():
         p=root/name
         if p.exists(): inspect_companion(p)
         else: print(f"missing companion: {p}")
+    ent=root/"Crypt3.ent"
+    if ent.exists(): inspect_entities(ent)
+    pth=root/"Crypt3.pth"
+    if pth.exists(): inspect_path_table(pth)
 if __name__=="__main__": main()

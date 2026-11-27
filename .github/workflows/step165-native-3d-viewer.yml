@@ -38,12 +38,12 @@ jobs:
           echo "TOOLCHAIN_FILE=$(realpath "$toolchain_file")" >> "$GITHUB_ENV"
           echo "MODERN_ROOT=$(dirname "$(dirname "$(realpath "$toolchain_file")")")" >> "$GITHUB_ENV"
 
-      - name: Export the Shadowkey bottle mesh
+      - name: Export three Shadowkey meshes and textures
         shell: bash
         run: |
           set -euo pipefail
           ZONE=source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51
-          python3 tools/export_native_viewer_mesh.py "$ZONE" 4
+          python3 tools/export_native_viewer_mesh.py "$ZONE"
           test -s source_bundle/host/step165/model_data.h
           cat source_bundle/host/step165/model_manifest.json
 
@@ -157,7 +157,7 @@ jobs:
         run: |
           $tag = "shadowkey-step165-sis-$env:GITHUB_RUN_ID"
           $hash = (Get-FileHash stage/Shadowkey3DViewer.sis -Algorithm SHA256).Hash
-          gh release create $tag stage/Shadowkey3DViewer.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step165 native 3D viewer SIS" --notes "Install on Nokia N95 / S60 3rd Edition FP1. Prototype shows a rotating wireframe model extracted from Shadowkey models.huge. SHA256: $hash"
+          gh release create $tag stage/Shadowkey3DViewer.sis --repo $env:GITHUB_REPOSITORY --title "Shadowkey Step165 native 3D viewer SIS" --notes "Install on Nokia N95 / S60 3rd Edition FP1. Prototype shows a three original models (bottle, barrel, pine tree) with software-rendered RGB444 texture candidates extracted from models.huge. SHA256: $hash"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release publication failed" }
 
       - name: Publish SIS and build logs as workflow artifact

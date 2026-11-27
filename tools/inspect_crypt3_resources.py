@@ -68,6 +68,35 @@ def inspect_path_table(path):
     print("ASCII runs:",json.dumps(runs(data,3),ensure_ascii=True))
     print("u32 words:",[hex(x) for x in struct.unpack_from("<"+"I"*(len(data)//4),data,0)[:64]])
 
+
+def export_entity_table(path):
+    data=path.read_bytes()
+    count=struct.unpack_from("<I",data,0)[0]
+    if 4+count*72 != len(data):
+        raise ValueError("Crypt3.ent is not a 72-byte record table")
+    rows=[]
+    for i in range(count):
+        off=4+i*72
+        rec=data[off:off+72]
+        def cstr(start,end):
+            return rec[start:end].split(b"\0",1)[0].decode("ascii","replace").replace("\xcc","")
+        x,y,z=struct.unpack_from("<iii",rec,0)
+        yaw=struct.unpack_from("<i",rec,20)[0]
+        label=cstr(32,40)
+        script=cstr(40,72)
+        rows.append({"index":i,"x_raw":x,"y_raw":y,"z_raw":z,
+                     "x":x/256.0,"y":y/256.0,"z":z/256.0,
+                     "yaw_raw":yaw,"yaw_candidate":yaw/256.0,
+                     "label":label,"script":script})
+    import csv
+    out=path.parent/"Crypt3_entities.csv"
+    with out.open("w",newline="",encoding="utf-8") as f:
+        w=csv.DictWriter(f,fieldnames=list(rows[0]))
+        w.writeheader();w.writerows(rows)
+    (path.parent/"Crypt3_entities.json").write_text(json.dumps(rows,indent=2),encoding="utf-8")
+    print(f"\nExported {len(rows)} entities to {out.name}; coordinates are raw signed 8.8 candidates, not yet independently calibrated.")
+    print("Entity type/script counts:",json.dumps(collections.Counter(r["script"] for r in rows).most_common(30)))
+
 def main():
     import argparse
     ap=argparse.ArgumentParser()
@@ -82,7 +111,7 @@ def main():
         if p.exists(): inspect_companion(p)
         else: print(f"missing companion: {p}")
     ent=root/"Crypt3.ent"
-    if ent.exists(): inspect_entities(ent)
+    if ent.exists():\n        inspect_entities(ent)\n        export_entity_table(ent)
     pth=root/"Crypt3.pth"
     if pth.exists(): inspect_path_table(pth)
 if __name__=="__main__": main()

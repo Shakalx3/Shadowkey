@@ -198,7 +198,6 @@ static TInt RunViewer()
                             gc.Activate(window);
                             gc.BitBlt(TPoint(0,0), &bitmap);
                             gc.SetPenColor(TRgb(235,235,235));
-                            gc.UseFont(NULL);
                             TBuf<64> label;
                             label.Copy(TPtrC8(reinterpret_cast<const TUint8*>(KModels[model].name)));
                             gc.DrawText(label, TPoint(8,18));

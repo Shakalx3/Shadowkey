@@ -1,87 +1,115 @@
 #!/usr/bin/env python3
-"""Export a small candidate Shadowkey model as C++ arrays for the Symbian viewer.
+"""Export several indexed Shadowkey models and their embedded RGB444 textures.
 
-The model record structure is parsed from models.idx. The position-index mapping
-(index modulo position_count) remains a hypothesis and is recorded in the report.
+The record layout is still a tested candidate: compact XYZ positions, two
+UV/index domains, then a 16-bit texture. Position remapping is index % vertex_count.
 """
 import json, struct, sys
 from pathlib import Path
 
-def main():
-    if len(sys.argv) != 3:
-        raise SystemExit("usage: export_native_viewer_mesh.py ZONE_DIRECTORY MODEL_SLOT")
-    zone = Path(sys.argv[1])
-    slot = int(sys.argv[2])
-    idx = (zone / "models.idx").read_bytes()
-    huge = (zone / "models.huge").read_bytes()
-    count = struct.unpack_from("<I", idx)[0]
-    if len(idx) != 4 + count * 8:
-        raise ValueError("models.idx count/size mismatch")
-    if not 0 <= slot < count:
-        raise ValueError("model slot outside models.idx")
-    offset, size = struct.unpack_from("<II", idx, 4 + slot * 8)
-    header = struct.unpack_from("<7H", huge, offset)
-    vertex_count, index_value_count, triangle_count, coordinate_value_count = header[2:6]
-    if coordinate_value_count != vertex_count * 3:
-        raise ValueError("coordinate count does not equal vertex_count × 3")
-    coord_offset = offset + 14
-    uv_a_offset = coord_offset + coordinate_value_count * 2
-    uv_b_offset = uv_a_offset + index_value_count * 2
-    index_a_offset = uv_b_offset + index_value_count * 2
-    index_b_offset = index_a_offset + index_value_count * 2
-    tail_offset = index_b_offset + index_value_count * 2
-    if tail_offset + 6 > offset + size:
-        raise ValueError("record is too short for inferred mesh arrays")
-    coords = struct.unpack_from("<" + "h" * coordinate_value_count, huge, coord_offset)
-    idx_a = struct.unpack_from("<" + "H" * index_value_count, huge, index_a_offset)
-    idx_b = struct.unpack_from("<" + "H" * index_value_count, huge, index_b_offset)
-    if len(idx_a) != triangle_count * 3 or len(idx_b) != triangle_count * 3:
-        raise ValueError("index arrays do not match triangle_count × 3")
-    # Candidate remap: two expanded material/index domains address the same
-    # compact coordinate array. Preserve this as a testable hypothesis.
-    faces = [tuple(v % vertex_count for v in idx_a[i:i+3]) for i in range(0, len(idx_a), 3)]
-    faces += [tuple(v % vertex_count for v in idx_b[i:i+3]) for i in range(0, len(idx_b), 3)]
-    if any(max(face) >= vertex_count for face in faces):
-        raise ValueError("remapped face index outside coordinate table")
+SLOTS = (4, 5, 6)  # bottle, sbarrel, pinetree in models.txt
 
+def read_model(data, idx_data, slot):
+    count = struct.unpack_from("<I", idx_data)[0]
+    if len(idx_data) != 4 + count * 8:
+        raise ValueError("models.idx count/size mismatch")
+    if slot >= count:
+        raise ValueError(f"slot {slot} outside models.idx")
+    offset, size = struct.unpack_from("<II", idx_data, 4 + slot * 8)
+    end = offset + size
+    if end > len(data):
+        raise ValueError(f"slot {slot} extends beyond models.huge")
+    header = struct.unpack_from("<7H", data, offset)
+    vertex_count, uv_count, triangle_count, coord_count = header[2:6]
+    if not vertex_count or coord_count != vertex_count * 3:
+        raise ValueError(f"slot {slot}: unsupported coordinate header {header}")
+    p = offset + 14
+    coords = struct.unpack_from("<" + "h" * coord_count, data, p)
+    p += coord_count * 2
+    uv_a = struct.unpack_from(">" + "H" * (uv_count * 2), data, p)
+    p += uv_count * 4
+    uv_b = struct.unpack_from(">" + "H" * (uv_count * 2), data, p)
+    p += uv_count * 4
+    ix_a = struct.unpack_from("<" + "H" * (triangle_count * 3), data, p)
+    p += triangle_count * 6
+    ix_b = struct.unpack_from("<" + "H" * (triangle_count * 3), data, p)
+    p += triangle_count * 6
+    tex_type, width, height = struct.unpack_from("<3H", data, p)
+    p += 6
+    if not width or not height or width > 256 or height > 256:
+        raise ValueError(f"slot {slot}: invalid texture dimensions {width}x{height}")
+    if p + width * height * 2 > end:
+        raise ValueError(f"slot {slot}: texture payload exceeds record")
+    pixels = struct.unpack_from("<" + "H" * (width * height), data, p)
+    if max(pixels) > 0xFFF:
+        raise ValueError(f"slot {slot}: pixel data is not RGB444 candidate")
+    faces = []
+    for uv, indices in ((uv_a, ix_a), (uv_b, ix_b)):
+        for i in range(0, len(indices), 3):
+            tri = indices[i:i+3]
+            if max(tri) >= uv_count:
+                raise ValueError(f"slot {slot}: UV index outside table")
+            pos = [v % vertex_count for v in tri]
+            corners = []
+            for vi, ui in zip(pos, tri):
+                u, v = uv[ui*2:ui*2+2]
+                corners.extend((vi, u, v))
+            faces.append(corners)
+    return {
+        "slot": slot, "offset": offset, "size": size, "header": header,
+        "vertices": [coords[i:i+3] for i in range(0, len(coords), 3)],
+        "faces": faces, "texture_type": tex_type, "width": width,
+        "height": height, "pixels": pixels, "uv_max": [max(uv_a[::2]+uv_b[::2]), max(uv_a[1::2]+uv_b[1::2])]
+    }
+
+def emit_array(lines, ctype, name, values, per_line=12):
+    lines.append(f"static const {ctype} {name}[] = {{")
+    for i in range(0, len(values), per_line):
+        lines.append("    " + ", ".join(str(x) for x in values[i:i+per_line]) + ",")
+    lines.append("};")
+
+def main():
+    if len(sys.argv) != 2:
+        raise SystemExit("usage: export_native_viewer_mesh.py ZONE_DIRECTORY")
+    zone = Path(sys.argv[1])
+    data = (zone / "models.huge").read_bytes()
+    idx_data = (zone / "models.idx").read_bytes()
+    models = [read_model(data, idx_data, s) for s in SLOTS]
+    names = {4: "bottle", 5: "sbarrel", 6: "pinetree"}
     out = Path("source_bundle/host/step165")
     out.mkdir(parents=True, exist_ok=True)
-    h = []
-    h.append("#ifndef SHADOWKEY_VIEWER_MODEL_DATA_H")
-    h.append("#define SHADOWKEY_VIEWER_MODEL_DATA_H")
-    h.append("struct TModelVertex { TInt x; TInt y; TInt z; };")
-    h.append("struct TModelFace { TInt a; TInt b; TInt c; };")
-    h.append(f"static const TInt KModelVertexCount = {vertex_count};")
-    h.append(f"static const TInt KModelFaceCount = {len(faces)};")
-    h.append("static const TModelVertex KModelVertices[KModelVertexCount] = {")
-    for i in range(vertex_count):
-        x,y,z = coords[i*3:i*3+3]
-        h.append(f"    {{{x}, {y}, {z}}},")
-    h.append("};")
-    h.append("static const TModelFace KModelFaces[KModelFaceCount] = {")
-    for a,b,c in faces:
-        h.append(f"    {{{a}, {b}, {c}}},")
-    h.append("};")
-    h.append("#endif")
+    h = [
+        "#ifndef SHADOWKEY_VIEWER_MODEL_DATA_H",
+        "#define SHADOWKEY_VIEWER_MODEL_DATA_H",
+        "struct TModelVertex { TInt x; TInt y; TInt z; };",
+        "struct TModelFace { TInt a; TInt u0; TInt v0; TInt b; TInt u1; TInt v1; TInt c; TInt u2; TInt v2; };",
+        "struct TModelData { const TModelVertex* vertices; TInt vertexCount; const TModelFace* faces; TInt faceCount; const TUint16* texture; TInt textureWidth; TInt textureHeight; const char* name; };"
+    ]
+    for m in models:
+        n = names[m["slot"]]
+        h.append(f"static const TModelVertex KVertices_{n}[] = {{")
+        for x,y,z in m["vertices"]:
+            h.append(f"    {{{x}, {y}, {z}}},")
+        h.append("};")
+        h.append(f"static const TModelFace KFaces_{n}[] = {{")
+        for f in m["faces"]:
+            h.append("    {" + ", ".join(map(str, f)) + "},")
+        h.append("};")
+        emit_array(h, "TUint16", f"KTexture_{n}", m["pixels"], 12)
+    h.append("static const TModelData KModels[] = {")
+    for m in models:
+        n = names[m["slot"]]
+        h.append(f'    {{KVertices_{n}, {len(m["vertices"])}, KFaces_{n}, {len(m["faces"])}, KTexture_{n}, {m["width"]}, {m["height"]}, "{n}"}},')
+    h.extend(["};", "static const TInt KModelCount = sizeof(KModels) / sizeof(KModels[0]);", "#endif"])
     (out / "model_data.h").write_text("\n".join(h) + "\n", encoding="utf-8")
-
-    texture_header = struct.unpack_from("<3H", huge, tail_offset)
-    report = {
-        "model_slot": slot, "record_offset": offset, "record_size": size,
-        "header_u16": list(header), "vertex_count": vertex_count,
-        "triangle_count_per_index_set": triangle_count,
-        "index_values_per_set": index_value_count,
-        "coordinate_values": coordinate_value_count,
-        "coordinate_offset": coord_offset, "uv_a_offset": uv_a_offset,
-        "uv_b_offset": uv_b_offset, "index_a_offset": index_a_offset,
-        "index_b_offset": index_b_offset, "trailing_header_offset": tail_offset,
-        "trailing_header_u16": list(texture_header),
-        "face_count_exported": len(faces),
-        "index_a_range": [min(idx_a), max(idx_a)],
-        "index_b_range": [min(idx_b), max(idx_b)],
-        "index_remap": "index % vertex_count (candidate; requires visual/device validation)",
-        "note": "The two index domains are preserved as separate face sets. This is a first native rendering candidate, not a final validated interpretation."
-    }
+    report = [{
+        "slot": m["slot"], "name": names[m["slot"]], "record_offset": m["offset"],
+        "record_size": m["size"], "header_u16": list(m["header"]),
+        "vertices": len(m["vertices"]), "faces_exported": len(m["faces"]),
+        "texture": [m["width"], m["height"]], "texture_type": m["texture_type"],
+        "uv_max": m["uv_max"], "pixel_word_range": [min(m["pixels"]), max(m["pixels"])],
+        "index_remap": "index % vertex_count (candidate)"
+    } for m in models]
     (out / "model_manifest.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
 

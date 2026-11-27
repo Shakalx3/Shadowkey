@@ -163,6 +163,8 @@ static TInt RunViewer()
     RWsSession session;
     TInt error = session.Connect();
     if (error != KErrNone) { delete cleanup; return error; }
+    error = RFbsSession::Connect();
+    if (error != KErrNone) { session.Close(); delete cleanup; return error; }
     {
     CWsScreenDevice screen(session);
     error = screen.Construct();
@@ -214,6 +216,7 @@ static TInt RunViewer()
             }
         }
     }
+    RFbsSession::Disconnect();
     session.Close();
     delete cleanup;
     return error;

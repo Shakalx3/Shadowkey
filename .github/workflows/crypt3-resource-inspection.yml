@@ -1,0 +1,23 @@
+name: Crypt3 resource format inspection
+on:
+  push:
+    paths:
+      - 'tools/inspect_crypt3_resources.py'
+      - 'source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/Crypt3.zmp'
+      - '.github/workflows/crypt3-resource-inspection.yml'
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode and inspect Crypt3 resources
+        run: |
+          python3 tools/inspect_crypt3_resources.py source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51
+      - name: Upload decoded resource payloads
+        uses: actions/upload-artifact@v4
+        with:
+          name: crypt3-decoded-resource-payloads
+          path: source_bundle/shadowkey_step35_work/game_assets/The_Elder_Scrolls_Travels_Shadowkey/system/apps/6R51/*.raw
+          if-no-files-found: error
+          retention-days: 14

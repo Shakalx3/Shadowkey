@@ -75,3 +75,17 @@ SHA-256:
 `ced7d9e70453d3dcf9dbf1ebed09f0f88df99ddab16ff11e85b70162377d88be`
 
 This is a build/package verification only. It has not yet been installed or run on a physical Nokia N95. The first device test is required to validate launch, rendering, rotation, and the candidate mesh index remapping.
+
+
+## Multi-model textured viewer iteration — 2026-11-27
+
+The first on-device validation was reported by the user: slot 4 (`bottle.bin`) installs and displays with recognizable, correct geometry. Rotation was not visible and is intentionally deferred; texture support and multiple models are the next acceptance targets.
+
+The exporter now validates and embeds three records from the model index:
+- slot 4: `bottle.bin`
+- slot 5: `sbarrel.bin`
+- slot 6: `pinetree.bin`
+
+All three records passed the exporter’s structural checks in CI: coordinate count, both component arrays, both triangle-index arrays, texture dimensions, texture payload bounds, and 12-bit pixel-word range. The two component arrays are currently interpreted as U and V channels; the triangle indices are used to look up those channels, while position indices use the same candidate modulo mapping that was visually validated for the bottle. This interpretation is still provisional.
+
+The native viewer now uses a software triangle rasterizer and converts candidate RGB444 texels to the N95-friendly RGB565 framebuffer. It displays the bottle, barrel, and pine tree sequentially. This build has not yet passed native compilation/package validation, and none of the new textured models has been tested on the phone. Treat UV scaling, channel order, transparency, depth ordering, and the position remap as hypotheses until the device output is inspected.
